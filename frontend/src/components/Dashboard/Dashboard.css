@@ -35,7 +35,8 @@
     padding: 0 70px;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 20px;
+    overflow-x: hidden;
 }
 
 .dashboard-heading{
@@ -153,7 +154,7 @@
 .borrowers-books-list div{
     background-color: var(--light-gray);
     width: 100%;
-    padding:10px 20px;
+    padding: 20px;
     border-radius: 8px;
 }
 
@@ -164,7 +165,7 @@
 
 }
 
-.list-heading{
+.list-heading, .popular-choices-text, .overdue-book-text{
     font-weight: 700;
     color: var(--black);
     font-size: 1.2rem;
@@ -234,4 +235,80 @@ th{
     background-color: transparent;
     border: none;
     cursor: pointer;
+}
+
+.popular-choices{
+    padding: 50px;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.popular-books{
+    display: flex;
+    gap: 20px;
+}
+
+.popular-books img{
+    background-color: var(--black);
+    width: 200px;
+    height: 300px;
+    border-radius: 15px;
+}
+
+.overdue-book-list{
+    background-color: var(--light-gray);
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 50px;
+    border-radius: 8px;
+}
+
+.overdue-book-table{
+    width: 100%;
+    text-align: center;
+}
+
+.overdue-text-table{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.table-pages{
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 15px;
+    padding: 0 50px;
+    font-size: 0.6rem;
+
+}
+
+.page-number{
+    border: 1px solid var(--black);
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+
+.current-page{
+    background-color: var(--black);
+    border: none;
+    color: var(--white);
+}
+
+.page-numbers{
+    display: flex;
+    gap: 5px;
+}
+
+.table-pages img{
+    width: 10px;
+    height: 10px;
 }

@@ -5,6 +5,8 @@ import visitors from '../../assets/Management System/dashboard/total-visitors.sv
 import borrowed from '../../assets/Management System/dashboard/total-borrowed.svg'
 import add from '../../assets/Management System/dashboard/add.svg'
 import more from'../../assets/Management System/dashboard/more.svg'
+import left from'../../assets/Management System/dashboard/arrow-left-black.svg'
+import right from'../../assets/Management System/dashboard/arrow-right-black.svg'
 
 
 const Dashboard = () => {
@@ -96,8 +98,6 @@ const Dashboard = () => {
           </table>
           <div className='see-all-box'><button className='see-all-button'>See all</button></div>
         </div>
-
-
         {/* book list box */}
         <div className='books-list'>
           <div className='books-heading'>
@@ -124,11 +124,65 @@ const Dashboard = () => {
             </tr>
           </table>
           <div className='see-all-box'><button className='see-all-button'>See all</button></div>
-        </div>
-          
+        </div>        
 
           
       </div>
+
+       {/* Popular choices */}
+       <div className="popular-choices">
+          <p className='popular-choices-text'>Popular Choices</p>
+          <div className="popular-books">
+            <img src="" alt="" />
+            <img src="" alt="" />
+            <img src="" alt="" />
+            <img src="" alt="" />
+            <img src="" alt="" />
+          </div>
+        </div>
+
+        {/* overdue book list */}
+        <div className="overdue-book-list">
+          <div className='overdue-text-table'>
+            <p className='overdue-book-text'>Overdue Book List</p>
+              <table className='overdue-book-table'>
+                  <tr>
+                    <th>TUP ID</th>
+                    <th>Borrowers Name</th>
+                    <th>Book ID</th>
+                    <th>Title</th>
+                    <th>Overdue</th>
+                    <th>Status</th>
+                    <th>Fine</th>
+                  </tr>
+                  <tr>
+                    <td>TUPM-01-0203</td>
+                    <td>Giolliana Plandez</td>
+                    <td>Happiness At Work</td>
+                    <td>Jessica Pryce-Jones</td>
+                    <td>3 days</td>
+                    <td>Delay</td>
+                    <td>₱ <span>60.00</span></td>
+                  </tr>
+                </table>
+          </div>
+          {/* pagination */}
+            <div className='table-pages'>
+            <img src={left} alt="" />
+            <div className='page-numbers'>
+              <div className='page-number current-page'>3</div>
+              <div className='page-number'>2</div>
+              <div className='page-number'>1</div>
+            </div>
+            
+            <img src={right} alt="" />
+
+          </div>
+          
+          
+          
+        </div>
+
 
 
 
