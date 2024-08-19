@@ -33,7 +33,8 @@
 }
 
 .login-box{
-    position: absolute;
+    position: relative;
+    bottom: 15px;
     background-color: var(--white);
     width: 380px;
     padding: 60px 40px;

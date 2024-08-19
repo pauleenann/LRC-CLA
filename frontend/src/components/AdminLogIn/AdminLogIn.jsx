@@ -2,6 +2,7 @@ import React from 'react'
 import tuplogo from '../../assets/tuplogo.png'
 import clalogo from '../../assets/clalogo.png'
 import './AdminLogIn.css'
+import AdminFooter from '../AdminFooter/AdminFooter'
 
 const AdminLogIn = () => {
   return (
@@ -44,7 +45,7 @@ const AdminLogIn = () => {
             <button type='submit' className='login-button'>Login</button>
         </div>
 
-        
+        <AdminFooter/>
     </div>
   )
 }

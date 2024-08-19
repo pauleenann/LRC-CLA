@@ -1,0 +1,22 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+}
+
+:root{
+    --tup-color: #94152B;
+    --white: #fff;
+}
+
+.adminfooter{
+    position: absolute;
+    text-align: center;
+    padding: 15px;
+    color: var(--white);
+    font-size: 12px;
+    bottom: 0;
+    width: 100%;
+    background-color:var(--tup-color) ;
+}
