@@ -8,8 +8,26 @@ import more from'../../assets/Management System/dashboard/more.svg'
 import left from'../../assets/Management System/dashboard/arrow-left-black.svg'
 import right from'../../assets/Management System/dashboard/arrow-right-black.svg'
 
+import {UserData} from '../../Data'
+import VisitorsBorrowersStatistics from '../VisitorsBorrowersStatistics/VisitorsBorrowersStatistics'
+
 
 const Dashboard = () => {
+  // sample data
+  const [user,setUser] = useState({
+    //creates a new array whereit only has a day
+    labels: UserData.map((data)=>data.day),
+    datasets:[{
+      label:"Visitors",
+      data:  UserData.map((data)=>data.visitors),
+      backgroundColor: '#94152B',
+    },{
+      label:"Borrowers",
+      data:  UserData.map((data)=>data.borrowers),
+      backgroundColor: '#948F15',
+    },]
+  })
+
   const [dateTime,setDateTime] = useState(new Date());
   const [dropdown, setDropdown]= useState(false)
 
@@ -161,28 +179,60 @@ const Dashboard = () => {
                     <td>Happiness At Work</td>
                     <td>Jessica Pryce-Jones</td>
                     <td>3 days</td>
-                    <td>Delay</td>
+                    <td className='overdue-delay'>Delay</td>
                     <td>₱ <span>60.00</span></td>
                   </tr>
                 </table>
           </div>
           {/* pagination */}
-            <div className='table-pages'>
+          <div className='table-pages'>
             <img src={left} alt="" />
             <div className='page-numbers'>
               <div className='page-number current-page'>3</div>
               <div className='page-number'>2</div>
               <div className='page-number'>1</div>
             </div>
-            
             <img src={right} alt="" />
-
           </div>
-          
-          
-          
         </div>
 
+        {/* books issued and statistics */}
+        <div className="books-issued-statistics">
+          <div className="books-issued">
+            <div className='book-issued-heading'>
+              <p className='list-heading'>Books Issued</p>
+              <button className='list-add-button'>
+                <img src={add} alt="" className='add-icon'/>
+                Add new
+              </button>
+            </div>
+            <table className='book-issued-table'>
+              <tr>
+                <th>TUP ID</th>
+                <th>Title</th>
+                <th>Return Date</th>
+                <th></th>
+              </tr>
+              <tr>
+                <td>TUPM-01-0203</td>
+                <td>A Theory of Justice</td>
+                <td>0/0/0</td>
+                <td><button className='more-button'><img src={more} alt="" /></button></td>
+              </tr>
+            </table>
+            <div className='see-all-box'><button className='see-all-button'>See all</button></div>            
+          </div>
+
+
+          {/* visitors and borrowers stats */}
+          <div className="statistics">
+            <p className='stats-text'>Visitors & Borrowed Statistics</p>
+            <div>
+              <VisitorsBorrowersStatistics chartData={user}/>
+            </div>
+
+          </div>
+        </div>
 
 
 

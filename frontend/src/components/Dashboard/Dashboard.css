@@ -32,7 +32,7 @@
 }
 
 .dashboard-container{
-    padding: 0 70px;
+    padding: 10px 70px 50px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -144,7 +144,7 @@
     column-gap: 20px;
 }
 
-.borrowers-list,.books-list{
+.borrowers-list,.books-list,.books-issued{
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -158,20 +158,20 @@
     border-radius: 8px;
 }
 
-.borrowers-heading, .books-heading{
+.borrowers-heading, .books-heading, .book-issued-heading{
    display: flex;
    justify-content: space-between;
    align-items: center;
 
 }
 
-.list-heading, .popular-choices-text, .overdue-book-text{
+.list-heading, .popular-choices-text, .overdue-book-text,.stats-text{
     font-weight: 700;
     color: var(--black);
     font-size: 1.2rem;
 }
 
-.borrower-table, .book-table{
+.borrower-table, .book-table,.book-issued-table{
     text-align: center;
     width: 100%;
     border-collapse: collapse;
@@ -193,10 +193,10 @@ th{
     border: 2px solid  var(--tup-color);
     background-color: var(--white);
     padding: 8px;
-    width: 120px;
-    font-size: 1rem;
+    width: 100px;
+    font-size: 0.9rem;
     display: flex;
-    gap: 10px;
+    gap: 6px;
     align-items: center;
     justify-content: center;
     border-radius: 20px;
@@ -231,6 +231,10 @@ th{
     border-bottom: 1px solid var(--tup-color);
 }
 
+.see-all-button{
+    color: var(--button-hover);
+}
+
 .more-button{
     background-color: transparent;
     border: none;
@@ -257,7 +261,7 @@ th{
     border-radius: 15px;
 }
 
-.overdue-book-list{
+.overdue-book-list,.books-issued, .statistics{
     background-color: var(--light-gray);
     display: flex;
     flex-direction: column;
@@ -277,6 +281,14 @@ th{
     gap: 20px;
 }
 
+.overdue-delay{
+    color: var(--button);
+}
+
+.overdue-returned{
+    color: var(--green);
+}
+
 .table-pages{
     display: flex;
     justify-content: end;
@@ -284,7 +296,10 @@ th{
     gap: 15px;
     padding: 0 50px;
     font-size: 0.6rem;
+}
 
+.table-pages img{
+    cursor: pointer;
 }
 
 .page-number{
@@ -295,6 +310,14 @@ th{
     justify-content: center;
     align-items: center;
     border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s linear;
+}
+
+.page-number:hover{
+    background-color: var(--button);
+    border: none;
+    color: var(--white);
 }
 
 .current-page{
@@ -311,4 +334,10 @@ th{
 .table-pages img{
     width: 10px;
     height: 10px;
+}
+
+.books-issued-statistics{
+    display: grid;
+    grid-template-columns: 45% 55%;
+    column-gap: 20px;
 }
