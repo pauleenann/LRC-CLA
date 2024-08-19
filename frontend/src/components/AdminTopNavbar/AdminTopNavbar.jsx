@@ -50,8 +50,9 @@ const AdminTopNavbar = () => {
             <p className='user-welcome'>Hello, <span className='user-welcome-uname'>@admin</span></p>
             <div className="user-dropdown">
                 <button className='user-button' onClick={toggleDropdown}><img src={dropdown_yellow} alt="" /></button>
-                <div className="user-dropdown-list">
-                    <a href="" className={userDropdown?'show-user-list':''}>Log out</a>
+                <div className={`user-dropdown-list ${userDropdown?'show-user-list':''}`}>
+                    <p>List 1</p>
+                    <p>List 2</p>
                 </div>
 
             </div>
