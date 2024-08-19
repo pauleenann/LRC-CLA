@@ -1,9 +1,17 @@
+@font-face {
+    font-family: 'Inter';
+    font-weight: 400;
+    src: url('../../assets/Fonts/Inter_24pt-Regular.ttf') format('ttf');
+}
+
 *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family:Arial, Helvetica, sans-serif;
+    font-family: 'Inter';
+    text-decoration: none;
 }
+
 
 :root{
     --tup-color: #94152B;
@@ -88,7 +96,7 @@
 .admin-input-box{
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
 }
 
 .admin-label{
@@ -97,20 +105,26 @@
 }
 
 .admin-input{
-    padding: 8px 15px;
-    border-radius: 15px;
+    padding: 10px 15px;
+    border-radius: 20px;
     border-color: var(--tup-color);
     font-size: 1rem;
+}
+
+.admin-input:focus{
+    border: 3px solid #97170E;
+    outline: none;
+    
 }
 
 .login-button{
     cursor: pointer;
     background-color: var(--button);
     color: var(--white);
-    padding: 12px;
+    padding: 15px;
     width: 150px;
     border: none;
-    border-radius: 20px;
+    border-radius: 50px;
     font-size: 1rem;
     transition: all 0.3s linear;
 }
