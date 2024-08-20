@@ -27,7 +27,7 @@
 .admin-navbar-container{
     background-color: var(--tup-color);
     width: 260px;
-    height: 100vh;
+    min-height: 100vh;
     position: fixed;
     display: flex;
     flex-direction: column;
