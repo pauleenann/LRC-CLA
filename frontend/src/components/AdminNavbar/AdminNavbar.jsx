@@ -44,7 +44,7 @@ const AdminNavbar = () => {
 
                 {/* logbook */}
                 <li>
-                    <Link className="menu">
+                    <Link to='/logbook' className="menu">
                         <img src={logbook} alt="" className='menu-icon' />
                         <p>Logbook</p>
                     </Link>

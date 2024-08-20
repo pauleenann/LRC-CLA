@@ -7,6 +7,7 @@ import {
 import AdminLogInPage from './pages/AdminLogInPage/AdminLogInPage';
 import DashboardPage from './pages/DashboardPage/DashboardPage';
 import Admin from './pages/Admin/Admin';
+import LogbookPage from './pages/LogbookPage/LogbookPage';
 
 
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
         <Routes>
           <Route path='/admin-log-in' element={<AdminLogInPage/>}/>
           <Route path='/dashboard' element={<DashboardPage/>}/>
+          <Route path='/logbook' element={<LogbookPage/>}/>
           <Route path='/admin' element={<Admin/>}/>
         </Routes>
       </BrowserRouter>
