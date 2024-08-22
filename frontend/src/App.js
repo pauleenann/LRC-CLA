@@ -9,6 +9,8 @@ import DashboardPage from './pages/DashboardPage/DashboardPage';
 import Admin from './pages/Admin/Admin';
 import LogbookPage from './pages/LogbookPage/LogbookPage';
 import InventoryPage from'./pages/InventoryPage/InventoryPage'
+import PatronsPage from './pages/PatronsPage/PatronsPage';
+import ReportsPage from './pages/ReportsPage/ReportsPage';
 
 const App = () => {
   return (
@@ -19,6 +21,8 @@ const App = () => {
           <Route path='/dashboard' element={<DashboardPage/>}/>
           <Route path='/logbook' element={<LogbookPage/>}/>
           <Route path='/inventory' element={<InventoryPage/>}/>
+          <Route path='/patrons' element={<PatronsPage/>}/>
+          <Route path='/reports' element={<ReportsPage/>}/>
           <Route path='/admin' element={<Admin/>}/>
         </Routes>
       </BrowserRouter>

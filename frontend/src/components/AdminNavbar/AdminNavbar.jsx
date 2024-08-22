@@ -68,7 +68,7 @@ const AdminNavbar = () => {
                 
                 {/* patrons */}
                 <li>
-                    <Link className="menu">
+                    <Link to='/patrons' className="menu">
                         <img src={patrons} alt="" className='menu-icon'/>
                         <p>Patrons</p>
                     </Link>
@@ -85,7 +85,7 @@ const AdminNavbar = () => {
                 
                 {/* reports */}
                 <li>
-                    <Link className="menu">
+                    <Link to='/reports' className="menu">
                         <img src={reports} alt="" className='menu-icon'/>
                         <p>Reports</p>
                     </Link>

@@ -45,6 +45,8 @@ const Logbook = () => {
             <div className="logbook-date-filter">
                 <label htmlFor="" >Date Filter</label>
                 <input type="date" className='logbook-filter-date'/>
+                <p>to</p>
+                <input type="date" className='logbook-filter-date'/>
                 <button className='logbook-clear-button'>Clear</button>
             </div>
         </div>
@@ -60,7 +62,7 @@ const Logbook = () => {
                         <th>Middle Name</th>
                         <th>Last Name</th>
                         <th>Gender</th>
-                        <th>course</th>
+                        <th>Course</th>
                         <th>College</th>
                         <th>Date</th>
                         <th>Time in</th>

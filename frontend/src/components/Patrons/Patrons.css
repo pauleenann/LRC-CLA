@@ -33,47 +33,45 @@
     --light-red: rgba(148, 21, 43, 0.1);
 }
 
-.inv-container{
+.patrons-container{
     padding: 10px 70px 50px;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 25px;
     overflow-x: hidden;   
 }
 
-.inv-container h1{
+.patrons-container h1{
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--black);
 }
 
-.add-scan-item{
+.search-bar-box{
     display: flex;
-    gap: 20px;
-    
+    gap: 15px;
 }
 
-.inv-add-item, .inv-scan-item{
-    height: 40px;
-    width: 130px;
-    border-radius: 5px;
-    padding: 8px;
-    background-color: var(--button);
-    border: none;
-    color: var(--white);
-    gap: 7px;
+.search-field-category-filter{
     display: flex;
-    font-size: 1rem;
-    justify-content: center;
+    gap: 30px;
+}
+
+.patrons-search-field,.patrons-category{
+    display: flex;
     align-items: center;
+    gap: 10px;
 }
 
-.search-filter-export{
-    display: flex;
-    justify-content: space-between;
+.patrons-filter{
+    padding: 5px;
+    height: 40px;
+    
+    border-color: var(--tup-color);
+    border-radius: 5px;
 }
 
-.inv-search-bar{
+.patrons-search-bar{
     height: 40px;
     padding: 10px;
     padding-left: 15px;
@@ -83,18 +81,12 @@
     font-size: 1rem;
 }
 
-.inv-search-bar:active,.inv-search-bar:focus{
+.patrons-search-bar:active,.patrons-search-bar:focus{
     border: 3px solid var(--tup-color);
     outline: none;
 }
 
-.search-filter{
-    display: flex;
-    align-items: center;
-    gap: 13px;
-}
-
-.inv-search-button{
+.patrons-search-button{
     height: 40px;
     border: none;
     background-color: var(--button);
@@ -111,59 +103,55 @@
     transition: all 0.1s linear;
 }
 
-.inv-search-button:hover{
+.patrons-search-button:hover{
     background-color: var(--button-hover);
 }
 
-.inv-filter{
-    padding: 5px;
-    height: 40px;
-    
-    border-color: var(--tup-color);
-    border-radius: 5px;
+.patrons-table-box{
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid var(--tup-color);
+    overflow: hidden;
 }
 
-.filter-export{
-    display: flex;
-    gap: 10px;
-}
-
-.inv-export-button{
-    height: 40px;
-    width: 110px;
-    padding: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1rem;
-    border-radius: 5px;
-    gap: 10px;
-    background-color: var(--yellow);
-    border: none;
-    cursor: pointer;
-    transition: all 0.1s linear;
-}
-
-
-.inv-export-button:hover{
-    background-color: var(--yellow-hover);
-}
-
-.inv-table-header{
-    display: flex;
-    justify-content: space-around;
+.patrons-table thead{
     background-color: var(--tup-color);
-    border-radius: 5px;
-
+    
 }
 
-.inv-table-header div button{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 8px;
+.patrons-table thead tr th{
     color: var(--white);
-    background-color: transparent;
+}
+
+.patrons-table tbody tr:nth-child(even){
+    background-color: var(--light-red);
+}
+
+.patrons-table{
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.patron-edit-checkout{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 3px;
+}
+
+.patron-edit-button, .patron-checkout-button{
+    border-radius: 5px;
+    padding: 8px 10px;
+    background-color: var(--button);
     border: none;
-    cursor: pointer;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.patron-edit-button img, .patron-checkout-button img{
+    width: 20px;
 }
