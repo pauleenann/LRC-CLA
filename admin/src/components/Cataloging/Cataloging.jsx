@@ -18,7 +18,7 @@ const Cataloging = () => {
                             <label htmlFor="">Department</label>
                             <select className="form-select">
                                 <option>1</option>
-                            
+    
                             </select>
                         </div>
                         {/* course */}
