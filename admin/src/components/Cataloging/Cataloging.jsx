@@ -37,9 +37,9 @@ const Cataloging = () => {
                         {/* active item */}
                         <div className="col-12 mt-5">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked"/>
+                                <input class="form-check-input" type="checkbox" role="switch" id="active-item"/>
                                 <div className="switch-label">
-                                    <label class="form-check-label" for="flexSwitchCheckChecked">Active Item</label>
+                                    <label class="form-check-label" for="active-item">Active Item</label>
                                     <span>Item is available for checking out and OPAC listing</span>
                                 </div>
                             </div>
@@ -47,9 +47,9 @@ const Cataloging = () => {
                         {/* published*/}
                         <div className="col-12 mt-3">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked"/>
+                                <input class="form-check-input" type="checkbox" role="switch" id="published"/>
                                 <div className="switch-label">
-                                    <label class="form-check-label" for="flexSwitchCheckChecked">Published</label>
+                                    <label class="form-check-label" for="published">Published</label>
                                     <span>Enable OPAC listing, uncheck if you don't want to put this item on OPAC.</span>
                                 </div>
                             </div>
@@ -57,9 +57,9 @@ const Cataloging = () => {
                         {/* circulation*/}
                         <div className="col-12 mt-3">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked"/>
+                                <input class="form-check-input" type="checkbox" role="switch" id="circulation"/>
                                 <div className="switch-label">
-                                    <label class="form-check-label" for="flexSwitchCheckChecked">Circulation</label>
+                                    <label class="form-check-label" for="circulation">Circulation</label>
                                     <span>Enable circulation, uncheck if you want to disable circulation for this item.</span>
                                 </div>
                             </div>

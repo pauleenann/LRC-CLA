@@ -87,11 +87,16 @@
     gap: 20px;
 }
 
+.form-check-label{
+    cursor: pointer;
+}
+
 
 .form-check-input{
     height: 30px;
     padding: 0 30px;
     border: none;
+    cursor: pointer;
 }
 
 .form-check-input:focus{

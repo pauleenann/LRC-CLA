@@ -137,6 +137,7 @@
 .select__control {
    border: 1px solid var(--button) !important;
    border-radius: 5px !important;
+   cursor: pointer !important;
 }
 
 
