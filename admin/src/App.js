@@ -12,6 +12,7 @@ import InventoryPage from'./pages/InventoryPage/InventoryPage'
 import PatronsPage from './pages/PatronsPage/PatronsPage';
 import ReportsPage from './pages/ReportsPage/ReportsPage';
 import CatalogPage from './pages/CatalogPage/CatalogPage';
+import AddItemPage from './pages/AddItemPage/AddItemPage';
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
           <Route path='/reports' element={<ReportsPage/>}/>
           <Route path='/admin' element={<Admin/>}/>
           <Route path='/catalog' element={<CatalogPage/>}/>
+          <Route path='/add-item' element={<AddItemPage/>}/>
 
         </Routes>
       </BrowserRouter>

@@ -73,8 +73,13 @@ li p{
     font-weight: 700;
 }
 
+.navbar-heading-text{
+    margin: 0;
+}
+
 .navbar-heading-lrc{
     font-style: italic;
+    margin: 0;
 }
 
 .navbar-menu .menu{
