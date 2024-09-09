@@ -1,10 +1,19 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './CatalogInfo.css'
 import BookInput from '../BookInput/BookInput'
 // for the multi select input
 import Select from 'react-select'
+import JournalInput from '../JournalInput/JournalInput'
+import ThesisInput from '../ThesisInput/ThesisInput'
 
 const CatalogInfo = () => {
+    const [resourceType, setResourceType] = useState('')
+
+    const handleType = (e)=>{
+        setResourceType(e.target.value);
+    }
+
+    console.log(resourceType)
 
     // sample data for multi select options
     // should be retrieved sa database
@@ -28,9 +37,9 @@ const CatalogInfo = () => {
                         {/* media type */}
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Media Type *</label>
-                            <select name="" id="" className='form-select'>
-                                <option value="book">Book</option>
-                                <option value="journal">Journal</option>
+                            <select name="" id="" className='form-select' onClick={handleType}>
+                                <option value="book" >Book</option>
+                                <option value="journal" >Journal</option>
                                 <option value="newsletter">Newsletter</option>
                                 <option value="thesis">Thesis</option>
                             </select>
@@ -57,7 +66,8 @@ const CatalogInfo = () => {
                         </div>
                         {/* input field changes depending on type */}
                         <div className="col-12">
-                            <BookInput/>
+                            {resourceType==='journal'||resourceType==='newsletter'?<JournalInput/>:resourceType==='thesis'?<ThesisInput/>:<BookInput/>}
+                                                        
                         </div>
                         {/* genre */}
                         <div className="col-12 info-input-box mb-3">

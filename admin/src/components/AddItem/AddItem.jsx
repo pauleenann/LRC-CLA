@@ -6,6 +6,7 @@ import Cataloging from '../Cataloging/Cataloging'
 
 
 const AddItem = () => {
+
   return (
     <div className='add-item-container'>
         <h1 className='m-0'>Cataloging</h1>
