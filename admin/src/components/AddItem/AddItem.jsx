@@ -2,6 +2,7 @@ import React from 'react'
 import './AddItem.css'
 import { Link } from 'react-router-dom'
 import CatalogInfo from '../CatalogInfo/CatalogInfo'
+import Cataloging from '../Cataloging/Cataloging'
 
 
 const AddItem = () => {
@@ -10,7 +11,7 @@ const AddItem = () => {
         <h1 className='m-0'>Cataloging</h1>
 
         <div className='add-item-path-button'>
-            <Link>
+            <Link to='/catalog'>
                 <button className='add-item-back-button'>
                     <i class="fa-solid fa-arrow-left"></i>
                     <p>Back</p>
@@ -23,6 +24,20 @@ const AddItem = () => {
 
         <div className='item-information'>
             <CatalogInfo/>
+        </div>
+
+        <div className="cataloging">
+            <Cataloging/>
+        </div>
+
+        <div className="cancel-save">
+            <button className="add-item-cancel">
+                Cancel
+            </button>
+            <button className="add-item-save">
+                <i class="fa-regular fa-floppy-disk"></i>
+                <span>Save</span>
+            </button>
         </div>
       
     </div>

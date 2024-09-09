@@ -21,8 +21,8 @@
     --button:  #97170E;
     --button-hover:  #75110a;
     --shadow: #0000003b;
-    --yellow: #EDDF13;
-    --yellow-hover: rgb(218, 168, 3);
+    --yellow: #FFE900;
+    --yellow-hover:#FEDD00;
     --yellow-filter: brightness(0) saturate(10%) invert(90%) sepia(41%) saturate(1000%) hue-rotate(332deg) brightness(103%) contrast(103%);
     --white-filter:  brightness(100%) saturate(0) invert(100%) sepia(0) saturate(0) hue-rotate(0) brightness(1000%) contrast(100%);
     --green: #54CB58;
@@ -37,7 +37,7 @@
     padding: 10px 70px 50px;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 20px;
     overflow-x: hidden;   
 }
 
@@ -45,6 +45,7 @@
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--black);
+    margin: 0;
 }
 
 .cat-buttons{
@@ -54,7 +55,7 @@
 
 .add-scan-item, .add-author-publisher{
     display: flex;
-    gap: 20px;
+    gap: 10px;
     
 }
 
@@ -71,6 +72,20 @@
     font-size: 1rem;
     justify-content: center;
     align-items: center;
+    transition: all 0.2s linear;
+}
+
+.cat-add-item{
+    width: 120px !important;
+}
+
+.cat-scan-item{
+    width: 130px !important;
+}
+
+.cat-add-item:hover, .cat-scan-item:hover,.cat-add-author:hover,.cat-add-pub:hover{
+    background-color: var(--button-hover);
+    border-color: var(--button-hover);
 }
 
 .search-filter-export{
@@ -120,13 +135,22 @@
     background-color: var(--button-hover);
 }
 
-.cat-filter{
-    padding: 5px;
-    height: 40px;
-    
-    border-color: var(--tup-color);
+.search-filter .form-select, .filter-export .form-select{
+    height: 45px;
+    width: 110px;
     border-radius: 5px;
+    border-color: var(--button);
+    background-color: var(--white);
+    cursor: pointer;
 }
+
+.search-filter .form-select:focus, .filter-export .form-select:focus{
+    border: 3px solid var(--black);
+    box-shadow: none;
+    outline: none;
+}
+
+
 
 .filter-export{
     display: flex;
@@ -134,7 +158,7 @@
 }
 
 .cat-export-button{
-    height: 40px;
+    height: 45px;
     width: 110px;
     padding: 8px;
     display: flex;
@@ -163,15 +187,17 @@ table{
     background-color: var(--tup-color) !important;
     text-align: center;
     color: var(--white);
-    padding: 1.2rem;
+    padding: 12px;
     border-bottom: none;
     width: 100px;
+    font-size: 1rem;
 }
 
-td{
+.table-striped td{
     border-bottom: none;
     width: 100px;
     vertical-align: middle;
+    font-size: 1rem;
 }
 
 
