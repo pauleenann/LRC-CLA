@@ -28,7 +28,7 @@ const CatalogInfo = () => {
                         {/* media type */}
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Media Type *</label>
-                            <select name="" id="">
+                            <select name="" id="" className='form-select'>
                                 <option value="book">Book</option>
                                 <option value="journal">Journal</option>
                                 <option value="newsletter">Newsletter</option>
@@ -38,13 +38,16 @@ const CatalogInfo = () => {
                         {/* quantity */}
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Quantity *</label>
-                            <input type="number" placeholder='Enter quantity'/>
+                            <input type="number" placeholder='Enter quantity' min='0'/>
                         </div>
                         {/* status */}
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Status *</label>
-                            <select name="" id="">
+                            <select name="" id="" className='form-select'>
                                 <option selected disabled>Select item status</option>
+                                <option value="available">Available</option>
+                                <option value="lost">Lost</option>
+                                <option value="damaged">Damaged</option>
                             </select>
                         </div>
                         {/* title */}

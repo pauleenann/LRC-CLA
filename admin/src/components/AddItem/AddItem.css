@@ -68,9 +68,56 @@
     color: var(--button);
     border: 1px solid var(--button);
     background-color: var(--white);
+    transition: all 0.2s linear;
+}
+
+.add-item-back-button:hover{
+    background-color: var(--button);
+    color: var(--white);
+
 }
 
 .add-item-path span{
     color: var(--button);
     font-weight: 700;
+}
+
+.cancel-save{
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.cancel-save button{
+    font-size: 1rem;
+    width: 100px;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.add-item-cancel{
+    background-color: transparent;
+    border: 1px solid var(--button);
+    transition: all 0.2s linear;
+}
+
+.add-item-cancel:hover{
+    background-color: var(--button);
+    border-color: var(--button);
+    color: var(--white);
+}
+
+.add-item-save{
+    background-color: var(--button);
+    border: 1px solid var(--button);
+    color: var(--white);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.add-item-save:hover{
+    background-color: var(--button-hover);
+    border: var(--button-hover);
 }

@@ -55,13 +55,13 @@
 }
 
 
-.info-input-box{
+.catalog-inputs .info-input-box{
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
 
-.info-input-box input, .info-input-box select{
+.catalog-inputs .info-input-box input, .catalog-inputs .info-input-box select{
     height: 45px;
     width: 100%;
     padding: 0 10px;
@@ -69,6 +69,19 @@
     border-color: var(--button);
     background-color: var(--white);
 }
+
+.catalog-inputs .info-input-box .form-select{
+    cursor: pointer !important;
+}
+
+
+.catalog-inputs .info-input-box .form-select:focus{
+    border: 3px solid var(--black);
+    box-shadow: none;
+    outline: none;
+}
+
+
 
 .cover-upload-box{
     width: 100%;
@@ -88,12 +101,11 @@
     align-items: center;
     gap: 10px;
     font-style: italic;
-    color: var(--button);
 }
 
 
 .cover-upload-box button span{
-    border-bottom: 1px solid var(--button);
+    border-bottom: 1px solid var(--black);
 }
 
 .cover-upload{

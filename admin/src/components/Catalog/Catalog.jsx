@@ -19,16 +19,16 @@ const Catalog = () => {
               {/* add item */}
               <Link to='/add-item'>
                 <button className='cat-add-item'>
-                    <img src={addItem}alt="Add Item" />
-                    Add Item
+                  <i class="fa-solid fa-pen"></i>
+                  <span>Add Item</span>
                 </button>
               </Link>
               
 
               {/* scan item */}
               <button className='cat-scan-item'>
-                  <img src={scanItem}alt="Scan Item" />
-                  Scan Item
+                <i class="fa-solid fa-barcode"></i>
+                <span>Scan Item</span>
               </button>
           </div>
           {/* add author and publisher*/}
@@ -57,7 +57,7 @@ const Catalog = () => {
                     <img src={search} alt="" />
                     Search
                 </button>
-                <select name="" id="" className='cat-filter'>
+                <select name="" id="" className='form-select'>
                     <option value="" selected>Filter</option>
                     <option value="">2</option>
                     <option value="">3</option>
@@ -68,7 +68,7 @@ const Catalog = () => {
             {/* row for filter and export button */}
             <div className="filter-export">
                 {/* filter */}
-                <select name="" id="" className='cat-filter'>
+                <select name="" id="" className='form-select'>
                     <option value="" selected>Customs</option>
                     <option value="">2</option>
                     <option value="">3</option>
