@@ -5,6 +5,8 @@ import scanItem from '../../assets/Management System/inventory/scan-item.svg'
 import search from '../../assets/Management System/logbook/search.svg'
 import exportIcon from '../../assets/Management System/logbook/export.svg'
 import dropdown from '../../assets/Management System/inventory/arrow-dropdown.svg'
+import { Link } from 'react-router-dom'
+
 
 const Catalog = () => {
   return (
@@ -15,10 +17,13 @@ const Catalog = () => {
           {/* add and scan item buttons */}
           <div className="add-scan-item">
               {/* add item */}
-              <button className='cat-add-item'>
-                  <img src={addItem}alt="Add Item" />
-                  Add Item
-              </button>
+              <Link to='/add-item'>
+                <button className='cat-add-item'>
+                    <img src={addItem}alt="Add Item" />
+                    Add Item
+                </button>
+              </Link>
+              
 
               {/* scan item */}
               <button className='cat-scan-item'>
