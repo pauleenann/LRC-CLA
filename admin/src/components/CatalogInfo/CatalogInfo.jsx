@@ -80,6 +80,7 @@ const CatalogInfo = () => {
                                 classNamePrefix="select"
                                 placeholder="Enter to add genre/s"/>
                         </div>
+                        
                     </div>
 
                 </div>
@@ -112,6 +113,7 @@ const CatalogInfo = () => {
 
 
         </div>
+        
     </div>
   )
 }
