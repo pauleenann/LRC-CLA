@@ -3,6 +3,7 @@ import './JournalInput.css'
 import AuthorInput from '../AuthorInput/AuthorInput'
 
 const JournalInput = () => {
+    
   return (
     <div className='row'>
         {/* author */}
