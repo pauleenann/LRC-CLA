@@ -7,11 +7,13 @@ import exportIcon from '../../assets/Management System/logbook/export.svg'
 import dropdown from '../../assets/Management System/inventory/arrow-dropdown.svg'
 import { Link } from 'react-router-dom'
 import AuthorModal from '../AuthorModal/AuthorModal'
+import PublisherModal from '../PublisherModal/PublisherModal'
 
 
 
 const Catalog = () => {
-  const [open, setOpen] = useState(false)
+  const [openAuthor, setOpenAuthor] = useState(false)
+  const [openPublisher, setOpenPublisher] = useState(false)
 
   return (
     <div className='cat-container'>
@@ -38,14 +40,14 @@ const Catalog = () => {
           {/* add author and publisher*/}
           <div className="add-author-publisher">
               {/* add author */}
-              <button className='cat-add-author' onClick={()=>setOpen(!open)}>
+              <button className='cat-add-author' onClick={()=>setOpenAuthor(!openAuthor)}>
                 <i class="fa-solid fa-plus"></i>
                   Add Author
               </button>
 
               {/* add publisher */}
-              <button className='cat-add-pub'>
-                <i class="fa-solid fa-plus"></i>
+              <button className='cat-add-pub' onClick={()=>setOpenPublisher(!openPublisher)}>
+                <i class="fa-solid fa-plus" ></i>
                   Add Publisher
               </button>
           </div>
@@ -116,7 +118,8 @@ const Catalog = () => {
         </tbody>
       </table>
 
-      <AuthorModal open={open} close={()=>setOpen(!open)}/>
+      <AuthorModal open={openAuthor} close={()=>setOpenAuthor(!openAuthor)}/>
+      <PublisherModal open={openPublisher} close={()=>setOpenPublisher(!openPublisher)}/>
     </div>
   )
 }
