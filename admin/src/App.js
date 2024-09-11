@@ -13,6 +13,8 @@ import PatronsPage from './pages/PatronsPage/PatronsPage';
 import ReportsPage from './pages/ReportsPage/ReportsPage';
 import CatalogPage from './pages/CatalogPage/CatalogPage';
 import AddItemPage from './pages/AddItemPage/AddItemPage';
+import ViewItem from './components/ViewItem/ViewItem';
+import ViewItemPage from './pages/ViewItemPage/ViewItemPage';
 
 const App = () => {
   return (
@@ -28,7 +30,7 @@ const App = () => {
           <Route path='/admin' element={<Admin/>}/>
           <Route path='/catalog' element={<CatalogPage/>}/>
           <Route path='/add-item' element={<AddItemPage/>}/>
-
+          <Route path='/view-item' element={<ViewItemPage/>}/>
         </Routes>
       </BrowserRouter>
     </div>
