@@ -42,16 +42,16 @@ const AuthorModal = ({open,close}) => {
                     classNamePrefix="select"
                     isClearable/>
                 </div>
-                <div className="col-12">
+                <div className="col-12 modal-reminder">
                     Can’t find author? Add manually below
                 </div>
                 {/* add manually */}
                 <div className="col-12 author-name">
-                    <label htmlFor="">Last Name</label>
+                    <label htmlFor="">Last name</label>
                     <input type="text" name="" id="" placeholder='Enter author’s last name '/>
                 </div>
                 <div className="col-12 author-name">
-                    <label htmlFor="">First Name</label>
+                    <label htmlFor="">First name</label>
                     <input type="text" name="" id="" placeholder='Enter author’s first name '/>
                 </div>
                 {/* button */}

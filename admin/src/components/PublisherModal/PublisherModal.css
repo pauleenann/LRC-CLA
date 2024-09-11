@@ -26,16 +26,15 @@
     --overlay: #3838388a;
 }
 
-.author-modal-container{
+.publisher-modal-container{
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    
 }
 
-.author-modal-overlay{
+.publisher-modal-overlay{
     background-color: var(--overlay);
     position: absolute;
     width: 100%;
@@ -43,20 +42,20 @@
     
 }
 
-.author-modal-box{
+.publisher-modal-box{
     position: absolute;
     display: flex;
     flex-direction: column;
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
-    width: 500px;
+    width: 600px;
     background-color: var(--catalog-info-bg);
     border-radius: 15px;
     overflow: hidden;
 }
 
-.author-modal-header{
+.publisher-modal-header{
     width: 100%;
     border-bottom: 1px solid var(--button);
     padding: 20px 20px 15px;
@@ -66,11 +65,11 @@
     color: var(--button);
 }
 
-.author-modal-header span{
+.publisher-modal-header span{
     font-size: 1.2rem;
 }
 
-.author-inputs{
+.publisher-inputs{
     width: 100%;
     margin: 0;
     padding: 30px;
@@ -79,27 +78,35 @@
     gap: 20px;
 }
 
-.author-search{
+.publisher-search{
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
 
-.author-name{
+.publisher-input{
     display: flex;
     flex-direction: column;
     gap: 5px;
     padding: 0 50px;
 }
 
-.author-name input{
-    height: 40px;
+.publisher-input input,.publisher-input textarea{
     padding: 0 10px;
     border-color: var(--button);
     border-radius: 5px;
 }
 
-.author-search .select__control {
+.publisher-input input{
+    height: 40px;
+}
+
+.publisher-input textarea{
+    height: 80px;
+    padding: 10px;
+}
+
+.publisher-search .select__control {
     border: 1px solid var(--button) !important;
     border-radius: 5px !important;
     cursor: pointer !important;
@@ -107,22 +114,22 @@
  
  
  
- .author-search .select__control--is-focused {
+ .publisher-search .select__control--is-focused {
      outline: none !important;
      border: 3px solid var(--black) !important;
      box-shadow: none !important;
  }
    
- .author-search .select__option--is-focused {
+ .publisher-search .select__option--is-focused {
      background-color: var(--light-red) !important;
      cursor: pointer !important;
  }
    
- .author-search  .select__menu {
+ .publisher-search  .select__menu {
      background-color: #fff;
  }
  
- .author-search  .select__multi-value{
+ .publisher-search  .select__multi-value{
      border-radius: 20px !important;
      padding: 5px 15px;
      display: flex !important;
@@ -130,21 +137,21 @@
      gap: 10px !important;  
  }
    
- .author-search .select__multi-value__label{  
+ .publisher-search .select__multi-value__label{  
      font-size: 1rem !important;
      padding: 0 !important
      ;
  }
  
- .author-search .select__multi-value__remove{
+ .publisher-search .select__multi-value__remove{
      padding: 0 !important;
  }
  
- .author-search  .select__indicator-separator{
+ .publisher-search  .select__indicator-separator{
      background-color: var(--button) !important;
  }
  
- .author-search  .select__indicator svg{
+ .publisher-search  .select__indicator svg{
      color: var(--button);
      cursor: pointer;
  }
@@ -153,39 +160,39 @@
     cursor: pointer;
  }
 
- .author-button{
+ .publisher-button{
     display: flex;
     gap: 15px;
     justify-content: end;
     margin-top: 10px;
  }
 
- .author-button button{
+ .publisher-button button{
     font-size: 1rem;
     width: 100px;
     padding: 5px;
     border-radius: 5px;
 }
 
-.author-cancel{
+.publisher-cancel{
     background-color: transparent;
     border: 1px solid var(--button);
     transition: all 0.2s linear;
 }
 
-.author-cancel:hover{
+.publisher-cancel:hover{
     background-color: var(--button);
     border-color: var(--button);
     color: var(--white);
 }
 
-.author-save{
+.publisher-save{
     background-color: var(--button);
     border: 1px solid var(--button);
     color: var(--white);
 }
 
-.author-save:hover{
+.publisher-save:hover{
     background-color: var(--button-hover);
     border: var(--button-hover);
 }
