@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import './ThesisInput.css'
 import AuthorInput from '../AuthorInput/AuthorInput'
-import PublisherModal from '../PublisherModal/PublisherModal'
+import AdviserModal from '../AdviserModal/AdviserModal'
+
 const ThesisInput = () => {
+    const [open,setOpen] = useState(false)
     
   return (
     <div className='row'>
@@ -28,7 +30,7 @@ const ThesisInput = () => {
                         </div>
                 </div>
                     {/* button */}
-                    <button className='add-adviser'>
+                    <button className='add-adviser' onClick={()=>setOpen(!open)}>
                         <i class="fa-solid fa-plus"></i>
                         <span>Add adviser</span>
                     </button>
@@ -40,6 +42,7 @@ const ThesisInput = () => {
             <label htmlFor="">Publish Date *</label>
             <input type="date" name="" id="" placeholder='Select date'/>
         </div>
+        <AdviserModal open={open} close={()=>setOpen(!open)}/>
     </div>
   )
 }
