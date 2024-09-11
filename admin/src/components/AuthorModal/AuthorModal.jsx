@@ -56,7 +56,7 @@ const AuthorModal = ({open,close}) => {
                 </div>
                 {/* button */}
                 <div className="col-12 author-button">
-                    <button className="author-cancel">
+                    <button className="author-cancel" onClick={close}>
                     Cancel
                     </button>
                     <button className="author-save">
