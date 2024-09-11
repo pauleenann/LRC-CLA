@@ -3,7 +3,7 @@ import './ThesisInput.css'
 import AuthorInput from '../AuthorInput/AuthorInput'
 import PublisherModal from '../PublisherModal/PublisherModal'
 const ThesisInput = () => {
-    const [open, setOpen] = useState(false)
+    
   return (
     <div className='row'>
         {/* author */}
@@ -28,7 +28,7 @@ const ThesisInput = () => {
                         </div>
                 </div>
                     {/* button */}
-                    <button className='add-adviser' onClick={()=>setOpen(!open)}>
+                    <button className='add-adviser'>
                         <i class="fa-solid fa-plus"></i>
                         <span>Add adviser</span>
                     </button>
@@ -40,8 +40,6 @@ const ThesisInput = () => {
             <label htmlFor="">Publish Date *</label>
             <input type="date" name="" id="" placeholder='Select date'/>
         </div>
-
-        <PublisherModal open={open} close={()=>setOpen(!open)}/>
     </div>
   )
 }
