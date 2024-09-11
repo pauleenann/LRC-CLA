@@ -2,7 +2,7 @@ import React from 'react'
 import './JournalInput.css'
 import AuthorInput from '../AuthorInput/AuthorInput'
 
-const JournalInput = () => {
+const JournalInput = ({disabled}) => {
     
   return (
     <div className='row'>
@@ -19,17 +19,17 @@ const JournalInput = () => {
                 {/* volume */}
                 <div className="col-12 info-input-box mb-3">
                     <label htmlFor="">Volume</label>
-                    <input type="text" placeholder='Enter volume'/>
+                    <input type="text" placeholder='Enter volume' disabled={disabled?true:false}/>
                 </div>
                 {/* issue */}
                 <div className="col-12 info-input-box mb-3">
                     <label htmlFor="">Issue</label>
-                    <input type="text" placeholder='Enter issue'/>  
+                    <input type="text" placeholder='Enter issue' disabled={disabled?true:false}/>  
                 </div>
                 {/* publisher date*/}
                 <div className="col-12 info-input-box mb-3">
                     <label htmlFor="">Publish Date *</label>
-                    <input type="date" name="" id="" placeholder='Select date'/>
+                    <input type="date" name="" id="" placeholder='Select date' disabled={disabled?true:false}/>
                 </div>
             </div>
         </div>

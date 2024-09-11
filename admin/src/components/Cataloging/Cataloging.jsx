@@ -2,7 +2,7 @@
 import React from 'react'
 import './Cataloging.css'
 
-const Cataloging = () => {
+const Cataloging = ({disabled}) => {
   return (
     <div className='cataloging-box'>
         <div className="row">
@@ -16,7 +16,7 @@ const Cataloging = () => {
                         {/* department */}
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Department</label>
-                            <select className="form-select">
+                            <select className="form-select" disabled={disabled?true:false}>
                                 <option>1</option>
     
                             </select>
@@ -24,7 +24,7 @@ const Cataloging = () => {
                         {/* course */}
                         <div className="col-5 info-input-box">
                             <label htmlFor="">Course</label>
-                            <select className="form-select">
+                            <select className="form-select" disabled={disabled?true:false}>
                                 <option>1</option>
                                 
                             </select>
@@ -32,12 +32,12 @@ const Cataloging = () => {
                         {/* shelf no */}
                         <div className="col-3 info-input-box">
                             <label htmlFor="">Shelf No.</label>
-                            <input type="number" placeholder='Enter shelf number'/>
+                            <input type="number" placeholder='Enter shelf number' disabled={disabled?true:false}/>
                         </div>
                         {/* active item */}
                         <div className="col-12 mt-5">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="active-item"/>
+                                <input class="form-check-input" type="checkbox" role="switch" id="active-item" disabled={disabled?true:false}/>
                                 <div className="switch-label">
                                     <label class="form-check-label" for="active-item">Active Item</label>
                                     <span>Item is available for checking out and OPAC listing</span>
@@ -47,7 +47,7 @@ const Cataloging = () => {
                         {/* published*/}
                         <div className="col-12 mt-3">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="published"/>
+                                <input class="form-check-input" type="checkbox" role="switch" id="published" disabled={disabled?true:false}/>
                                 <div className="switch-label">
                                     <label class="form-check-label" for="published">Published</label>
                                     <span>Enable OPAC listing, uncheck if you don't want to put this item on OPAC.</span>
@@ -57,7 +57,7 @@ const Cataloging = () => {
                         {/* circulation*/}
                         <div className="col-12 mt-3">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="circulation"/>
+                                <input class="form-check-input" type="checkbox" role="switch" id="circulation" disabled={disabled?true:false}/>
                                 <div className="switch-label">
                                     <label class="form-check-label" for="circulation">Circulation</label>
                                     <span>Enable circulation, uncheck if you want to disable circulation for this item.</span>

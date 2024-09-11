@@ -3,7 +3,7 @@ import './ThesisInput.css'
 import AuthorInput from '../AuthorInput/AuthorInput'
 import AdviserModal from '../AdviserModal/AdviserModal'
 
-const ThesisInput = () => {
+const ThesisInput = ({disabled}) => {
     const [open,setOpen] = useState(false)
     
   return (
@@ -40,7 +40,7 @@ const ThesisInput = () => {
         {/* publish date */}
         <div className="col-6 info-input-box my-3">
             <label htmlFor="">Publish Date *</label>
-            <input type="date" name="" id="" placeholder='Select date'/>
+            <input type="date" name="" id="" placeholder='Select date' disabled={disabled?true:false}/>
         </div>
         <AdviserModal open={open} close={()=>setOpen(!open)}/>
     </div>

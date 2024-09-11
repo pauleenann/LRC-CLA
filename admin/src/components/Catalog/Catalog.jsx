@@ -109,10 +109,12 @@ const Catalog = () => {
             <td>1</td>
             <td>1</td>
             <td>
-              <button className='cat-view'>
+              <Link to='/view-item'><button className='cat-view'>
                 <i class="fa-solid fa-bars"></i>
                 <p>View</p>
               </button>
+              </Link>
+              
             </td>
           </tr>
         </tbody>
