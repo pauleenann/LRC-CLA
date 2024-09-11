@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './Catalog.css'
 import addItem from '../../assets/Management System/inventory/add-item.svg'
 import scanItem from '../../assets/Management System/inventory/scan-item.svg'
@@ -6,9 +6,13 @@ import search from '../../assets/Management System/logbook/search.svg'
 import exportIcon from '../../assets/Management System/logbook/export.svg'
 import dropdown from '../../assets/Management System/inventory/arrow-dropdown.svg'
 import { Link } from 'react-router-dom'
+import AuthorModal from '../AuthorModal/AuthorModal'
+
 
 
 const Catalog = () => {
+  const [open, setOpen] = useState(false)
+
   return (
     <div className='cat-container'>
       <h1>Catalog</h1>
@@ -34,7 +38,7 @@ const Catalog = () => {
           {/* add author and publisher*/}
           <div className="add-author-publisher">
               {/* add author */}
-              <button className='cat-add-author'>
+              <button className='cat-add-author' onClick={()=>setOpen(!open)}>
                 <i class="fa-solid fa-plus"></i>
                   Add Author
               </button>
@@ -112,7 +116,7 @@ const Catalog = () => {
         </tbody>
       </table>
 
-
+      <AuthorModal open={open} close={()=>setOpen(!open)}/>
     </div>
   )
 }
