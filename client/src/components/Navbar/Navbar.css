@@ -1,0 +1,99 @@
+@font-face {
+    font-family: 'Inter';
+    font-weight: 400;
+    src: url('../../assets/Fonts/Inter_24pt-Regular.ttf') format('ttf');
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter';
+    text-decoration: none;
+}
+
+:root{
+    --black:#1F1F1F;
+    --tup-color: #94152B;
+    --white: #fff;
+}
+
+nav{
+    z-index: 1000;
+}
+
+.navbar-container{
+    display: flex;
+    justify-content: center;
+    
+}
+
+.navbar{
+    padding: 40px 0;
+    /* position: absolute; */
+    width: 80%;
+    background-color: transparent !important;
+}
+.navbar-nav{
+    gap: 50px;
+}
+
+.nav-link{
+    color: var(--black);
+    font-weight: 500;
+}
+
+.logo{
+    width: 70px;
+    height: 70px;
+}
+.logos{
+    display: flex;
+    gap: 10px;
+}
+
+.overlay{
+    z-index: 1000;
+}
+
+@media screen and (max-width:700px) {
+    .navbar-toggler{
+        border: none;
+    }
+    .navbar-toggler:active{
+        outline: none;
+        border: none;
+    }
+    .navbar{
+        width: 100%;
+        padding: 10px 10px;
+        background-color: var(--white);
+    }
+    .logo{
+        width: 50px;
+        height: 50px;
+    }
+    .logos{
+        display: flex;
+        gap:5px;
+    }
+    
+    .navbar-nav{
+        text-align: end;
+        gap: 10px;
+    }
+
+    .navbar-nav a:hover{
+        color: var(--tup-color);
+    }  
+    .navbar{
+        background-color: var(--white) !important;
+    }
+    .navbar-collapse{
+        padding: 20px;
+    }
+    
+
+   
+    
+}

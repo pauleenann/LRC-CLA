@@ -1,0 +1,94 @@
+@font-face {
+    font-family: 'Inter';
+    font-weight: 400;
+    src: url('../../assets/Fonts/Inter_24pt-Regular.ttf') format('ttf');
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter';
+    text-decoration: none;
+}
+
+:root{
+    --black:#0c0c0c;
+    --dark-gray: #131313;
+    --tup-color: #94152B;
+    --white: #fff;
+    --button:  #97170E;
+    --button-hover:  #75110a;
+    --shadow: #0000003b;
+    --yellow: #EDDF13;
+    --yellow-hover: rgb(218, 168, 3);
+    --yellow-filter: brightness(0) saturate(10%) invert(90%) sepia(41%) saturate(1000%) hue-rotate(332deg) brightness(103%) contrast(103%);
+    --white-filter:  brightness(100%) saturate(0) invert(100%) sepia(0) saturate(0) hue-rotate(0) brightness(1000%) contrast(100%);
+    --green: #54CB58;
+    --light-gray: #F7F7F7;
+    --blue: #5499CB;
+    --table-header: #6F6A6A;
+    --table-border-bottom:#D9D9D9;
+    --light-red: rgba(148, 21, 43, 0.1);
+    --lightest-red: #FFCBD4;
+    --lightest-green:#C7C48E
+}
+
+.footer-container{
+    width: 100%;
+    padding: 50px;
+    background-color: var(--tup-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    color: var(--white);
+}
+
+.footer-logo-text{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.footer-logos{
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+}
+
+.footer-logo{
+    width: 50px;
+    height: 50px;
+}
+
+.footer-main-texts{
+    line-height: 23px;
+}
+
+.footer-main-text{
+    font-size: 1.2rem;
+}
+
+.footer-copyright{
+    font-weight: 200;
+    text-align: center;
+}
+
+@media screen and (max-width:700px) {
+    .footer-container{
+        padding: 30px;
+        gap: 25px;
+    }
+    .footer-logo-text{
+        gap: 5px;
+    }
+    .footer-main-text{
+        font-size: 1rem;
+    }
+    .footer-copyright{
+        font-size: 0.8rem;
+    }
+}
