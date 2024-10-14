@@ -30,7 +30,7 @@ const App = () => {
           <Route path='/admin' element={<Admin/>}/>
           <Route path='/catalog' element={<CatalogPage/>}/>
           <Route path='/add-item' element={<AddItemPage/>}/>
-          <Route path='/view-item' element={<ViewItemPage/>}/>
+          <Route path='/view-item/:id' element={<ViewItemPage/>}/>
         </Routes>
       </BrowserRouter>
     </div>

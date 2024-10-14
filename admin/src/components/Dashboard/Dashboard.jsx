@@ -11,7 +11,6 @@ import right from'../../assets/Management System/dashboard/arrow-right-black.svg
 import {UserData} from '../../Data'
 import VisitorsBorrowersStatistics from '../VisitorsBorrowersStatistics/VisitorsBorrowersStatistics'
 
-
 const Dashboard = () => {
   // sample data
   const [user,setUser] = useState({

@@ -10,7 +10,7 @@ const JournalInput = ({disabled}) => {
         <div className="col-6 info-input-box">
             <label htmlFor="">Author/s *</label>
             {/* author box */}
-            <AuthorInput/>
+            <AuthorInput disabled={disabled}/>
         </div>
 
         {/* volume, issue, publish date */}

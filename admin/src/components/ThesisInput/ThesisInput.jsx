@@ -12,7 +12,7 @@ const ThesisInput = ({disabled}) => {
         <div className="col-6 info-input-box">
             <label htmlFor="">Author/s *</label>
             {/* author box */}
-            <AuthorInput/>
+            <AuthorInput disabled={disabled}/>
         </div>
 
         {/* thesis adviser*/}
@@ -30,7 +30,7 @@ const ThesisInput = ({disabled}) => {
                         </div>
                 </div>
                     {/* button */}
-                    <button className='add-adviser' onClick={()=>setOpen(!open)}>
+                    <button className='add-adviser' onClick={()=>{disabled?setOpen(false):setOpen(!open)}}>
                         <i class="fa-solid fa-plus"></i>
                         <span>Add adviser</span>
                     </button>
