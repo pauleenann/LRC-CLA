@@ -1,11 +1,53 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './AddItem.css'
 import { Link } from 'react-router-dom'
 import CatalogInfo from '../CatalogInfo/CatalogInfo'
 import Cataloging from '../Cataloging/Cataloging'
 
 
+
 const AddItem = () => {
+    const [bookData, setBookData]=useState({
+        mediaType:'Book',
+        quantity:0,
+        status:'',
+        title:'',
+        authors:[],
+        isbn:'',
+        publisher:'',
+        publishedDate:'',
+        genre:'',
+        description:'',
+        department:'',
+        course:'',
+        shelfNo:'',
+        isActive:false,
+        isPublished:false,
+        isCirculation:false
+    })
+
+    console.log(bookData.isbn)
+
+    console.log(bookData)
+    
+    const handleChange = (e)=>{
+        const {name,value} = e.target
+        setBookData({...bookData,[name]:value})
+    }
+
+    const handleAuthor=(selectedAuthor)=>{
+        setBookData((prevdata)=>({
+            ...prevdata,
+            authors:[...prevdata.authors,selectedAuthor.value]
+        }))
+    }
+
+    const addAuthor=(author)=>{
+        setBookData((prevdata)=>({
+            ...prevdata,
+            authors:[...prevdata.authors,author]
+        }))
+    }
 
   return (
     <div className='add-item-container'>
@@ -24,11 +66,11 @@ const AddItem = () => {
         </div>
 
         <div className='item-information'>
-            <CatalogInfo/>
+            <CatalogInfo handleChange={handleChange} bookData={bookData} addAuthor={addAuthor}/>
         </div>
-
+                  
         <div className="cataloging">
-            <Cataloging/>
+            <Cataloging handleChange={handleChange}/>
         </div>
 
         <div className="cancel-save">
