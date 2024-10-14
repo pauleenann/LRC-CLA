@@ -45,7 +45,15 @@
     gap: 20px;
 }
 
-.author{
+/* .author{
+    background-color: var(--catalog-info-bg);
+    display: inline-block;
+    align-items: center;
+    padding: 5px 15px;  
+    border-radius: 20px;  
+} */
+
+.author span{
     background-color: var(--catalog-info-bg);
     display: inline-block;
     align-items: center;
@@ -54,7 +62,7 @@
 }
 
 .author span{
-    margin-right: 15px;
+    margin-left: 10px;
 }
 
 .author button{
