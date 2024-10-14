@@ -3,7 +3,7 @@ import ReactDom from 'react-dom'
 import './PublisherModal.css'
 import Select from 'react-select'
 
-const PublisherModal = ({open,close}) => {
+const PublisherModal = ({open,close,handleChange}) => {
 
     // sample data for multi select options
     // should be retrieved sa database

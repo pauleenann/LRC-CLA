@@ -32,10 +32,10 @@ const Catalog = () => {
               
 
               {/* scan item */}
-              <button className='cat-scan-item'>
+              {/* <button className='cat-scan-item'>
                 <i class="fa-solid fa-barcode"></i>
                 <span>Scan Item</span>
-              </button>
+              </button> */}
           </div>
           {/* add author and publisher*/}
           <div className="add-author-publisher">
@@ -109,7 +109,7 @@ const Catalog = () => {
             <td>1</td>
             <td>1</td>
             <td>
-              <Link to='/view-item'><button className='cat-view'>
+              <Link to='/view-item/1'><button className='cat-view'>
                 <i class="fa-solid fa-bars"></i>
                 <p>View</p>
               </button>
