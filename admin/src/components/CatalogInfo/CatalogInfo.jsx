@@ -7,7 +7,7 @@ import JournalInput from '../JournalInput/JournalInput'
 import ThesisInput from '../ThesisInput/ThesisInput'
 import axios from 'axios'
 
-const CatalogInfo = ({disabled,handleChange,bookData,addAuthor}) => {
+const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,addAdviser}) => {
     // disabled is passed by the viewItem component. This disables the input fields so users can only access the page in view mode 
     const [resourceType, setResourceType] = useState('')
 
@@ -15,7 +15,6 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor}) => {
         setResourceType(e.target.value);
     }
     
-
     // sample data for multi select options
     // should be retrieved sa database
     const options = [
@@ -38,7 +37,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor}) => {
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Media Type *</label>
                             <select name="mediaType" id="" className='form-select' onClick={handleType} disabled={disabled?true:false} onChange={handleChange}>
-                                <option value="book" selected>Book</option>
+                                <option value="book">Book</option>
                                 <option value="journal" >Journal</option>
                                 <option value="newsletter">Newsletter</option>
                                 <option value="thesis">Thesis</option>
@@ -47,7 +46,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor}) => {
                         {/* quantity */}
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Quantity *</label>
-                            <input type="number" placeholder='Enter quantity' min='0' disabled={disabled?true:false} name='quantity' onChange={handleChange}/>
+                            <input type="number" placeholder='Enter quantity' min='0' disabled={disabled?true:false} name='quantity' onChange={handleChange} value={bookData.quantity?bookData.quantity:''}/>
                         </div>
                         {/* status */}
                         <div className="col-4 info-input-box">
@@ -62,13 +61,14 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor}) => {
                         {/* title */}
                         <div className="col-12 info-input-box my-3">
                             <label htmlFor="">Title</label>
-                            <input type="text" placeholder='Enter title' disabled={disabled?true:false} name='title' onChange={handleChange}/>
+                            <input type="text" placeholder='Enter title' disabled={disabled?true:false} name='title' onChange={handleChange} value={bookData.title?bookData.title:''}/>
                         </div>
                         {/* input field changes depending on type */}
                         <div className="col-12">
-                            {resourceType==='journal'||resourceType==='newsletter'?<JournalInput disabled={disabled}/>:resourceType==='thesis'?<ThesisInput disabled={disabled}/>:<BookInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor}/>}
+                            {resourceType==='journal'||resourceType==='newsletter'?<JournalInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor}/>:resourceType==='thesis'?<ThesisInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} addAdviser={addAdviser}/>:<BookInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor}/>}
                         </div>
                         {/* genre */}
+                        {bookData.mediaType==='book'?
                         <div className="col-12 info-input-box mb-3">
                             <label htmlFor="">Genre</label>
                             <Select
@@ -79,10 +79,12 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor}) => {
                                 classNamePrefix="select"
                                 placeholder="Enter to add genre/s"
                                 isDisabled={disabled?true:false}
-                                value 
-                               />
-                        </div>
-                        
+                                onChange={addGenre}
+                                
+                            />
+                        </div> 
+                        :''}
+                                         
                     </div>
 
                 </div>
@@ -107,7 +109,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor}) => {
                     {/* description */}
                     <div className="col-12 info-input-box mb-3">
                         <label htmlFor="">Description</label>
-                        <textarea name="" id="" disabled={disabled?true:false}value={bookData.description?bookData.description:''}></textarea>
+                        <textarea name="description" id="" disabled={disabled?true:false} onChange={handleChange} value={bookData.description?bookData.description:''}></textarea>
                     </div>
                 </div>
 

@@ -1,9 +1,30 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDom from 'react-dom'
 import './AdviserModal.css'
 import Select from 'react-select'
 
-const AdviserModal = ({open,close}) => {
+const AdviserModal = ({open,close,handleChange,bookData,addAdviser}) => {
+
+    // usestates for manual input
+    const [fname,setFname] = useState('')
+    const [lname,setLname] = useState('')
+    const [adviser,setAdviser] = useState('')
+    
+    // for seleted adviser dun sa dropdown
+    const [selectedAdviser, setSelectedAdviser] = useState('')
+    //console.log(`${fname} ${lname}`)
+
+    // everytime na nagbabago ung fname and lname, mababago rin yung adviser usestate
+    useEffect(()=>{
+        setAdviser(`${fname} ${lname}`)
+    },[fname,lname])
+
+    useEffect(()=>{
+        setFname('')
+        setLname('')
+        setAdviser('')
+        setSelectedAdviser('')
+    },[bookData])
 
     // sample data for multi select options
     // should be retrieved sa database
@@ -13,10 +34,16 @@ const AdviserModal = ({open,close}) => {
         { value: 'vanilla', label: 'Vanilla' }
     ]
 
+    // handles ung selected adviser sa dropdown
+    //value ng item ay like this->{ value: 'chocolate', label: 'Chocolate' },
+    const handleAdviser = (item)=>{
+        setSelectedAdviser(item.value)
+    }
+
     if(!open){
         return null
     }else{
-        console.log('author-modal')
+        console.log('adviser-modal')
     }
 
   return ReactDom.createPortal(
@@ -40,7 +67,8 @@ const AdviserModal = ({open,close}) => {
                     options={options}
                     placeholder="Search adviser's name"
                     classNamePrefix="select"
-                    isClearable/>
+                    isClearable
+                    onChange={handleAdviser}/>
                 </div>
                 <div className="col-12 modal-reminder">
                     Can’t find adviser? Add manually below
@@ -48,18 +76,30 @@ const AdviserModal = ({open,close}) => {
                 {/* add manually */}
                 <div className="col-12 adviser-name">
                     <label htmlFor="">Last name</label>
-                    <input type="text" name="" id="" placeholder="Enter adviser's last name"/>
+                    <input type="text" name="" id="" placeholder="Enter adviser's last name"
+                    onChange={(e)=>setLname(e.target.value)}
+                    />
                 </div>
                 <div className="col-12 adviser-name">
                     <label htmlFor="">First name</label>
-                    <input type="text" name="" id="" placeholder="Enter adviser's first name"/>
+                    <input type="text" name="" id="" placeholder="Enter adviser's first name"
+                    onChange={(e)=>setFname(e.target.value)}/>
                 </div>
                 {/* button */}
                 <div className="col-12 adviser-button">
                     <button className="adviser-cancel" onClick={close}>
                     Cancel
                     </button>
-                    <button className="adviser-save">
+                    <button className="adviser-save" onClick={()=>{
+                        // if hindi ' ' ung author, hindi siya masasama sa authors na array
+                        if(adviser){
+                            addAdviser(adviser)
+                        }
+                        if(selectedAdviser){
+                            addAdviser(selectedAdviser)
+                        }
+                        close()
+                        }} disabled={adviser.length==0&&selectedAdviser.length==0?true:false}>
                         Save
                     </button>
                 </div>

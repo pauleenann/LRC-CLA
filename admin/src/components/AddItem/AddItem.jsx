@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './AddItem.css'
 import { Link } from 'react-router-dom'
 import CatalogInfo from '../CatalogInfo/CatalogInfo'
@@ -7,26 +7,46 @@ import Cataloging from '../Cataloging/Cataloging'
 
 
 const AddItem = () => {
+    const [type,setType] = useState('')
     const [bookData, setBookData]=useState({
-        mediaType:'Book',
-        quantity:0,
-        status:'',
-        title:'',
+        mediaType:'book',
         authors:[],
-        isbn:'',
-        publisher:'',
-        publishedDate:'',
-        genre:'',
-        description:'',
-        department:'',
-        course:'',
-        shelfNo:'',
+        genre:[],
         isActive:false,
         isPublished:false,
         isCirculation:false
     })
 
-    console.log(bookData.isbn)
+    useEffect(() => {
+            // Reset bookData when mediaType changes
+        if(bookData.mediaType==='thesis'){
+            setBookData({
+                mediaType: bookData.mediaType, // keep the changed mediaType
+                authors: [],
+                advisers:[],
+                isActive: false,
+                isPublished: false,
+                isCirculation: false,
+            });
+        }else if(bookData.mediaType==='book'){
+             setBookData({
+                mediaType: bookData.mediaType, // keep the changed mediaType
+                authors: [],
+                genre: [],
+                isActive: false,
+                isPublished: false,
+                isCirculation: false,
+            });
+        }else{
+            setBookData({
+                mediaType: bookData.mediaType, // keep the changed mediaType
+                authors: [],
+                isActive: false,
+                isPublished: false,
+                isCirculation: false,
+            });
+        }
+    }, [bookData.mediaType]);
 
     console.log(bookData)
     
@@ -35,17 +55,43 @@ const AddItem = () => {
         setBookData({...bookData,[name]:value})
     }
 
-    const handleAuthor=(selectedAuthor)=>{
-        setBookData((prevdata)=>({
-            ...prevdata,
-            authors:[...prevdata.authors,selectedAuthor.value]
-        }))
+    // add author
+    const addAuthor=(author)=>{
+        if(author.length!=1){
+            setBookData((prevdata)=>({
+                ...prevdata,
+                authors:[...prevdata.authors,author]
+            }))
+        }else{
+            console.log('enter data')
+        }
     }
 
-    const addAuthor=(author)=>{
+    // add adviser
+    const addAdviser=(adviser)=>{
+        if(adviser.length!=1){
+            setBookData((prevdata)=>({
+                ...prevdata,
+                advisers:[...prevdata.advisers,adviser]
+            }))
+        }else{
+            console.log('enter data')
+        }
+    }
+
+    // handling chosen genre
+    const addGenre=(selectedGenre)=>{
+        // console.log(selectedGenre[0].value)\
+        const genre = selectedGenre.map(item=>{
+           return item.value
+        })
+
+        console.log(genre)
+       
+   
         setBookData((prevdata)=>({
-            ...prevdata,
-            authors:[...prevdata.authors,author]
+         ...prevdata,
+                genre:genre
         }))
     }
 
@@ -66,7 +112,7 @@ const AddItem = () => {
         </div>
 
         <div className='item-information'>
-            <CatalogInfo handleChange={handleChange} bookData={bookData} addAuthor={addAuthor}/>
+            <CatalogInfo handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setType={setType} addGenre={addGenre} addAdviser={addAdviser}/>
         </div>
                   
         <div className="cataloging">
