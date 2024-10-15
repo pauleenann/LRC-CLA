@@ -112,7 +112,7 @@ const AddItem = () => {
         </div>
 
         <div className='item-information'>
-            <CatalogInfo handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setType={setType} addGenre={addGenre} addAdviser={addAdviser}/>
+            <CatalogInfo handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setType={setType} addGenre={addGenre} addAdviser={addAdviser} setBookData={setBookData}/>
         </div>
                   
         <div className="cataloging">

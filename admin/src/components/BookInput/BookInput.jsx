@@ -4,7 +4,7 @@ import AuthorInput from '../AuthorInput/AuthorInput'
 import PublisherModal from '../PublisherModal/PublisherModal'
 import axios from 'axios'
 
-const BookInput = ({disabled,handleChange,bookData,addAuthor}) => {
+const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData}) => {
     const [isbn, setIsbn] = useState("");
     const [open, setOpen] = useState(false)
     
@@ -22,32 +22,21 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor}) => {
             try{
                 const response = await fetch(`http://localhost:3001/bookData/${bookData.isbn}`).then(data=>data.json()).then(data=>data.items[0].volumeInfo)
                 console.log(response);
-                // store retrieve data sa book object
-                book.title = response.title
-                book.authors = response.authors
-                book.publishedDate = response.publishedDate
-                book.publisher = response.publisher
-                book.cover = response.imageLinks.thumbnail
-                book.description = response.description
-                // setBookData(book)
-                // setBook ay para sa catalogInfo component para madisplay niya ung title, description and cover
-                // setBook(book)
+                // // store retrieve data sa book object
+                setBookData((prevdata)=>({
+                    ...prevdata,
+                    title: response.title || '',
+                    authors: response.authors || [],
+                    publishedDate: response.publishedDate || '',
+                    publisher: response.publisher || '',
+                    cover: response.imageLinks.thumbnail || '',
+                    description: response.description || ''
+                }))
             }catch(err){
                 console.log(err.message)
             }
         }
     }
-
-    // allows ung pagbabago ng retrieved data
-    // const handleChange=(property)=>(e)=>{
-    //     const changes = e.target.value
-
-    //     setBookData((prevData)=>({
-    //         ...prevData,
-    //         [property]: changes
-    //     }))
-    // }
-    
   return (
     <div className='row'>
         {/* author */}
