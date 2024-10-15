@@ -41,16 +41,15 @@
     gap: 20px;
 }
 
-.adviser{
+
+
+.adviser span{
+    margin: 5px 3px;
     background-color: var(--catalog-info-bg);
     display: inline-block;
     align-items: center;
     padding: 5px 15px;  
-    border-radius: 20px;  
-}
-
-.adviser span{
-    margin-right: 15px;
+    border-radius: 20px; 
 }
 
 .adviser button{

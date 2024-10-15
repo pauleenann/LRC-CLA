@@ -3,7 +3,7 @@ import './ThesisInput.css'
 import AuthorInput from '../AuthorInput/AuthorInput'
 import AdviserModal from '../AdviserModal/AdviserModal'
 
-const ThesisInput = ({disabled}) => {
+const ThesisInput = ({disabled,handleChange,bookData,addAuthor,addAdviser}) => {
     const [open,setOpen] = useState(false)
     
   return (
@@ -12,9 +12,8 @@ const ThesisInput = ({disabled}) => {
         <div className="col-6 info-input-box">
             <label htmlFor="">Author/s *</label>
             {/* author box */}
-            <AuthorInput disabled={disabled}/>
+            <AuthorInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor}/>
         </div>
-
         {/* thesis adviser*/}
         <div className="col-6 info-input-box">
             <label htmlFor="">Adviser *</label>
@@ -23,8 +22,11 @@ const ThesisInput = ({disabled}) => {
                 <div className="advisers">
                     {/* adviser name */}
                         <div className="adviser">
-                            <span>Stan Lee</span>
-                                <button>
+                            {bookData.advisers?bookData.advisers.map((item,key)=>{
+                                console.log(item)
+                                return <span>{item}</span>
+                            }):''}
+                            <button>
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </div>
@@ -40,9 +42,9 @@ const ThesisInput = ({disabled}) => {
         {/* publish date */}
         <div className="col-6 info-input-box my-3">
             <label htmlFor="">Publish Date *</label>
-            <input type="date" name="" id="" placeholder='Select date' disabled={disabled?true:false}/>
+            <input type="text" name="publishedDate" id="" placeholder='Select date' disabled={disabled?true:false} value={bookData.publishedDate?bookData.publishedDate:''} onChange={handleChange}/>
         </div>
-        <AdviserModal open={open} close={()=>setOpen(!open)}/>
+        <AdviserModal open={open} close={()=>setOpen(!open) } addAdviser={addAdviser} handleChange={handleChange} bookData={bookData}/>
     </div>
   )
 }

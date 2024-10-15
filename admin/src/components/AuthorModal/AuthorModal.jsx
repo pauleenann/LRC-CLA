@@ -12,13 +12,19 @@ const AuthorModal = ({open,close,handleChange,bookData,addAuthor}) => {
     
     // for seleted author dun sa dropdown
     const [selectedAuthor, setSelectedAuthor] = useState('')
-
     //console.log(`${fname} ${lname}`)
 
     // everytime na nagbabago ung fname and lname, mababago rin yung author usestate
     useEffect(()=>{
         setAuthor(`${fname} ${lname}`)
     },[fname,lname])
+
+    useEffect(()=>{
+        setFname('')
+        setLname('')
+        setAuthor('')
+        setSelectedAuthor('')
+    },[bookData])
 
     // sample data for multi select options
     // should be retrieved sa database
@@ -89,17 +95,18 @@ const AuthorModal = ({open,close,handleChange,bookData,addAuthor}) => {
                     </button>
                     <button className="author-save" onClick={()=>{
                         // if hindi ' ' ung author, hindi siya masasama sa authors na array
-                        if(author.length!=1){
+                        if(author){
                             addAuthor(author)
                         }
                         if(selectedAuthor){
                             addAuthor(selectedAuthor)
                         }
                         close()
-                        }}>
+                        }} disabled={author.length==0&&selectedAuthor.length==0?true:false}>
                         Save
                     </button>
                 </div>
+                <p></p>
 
             </div>
         </div>      

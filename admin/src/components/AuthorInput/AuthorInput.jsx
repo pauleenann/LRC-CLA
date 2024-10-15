@@ -4,7 +4,7 @@ import AuthorModal from '../AuthorModal/AuthorModal'
 import PublisherModal from '../PublisherModal/PublisherModal'
 
 const AuthorInput = ({disabled,authors,handleChange,bookData, addAuthor}) => {
-    const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false)
 
   return (
     <div className="author-box">
@@ -16,7 +16,6 @@ const AuthorInput = ({disabled,authors,handleChange,bookData, addAuthor}) => {
                         console.log(item)
                         return <span>{item}</span>
                     }):''}
-                    
                     <button>
                         <i class="fa-solid fa-xmark"></i>
                     </button>
@@ -27,7 +26,6 @@ const AuthorInput = ({disabled,authors,handleChange,bookData, addAuthor}) => {
             <i class="fa-solid fa-plus"></i>
             <span>Add new author</span>
         </button>
-
         <AuthorModal open={open} close={()=>setOpen(!open)} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor}/>
     </div>
   )
