@@ -39,7 +39,7 @@
     background-color: var(--catalog-info-bg);
     border-radius: 15px;
     overflow: hidden;
-    height: 1000px;
+    height: auto;
 }
 
 .cat-info-header{
