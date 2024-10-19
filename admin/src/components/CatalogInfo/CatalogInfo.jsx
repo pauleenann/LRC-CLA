@@ -7,7 +7,7 @@ import JournalInput from '../JournalInput/JournalInput'
 import ThesisInput from '../ThesisInput/ThesisInput'
 import axios from 'axios'
 
-const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,addAdviser,setBookData,handleFileChange}) => {
+const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,addAdviser,setBookData,handleFileChange,error}) => {
     // disabled is passed by the viewItem component. This disables the input fields so users can only access the page in view mode 
     const [preview,setPreview] =useState() //for preview kapag pumili ng photo or may naretrieve na photo
 
@@ -20,30 +20,30 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
     const [options,setOptions] = useState([])
 
     // for displaying preview photo
-    useEffect(()=>{
-        if(!bookData.file){
-          setPreview(undefined)
-          return
-        }
+    // useEffect(()=>{
+    //     if(!bookData.file){
+    //       setPreview(undefined)
+    //       return
+    //     }
     
-        let objectUrl;
+    //     let objectUrl;
     
-        if (typeof bookData.file === 'string') {
-          // If data.file is a URL (string), set it directly as the preview
-          setPreview(bookData.file);
-        } else {
-            // If data.file is a File object, create an Object URL for it
-            objectUrl = URL.createObjectURL(bookData.file);
-            setPreview(objectUrl);
-        }
+    //     if (typeof bookData.file === 'string') {
+    //       // If data.file is a URL (string), set it directly as the preview
+    //       setPreview(bookData.file);
+    //     } else {
+    //         // If data.file is a File object, create an Object URL for it
+    //         objectUrl = URL.createObjectURL(bookData.file);
+    //         setPreview(objectUrl);
+    //     }
     
-         // Cleanup function to revoke the Object URL
-         return () => {
-          if (objectUrl) {
-              URL.revokeObjectURL(objectUrl);
-          }
-          };
-      },[bookData.file])
+    //      // Cleanup function to revoke the Object URL
+    //      return () => {
+    //       if (objectUrl) {
+    //           URL.revokeObjectURL(objectUrl);
+    //       }
+    //       };
+    //   },[bookData.file])
 
     //   get genre
       const getGenre = async()=>{
@@ -86,11 +86,13 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                                 <option value="newsletter">Newsletter</option>
                                 <option value="thesis">Thesis</option>
                             </select>
+                           
                         </div>
                         {/* quantity */}
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Quantity *</label>
                             <input type="number" placeholder='Enter quantity' min='0' disabled={disabled?true:false} name='quantity' onChange={handleChange} value={bookData.quantity?bookData.quantity:''}/>
+                            <p className='resource-error'>{error.quantity}</p>
                         </div>
                         {/* status */}
                         <div className="col-4 info-input-box">

@@ -31,8 +31,6 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle}) => {
         }
     }
 
-    console.log(catalog)
-
   return (
     <div className='cataloging-box'>
         <div className="row">

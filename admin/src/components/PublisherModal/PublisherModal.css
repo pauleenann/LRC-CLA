@@ -198,3 +198,10 @@
     font-size: 0.9rem;
     font-style: italic;
 }
+
+.pub-error{
+    margin: 0;
+    font-style: italic;
+    color: var(--button);
+    font-size: 12px;
+}

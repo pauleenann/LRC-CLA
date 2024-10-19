@@ -3,7 +3,7 @@ import './AddItem.css'
 import { Link } from 'react-router-dom'
 import CatalogInfo from '../CatalogInfo/CatalogInfo'
 import Cataloging from '../Cataloging/Cataloging'
-
+import axios from 'axios'
 
 
 const AddItem = () => {
@@ -14,6 +14,7 @@ const AddItem = () => {
         genre:[],
         isCirculation:false
     })
+    const [error, setError]=useState({})
 
     useEffect(() => {
             // Reset bookData when mediaType changes
@@ -104,6 +105,54 @@ const AddItem = () => {
         }))
       }
 
+      //form validation
+      const formValidation = ()=>{
+        const err = {}
+
+        if(!bookData.quantity||bookData.quantity===0){
+            err.quantity = 'Please enter quantity'
+        }
+        if(!bookData.status){
+            err.status = 'Please select status'
+        }
+        if(!bookData.title){
+            err.title = 'Please enter title'
+        }
+        if(bookData.authors.length===0){
+            err.authors = 'Please specify author/s'
+        }
+        
+        setError(err)
+      }
+
+    // handle upload
+    const handleSaveResource = async()=>{
+        formValidation()
+        if(typeof bookData.file === 'string'){
+            // Fetch the image from the URL
+            const response = await fetch(bookData.file);
+            const blob = await response.blob(); // Convert response to Blob
+            //convert link to vlog in order to store in database
+            bookData.file = blob
+        }
+
+        // try{
+        //     const formData = new FormData();
+        //     //iterates throu bookdata
+        //     Object.entries(bookData).map(([key,value])=>{
+        //         formData.append(key,value)
+        //     })
+
+        //     // send data to endpoint
+        //     const response = await axios.post('http://localhost:3001/upload',formData)
+
+        // }catch(err){
+        //     console.log(err.message)
+        // }
+        
+        
+    }
+
     // handle toggle buttons
     const handleToggle = (e)=>{
         const {name, checked} = e.target
@@ -127,6 +176,7 @@ const AddItem = () => {
         
     }
 
+    Object.entries(bookData).map(([key,value])=>console.log(value))
   return (
     <div className='add-item-container'>
         <h1 className='m-0'>Cataloging</h1>
@@ -144,7 +194,7 @@ const AddItem = () => {
         </div>
 
         <div className='item-information'>
-            <CatalogInfo handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setType={setType} addGenre={addGenre} addAdviser={addAdviser} setBookData={setBookData} handleFileChange={handleFileChange}/>
+            <CatalogInfo handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setType={setType} addGenre={addGenre} addAdviser={addAdviser} setBookData={setBookData} handleFileChange={handleFileChange} formValidation={formValidation} error={error}/>
         </div>
                   
         <div className="cataloging">
@@ -155,7 +205,7 @@ const AddItem = () => {
             <button className="add-item-cancel">
                 Cancel
             </button>
-            <button className="add-item-save">
+            <button className="add-item-save" onClick={handleSaveResource}>
                 <i class="fa-regular fa-floppy-disk"></i>
                 <span>Save</span>
             </button>
