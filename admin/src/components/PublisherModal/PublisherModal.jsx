@@ -9,6 +9,7 @@ const PublisherModal = ({open,close,handleChange,bookData,setBookData}) => {
         publisher: bookData.publisher
     })
     const [selectedPublisher,setSelectedPublisher] = useState('')
+    const [error,setError] = useState({})
     // sample data for multi select options
     // should be retrieved sa database
     const options = [
@@ -30,15 +31,45 @@ const PublisherModal = ({open,close,handleChange,bookData,setBookData}) => {
         })
     }
 
+    const formValidation=()=>{
+        const err={}
+        if(!selectedPublisher){
+            if(!publisherDetails.publisher){
+                err.publisher='Please enter publisher name'
+            }
+            if(!publisherDetails.publisher_address){
+                err.address='Please enter publisher address'
+            }
+            if(!publisherDetails.publisher_email){
+                err.email='Please enter publisher email'
+            }
+            if(!publisherDetails.publisher_website){
+                err.website='Please enter publisher website'
+            }
+            if(!publisherDetails.publisher_number){
+                err.phone='Please enter publisher phone'
+            }
+        }
+        
+        if(Object.keys(err).length!=0){
+            setError(err)
+            return false
+        }else{
+            return true
+        }
+        
+    }
+
     // handle save.Pag clinick ung save, masstore ung publisherdetails sa bookdata
     const handleSave = ()=>{
-        if(selectedPublisher){
+        console.log(formValidation())
+        if(selectedPublisher&&formValidation()){
             setBookData((prevdata)=>({
                  ...prevdata,
                  publisher: selectedPublisher
             }))
             close()
-        }else{
+        }else if(formValidation()===true){
             setBookData((prevdata)=>({
                 ...prevdata,
                 publisher: publisherDetails.publisher,
@@ -49,15 +80,18 @@ const PublisherModal = ({open,close,handleChange,bookData,setBookData}) => {
             }))
             close()
         }
-        
     }
 
     //handles selected publisher
     const handleSelectedPublisher=(item)=>{
-        setSelectedPublisher(item.value)
+        if(item){
+            setSelectedPublisher(item.value)
+        }else{
+            setSelectedPublisher('')
+        }
     }
 
-    console.log(publisherDetails)
+    console.log(error)
 
   return ReactDom.createPortal(
     <div className='publisher-modal-container'>
@@ -81,7 +115,7 @@ const PublisherModal = ({open,close,handleChange,bookData,setBookData}) => {
                     placeholder="Search publisher's name"
                     classNamePrefix="select"
                     isClearable
-                    isDisabled={bookData.publisher}
+                    isDisabled={publisherDetails.publisher}
                     onChange={handleSelectedPublisher}/>
                 </div>
                 <div className="col-12 modal-reminder">
@@ -90,23 +124,28 @@ const PublisherModal = ({open,close,handleChange,bookData,setBookData}) => {
                 {/* add manually */}
                 <div className="col-12 publisher-input">
                     <label htmlFor="">Publisher name</label>
-                    <input type="text" name="publisher" id="" placeholder="Enter publisher's name " value={publisherDetails.publisher?publisherDetails.publisher:''} onChange={handlePublisher} on/>
+                    <input type="text" name="publisher" id="" placeholder="Enter publisher's name " value={publisherDetails.publisher?publisherDetails.publisher:''} onChange={handlePublisher} disabled={selectedPublisher}/>
+                    <p className='pub-error'>{error.publisher}</p>
                 </div>
                 <div className="col-12 publisher-input">
                     <label htmlFor="">Publisher address</label>
-                    <textarea name="publisher_address" id="" placeholder="Enter publisher's address " value={publisherDetails.publisher_address?publisherDetails.publisher_address:''} onChange={handlePublisher}></textarea>
+                    <textarea name="publisher_address" id="" placeholder="Enter publisher's address " value={publisherDetails.publisher_address?publisherDetails.publisher_address:''} onChange={handlePublisher}disabled={selectedPublisher}></textarea>
+                    <p className='pub-error'>{error.address}</p>
                 </div>
                 <div className="col-12 publisher-input">
                     <label htmlFor="">Publisher website</label>
-                    <input type="text" name="publisher_website" id="" placeholder="Enter publisher's website " value={publisherDetails.publisher_website?publisherDetails.publisher_website:''} onChange={handlePublisher}/>
+                    <input type="text" name="publisher_website" id="" placeholder="Enter publisher's website " value={publisherDetails.publisher_website?publisherDetails.publisher_website:''} onChange={handlePublisher} disabled={selectedPublisher}/>
+                    <p className='pub-error'>{error.website}</p>
                 </div>
                 <div className="col-12 publisher-input">
                     <label htmlFor="">Publisher number</label>
-                    <input type="text" name="publisher_number" id="" placeholder="Enter publisher's number " value={publisherDetails.publisher_number?publisherDetails.publisher_number:''} onChange={handlePublisher}/>
+                    <input type="text" name="publisher_number" id="" placeholder="Enter publisher's number " value={publisherDetails.publisher_number?publisherDetails.publisher_number:''} onChange={handlePublisher} disabled={selectedPublisher}/>
+                    <p className='pub-error'>{error.number}</p>
                 </div>
                 <div className="col-12 publisher-input">
                     <label htmlFor="">Publisher email</label>
-                    <input type="text" name="publisher_email" id="" placeholder="Enter publisher's email " value={publisherDetails.publisher_email?publisherDetails.publisher_email:''} onChange={handlePublisher}/>
+                    <input type="text" name="publisher_email" id="" placeholder="Enter publisher's email " value={publisherDetails.publisher_email?publisherDetails.publisher_email:''} onChange={handlePublisher} disabled={selectedPublisher}/>
+                    <p className='pub-error'>{error.email}</p>
                 </div>
                 {/* button */}
                 <div className="col-12 publisher-button">
