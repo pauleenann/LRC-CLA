@@ -162,6 +162,19 @@ const AddItem = () => {
     // Handle resource save
     const handleSaveResource = async () => {
         if (formValidation() === true) {
+            if(typeof bookData.file === 'string'){
+                // Fetch the image from the URL
+                const response = await fetch(bookData.file,{
+                    mode:'no-cors'
+                });
+                const blob = await response.blob(); // Convert response to Blob
+
+                setBookData((prevData)=>({
+                    ...prevData,
+                    file: blob
+                }))
+            }
+            
             try {
                 const formData = new FormData();
                 Object.entries(bookData).forEach(([key, value]) => {
@@ -172,7 +185,7 @@ const AddItem = () => {
                 await axios.post('http://localhost:3001/save', formData);
                 console.log('Resource saved successfully');
 
-                //reset if saved successfully
+                // reset if saved successfully
                 setBookData({
                     mediaType: 'book',
                     authors: [],
@@ -189,9 +202,6 @@ const AddItem = () => {
         } else {
             console.log("Please enter complete information");
         }
-
-        
-        
     };
 
     // Handle toggle buttons
@@ -223,6 +233,7 @@ const AddItem = () => {
     console.log(error);
     console.log(bookData);
     console.log(publishers);
+    console.log(typeof bookData.file)
 
     return (
         <div className='add-item-container'>

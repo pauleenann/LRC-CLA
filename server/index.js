@@ -45,6 +45,8 @@ app.post('/save', upload.single('file'), (req, res) => {
     const filePath = req.file.path; // Get the file path
     const existingPublisher = req.body.publisher_id; //this is not 0 if pinili niya ay existing na publisher
 
+    console.log(req.file)
+
     //insert data in resources data
     const q = 'INSERT INTO resources (resource_title, resource_description, resource_published_date, resource_quantity, resource_is_circulation, dept_id, cat_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
 
