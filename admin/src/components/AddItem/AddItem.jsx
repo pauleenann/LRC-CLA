@@ -157,8 +157,6 @@ const AddItem = () => {
         }
       }
 
-      console.log(bookData.genre)
-
     // handle upload
     const handleSaveResource = async()=>{
         formValidation()

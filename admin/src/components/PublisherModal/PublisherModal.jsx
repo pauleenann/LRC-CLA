@@ -6,7 +6,7 @@ import Select from 'react-select'
 const PublisherModal = ({open,close,handleChange,bookData,setBookData}) => {
     // dito ko muna isstore ung publisher details then kapag clinick ung save, tsaka lang sya masstore sa bookdata
     const [publisherDetails, setPublisherDetails] = useState({
-        publisher: bookData.publisher
+        publisher: bookData?bookData.publisher:''
     })
     const [selectedPublisher,setSelectedPublisher] = useState('')
     const [error,setError] = useState({})
@@ -91,7 +91,7 @@ const PublisherModal = ({open,close,handleChange,bookData,setBookData}) => {
         }
     }
 
-    console.log(error)
+    console.log(publisherDetails)
 
   return ReactDom.createPortal(
     <div className='publisher-modal-container'>
