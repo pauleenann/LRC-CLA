@@ -121,3 +121,10 @@
 .dept_name, .form-select{
     text-transform: capitalize;
 }
+
+.resource-error{
+    margin: 0;
+    color: var(--button);
+    font-style: italic;
+    font-size: 12px;
+}

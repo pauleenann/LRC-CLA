@@ -3,7 +3,7 @@ import './AuthorInput.css'
 import AuthorModal from '../AuthorModal/AuthorModal'
 import PublisherModal from '../PublisherModal/PublisherModal'
 
-const AuthorInput = ({disabled,authors,handleChange,bookData, addAuthor}) => {
+const AuthorInput = ({disabled,authors,handleChange,bookData, addAuthor,formValidation,error}) => {
   const [open, setOpen] = useState(false)
 
   return (
