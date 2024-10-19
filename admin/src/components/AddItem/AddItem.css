@@ -120,9 +120,3 @@
     border: var(--button-hover);
 }
 
-.resource-error{
-    margin: 0;
-    color: var(--button);
-    font-style: italic;
-    font-size: 12px;
-}

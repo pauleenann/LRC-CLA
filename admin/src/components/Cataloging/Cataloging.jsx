@@ -4,7 +4,7 @@ import './Cataloging.css'
 import axios from 'axios'
 
 
-const Cataloging = ({disabled,handleChange,bookData,handleToggle}) => {
+const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation, error}) => {
     const [department, setDepartment] = useState([])
     const [catalog, setCatalog] = useState([])
 
@@ -46,25 +46,25 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle}) => {
                             <label htmlFor="">Department</label>
                             <select className="form-select"
                             name='department'
-                            disabled={disabled?true:false} onChange={handleChange}>
+                            disabled={disabled?true:false} onChange={handleChange} onBlur={formValidation}>
                                 <option selected disabled>Select a department</option>
                                 {department?department.map((item,key)=>(
                                     <option value={item.dept_id} className='dept_name'>{item.dept_name}</option>
                                 )):''}
                                 
                             </select>
+                            <p className='resource-error'>{error.department}</p>
                         </div>
                         {/* course */}
                         <div className="col-6 info-input-box">
                             <label htmlFor="">Course</label>
-                            <select className="form-select" name='course' disabled={disabled?true:false} onChange={handleChange}>
+                            <select className="form-select" name='course' disabled={disabled?true:false} onChange={handleChange} onBlur={formValidation}>
                                 <option selected disabled>Select a course</option>
                                 {catalog?catalog.map((item,key)=>(
                                     <option value={item.cat_id}>{`${item.cat_course_code} (${item.cat_course_name})`}</option>
                                 )):''}
-                                
-                                
                             </select>
+                            <p className='resource-error'>{error.course}</p>
                         </div>
                         {/* shelf no */}
                         {/* <div className="col-3 info-input-box">

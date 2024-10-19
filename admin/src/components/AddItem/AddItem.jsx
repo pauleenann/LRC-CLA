@@ -118,12 +118,41 @@ const AddItem = () => {
         if(!bookData.title){
             err.title = 'Please enter title'
         }
-        if(bookData.authors.length===0){
-            err.authors = 'Please specify author/s'
+        if(bookData.genre.length===0||!bookData.genre){
+            err.genres = 'Please specify genre/s'
         }
-        
+        if(!bookData.file){
+            err.file = 'Please select cover'
+        }
+        if(!bookData.description){
+            err.description = 'Please enter description'
+        }
+        if(!bookData.department){
+            err.department = 'Please select department'
+        }
+        if(!bookData.course){
+            err.course = 'Please select course'
+        }
+
+        if(bookData.mediaType==='book'){
+            if(bookData.authors.length===0||!bookData.authors){
+                err.authors = 'Please specify author/s'
+            }
+            if(!bookData.isbn){
+                err.isbn = 'Please enter ISBN'
+            }
+            if(!bookData.publisher){
+                err.publisher = 'Please enter publisher]'
+            }
+            if(!bookData.publishedDate){
+                err.publishedDate = 'Please enter publish date'
+            }
+
+        }
         setError(err)
       }
+
+      console.log(bookData.genre)
 
     // handle upload
     const handleSaveResource = async()=>{
@@ -176,7 +205,7 @@ const AddItem = () => {
         
     }
 
-    Object.entries(bookData).map(([key,value])=>console.log(value))
+
   return (
     <div className='add-item-container'>
         <h1 className='m-0'>Cataloging</h1>
@@ -198,7 +227,7 @@ const AddItem = () => {
         </div>
                   
         <div className="cataloging">
-            <Cataloging handleChange={handleChange} bookData={bookData} handleToggle={handleToggle}/>
+            <Cataloging handleChange={handleChange} bookData={bookData} handleToggle={handleToggle} formValidation={formValidation} error={error}/>
         </div>
 
         <div className="cancel-save">
