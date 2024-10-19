@@ -149,7 +149,12 @@ const AddItem = () => {
             }
 
         }
-        setError(err)
+        if(error){
+            setError(err)
+            return false
+        }else{
+            return true
+        }
       }
 
       console.log(bookData.genre)
@@ -157,27 +162,32 @@ const AddItem = () => {
     // handle upload
     const handleSaveResource = async()=>{
         formValidation()
-        if(typeof bookData.file === 'string'){
-            // Fetch the image from the URL
-            const response = await fetch(bookData.file);
-            const blob = await response.blob(); // Convert response to Blob
-            //convert link to vlog in order to store in database
-            bookData.file = blob
+        // if(typeof bookData.file === 'string' ){
+        //     // Fetch the image from the URL
+        //     const response = await fetch(bookData.file);
+        //     const blob = await response.blob(); // Convert response to Blob
+        //     //convert link to vlog in order to store in database
+        //     bookData.file = blob
+        // }
+
+        if(Object.keys(error).length===0){
+            try{
+                const formData = new FormData();
+                //iterates throu bookdata
+                Object.entries(bookData).map(([key,value])=>{
+                    formData.append(key,value)
+                })
+
+                // send data to endpoint
+                const response = await axios.post('http://localhost:3001/save',formData).then(res=>console.log(res))
+
+        
+            }catch(err){
+                console.log(err.message)
+            }
         }
 
-        // try{
-        //     const formData = new FormData();
-        //     //iterates throu bookdata
-        //     Object.entries(bookData).map(([key,value])=>{
-        //         formData.append(key,value)
-        //     })
-
-        //     // send data to endpoint
-        //     const response = await axios.post('http://localhost:3001/upload',formData)
-
-        // }catch(err){
-        //     console.log(err.message)
-        // }
+       
         
         
     }

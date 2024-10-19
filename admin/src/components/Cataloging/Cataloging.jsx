@@ -47,7 +47,7 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation,
                             <select className="form-select"
                             name='department'
                             disabled={disabled?true:false} onChange={handleChange} onBlur={formValidation}>
-                                <option selected disabled>Select a department</option>
+                                <option selected disabled className=''>Select department</option>
                                 {department?department.map((item,key)=>(
                                     <option value={item.dept_id} className='dept_name'>{item.dept_name}</option>
                                 )):''}
@@ -59,7 +59,7 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation,
                         <div className="col-6 info-input-box">
                             <label htmlFor="">Course</label>
                             <select className="form-select" name='course' disabled={disabled?true:false} onChange={handleChange} onBlur={formValidation}>
-                                <option selected disabled>Select a course</option>
+                                <option selected disabled>Select Course</option>
                                 {catalog?catalog.map((item,key)=>(
                                     <option value={item.cat_id}>{`${item.cat_course_code} (${item.cat_course_name})`}</option>
                                 )):''}
