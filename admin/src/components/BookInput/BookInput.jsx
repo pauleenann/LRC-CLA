@@ -3,22 +3,38 @@ import './BookInput.css'
 import AuthorInput from '../AuthorInput/AuthorInput'
 import PublisherModal from '../PublisherModal/PublisherModal'
 import axios from 'axios'
+import Select from 'react-select'
 
-const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formValidation,error}) => {
+const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formValidation,error,publishers}) => {
     const [isbn, setIsbn] = useState("");
     const [open, setOpen] = useState(false)
+    // dito ko muna isstore ung publisher details then kapag clinick ung save, tsaka lang sya masstore sa bookdata
+    const [publisherDetails, setPublisherDetails] = useState({})
     
     useEffect(()=>{
         getBookData();
     },[bookData.isbn])
 
-    console.log(bookData.isbn)
+    useEffect(() => {
+        if (bookData.publisher=== '') {
+          setPublisherDetails({});
+        }
+      }, [bookData.publisher]);
+    
+    // handle publisher
+    const handlePublisher = (e) =>{
+        const {name,value} = e.target
+        setPublisherDetails({...publisherDetails,[name]:value
+        })
+    }
 
+
+    // for getting info sa google books api
     const getBookData = async()=>{
         // create an object na katulad bookData tapos ilalagay nalang siya doon using setBookData
         const book = {}
         
-        if(bookData.isbn){
+        if(bookData.isbn&&bookData.isbn.length===13){
             try{
                 const response = await fetch(`http://localhost:3001/bookData/${bookData.isbn}`).then(data=>data.json()).then(data=>data.items[0].volumeInfo)
                 console.log(response);
@@ -28,7 +44,6 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formVal
                     title: response.title || '',
                     authors: response.authors || [],
                     publishedDate: response.publishedDate || '',
-                    publisher: response.publisher || '',
                     file: response.imageLinks.thumbnail || '',
                     description: response.description || ''
                 }))
@@ -37,6 +52,23 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formVal
             }
         }
     }
+
+    const handleSelectedPublisher = (item)=>{
+        console.log(item)
+        if(item){
+            setBookData((prevdata)=>({...prevdata,
+                publisher_id:item.value,
+                publisher: '',
+                publisher_address:'',
+                publisher_email:'',
+                publisher_number:'',
+                publisher_website:'',
+            }))
+        }else{
+            setBookData({...bookData,publisher_id:0})
+        }       
+    }
+
   return (
     <div className='row'>
         {/* author */}
@@ -58,9 +90,23 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formVal
                 {/* publisher */}
                 <div className="col-12 info-input-box mb-3">
                     <label htmlFor="">Publisher</label>
-                    <input type="text" placeholder='Enter Publisher' disabled={disabled?true:false} name='publisher' value={bookData.publisher?bookData.publisher:''} onBlur={formValidation}/>  
+                    {bookData.publisher&&bookData.publisher.length >=1?
+                       <div>
+                        <input type="text" value={bookData.publisher} name='publisher' onChange={handleChange} onBlur={formValidation}/> 
+                       </div> 
+                         
+                   :<Select  
+                    options={publishers}
+                    placeholder="Search publisher"
+                    classNamePrefix="select"
+                    isClearable
+                    onChange={handleSelectedPublisher}
+                    onBlur={formValidation}
+                    />}
+
                     <span className='add-publisher'>Publisher not listed? Please <button className='add-publisher-button' onClick={()=>{disabled?setOpen(false):setOpen(true)}} >"add publisher here"</button> first.</span>
                     <p className="resource-error">{error.publisher?error.publisher:''}</p>
+                    
                 </div>
                 {/* publisher date*/}
                 <div className="col-12 info-input-box mb-3">
@@ -71,7 +117,7 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formVal
                 </div>
             </div>
         </div>
-        <PublisherModal open={open} close={()=>setOpen(!open)} handleChange={handleChange} bookData={bookData} setBookData={setBookData}/>
+        <PublisherModal open={open} close={()=>setOpen(!open)} handleChange={handleChange} bookData={bookData} setBookData={setBookData} publishers={publishers} publisherDetails={publisherDetails} handlePublisher={handlePublisher}/>
     </div>
   )
 }

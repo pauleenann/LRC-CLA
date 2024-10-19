@@ -13,7 +13,6 @@ const AuthorInput = ({disabled,authors,handleChange,bookData, addAuthor,formVali
             {/* author name */}
                 <div className="author">
                     {bookData.authors?bookData.authors.map((item,key)=>{
-                        console.log(item)
                         return <span>{item}</span>
                     }):''}
                     <button>
