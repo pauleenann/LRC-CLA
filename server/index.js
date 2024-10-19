@@ -32,9 +32,25 @@ const storage = multer.diskStorage({
 //upload: This is an instance of multer, configured to use the storage we just defined. It's ready to handle file uploads now!
 const upload = multer({storage})
 
-app.post('/upload',upload.single('file'),(req,res)=>{
-    console.log(req.file)
-    console.log(req.body)
+app.post('/save',upload.single('file'),(req,res)=>{
+    console.log(req.body.mediaType)
+
+    const q = 'INSERT INTO resources (resource_title, resource_description, resource_published_date, resource_quantity, resource_is_circulation, dept_id, cat_id) VALUES (?, ?, ?, ?, ?, ?, ?)'
+
+    const resources = [
+        req.body.title,
+        req.body.description,
+        req.body.publishedDate,
+        req.body.quantity,
+        req.body.isCirculation,
+        req.body.department,
+        req.body.course
+    ]
+
+    db.query(q,resources,(err,results)=>{
+        if(err) res.send(err)
+            res.send(results)
+    })
 
     
     

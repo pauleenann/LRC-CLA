@@ -91,7 +91,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                         {/* quantity */}
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Quantity *</label>
-                            <input type="number" placeholder='Enter quantity' min='0' disabled={disabled?true:false} name='quantity' onChange={handleChange} value={bookData.quantity?bookData.quantity:''} onBlur={formValidation}/>
+                            <input type="number" placeholder='Enter Quantity' min='0' disabled={disabled?true:false} name='quantity' onChange={handleChange} value={bookData.quantity?bookData.quantity:''} onBlur={formValidation}/>
                             <p className='resource-error'>{error.quantity}</p>
                         </div>
                         {/* status */}
@@ -108,7 +108,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                         {/* title */}
                         <div className="col-12 info-input-box my-3">
                             <label htmlFor="">Title</label>
-                            <input type="text" placeholder='Enter title' disabled={disabled?true:false} name='title' onChange={handleChange} value={bookData.title?bookData.title:''} onBlur={formValidation}/>
+                            <input type="text" placeholder='Enter Title' disabled={disabled?true:false} name='title' onChange={handleChange} value={bookData.title?bookData.title:''} onBlur={formValidation}/>
                             <p className='resource-error'>{error.title}</p>
                         </div>
                         {/* input field changes depending on type */}
