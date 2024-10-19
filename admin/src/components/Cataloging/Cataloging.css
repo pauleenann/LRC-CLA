@@ -12,8 +12,6 @@
     text-decoration: none;
 }
 
-
-
 :root{
     --black:#1F1F1F;
     --tup-color: #94152B;
@@ -39,7 +37,7 @@
     background-color: var(--catalog-info-bg);
     border-radius: 15px;
     overflow: hidden;
-    height: 500px;
+    height: auto;
 }
 
 .cataloging-info-header{
@@ -79,6 +77,9 @@
     background-color: var(--white);
 }
 
+.form-switch{
+    margin-top: 50px;
+}
 
 .form-check{
     margin-left: 0px;
@@ -115,4 +116,8 @@
 
 .switch-label label{
     font-size: 1.2rem;
+}
+
+.dept_name, .form-select{
+    text-transform: capitalize;
 }

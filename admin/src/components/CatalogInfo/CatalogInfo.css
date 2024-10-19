@@ -96,18 +96,17 @@
     border-radius: 5px;
 }
 
-.cover-upload-box button{
-    background-color: transparent;
-    border: none;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+
+
+.cover-upload-box label{
+    border-bottom: 1px solid var(--black);
     font-style: italic;
+    cursor: pointer;
 }
 
-
-.cover-upload-box button span{
-    border-bottom: 1px solid var(--black);
+.cover-upload-box label:hover{
+    color: var(--button);
+    border-color: var(--button);
 }
 
 .cover-upload{
@@ -122,6 +121,17 @@
     border-color: var(--button);
     background-color: var(--white);
     
+}
+
+.edit-cover{
+    font-size: 12px;
+    color: var(--button);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.edit-cover:hover{
+    color: var(--black);
 }
 
 
@@ -185,5 +195,4 @@
     color: var(--button);
     cursor: pointer;
 }
-
 

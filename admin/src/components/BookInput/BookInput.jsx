@@ -29,7 +29,7 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData}) => {
                     authors: response.authors || [],
                     publishedDate: response.publishedDate || '',
                     publisher: response.publisher || '',
-                    cover: response.imageLinks.thumbnail || '',
+                    file: response.imageLinks.thumbnail || '',
                     description: response.description || ''
                 }))
             }catch(err){
@@ -56,7 +56,7 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData}) => {
                 {/* publisher */}
                 <div className="col-12 info-input-box mb-3">
                     <label htmlFor="">Publisher</label>
-                    <input type="text" placeholder='Enter Publisher' disabled={disabled?true:false} name='publisher' onChange={handleChange} value={bookData.publisher?bookData.publisher:''}/>  
+                    <input type="text" placeholder='Enter Publisher' disabled={disabled?true:false} name='publisher' value={bookData.publisher?bookData.publisher:''}/>  
                     <span className='add-publisher'>Publisher not listed? Please <button className='add-publisher-button' onClick={()=>{disabled?setOpen(false):setOpen(true)}} >"add publisher here"</button> first.</span>
                 </div>
                 {/* publisher date*/}
@@ -68,7 +68,7 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData}) => {
                 </div>
             </div>
         </div>
-        <PublisherModal open={open} close={()=>setOpen(!open)} handleChange={handleChange}/>
+        <PublisherModal open={open} close={()=>setOpen(!open)} handleChange={handleChange} bookData={bookData} setBookData={setBookData}/>
     </div>
   )
 }

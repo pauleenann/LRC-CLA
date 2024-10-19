@@ -12,8 +12,6 @@ const AddItem = () => {
         mediaType:'book',
         authors:[],
         genre:[],
-        isActive:false,
-        isPublished:false,
         isCirculation:false
     })
 
@@ -24,8 +22,6 @@ const AddItem = () => {
                 mediaType: bookData.mediaType, // keep the changed mediaType
                 authors: [],
                 advisers:[],
-                isActive: false,
-                isPublished: false,
                 isCirculation: false,
             });
         }else if(bookData.mediaType==='book'){
@@ -33,16 +29,12 @@ const AddItem = () => {
                 mediaType: bookData.mediaType, // keep the changed mediaType
                 authors: [],
                 genre: [],
-                isActive: false,
-                isPublished: false,
                 isCirculation: false,
             });
         }else{
             setBookData({
                 mediaType: bookData.mediaType, // keep the changed mediaType
                 authors: [],
-                isActive: false,
-                isPublished: false,
                 isCirculation: false,
             });
         }
@@ -57,6 +49,18 @@ const AddItem = () => {
 
     // add author
     const addAuthor=(author)=>{
+        if(author.length!=1){
+            setBookData((prevdata)=>({
+                ...prevdata,
+                authors:[...prevdata.authors,author]
+            }))
+        }else{
+            console.log('enter data')
+        }
+    }
+
+    // add publisher
+    const addPublisher=(author)=>{
         if(author.length!=1){
             setBookData((prevdata)=>({
                 ...prevdata,
@@ -85,14 +89,42 @@ const AddItem = () => {
         const genre = selectedGenre.map(item=>{
            return item.value
         })
-
         console.log(genre)
-       
-   
         setBookData((prevdata)=>({
          ...prevdata,
                 genre:genre
         }))
+    }
+
+    // handle file
+    const handleFileChange = (e)=>{
+        setBookData((prevData)=>({
+          ...prevData,
+          file:e.target.files[0]
+        }))
+      }
+
+    // handle toggle buttons
+    const handleToggle = (e)=>{
+        const {name, checked} = e.target
+        console.log(checked)
+        if(name==='isActive'){
+            setBookData((prevdata)=>({
+                ...prevdata,
+                isActive:checked
+            }))
+        }else if(name==='isPublished'){
+            setBookData((prevdata)=>({
+                ...prevdata,
+                isPublished:checked
+            }))
+        }else{
+            setBookData((prevdata)=>({
+                ...prevdata,
+                isCirculation:checked
+            }))
+        }
+        
     }
 
   return (
@@ -112,11 +144,11 @@ const AddItem = () => {
         </div>
 
         <div className='item-information'>
-            <CatalogInfo handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setType={setType} addGenre={addGenre} addAdviser={addAdviser} setBookData={setBookData}/>
+            <CatalogInfo handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setType={setType} addGenre={addGenre} addAdviser={addAdviser} setBookData={setBookData} handleFileChange={handleFileChange}/>
         </div>
                   
         <div className="cataloging">
-            <Cataloging handleChange={handleChange}/>
+            <Cataloging handleChange={handleChange} bookData={bookData} handleToggle={handleToggle}/>
         </div>
 
         <div className="cancel-save">
