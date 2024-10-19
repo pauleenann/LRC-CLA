@@ -7,21 +7,65 @@ import JournalInput from '../JournalInput/JournalInput'
 import ThesisInput from '../ThesisInput/ThesisInput'
 import axios from 'axios'
 
-const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,addAdviser,setBookData}) => {
+const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,addAdviser,setBookData,handleFileChange}) => {
     // disabled is passed by the viewItem component. This disables the input fields so users can only access the page in view mode 
-    const [resourceType, setResourceType] = useState('')
+    const [preview,setPreview] =useState() //for preview kapag pumili ng photo or may naretrieve na photo
 
-    const handleType = (e)=>{
-        setResourceType(e.target.value);
-    }
+    useEffect(()=>{
+        getGenre()
+    },[])
     
     // sample data for multi select options
     // should be retrieved sa database
-    const options = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
-    ]
+    const [options,setOptions] = useState([])
+
+    // for displaying preview photo
+    useEffect(()=>{
+        if(!bookData.file){
+          setPreview(undefined)
+          return
+        }
+    
+        let objectUrl;
+    
+        if (typeof bookData.file === 'string') {
+          // If data.file is a URL (string), set it directly as the preview
+          setPreview(bookData.file);
+        } else {
+            // If data.file is a File object, create an Object URL for it
+            objectUrl = URL.createObjectURL(bookData.file);
+            setPreview(objectUrl);
+        }
+    
+         // Cleanup function to revoke the Object URL
+         return () => {
+          if (objectUrl) {
+              URL.revokeObjectURL(objectUrl);
+          }
+          };
+      },[bookData.file])
+
+    //   get genre
+      const getGenre = async()=>{
+        const genres = []
+        
+        try{
+            const response = await axios.get('http://localhost:3001/genre').then(res=>res.data)
+            response.map((item)=>{
+                const genre = {
+                    value: item.genre_id,
+                    label: item.genre_name
+                }
+               genres.push(genre)
+            })
+
+            setOptions(genres)
+        }catch(err){
+            console.log(err.message)
+        }
+    }
+
+    console.log(options)
 
   return (
     <div className='cat-info'>
@@ -36,7 +80,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                         {/* media type */}
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Media Type *</label>
-                            <select name="mediaType" id="" className='form-select' onClick={handleType} disabled={disabled?true:false} onChange={handleChange}>
+                            <select name="mediaType" id="" className='form-select' disabled={disabled?true:false} onChange={handleChange}>
                                 <option value="book">Book</option>
                                 <option value="journal" >Journal</option>
                                 <option value="newsletter">Newsletter</option>
@@ -65,7 +109,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                         </div>
                         {/* input field changes depending on type */}
                         <div className="col-12">
-                            {resourceType==='journal'||resourceType==='newsletter'?<JournalInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor}/>:resourceType==='thesis'?<ThesisInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} addAdviser={addAdviser}/>:<BookInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setBookData={setBookData}/>}
+                            {bookData.mediaType==='journal'||bookData.mediaType==='newsletter'?<JournalInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor}/>:bookData.mediaType==='thesis'?<ThesisInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} addAdviser={addAdviser}/>:<BookInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setBookData={setBookData}/>}
                         </div>
                         {/* genre */}
                         {bookData.mediaType==='book'?
@@ -90,19 +134,27 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                 </div>
 
                 {/* for cover */}
-                <div className="col-3">
+                {bookData.mediaType!=='thesis'?<div className="col-3">
                     {/* cover */}
                     <div className="col-12 info-input-box mb-3">
                         <label htmlFor="">Cover</label>
-                        <input type="file" src="" alt="" className='cover-upload' id='cover-upload'disabled={disabled?true:false}/>
+                        <input type="file" src="" alt="" className='cover-upload' id='cover'disabled={disabled?true:false} onChange={handleFileChange}/>
                         <div className="cover-upload-box">
-                            <button>
-                                <i class="fa-solid fa-plus"></i>
-                                <span>Add Photo</span>
-                            </button>
+                            {bookData.file?'':<label htmlFor="cover">Add cover</label>}
+                            {bookData.file && ( // Display the selected image if it exists
+                                <div>
+                                    <img src={preview}
+                                    // Create a URL for the selected image
+                                    alt="Selected"
+                                    style={{ width: '200px', height: 'auto', marginTop: '10px' }} // Adjust the size as needed
+                                    />
+                                </div>
+                                )}
                         </div>
+                       {typeof bookData.file!=='string'&&bookData.file?<label htmlFor="cover" className='edit-cover'>Edit cover</label>:""}
                     </div>
-                </div>
+                </div>:''}
+                
 
                 {/* description */}
                 <div className="col-12">

@@ -12,8 +12,6 @@
     text-decoration: none;
 }
 
-
-
 :root{
     --black:#1F1F1F;
     --tup-color: #94152B;
@@ -75,19 +73,18 @@
     padding: 30px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
 }
 
 .publisher-search{
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 1px;
 }
 
 .publisher-input{
     display: flex;
     flex-direction: column;
-    gap: 5px;
     padding: 0 50px;
 }
 
