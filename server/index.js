@@ -44,10 +44,10 @@ app.post('/save', upload.single('file'), (req, res) => {
     const mediaType = req.body.mediaType;
     const filePath = req.file.path; // Get the file path
     const existingPublisher = req.body.publisher_id; //this is not 0 if pinili niya ay existing na publisher
+    const genre = req.body.genre.split(',')
+    const authors = req.body.authors.split(',')
 
-   const authors = req.body.authors.split(',')
-
-    //insert data in resources data
+    // //insert data in resources data
     const q = 'INSERT INTO resources (resource_title, resource_description, resource_published_date, resource_quantity, resource_is_circulation, dept_id, cat_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
 
     const resources = [
@@ -189,7 +189,26 @@ app.post('/save', upload.single('file'), (req, res) => {
                             });
 
                             // Successfully inserted image, send response
-                            return res.send('Successful');
+                            // return res.send('Successful');
+                            
+                            //insert to bookgenre
+                            //store yung id ng kakastore na book sa bookId
+                            const bookId = result.insertId;
+                            const bookGenreQ = 'INSERT INTO bookgenre (book_id, genre_id) VALUES (?,?)'
+
+                            //iterate through genre array
+                            genre.forEach(element=>{
+                                db.query(bookGenreQ,[bookId,element],(err,result)=>{
+                                    if (err) {
+                                        return res.status(500).send(err); 
+                                    }
+                                    res.send('successful')
+                                })
+                                
+                            })
+
+                            
+
                         });
                     });
                 }
