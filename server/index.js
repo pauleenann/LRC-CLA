@@ -186,6 +186,7 @@ app.get('/bookData/:isbn',async (req,res)=>{
     }
 })
 
+
 //retrieve list of department from database
 app.get('/departments',(req,res)=>{
     const q = 'SELECT * FROM department'
@@ -225,6 +226,17 @@ app.get('/publishers',(req,res)=>{
             res.send(results)
     })
 })
+
+//retrieve list of genre from database
+app.get('/authors',(req,res)=>{
+    const q = 'SELECT * FROM author'
+
+    db.query(q,(err,results)=>{
+        if(err) res.send(err)
+            res.send(results)
+    })
+})
+
 
 
 

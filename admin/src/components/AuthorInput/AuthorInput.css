@@ -78,3 +78,15 @@
     align-items: center;
     font-style: italic;
 }
+
+.delete-author{
+    font-size: 10px;
+    margin-left: 5px;
+    position: relative;
+    top: -1px;
+    cursor: pointer;
+}
+
+.delete-author:hover{
+    color: var(--button);
+}

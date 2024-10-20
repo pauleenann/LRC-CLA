@@ -3,7 +3,7 @@ import './AuthorInput.css'
 import AuthorModal from '../AuthorModal/AuthorModal'
 import PublisherModal from '../PublisherModal/PublisherModal'
 
-const AuthorInput = ({disabled,authors,handleChange,bookData, addAuthor,formValidation,error}) => {
+const AuthorInput = ({disabled,authors,handleChange,bookData, addAuthor,formValidation,error,deleteAuthor}) => {
   const [open, setOpen] = useState(false)
 
   return (
@@ -13,7 +13,8 @@ const AuthorInput = ({disabled,authors,handleChange,bookData, addAuthor,formVali
             {/* author name */}
                 <div className="author">
                     {bookData.authors?bookData.authors.map((item,key)=>{
-                        return <span>{item}</span>
+                        console.log(key)
+                        return <span>{item} <button className='delete-author' onClick={()=>deleteAuthor(key)}>x</button></span>
                     }):''}
                     <button>
                         <i class="fa-solid fa-xmark"></i>
