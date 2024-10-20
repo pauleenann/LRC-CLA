@@ -17,7 +17,7 @@ const AddItem = () => {
     });
     const [error, setError] = useState({});
     const [publishers, setPublishers] = useState([]);
-
+    const [authorList, setAuthorList] = useState([]);
     // Reset bookData when mediaType changes
     useEffect(() => {
         if (bookData.mediaType === 'thesis') {
@@ -48,6 +48,7 @@ const AddItem = () => {
     // Fetch publishers when component mounts
     useEffect(() => {
         getPublishers();
+        getAuthors()
     }, []);
 
     // Handle input changes
@@ -60,10 +61,16 @@ const AddItem = () => {
     // Add author
     const addAuthor = (author) => {
         if (author.length !== 1) {
-            setBookData((prevData) => ({
-                ...prevData,
-                authors: [...prevData.authors, author]
-            }));
+            if(!bookData.authors.includes(author)){
+                 setBookData((prevData) => ({
+                    ...prevData,
+                    authors: [...prevData.authors, author]
+                }));
+                return true
+            }else{
+                console.log('you inserted it already!')
+            }
+           
         } else {
             console.log('Please enter valid author data');
         }
@@ -255,6 +262,23 @@ const AddItem = () => {
         }
     };
 
+    // Fetch publishers from the backend
+    const getAuthors = async () => {
+        const pubs = [];
+        try {
+            const response = await axios.get('http://localhost:3001/authors');
+            response.data.forEach(item => {
+                pubs.push({
+                    value: `${item.author_fname} ${item.author_lname}`,
+                    label: `${item.author_fname} ${item.author_lname}`
+                });
+            });
+            setAuthorList(pubs);
+        } catch (err) {
+            console.log(err.message);
+        }
+    };
+
     console.log(error);
     console.log(bookData);
     console.log(publishers);
@@ -290,6 +314,7 @@ const AddItem = () => {
                     error={error}
                     publishers={publishers}
                     deleteAuthor={deleteAuthor}
+                    authorList={authorList}
                 />
             </div>
 
