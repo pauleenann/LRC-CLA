@@ -162,30 +162,45 @@ const AddItem = () => {
     // Handle resource save
     const handleSaveResource = async () => {
         if (formValidation() === true) {
-            if(typeof bookData.file === 'string'){
-                // Fetch the image from the URL
-                const response = await fetch(bookData.file,{
-                    mode:'no-cors'
-                });
-                const blob = await response.blob(); // Convert response to Blob
-
-                setBookData((prevData)=>({
-                    ...prevData,
-                    file: blob
-                }))
-            }
-            
             try {
+                // Create a new FormData object
                 const formData = new FormData();
-                Object.entries(bookData).forEach(([key, value]) => {
-                    formData.append(key, value);
-                });
-
+    
+                // If the file is a URL string, fetch it as a Blob
+                if (typeof bookData.file === 'string') {
+                    const response = await fetch(bookData.file, { mode: 'no-cors' });
+                    const blob = await response.blob(); // Convert response to Blob
+    
+                    // Set the blob to bookData.file directly
+                    //It spreads the existing properties of prevData and sets the file property to the newly fetched blob.
+                    setBookData((prevData) => ({
+                        ...prevData,
+                        file: blob,
+                    }));
+    
+                    // Use a temporary state to wait for the blob to be set
+                    //create a new object that includes all properties of bookdata but replaces the file property to blob
+                    const updatedBookData = {
+                        ...bookData,
+                        file: blob,
+                    };
+    
+                    // Append all data to formData using updatedBookData instead of bookData
+                    Object.entries(updatedBookData).forEach(([key, value]) => {
+                        formData.append(key, value);
+                    });
+                } else {
+                    // If it's not a URL, just append the current bookData
+                    Object.entries(bookData).forEach(([key, value]) => {
+                        formData.append(key, value);
+                    });
+                }
+    
                 // Send data to the endpoint
                 await axios.post('http://localhost:3001/save', formData);
                 console.log('Resource saved successfully');
-
-                // reset if saved successfully
+    
+                // Reset bookData if saved successfully
                 setBookData({
                     mediaType: 'book',
                     authors: [],
@@ -193,17 +208,17 @@ const AddItem = () => {
                     isCirculation: false,
                     publisher_id: 0,
                     publisher: ''
-                })
-                
-                window.location.reload()
+                });
+    
+                window.location.reload(); // Optionally reload the page
             } catch (err) {
-                console.log(err.message);
+                console.log('Error saving resource:', err.message);
             }
         } else {
             console.log("Please enter complete information");
         }
     };
-
+    
     // Handle toggle buttons
     const handleToggle = (e) => {
         const { name, checked } = e.target;
