@@ -201,16 +201,16 @@ const AddItem = () => {
                 console.log('Resource saved successfully');
     
                 // Reset bookData if saved successfully
-                setBookData({
-                    mediaType: 'book',
-                    authors: [],
-                    genre: [],
-                    isCirculation: false,
-                    publisher_id: 0,
-                    publisher: ''
-                });
+                // setBookData({
+                //     mediaType: 'book',
+                //     authors: [],
+                //     genre: [],
+                //     isCirculation: false,
+                //     publisher_id: 0,
+                //     publisher: ''
+                // });
     
-                window.location.reload(); // Optionally reload the page
+                // window.location.reload(); // Optionally reload the page
             } catch (err) {
                 console.log('Error saving resource:', err.message);
             }
@@ -248,7 +248,7 @@ const AddItem = () => {
     console.log(error);
     console.log(bookData);
     console.log(publishers);
-    console.log(typeof bookData.file)
+    console.log(bookData.authors)
 
     return (
         <div className='add-item-container'>
