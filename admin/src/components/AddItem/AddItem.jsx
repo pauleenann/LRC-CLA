@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import CatalogInfo from '../CatalogInfo/CatalogInfo';
 import Cataloging from '../Cataloging/Cataloging';
 import axios from 'axios';
+import Loading from '../Loading/Loading';
 
 const AddItem = () => {
     const [type, setType] = useState('');
@@ -18,6 +19,7 @@ const AddItem = () => {
     const [error, setError] = useState({});
     const [publishers, setPublishers] = useState([]);
     const [authorList, setAuthorList] = useState([]);
+    const [loading,setLoading] = useState(false)
     // Reset bookData when mediaType changes
     useEffect(() => {
         if (bookData.mediaType === 'thesis') {
@@ -179,6 +181,7 @@ const AddItem = () => {
     // Handle resource save
     const handleSaveResource = async () => {
         if (formValidation() === true) {
+            setLoading(true)
             try {
                 // Create a new FormData object
                 const formData = new FormData();
@@ -216,18 +219,20 @@ const AddItem = () => {
                 // Send data to the endpoint
                 await axios.post('http://localhost:3001/save', formData);
                 console.log('Resource saved successfully');
-    
+                
+                //close loading
+                setLoading(false)
                 // Reset bookData if saved successfully
-                // setBookData({
-                //     mediaType: 'book',
-                //     authors: [],
-                //     genre: [],
-                //     isCirculation: false,
-                //     publisher_id: 0,
-                //     publisher: ''
-                // });
+                setBookData({
+                    mediaType: 'book',
+                    authors: [],
+                    genre: [],
+                    isCirculation: false,
+                    publisher_id: 0,
+                    publisher: ''
+                });
     
-                // window.location.reload(); // Optionally reload the page
+                window.location.reload(); // Optionally reload the page
             } catch (err) {
                 console.log('Error saving resource:', err.message);
             }
@@ -337,6 +342,7 @@ const AddItem = () => {
                     <span>Save</span>
                 </button>
             </div>
+            <Loading loading={loading}/>
         </div>
     );
 };
