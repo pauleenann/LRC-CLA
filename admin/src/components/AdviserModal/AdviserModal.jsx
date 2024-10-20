@@ -98,6 +98,8 @@ const AdviserModal = ({open,close,handleChange,bookData,addAdviser}) => {
                         if(selectedAdviser){
                             addAdviser(selectedAdviser)
                         }
+
+                        
                         close()
                         }} disabled={adviser.length==0&&selectedAdviser.length==0?true:false}>
                         Save

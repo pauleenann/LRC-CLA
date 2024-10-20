@@ -3,7 +3,7 @@ import ReactDom from 'react-dom'
 import './AuthorModal.css'
 import Select from 'react-select'
 
-const AuthorModal = ({open,close,handleChange,bookData,addAuthor}) => {
+const AuthorModal = ({open,close,handleChange,bookData,addAuthor,authorList}) => {
 
     // usestates for manual input
     const [fname,setFname] = useState('')
@@ -26,18 +26,15 @@ const AuthorModal = ({open,close,handleChange,bookData,addAuthor}) => {
         setSelectedAuthor('')
     },[bookData])
 
-    // sample data for multi select options
-    // should be retrieved sa database
-    const options = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
-    ]
-
     // handles ung selected author sa dropdown
     //value ng item ay like this->{ value: 'chocolate', label: 'Chocolate' },
     const handleAuthor = (item)=>{
-        setSelectedAuthor(item.value)
+        if(item){
+             setSelectedAuthor(item.value)
+        }else{
+            setSelectedAuthor('')
+        }
+       
     }
 
     if(!open){
@@ -66,7 +63,7 @@ const AuthorModal = ({open,close,handleChange,bookData,addAuthor}) => {
                 <div className="col-12 author-search">
                     <label htmlFor="">Search for existing author</label>
                     <Select  
-                    options={options}
+                    options={authorList}
                     placeholder="Search author's name"
                     classNamePrefix="select"
                     isClearable
@@ -99,9 +96,11 @@ const AuthorModal = ({open,close,handleChange,bookData,addAuthor}) => {
                             addAuthor(author)
                         }
                         if(selectedAuthor){
-                            addAuthor(selectedAuthor)
+                            if(addAuthor(selectedAuthor)){
+                                close()
+                            }
                         }
-                        close()
+                        
                         }} disabled={author.length==0&&selectedAuthor.length==0?true:false}>
                         Save
                     </button>
