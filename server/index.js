@@ -71,6 +71,7 @@ app.post('/save', upload.single('file'), (req, res) => {
         //insert authors
         const authorQ = 'INSERT INTO author (author_fname, author_lname) VALUES (?, ?)'
         const resourceAuthorQ = 'INSERT INTO resourceauthors (resource_id, author_id) VALUES (?, ?)'
+        const checkIfAuthorExist ='SELECT author_id FROM author WHERE author_fname = ? AND author_lname = ?'
         authors.forEach(element => {
             const nameParts = element.split(' '); 
             const fname = nameParts[0]; // First name
@@ -80,22 +81,48 @@ app.post('/save', upload.single('file'), (req, res) => {
                 fname,
                 lname
             ]
-            
-            db.query(authorQ,authorValue,(err,results)=>{
+
+            // check if author already exist
+            db.query(checkIfAuthorExist,[fname,lname], (err,results)=>{
                 if (err) {
                     return res.status(500).send(err); 
                 }
-
-                //author Id nung author info na kakainsert lang
-                const authorId = results.insertId;
-
-                //if author is inserted, insert sa resourceAuthor table
-                db.query(resourceAuthorQ,[resourceId,authorId],(req,res)=>{
-                    if (err) {
-                        return res.status(500).send(err); 
-                    }
-                })
+                
+                //pag walang nahanap
+                if(results.length===0){
+                    db.query(authorQ,authorValue,(err,results)=>{
+                        if (err) {
+                            return res.status(500).send(err); 
+                        }
+        
+                        //author Id nung author info na kakainsert lang
+                        const authorId = results.insertId;
+        
+                        //if author is inserted, insert sa resourceAuthor table
+                        db.query(resourceAuthorQ,[resourceId,authorId],(req,res)=>{
+                            if (err) {
+                                return res.status(500).send(err); 
+                            }
+                        })
+                    })
+                }else{
+                    //if author is inserted, insert sa resourceAuthor table
+                    //results look like this: 
+                    // [
+                    //     {
+                    //         author_id: 5
+                    //     }
+                    // ]
+                    //so you have to use index to access id
+                    db.query(resourceAuthorQ,[resourceId,results[0].author_id],(req,res)=>{
+                        if (err) {
+                            return res.status(500).send(err); 
+                        }
+                    })
+                }
             })
+            
+            
         });
 
         //if resource is inserted in resources table, check mediaType and insert the rest of the data to their corresponding media type.
