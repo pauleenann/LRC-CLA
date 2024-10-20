@@ -45,7 +45,7 @@ app.post('/save', upload.single('file'), (req, res) => {
     const filePath = req.file.path; // Get the file path
     const existingPublisher = req.body.publisher_id; //this is not 0 if pinili niya ay existing na publisher
 
-    console.log(req.file)
+   const authors = req.body.authors.split(',')
 
     //insert data in resources data
     const q = 'INSERT INTO resources (resource_title, resource_description, resource_published_date, resource_quantity, resource_is_circulation, dept_id, cat_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
@@ -67,6 +67,36 @@ app.post('/save', upload.single('file'), (req, res) => {
 
         // Get the resource_id of the newly inserted row
         const resourceId = results.insertId;
+
+        //insert authors
+        const authorQ = 'INSERT INTO author (author_fname, author_lname) VALUES (?, ?)'
+        const resourceAuthorQ = 'INSERT INTO resourceauthors (resource_id, author_id) VALUES (?, ?)'
+        authors.forEach(element => {
+            const nameParts = element.split(' '); 
+            const fname = nameParts[0]; // First name
+            const lname = nameParts.length > 1 ? nameParts.slice(1).join(' ') : ''; // Last name (handles multiple words)
+
+            const authorValue = [
+                fname,
+                lname
+            ]
+            
+            db.query(authorQ,authorValue,(err,results)=>{
+                if (err) {
+                    return res.status(500).send(err); 
+                }
+
+                //author Id nung author info na kakainsert lang
+                const authorId = results.insertId;
+
+                //if author is inserted, insert sa resourceAuthor table
+                db.query(resourceAuthorQ,[resourceId,authorId],(req,res)=>{
+                    if (err) {
+                        return res.status(500).send(err); 
+                    }
+                })
+            })
+        });
 
         //if resource is inserted in resources table, check mediaType and insert the rest of the data to their corresponding media type.
         // For example, if mediaType is book, the rest of the data will be inserted sa book table and etc
