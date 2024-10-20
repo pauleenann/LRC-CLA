@@ -5,7 +5,7 @@ import PublisherModal from '../PublisherModal/PublisherModal'
 import axios from 'axios'
 import Select from 'react-select'
 
-const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formValidation,error,publishers}) => {
+const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formValidation,error,publishers,authorOptions,handleAddAuthor,selectedOptions,deleteAuthor}) => {
     const [isbn, setIsbn] = useState("");
     const [open, setOpen] = useState(false)
     // dito ko muna isstore ung publisher details then kapag clinick ung save, tsaka lang sya masstore sa bookdata
@@ -75,7 +75,7 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formVal
         <div className="col-6 info-input-box">
             <label htmlFor="">Author/s *</label>
             {/* author box */}
-            <AuthorInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor}/>
+            <AuthorInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} authorOptions={authorOptions} setBookData={setBookData} handleAddAuthor={handleAddAuthor} selectedOptions={selectedOptions} deleteAuthor={deleteAuthor}/>
             <p className="resource-error">{error.authors?error.authors:''}</p>
         </div>
         {/* isbn, publisher, publish date */}

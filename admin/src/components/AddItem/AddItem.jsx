@@ -69,6 +69,16 @@ const AddItem = () => {
         }
     };
 
+    // delete author 
+    const deleteAuthor = (index)=>{
+        //(_,i) is the index of each element in authors
+        //pag true ung condition marereturn sa updatedAuthors
+        setBookData(prevData => ({
+            ...prevData,
+            authors: prevData.authors.filter((_, i) => i !== index)
+          }));
+    }
+
     // Add publisher
     const addPublisher = (publisher) => {
         if (publisher.length !== 1) {
@@ -248,7 +258,7 @@ const AddItem = () => {
     console.log(error);
     console.log(bookData);
     console.log(publishers);
-    console.log(bookData.authors)
+    console.log(typeof bookData.file)
 
     return (
         <div className='add-item-container'>
@@ -279,6 +289,7 @@ const AddItem = () => {
                     formValidation={formValidation}
                     error={error}
                     publishers={publishers}
+                    deleteAuthor={deleteAuthor}
                 />
             </div>
 
