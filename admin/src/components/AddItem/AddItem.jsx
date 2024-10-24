@@ -308,9 +308,9 @@ const AddItem = () => {
 
             <div className='add-item-path-button'>
                 <Link to='/catalog'>
-                    <button className='add-item-back-button'>
+                    <button className='btn add-item-back-button'>
                         <i className="fa-solid fa-arrow-left"></i>
-                        <p>Back</p>
+                        Back
                     </button>
                 </Link>
                 <div className="add-item-path">

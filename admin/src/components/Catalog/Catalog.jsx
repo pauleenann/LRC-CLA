@@ -16,9 +16,9 @@ const Catalog = () => {
   const [openPublisher, setOpenPublisher] = useState(false)
   const [catalog, setCatalog] = useState([])
 
-  // useEffect(()=>{
-  //   getCatalog();
-  // },[])
+  useEffect(()=>{
+    getCatalog();
+  },[])
 
   const getCatalog = async()=>{
     try {
@@ -86,37 +86,58 @@ const Catalog = () => {
         </div>
 
         {/* table */}
-        <table class="table table-striped cat-table">
-          <thead>
-            <tr>
-              <th >ID</th>
-              <th >Title</th>
-              <th >Type</th>
-              <th >Authors</th>
-              <th >Shelf No.</th>
-              <th >Copies</th>
-              <th ></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>@mdo</td>
-              <td>@mdo</td>
-              <td>@mdo</td>
-              <td>
-                <Link to='/view-item/1'>
-                  <button className='btn cat-view'>
-                    <i class="fa-solid fa-bars"></i>
-                    View
-                  </button>
-                </Link>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        
+            <table class=" cat-table">
+              <thead>
+                <tr>
+                  <th >ID</th>
+                  <th >Title</th>
+                  <th >Type</th>
+                  <th >Authors</th>
+                  <th >Shelf No.</th>
+                  <th >Copies</th>
+                  <th ></th>
+                </tr>
+              </thead>
+              <tbody>
+                {catalog.length>0?catalog.map((item,key)=>(
+                <tr key={key}>
+                  <td>{item.resource_id}</td>
+                  <td>{item.resource_title}</td>
+                  <td>{item.type_name}</td>
+                  <td>{item.author_names}</td>
+                  <td>{item.cat_shelf_no}</td>
+                  <td>{item.resource_quantity}</td>
+                  <td>
+                    <Link to='/view-item/1'>
+                      <button className='btn cat-view'>
+                        <i class="fa-solid fa-bars"></i>
+                        View
+                      </button>
+                    </Link>
+                  </td>
+                </tr> )):
+                  <tr>
+                      <td colSpan="7">No record yet</td> {/* Use colspan to fill the empty row */}
+                  </tr>}
+              </tbody>
+            </table>
+            {/* pagination */}
+            <nav aria-label="Page navigation example">
+              <ul class="pagination justify-content-end">
+                <li class="page-item disabled">
+                  <a class="page-link">Previous</a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                  <a class="page-link" href="#">Next</a>
+                </li>
+              </ul>
+            </nav>
+        
+        
 
       <AuthorModal open={openAuthor} close={()=>setOpenAuthor(!openAuthor)}/>
       <PublisherModal open={openPublisher} close={()=>setOpenPublisher(!openPublisher)}/>
