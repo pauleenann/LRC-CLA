@@ -59,33 +59,26 @@
     
 }
 
-.cat-add-item, .cat-scan-item,.cat-add-author,.cat-add-pub{
-    height: 40px;
-    width: 150px;
-    border-radius: 5px;
-    padding: 8px;
+.cat-add-item, .cat-scan-item,.cat-add-author,.cat-add-pub,.cat-search-button,.cat-view{
+   color: var(--white);
+   font-size: 1rem;
     background-color: var(--button);
-    border: none;
-    color: var(--white);
-    gap: 7px;
-    display: flex;
-    font-size: 1rem;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.2s linear;
+    border: var(--button);
 }
 
-.cat-add-item{
-    width: 120px !important;
-}
 
 .cat-scan-item{
     width: 130px !important;
 }
 
-.cat-add-item:hover, .cat-scan-item:hover,.cat-add-author:hover,.cat-add-pub:hover{
-    background-color: var(--button-hover);
-    border-color: var(--button-hover);
+.cat-add-item:hover, .cat-add-item:focus, 
+.cat-add-author:hover,.cat-add-author:focus
+.cat-add-pub:hover, .cat-add-pub:focus,
+.cat-search-button:hover, .cat-search-button:focus,
+.cat-view:hover, .cat-view:focus{
+    background-color: var(--button-hover) !important;
+    border-color: var(--button-hover) !important;
+    color: var(--white) !important;
 }
 
 .search-filter-export{
@@ -94,18 +87,14 @@
 }
 
 .cat-search-bar{
-    height: 40px;
-    padding: 10px;
-    padding-left: 15px;
-    width: 600px;
-    border-radius: 5px;
     border-color: var(--tup-color);
-    font-size: 1rem;
+  
 }
 
 .cat-search-bar:active,.cat-search-bar:focus{
-    border: 3px solid var(--tup-color);
+    border: 1px solid var(--tup-color);
     outline: none;
+    
 }
 
 .search-filter{
@@ -135,101 +124,31 @@
     background-color: var(--button-hover);
 }
 
-.search-filter .form-select, .filter-export .form-select{
-    height: 45px;
-    width: 110px;
-    border-radius: 5px;
-    border-color: var(--button);
-    background-color: var(--white);
-    cursor: pointer;
+.cat-dropdown{
+    border: 1px solid var(--button);
 }
 
-.search-filter .form-select:focus, .filter-export .form-select:focus{
-    border: 3px solid var(--black);
-    box-shadow: none;
-    outline: none;
+.cat-dropdown:hover{
+    background-color: var(--button) !important;
+    border-color: var(--button) !important;
+    color: var(--white) !important;
 }
 
 
-
-.filter-export{
-    display: flex;
-    gap: 10px;
-}
-
-.cat-export-button{
-    height: 45px;
-    width: 110px;
-    padding: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1rem;
-    border-radius: 5px;
-    gap: 10px;
-    background-color: var(--yellow);
-    border: none;
-    cursor: pointer;
-    transition: all 0.1s linear;
-}
-
-
-.cat-export-button:hover{
-    background-color: var(--yellow-hover);
-}
-
-table{
-    border-radius: 5px;
+.cat-table{
+    text-align: center;
+    border-radius: 8px;
     overflow: hidden;
-}
-
-.cat-table-header th{
-    background-color: var(--tup-color) !important;
-    text-align: center;
-    color: var(--white);
-    padding: 12px;
-    border-bottom: none;
-    width: 100px;
-    font-size: 1rem;
-}
-
-.table-striped td{
-    border-bottom: none;
-    width: 100px;
-    vertical-align: middle;
-    font-size: 1rem;
-}
-
-
-.table-striped>tbody>tr:nth-of-type(odd)>* {
-    --bs-table-color-type: var(--bs-table-striped-color);
-    --bs-table-bg-type: var(--white);
-    text-align: center;
-    padding: 1.2rem;
-}
-
-.table-striped>tbody>tr:nth-of-type(even)>* {
-    --bs-table-color-type: var(--bs-table-striped-color);
-    --bs-table-bg-type: var(--light-red);
-    text-align: center;
-    padding: 1.2rem;
-}
-
-
-.cat-view{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: auto;
-    gap: 10px;
-    font-size: 1rem;
-    background-color: transparent;
-    border: none;
-    color: var(--button);
-}
-
-.cat-view p{
-    margin: 0;
-    border-bottom: 1px solid var(--button);
     
+}
+
+.cat-table thead tr th{
+    background-color: var(--button) !important;
+    color: var(--white);
+    font-size: 1rem !important;
+}
+
+.cat-table tbody tr td{
+    vertical-align: middle;
+    font-size: 1rem !important;
 }

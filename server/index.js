@@ -48,7 +48,7 @@ app.post('/save', upload.single('file'), (req, res) => {
     const authors = req.body.authors.split(',')
 
     // //insert data in resources data
-    const q = 'INSERT INTO resources (resource_title, resource_description, resource_published_date, resource_quantity, resource_is_circulation, dept_id, cat_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const q = 'INSERT INTO resources (resource_title, resource_description, resource_published_date, resource_quantity, resource_is_circulation, dept_id, cat_id,type_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
 
     const resources = [
         req.body.title,
@@ -57,7 +57,8 @@ app.post('/save', upload.single('file'), (req, res) => {
         req.body.quantity,
         req.body.isCirculation,
         req.body.department,
-        req.body.course
+        req.body.course,
+        req.body.mediaType
     ];
 
     db.query(q, resources, (err, results) => {
@@ -129,7 +130,7 @@ app.post('/save', upload.single('file'), (req, res) => {
         // For example, if mediaType is book, the rest of the data will be inserted sa book table and etc
 
         // however, before inserting the rest of the data inside the book table, we need to insert the publisher info if the mediaType is book
-        if (mediaType === 'book') {
+        if (mediaType === '1') {
             const checkPubIdQ = "SELECT * FROM publisher WHERE pub_id = ?"
             
             db.query(checkPubIdQ,existingPublisher,(err,results)=>{
@@ -202,7 +203,7 @@ app.post('/save', upload.single('file'), (req, res) => {
                                     if (err) {
                                         return res.status(500).send(err); 
                                     }
-                                    res.send('successful')
+                                    return res.send('successful')
                                 })
                                 
                             })
@@ -225,7 +226,7 @@ app.get('/bookData/:isbn',async (req,res)=>{
     try{
         const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&key=${apikey}`);
         console.log(response.data)
-        res.json(response.data);
+        return res.json(response.data);
         
     }catch(err){
         console.log(err)
@@ -238,8 +239,8 @@ app.get('/departments',(req,res)=>{
     const q = 'SELECT * FROM department'
 
     db.query(q,(err,results)=>{
-        if(err) res.send(err)
-            res.send(results)
+        if(err) return res.send(err)
+           return res.send(results)
     })
 })
 
@@ -248,8 +249,8 @@ app.get('/catalog',(req,res)=>{
     const q = 'SELECT * FROM catalog'
 
     db.query(q,(err,results)=>{
-        if(err) res.send(err)
-            res.send(results)
+        if(err) return res.send(err)
+           return res.send(results)
     })
 })
 
@@ -258,18 +259,18 @@ app.get('/genre',(req,res)=>{
     const q = 'SELECT * FROM genre'
 
     db.query(q,(err,results)=>{
-        if(err) res.send(err)
-            res.send(results)
+        if(err) return res.send(err)
+           return res.send(results)
     })
 })
 
-//retrieve list of genre from database
+// retrieve list of genre from database
 app.get('/publishers',(req,res)=>{
     const q = 'SELECT * FROM publisher'
 
     db.query(q,(err,results)=>{
-        if(err) res.send(err)
-            res.send(results)
+        if(err) return res.send(err)
+           return res.send(results)
     })
 })
 
@@ -278,12 +279,40 @@ app.get('/authors',(req,res)=>{
     const q = 'SELECT * FROM author'
 
     db.query(q,(err,results)=>{
-        if(err) res.send(err)
-            res.send(results)
+        if(err) return res.send(err)
+            return res.send(results)
     })
 })
 
+//retrieve resources  from database
+app.get('/authors',(req,res)=>{
+    const q = 'SELECT * FROM author'
 
+    db.query(q,(err,results)=>{
+        if(err) return res.send(err)
+           return res.send(results)
+    })
+})
+
+//retrieve type  from database
+app.get('/type',(req,res)=>{
+    const q = 'SELECT * FROM resourcetype'
+
+    db.query(q,(err,results)=>{
+        if(err) return res.send(err)
+            return res.send(results)
+    })
+})
+
+// //get catalog details 
+// app.get('/catalogdetails',(req,res)=>{
+//     const q = "SELECT r.resource_id, r.resource_title,  r.resource_quantity, GROUP_CONCAT(CONCAT(a.author_fname, ' ', a.author_lname) SEPARATOR ', ') AS author_names, c.cat_shelf_no, t.type_name FROM resources r JOIN resourceAuthors ra ON r.resource_id = ra.resource_id JOIN author a ON ra.author_id = a.author_id JOIN catalog c ON r.cat_id = c.cat_id JOIN type t ON t.type_id = r.type_id GROUP BY r.resource_id, r.resource_title, r.resource_quantity, c.cat_shelf_no";
+
+//     db.query(q,(err,results)=>{
+//         if(err) res.send(err)
+//             res.send(results)
+//     })
+// })
 
 
 app.listen(3001,()=>{

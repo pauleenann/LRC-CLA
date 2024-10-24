@@ -9,7 +9,7 @@ import Loading from '../Loading/Loading';
 const AddItem = () => {
     const [type, setType] = useState('');
     const [bookData, setBookData] = useState({
-        mediaType: 'book',
+        mediaType: '1',
         authors: [],
         genre: [],
         isCirculation: false,
@@ -20,6 +20,7 @@ const AddItem = () => {
     const [publishers, setPublishers] = useState([]);
     const [authorList, setAuthorList] = useState([]);
     const [loading,setLoading] = useState(false)
+    const [resourceType,setResourceType]=useState([])
     // Reset bookData when mediaType changes
     useEffect(() => {
         if (bookData.mediaType === 'thesis') {
@@ -50,7 +51,8 @@ const AddItem = () => {
     // Fetch publishers when component mounts
     useEffect(() => {
         getPublishers();
-        getAuthors()
+        getAuthors();
+        getType()
     }, []);
 
     // Handle input changes
@@ -284,6 +286,17 @@ const AddItem = () => {
         }
     };
 
+    const getType = async()=>{
+        try {
+            const response = await axios.get('http://localhost:3001/type').then(res=>res.data);
+            console.log(response)
+            setResourceType(response)
+        } catch (err) {
+            console.log(err.message);
+        }
+    };
+    
+
     console.log(error);
     console.log(bookData);
     console.log(publishers);
@@ -320,6 +333,7 @@ const AddItem = () => {
                     publishers={publishers}
                     deleteAuthor={deleteAuthor}
                     authorList={authorList}
+                    resourceType={resourceType}
                 />
             </div>
 
