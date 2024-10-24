@@ -47,7 +47,7 @@ li p{
     position: fixed;
     display: flex;
     flex-direction: column;
-    gap: 50px;
+    gap: 40px;
 }
 
 .navbar-logo-heading{
@@ -56,12 +56,12 @@ li p{
     align-items: center;
     margin-top: 70px;
     color: var(--white);
-    gap: 12px;
+    gap: 10px;
 }
 
 .navbar-logos{
     display: flex;
-    gap: 8px;
+    gap: 5px;
 }
 
 .navbar-logo-heading img{
@@ -85,8 +85,8 @@ li p{
 .navbar-menu .menu{
     display: flex;
     align-items: center;
-    padding: 15px 0 15px 50px;
-    gap: 13px;
+    padding: 5px 0 15px 30px;
+    gap: 15px;
     cursor: pointer;
     color: var(--white);
     font-weight: 700;
@@ -107,5 +107,5 @@ li p{
 
 
 .navbar-menu li img{
-    width: 25px;
+    width: 20px;
 }

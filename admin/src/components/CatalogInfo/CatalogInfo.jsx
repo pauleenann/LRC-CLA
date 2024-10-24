@@ -7,14 +7,13 @@ import JournalInput from '../JournalInput/JournalInput'
 import ThesisInput from '../ThesisInput/ThesisInput'
 import axios from 'axios'
 
-const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,addAdviser,setBookData,handleFileChange,error,formValidation,publishers,authorOptions,handleAddAuthor,selectedOptions,deleteAuthor,authorList}) => {
+const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,addAdviser,setBookData,handleFileChange,error,formValidation,publishers,authorOptions,handleAddAuthor,selectedOptions,deleteAuthor,authorList,resourceType}) => {
     // disabled is passed by the viewItem component. This disables the input fields so users can only access the page in view mode 
     const [preview,setPreview] =useState() //for preview kapag pumili ng photo or may naretrieve na photo
 
     useEffect(()=>{
         getGenre()
     },[])
-    
     // sample data for multi select options
     // should be retrieved sa database
     const [options,setOptions] = useState([])
@@ -78,11 +77,10 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Media Type *</label>
                             <select name="mediaType" id="" className='form-select' disabled={disabled?true:false} onChange={handleChange}>
-                                
-                                <option value="book">Book</option>
-                                <option value="journal" >Journal</option>
-                                <option value="newsletter">Newsletter</option>
-                                <option value="thesis">Thesis</option>
+                                {resourceType.length>0?resourceType.map(item=>(
+                                    <option value={item.type_id}>{item.type_name}</option>
+                                )):''}
+
                             </select>
                            
                         </div>
@@ -111,11 +109,11 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                         </div>
                         {/* input field changes depending on type */}
                         <div className="col-12">
-                            {bookData.mediaType==='journal'||bookData.mediaType==='newsletter'?<JournalInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor}/>:bookData.mediaType==='thesis'?<ThesisInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} addAdviser={addAdviser}/>:<BookInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setBookData={setBookData} formValidation={formValidation} error={error} publishers={publishers} authorOptions={authorOptions} handleAddAuthor={handleAddAuthor}
+                            {bookData.mediaType==='2'||bookData.mediaType==='3'?<JournalInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor}/>:bookData.mediaType==='4'?<ThesisInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} addAdviser={addAdviser}/>:<BookInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setBookData={setBookData} formValidation={formValidation} error={error} publishers={publishers} authorOptions={authorOptions} handleAddAuthor={handleAddAuthor}
                             selectedOptions={selectedOptions} deleteAuthor={deleteAuthor} authorList={authorList}/>}
                         </div>
                         {/* genre */}
-                        {bookData.mediaType==='book'?
+                        {bookData.mediaType==='1'?
                         <div className="col-12 info-input-box mb-3">
                             <label htmlFor="">Genre</label>
                             <Select
