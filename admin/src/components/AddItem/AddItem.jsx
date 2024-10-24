@@ -156,11 +156,11 @@ const AddItem = () => {
         if (!bookData.course) {
             err.course = 'Please select course';
         }
-        if (!bookData.genre || bookData.genre.length === 0) {
-            err.genre = 'Please select genre';
-        }
 
-        if (bookData.mediaType === 'book') {
+        if (bookData.mediaType === '1') {
+            if (!bookData.genre || bookData.genre.length === 0) {
+                err.genre = 'Please select genre';
+            }
             if (!bookData.authors || bookData.authors.length === 0) {
                 err.authors = 'Please specify author/s';
             }
@@ -169,6 +169,19 @@ const AddItem = () => {
             }
             if (bookData.publisher_id === 0 && bookData.publisher === '') {
                 err.publisher = 'Please enter publisher';
+            }
+            if (!bookData.publishedDate) {
+                err.publishedDate = 'Please enter publish date';
+            }
+        }else if(bookData.mediaType==='2'||bookData.mediaType==='3'){
+            if (!bookData.authors || bookData.authors.length === 0) {
+                err.authors = 'Please specify author/s';
+            }
+            if(!bookData.volume){
+                err.volume = 'Please enter volume'
+            }
+            if(!bookData.issue){
+                err.issue = 'Please enter issue'
             }
             if (!bookData.publishedDate) {
                 err.publishedDate = 'Please enter publish date';
@@ -199,6 +212,8 @@ const AddItem = () => {
                         ...prevData,
                         file: blob,
                     }));
+                    
+                    
     
                     // Use a temporary state to wait for the blob to be set
                     //create a new object that includes all properties of bookdata but replaces the file property to blob

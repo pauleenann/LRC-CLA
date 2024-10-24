@@ -44,7 +44,10 @@ app.post('/save', upload.single('file'), (req, res) => {
     const mediaType = req.body.mediaType;
     const filePath = req.file.path; // Get the file path
     const existingPublisher = req.body.publisher_id; //this is not 0 if pinili niya ay existing na publisher
-    const genre = req.body.genre.split(',')
+    if(mediaType==='1'){
+        const genre = req.body.genre.split(',')
+    }
+    
     const authors = req.body.authors.split(',')
 
     // //insert data in resources data
@@ -215,6 +218,41 @@ app.post('/save', upload.single('file'), (req, res) => {
                 }
             })
             
+        }else if(mediaType==='2'|| mediaType==='3'){
+            // Read the file data
+            fs.readFile(filePath, (err, data) => {
+                if (err) {
+                    return res.status(500).send(err); 
+                }
+                //data
+                // ganitong form mo siya isstore sa database
+                //<Buffer ff d8 ff e1 5a 84 45 78 69 66 00 00 49 49 2a 00 08 00 00 00 0c 00 0f 01 02 00 09 00 00 00 9e 00 00 00 10 01 02 00 13 00 00 00 a8 00 00 00 12 01 03 00 ... 2437749 more bytes>
+                
+                // Insert the file data into the database
+                const q = 'INSERT INTO journalnewsletter (jn_volume, jn_issue, jn_cover, resource_id) VALUES (?, ?, ?, ?)';
+                const jn = [
+                    req.body.volume,
+                    req.body.issue,
+                    data,
+                    resourceId
+                ];
+
+                db.query(q, jn, (err, result) => {
+                    if (err) {
+                        return res.status(500).send(err); 
+                    }
+
+                    // Optionally, delete the file from disk after saving it to the database
+                    // fs.unlink() method is used to delete files in Node.js
+                    // filePath - a string, Buffer or URL that, represents the file or symbolic link that has to be removed.
+                    fs.unlink(filePath, (unlinkErr) => {
+                        if (unlinkErr) console.error('Error deleting file:', unlinkErr);
+                    });
+
+                    // Successfully inserted image, send response
+                    return res.send('Successful');
+                });
+            });
         }
     });
 });
