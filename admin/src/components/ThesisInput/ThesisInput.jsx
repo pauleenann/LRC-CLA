@@ -3,7 +3,7 @@ import './ThesisInput.css'
 import AuthorInput from '../AuthorInput/AuthorInput'
 import AdviserModal from '../AdviserModal/AdviserModal'
 
-const ThesisInput = ({disabled,handleChange,bookData,addAuthor,addAdviser}) => {
+const ThesisInput = ({disabled,handleChange,bookData,addAuthor,addAdviser,authorOptions,setBookData,handleAddAuthor,selectedOptions,deleteAuthor,authorList}) => {
     const [open,setOpen] = useState(false)
     
   return (
@@ -12,7 +12,7 @@ const ThesisInput = ({disabled,handleChange,bookData,addAuthor,addAdviser}) => {
         <div className="col-6 info-input-box">
             <label htmlFor="">Author/s *</label>
             {/* author box */}
-            <AuthorInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor}/>
+            <AuthorInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} authorOptions={authorOptions} setBookData={setBookData} handleAddAuthor={handleAddAuthor} selectedOptions={selectedOptions} deleteAuthor={deleteAuthor} authorList={authorList}/>
         </div>
         {/* thesis adviser*/}
         <div className="col-6 info-input-box">

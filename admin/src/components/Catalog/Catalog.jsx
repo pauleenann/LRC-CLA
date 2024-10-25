@@ -15,21 +15,22 @@ const Catalog = () => {
   const [openAuthor, setOpenAuthor] = useState(false)
   const [openPublisher, setOpenPublisher] = useState(false)
   const [catalog, setCatalog] = useState([])
+  const [pagination,setPagination] = useState(0)
 
   useEffect(()=>{
     getCatalog();
-  },[])
+  },[pagination])
 
   const getCatalog = async()=>{
     try {
-      const response = await axios.get('http://localhost:3001/catalogdetails').then(res=>res.data);
+      const response = await axios.get(`http://localhost:3001/catalogdetails/${pagination}`).then(res=>res.data);
+  
      
       setCatalog(response)
     } catch (err) {
         console.log(err.message);
     }
   }
-  console.log(catalog)
 
   return (
     <div className='cat-container'>
@@ -100,7 +101,7 @@ const Catalog = () => {
                 </tr>
               </thead>
               <tbody>
-                {catalog.length>0?catalog.map((item,key)=>(
+                {typeof catalog!=='string'?catalog.map((item,key)=>(
                 <tr key={key}>
                   <td>{item.resource_id}</td>
                   <td>{item.resource_title}</td>
@@ -109,7 +110,7 @@ const Catalog = () => {
                   <td>{item.cat_shelf_no}</td>
                   <td>{item.resource_quantity}</td>
                   <td>
-                    <Link to='/view-item/1'>
+                    <Link to={`/view-item/${item.resource_id}`}>
                       <button className='btn cat-view'>
                         <i class="fa-solid fa-bars"></i>
                         View
@@ -118,23 +119,21 @@ const Catalog = () => {
                   </td>
                 </tr> )):
                   <tr>
-                      <td colSpan="7">No record yet</td> {/* Use colspan to fill the empty row */}
+                      <td colSpan="7">No records available</td> {/* Use colspan to fill the empty row */}
                   </tr>}
               </tbody>
             </table>
             {/* pagination */}
             <nav aria-label="Page navigation example">
-              <ul class="pagination justify-content-end">
-                <li class="page-item disabled">
-                  <a class="page-link">Previous</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                  <a class="page-link" href="#">Next</a>
-                </li>
-              </ul>
+              <div class="pagination justify-content-end">
+                <button className={pagination===0?'btn disabled':'btn enabled'} onClick={()=>{
+                  pagination!=0?setPagination(pagination-5):setPagination(0)}} disabled={pagination===0}>
+                  Previous
+                </button>
+                <button className={Object.keys(catalog).length!=5?'btn disabled':'btn enabled'} onClick={()=>setPagination(pagination+5)} disabled={Object.keys(catalog).length!=5}>
+                  Next
+                </button>
+              </div>
             </nav>
         
         

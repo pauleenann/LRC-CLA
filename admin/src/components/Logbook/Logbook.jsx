@@ -13,18 +13,14 @@ const Logbook = () => {
         {/* search bar and export button */}
         <div className="search-export">
             {/* search bar */}
-            <div className="logbook-search">
-                <input type="text" className='logbook-search-bar' placeholder='Enter Student ID or Student Name'/>
-                <button className="logbook-search-button">
-                    <img src={search} alt="" />
-                    Search
-                </button>
-
-            </div>
-
+            <form class="d-flex " role="search">
+                  <input class="form-control me-2 log-search-bar" type="search" placeholder="Enter Student ID or Student Name" aria-label="Search"/>
+                  <button class="btn log-search-button" ><img src={search} alt="" />
+                  Search</button>
+            </form>
             {/* export button */}
-            <button className='logbook-export-button'>
-                <img src={exportIcon}alt="" />
+            <button className='btn logbook-export-button'>
+                <img src={exportIcon} alt="" />
                 Export
             </button>
         </div>
@@ -34,11 +30,16 @@ const Logbook = () => {
             {/* logbook entries per page */}
             <div className="logbook-entries-page">
                 <label htmlFor="entries">Entries per page</label>
-                <select name="" id="entries"className='logbook-entries-dropdown'>
-                    <option value="">1</option>
-                    <option value="">2</option>
-                    <option value="">3</option>
-                </select>
+                <div class="dropdown">
+                  <button class="btn log-dropdown dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    1
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                  </ul>
+                </div>
             </div>
 
             {/* date filter */}

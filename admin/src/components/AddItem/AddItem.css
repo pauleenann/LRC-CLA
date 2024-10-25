@@ -56,18 +56,17 @@
 }
 
 .add-item-back-button{
-    border-color: var(--button);
-    border-radius: 20px;
+    border-color: var(--tup-color);
 }
 
 .add-item-back-button:hover{
-    background-color: var(--button);
+    background-color: var(--tup-color);
     color: var(--white);
 
 }
 
 .add-item-path span{
-    color: var(--button);
+    color: var(--tup-color);
     font-weight: 700;
 }
 
@@ -86,19 +85,19 @@
 
 .add-item-cancel{
     background-color: transparent;
-    border: 1px solid var(--button);
+    border: 1px solid var(--tup-color);
     transition: all 0.2s linear;
 }
 
 .add-item-cancel:hover{
-    background-color: var(--button);
-    border-color: var(--button);
+    background-color: var(--tup-color);
+    border-color: var(--tup-color);
     color: var(--white);
 }
 
 .add-item-save{
-    background-color: var(--button);
-    border: 1px solid var(--button);
+    background-color: var(--tup-color);
+    border: 1px solid var(--tup-color);
     color: var(--white);
     display: flex;
     justify-content: center;

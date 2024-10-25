@@ -12,8 +12,6 @@
     text-decoration: none;
 }
 
-
-
 :root{
     --black:#1F1F1F;
     --tup-color: #94152B;
@@ -53,19 +51,8 @@
     align-items: center;
 }
 
-.logbook-search-bar{
-    height: 40px;
-    padding: 10px;
-    padding-left: 15px;
-    width: 600px;
-    border-radius: 5px;
-    border-color: var(--tup-color);
-    font-size: 1rem;
-}
-
-.logbook-search-bar:active,.logbook-search-bar:focus{
-    border: 3px solid var(--tup-color);
-    outline: none;
+.log-search-bar{
+    width: 400px;
 }
 
 .logbook-search{
@@ -74,46 +61,40 @@
     gap: 15px;
 }
 
-.logbook-search-button{
-    height: 40px;
-    border: none;
+.log-search-button{
     background-color: var(--button);
     color: var(--white);
-    padding: 8px;
-    width: 110px;
-    font-size: 1rem;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.1s linear;
 }
 
-.logbook-search-button:hover{
-    background-color: var(--button-hover);
+.log-search-button:hover,.log-search-button:focus{
+    border-color: var(--button) !important;
+    background-color: var(--button-hover) !important;
+    color: var(--white) !important;
+}
+
+.log-search-button img{
+    width: 14px;
+    position: relative;
+    top: -1.5px;
+    margin-right: 6px;
+   
 }
 
 .logbook-export-button{
-    height: 40px;
-    width: 110px;
-    padding: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1rem;
-    border-radius: 5px;
-    gap: 10px;
     background-color: var(--yellow);
-    border: none;
-    cursor: pointer;
-    transition: all 0.1s linear;
 }
 
+.logbook-export-button img{
+    width: 20px;
+    position: relative;
+    top: -1.5px;
+    margin-right: 6px;
+}
 
-.logbook-export-button:hover{
-    background-color: var(--yellow-hover);
+.logbook-export-button:hover,.logbook-export-button:focus{
+    background-color: var(--yellow-hover) !important;
+    border-color: var(--yellow-hover) !important;
+    color: var(--black) !important;
 }
 
 .logbook-filters{
@@ -134,12 +115,14 @@
     gap: 15px;
 }
 
-.logbook-entries-dropdown{
-    padding: 5px;
-    height: 30px;
-    width: 50px;
-    border-color: var(--tup-color);
-    border-radius: 5px;
+.log-dropdown{
+    border-color: var(--button);
+}
+
+.log-dropdown:hover,.log-dropdown:focus{
+    border-color: var(--button) !important;
+    background-color: var(--button) !important;
+    color: var(--white) !important;
 }
 
 .logbook-filter-date{

@@ -47,7 +47,7 @@ li p{
     position: fixed;
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 50px;
 }
 
 .navbar-logo-heading{
@@ -70,7 +70,7 @@ li p{
 
 .navbar-heading{
     text-align: center;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .navbar-heading-text{
@@ -89,7 +89,7 @@ li p{
     gap: 15px;
     cursor: pointer;
     color: var(--white);
-    font-weight: 700;
+    /* font-weight: 700; */
     font-size: 1.1rem;
     transition:all 0.2s linear;
 }
