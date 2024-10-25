@@ -3,7 +3,7 @@ import './ThesisInput.css'
 import AuthorInput from '../AuthorInput/AuthorInput'
 import AdviserModal from '../AdviserModal/AdviserModal'
 
-const ThesisInput = ({disabled,handleChange,bookData,addAuthor,addAdviser,authorOptions,setBookData,handleAddAuthor,selectedOptions,deleteAuthor,authorList}) => {
+const ThesisInput = ({disabled,handleChange,bookData,addAuthor,addAdviser,authorOptions,setBookData,handleAddAuthor,selectedOptions,deleteAuthor,authorList,adviserList,deleteAdviser}) => {
     const [open,setOpen] = useState(false)
     
   return (
@@ -23,8 +23,8 @@ const ThesisInput = ({disabled,handleChange,bookData,addAuthor,addAdviser,author
                     {/* adviser name */}
                         <div className="adviser">
                             {bookData.advisers?bookData.advisers.map((item,key)=>{
-                                console.log(item)
-                                return <span>{item}</span>
+                                console.log(key)
+                                return <span>{item} <button className='delete-adviser' onClick={()=>deleteAdviser(key)}>x</button></span>
                             }):''}
                             <button>
                                 <i class="fa-solid fa-xmark"></i>
@@ -44,7 +44,7 @@ const ThesisInput = ({disabled,handleChange,bookData,addAuthor,addAdviser,author
             <label htmlFor="">Publish Date *</label>
             <input type="text" name="publishedDate" id="" placeholder='Select date' disabled={disabled?true:false} value={bookData.publishedDate?bookData.publishedDate:''} onChange={handleChange}/>
         </div>
-        <AdviserModal open={open} close={()=>setOpen(!open) } addAdviser={addAdviser} handleChange={handleChange} bookData={bookData}/>
+        <AdviserModal open={open} close={()=>setOpen(!open) } addAdviser={addAdviser} handleChange={handleChange} bookData={bookData} adviserList={adviserList}/>
     </div>
   )
 }

@@ -3,7 +3,7 @@ import ReactDom from 'react-dom'
 import './AdviserModal.css'
 import Select from 'react-select'
 
-const AdviserModal = ({open,close,handleChange,bookData,addAdviser}) => {
+const AdviserModal = ({open,close,handleChange,bookData,addAdviser,adviserList}) => {
 
     // usestates for manual input
     const [fname,setFname] = useState('')
@@ -26,18 +26,14 @@ const AdviserModal = ({open,close,handleChange,bookData,addAdviser}) => {
         setSelectedAdviser('')
     },[bookData])
 
-    // sample data for multi select options
-    // should be retrieved sa database
-    const options = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
-    ]
-
     // handles ung selected adviser sa dropdown
     //value ng item ay like this->{ value: 'chocolate', label: 'Chocolate' },
     const handleAdviser = (item)=>{
-        setSelectedAdviser(item.value)
+        if(item){
+            setSelectedAdviser(item.value)
+       }else{
+           setSelectedAdviser('')
+       }
     }
 
     if(!open){
@@ -64,7 +60,7 @@ const AdviserModal = ({open,close,handleChange,bookData,addAdviser}) => {
                 <div className="col-12 adviser-search">
                     <label htmlFor="">Search adviser's name</label>
                     <Select 
-                    options={options}
+                    options={adviserList}
                     placeholder="Search adviser's name"
                     classNamePrefix="select"
                     isClearable
@@ -94,13 +90,13 @@ const AdviserModal = ({open,close,handleChange,bookData,addAdviser}) => {
                         // if hindi ' ' ung author, hindi siya masasama sa authors na array
                         if(adviser){
                             addAdviser(adviser)
+                            close()
                         }
                         if(selectedAdviser){
-                            addAdviser(selectedAdviser)
+                            if(addAdviser(selectedAdviser)){
+                                 close()
+                            }
                         }
-
-                        
-                        close()
                         }} disabled={adviser.length==0&&selectedAdviser.length==0?true:false}>
                         Save
                     </button>

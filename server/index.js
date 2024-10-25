@@ -336,6 +336,16 @@ app.get('/authors',(req,res)=>{
     })
 })
 
+//retrieve advisers  from database
+app.get('/advisers',(req,res)=>{
+    const q = 'SELECT * FROM adviser'
+
+    db.query(q,(err,results)=>{
+        if(err) return res.send(err)
+           return res.send(results)
+    })
+})
+
 //retrieve type  from database
 app.get('/type',(req,res)=>{
     const q = 'SELECT * FROM resourcetype'

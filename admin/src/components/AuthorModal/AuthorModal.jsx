@@ -94,6 +94,7 @@ const AuthorModal = ({open,close,handleChange,bookData,addAuthor,authorList}) =>
                         // if hindi ' ' ung author, hindi siya masasama sa authors na array
                         if(author){
                             addAuthor(author)
+                            close()
                         }
                         if(selectedAuthor){
                             if(addAuthor(selectedAuthor)){
