@@ -18,19 +18,23 @@ const AddItem = () => {
     });
     const [error, setError] = useState({});
     const [publishers, setPublishers] = useState([]);
+    // authorlist and adviserlist are for the <Select>. These are the options to be displayed
     const [authorList, setAuthorList] = useState([]);
+    const [adviserList, setAdviserList] = useState([]);
+    // for loading modal
     const [loading,setLoading] = useState(false)
+
     const [resourceType,setResourceType]=useState([])
     // Reset bookData when mediaType changes
     useEffect(() => {
-        if (bookData.mediaType === 'thesis') {
+        if (bookData.mediaType==4) {
             setBookData({
                 mediaType: bookData.mediaType, // keep the changed mediaType
                 authors: [],
                 advisers: [],
                 isCirculation: false,
             });
-        } else if (bookData.mediaType === 'book') {
+        } else if (bookData.mediaType== 1) {
             setBookData({
                 mediaType: bookData.mediaType, // keep the changed mediaType
                 authors: [],
@@ -53,6 +57,7 @@ const AddItem = () => {
         getPublishers();
         getAuthors();
         getType()
+        getAdvisers()
     }, []);
 
     // Handle input changes
@@ -90,6 +95,16 @@ const AddItem = () => {
           }));
     }
 
+    // delete adviser 
+    const deleteAdviser = (index)=>{
+        //(_,i) is the index of each element in authors
+        //pag true ung condition marereturn sa updated adviserd
+        setBookData(prevData => ({
+            ...prevData,
+            advisers: prevData.advisers.filter((_, i) => i !== index)
+          }));
+    }
+
     // Add publisher
     const addPublisher = (publisher) => {
         if (publisher.length !== 1) {
@@ -105,12 +120,18 @@ const AddItem = () => {
     // Add adviser
     const addAdviser = (adviser) => {
         if (adviser.length !== 1) {
-            setBookData((prevData) => ({
-                ...prevData,
-                advisers: [...prevData.advisers, adviser]
-            }));
+            //check if nandon na ung author
+            if(!bookData.advisers.includes(adviser)){
+                 setBookData((prevData) => ({
+                    ...prevData,
+                    advisers: [...prevData.advisers, adviser]
+                }));
+                return true
+            }else{
+                console.log('you inserted it already!')
+            }
         } else {
-            console.log('Please enter valid adviser data');
+            console.log('Please enter valid author data');
         }
     };
 
@@ -286,21 +307,39 @@ const AddItem = () => {
 
     // Fetch publishers from the backend
     const getAuthors = async () => {
-        const pubs = [];
+        const auth = [];
         try {
             const response = await axios.get('http://localhost:3001/authors');
             response.data.forEach(item => {
-                pubs.push({
+                auth.push({
                     value: `${item.author_fname} ${item.author_lname}`,
                     label: `${item.author_fname} ${item.author_lname}`
                 });
             });
-            setAuthorList(pubs);
+            setAuthorList(auth);
         } catch (err) {
             console.log(err.message);
         }
     };
 
+    //Fetch advisers
+    const getAdvisers = async () => {
+        const adv = [];
+        try {
+            const response = await axios.get('http://localhost:3001/advisers');
+            response.data.forEach(item => {
+                adv.push({
+                    value: `${item.adviser_fname} ${item.adviser_lname}`,
+                    label: `${item.adviser_fname} ${item.adviser_lname}`
+                });
+            });
+            setAdviserList(adv);
+        } catch (err) {
+            console.log(err.message);
+        }
+    };
+
+    // fetch resourceType ( book, journal, newsletter, thesis)
     const getType = async()=>{
         try {
             const response = await axios.get('http://localhost:3001/type').then(res=>res.data);
@@ -349,6 +388,8 @@ const AddItem = () => {
                     deleteAuthor={deleteAuthor}
                     authorList={authorList}
                     resourceType={resourceType}
+                    adviserList={adviserList}
+                    deleteAdviser={deleteAdviser}
                 />
             </div>
 
