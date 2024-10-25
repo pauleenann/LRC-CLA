@@ -36,14 +36,14 @@
 }
 
 .cat-info{
-    background-color: var(--catalog-info-bg);
+    background-color: var(--light-gray);
     border-radius: 15px;
     overflow: hidden;
     height: auto;
 }
 
 .cat-info-header{
-    background-color: var(--button);
+    background-color: var(--tup-color);
     padding: 20px;
     text-align: center;
     color: var(--white);
@@ -66,7 +66,7 @@
     width: 100%;
     padding: 0 10px;
     border-radius: 5px;
-    border-color: var(--button);
+    border-color: var(--tup-color);
     background-color: var(--white);
 }
 
@@ -92,7 +92,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--button);
+    border: 1px solid var(--tup-color);
     border-radius: 5px;
 }
 
@@ -105,8 +105,8 @@
 }
 
 .cover-upload-box label:hover{
-    color: var(--button);
-    border-color: var(--button);
+    color: var(--tup-color);
+    border-color: var(--tup-color);
 }
 
 .cover-upload{
@@ -118,14 +118,14 @@
     width: 100%;
     padding: 10px;
     border-radius: 5px;
-    border-color: var(--button);
+    border-color: var(--tup-color);
     background-color: var(--white);
     
 }
 
 .edit-cover{
     font-size: 12px;
-    color: var(--button);
+    color: var(--tup-color);
     font-weight: bold;
     cursor: pointer;
 }
@@ -142,12 +142,12 @@
 .add-publisher-button{
     background-color: transparent;
     border: none;
-    color: var(--button);
+    color: var(--tup-color);
     font-weight: 700;
 }
 
 .select__control {
-   border: 1px solid var(--button) !important;
+   border: 1px solid var(--tup-color) !important;
    border-radius: 5px !important;
    cursor: pointer !important;
 }
@@ -188,17 +188,17 @@
 }
 
 .select__indicator-separator{
-    background-color: var(--button) !important;
+    background-color: var(--tup-color) !important;
 }
 
 .select__indicator svg{
-    color: var(--button);
+    color: var(--tup-color);
     cursor: pointer;
 }
 
 .resource-error{
     margin: 0;
-    color: var(--button);
+    color: var(--tup-color);
     font-style: italic;
     font-size: 12px;
 }

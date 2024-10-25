@@ -34,14 +34,14 @@
 }
 
 .cataloging-box{
-    background-color: var(--catalog-info-bg);
+    background-color: var(--light-gray);
     border-radius: 15px;
     overflow: hidden;
     height: auto;
 }
 
 .cataloging-info-header{
-    background-color: var(--button);
+    background-color: var(--tup-color);
     padding: 20px;
     text-align: center;
     color: var(--white);
@@ -73,7 +73,7 @@
     width: 100%;
     padding: 0 10px;
     border-radius: 5px;
-    border-color: var(--button);
+    border-color: var(--tup-color);
     background-color: var(--white);
 }
 
@@ -105,7 +105,7 @@
 }
 
 .form-check-input:checked{
-    background-color: var(--button);
+    background-color: var(--tup-color);
     
 }
 
@@ -124,7 +124,7 @@
 
 .resource-error{
     margin: 0;
-    color: var(--button);
+    color: var(--tup-color);
     font-style: italic;
     font-size: 12px;
 }

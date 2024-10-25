@@ -46,6 +46,8 @@ app.post('/save', upload.single('file'), (req, res) => {
     const existingPublisher = req.body.publisher_id; //this is not 0 if pinili niya ay existing na publisher
     if(mediaType==='1'){
         const genre = req.body.genre.split(',')
+    }else if(mediaType==='4'){
+        const adviser = req.body.advisers.split(',')
     }
     
     const authors = req.body.authors.split(',')
@@ -253,6 +255,8 @@ app.post('/save', upload.single('file'), (req, res) => {
                     return res.send('Successful');
                 });
             });
+        }else{
+
         }
     });
 });
@@ -343,12 +347,20 @@ app.get('/type',(req,res)=>{
 })
 
 //get catalog details 
-app.get('/catalogdetails',(req,res)=>{
-    const q = "SELECT r.resource_id, r.resource_title, r.resource_quantity,rt.type_name,GROUP_CONCAT(CONCAT(a.author_fname, ' ', a.author_lname) SEPARATOR ', ') AS author_names, c.cat_shelf_no FROM resources r JOIN resourceAuthors ra ON r.resource_id = ra.resource_id JOIN author a ON ra.author_id = a.author_id JOIN catalog c ON r.cat_id = c.cat_id JOIN resourcetype rt on rt.type_id = r.type_id GROUP BY r.resource_id, r.resource_title, r.resource_quantity, c.cat_shelf_no,rt.type_name LIMIT 5 OFFSET 0";
+app.get('/catalogdetails/:pagination',(req,res)=>{
+    const page = parseInt(req.params.pagination,10
+    )
 
-    db.query(q,(err,results)=>{
-        if(err) res.send(err)
-            res.send(results)
+    const q = "SELECT r.resource_id, r.resource_title, r.resource_quantity,rt.type_name,GROUP_CONCAT(CONCAT(a.author_fname, ' ', a.author_lname) SEPARATOR ', ') AS author_names, c.cat_shelf_no FROM resources r JOIN resourceAuthors ra ON r.resource_id = ra.resource_id JOIN author a ON ra.author_id = a.author_id JOIN catalog c ON r.cat_id = c.cat_id JOIN resourcetype rt on rt.type_id = r.type_id GROUP BY r.resource_id, r.resource_title, r.resource_quantity, c.cat_shelf_no,rt.type_name LIMIT 5 OFFSET ?";
+
+    db.query(q,page,(err,results)=>{
+        if(err) return res.send(err)
+        if(results.length>0){
+            return res.send(results)
+        }else{
+            return res.send('No more records')
+        }
+            
     })
 })
 

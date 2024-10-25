@@ -71,7 +71,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
 
             <div className="row catalog-inputs">
                 {/* first column - media-genre*/}
-                <div className="col-9 ">
+                <div className={bookData.mediaType!=='4'?'col-9':'col-12'}>
                     <div className="row">
                         {/* media type */}
                         <div className="col-4 info-input-box">
@@ -110,7 +110,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                         {/* input field changes depending on type */}
                         <div className="col-12">
                             {bookData.mediaType==='2'||bookData.mediaType==='3'?<JournalInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setBookData={setBookData} formValidation={formValidation} error={error} publishers={publishers} authorOptions={authorOptions} handleAddAuthor={handleAddAuthor}
-                            selectedOptions={selectedOptions} deleteAuthor={deleteAuthor} authorList={authorList}/>:bookData.mediaType==='4'?<ThesisInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} addAdviser={addAdviser}/>:<BookInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setBookData={setBookData} formValidation={formValidation} error={error} publishers={publishers} authorOptions={authorOptions} handleAddAuthor={handleAddAuthor}
+                            selectedOptions={selectedOptions} deleteAuthor={deleteAuthor} authorList={authorList}/>:bookData.mediaType==='4'?<ThesisInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} authorOptions={authorOptions} setBookData={setBookData} handleAddAuthor={handleAddAuthor} selectedOptions={selectedOptions} deleteAuthor={deleteAuthor} authorList={authorList} addAdviser={addAdviser}/>:<BookInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setBookData={setBookData} formValidation={formValidation} error={error} publishers={publishers} authorOptions={authorOptions} handleAddAuthor={handleAddAuthor}
                             selectedOptions={selectedOptions} deleteAuthor={deleteAuthor} authorList={authorList}/>}
                         </div>
                         {/* genre */}
@@ -137,7 +137,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                 </div>
 
                 {/* for cover */}
-                {bookData.mediaType!=='thesis'?<div className="col-3">
+                {bookData.mediaType!=='4'?<div className="col-3">
                     {/* cover */}
                     <div className="col-12 info-input-box mb-3">
                         <label htmlFor="">Cover</label>
