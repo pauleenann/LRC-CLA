@@ -33,29 +33,22 @@ const AddItem = () => {
     //console.log(resourceId)
 
     useEffect(() => {
-        // if (bookData.mediaType==4) {
-        //     setBookData({
-        //         mediaType: bookData.mediaType, // keep the changed mediaType
-        //         authors: [],
-        //         advisers: [],
-        //         isCirculation: false,
-        //     });
-        // } else if (bookData.mediaType== 1) {
-        //     setBookData({
-        //         mediaType: bookData.mediaType, // keep the changed mediaType
-        //         authors: [],
-        //         genre: [],
-        //         isCirculation: false,
-        //         publisher_id: 0,
-        //         publisher: ''
-        //     });
-        // } else {
-        //     setBookData({
-        //         mediaType: bookData.mediaType, // keep the changed mediaType
-        //         authors: [],
-        //         isCirculation: false,
-        //     });
-        // }
+        if (bookData.mediaType== 1) {
+            setBookData({
+                mediaType: bookData.mediaType, // keep the changed mediaType
+                authors: [],
+                genre: [],
+                isCirculation: false,
+                publisher_id: 0,
+                publisher: ''
+            });
+        } else {
+            setBookData({
+                mediaType: bookData.mediaType, // keep the changed mediaType
+                authors: [],
+                isCirculation: false,
+            });
+        }
     }, [bookData.mediaType]);
 
     // Fetch publishers when component mounts
@@ -189,9 +182,6 @@ const AddItem = () => {
         if (!bookData.title || bookData.title.length === 0) {
             err.title = 'Please enter title';
         }
-        if (!bookData.file) {
-            err.file = 'Please select cover';
-        }
         if (!bookData.description) {
             err.description = 'Please enter description';
         }
@@ -203,6 +193,9 @@ const AddItem = () => {
         }
 
         if (bookData.mediaType === '1') {
+            if (!bookData.file) {
+                err.file = 'Please select cover';
+            }
             if (!bookData.genre || bookData.genre.length === 0) {
                 err.genre = 'Please select genre';
             }
@@ -219,6 +212,9 @@ const AddItem = () => {
                 err.publishedDate = 'Please enter publish date';
             }
         }else if(bookData.mediaType==='2'||bookData.mediaType==='3'){
+            if (!bookData.file) {
+                err.file = 'Please select cover';
+            }
             if (!bookData.authors || bookData.authors.length === 0) {
                 err.authors = 'Please specify author/s';
             }
@@ -231,7 +227,7 @@ const AddItem = () => {
             if (!bookData.publishedDate) {
                 err.publishedDate = 'Please enter publish date';
             }
-        }else{
+        }else if(bookData.mediaType==='4'){
             if (!bookData.authors || bookData.authors.length === 0) {
                 err.authors = 'Please specify author/s';
             }
