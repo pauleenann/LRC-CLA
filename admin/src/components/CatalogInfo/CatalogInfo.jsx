@@ -19,30 +19,30 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
     const [options,setOptions] = useState([])
 
     //for displaying preview photo
-    // useEffect(()=>{
-    //     if(!bookData.file){
-    //       setPreview(undefined)
-    //       return
-    //     }
+    useEffect(()=>{
+        if(!bookData.file){
+          setPreview(undefined)
+          return
+        }
     
-    //     let objectUrl;
+        let objectUrl;
     
-    //     if (typeof bookData.file === 'string') {
-    //       // If data.file is a URL (string), set it directly as the preview
-    //       setPreview(bookData.file);
-    //     } else {
-    //         // If data.file is a File object, create an Object URL for it
-    //         objectUrl = URL.createObjectURL(bookData.file);
-    //         setPreview(objectUrl);
-    //     }
+        if (typeof bookData.file === 'string') {
+          // If data.file is a URL (string), set it directly as the preview
+          setPreview(bookData.file);
+        } else {
+            // If data.file is a File object, create an Object URL for it
+            objectUrl = URL.createObjectURL(bookData.file);
+            setPreview(objectUrl);
+        }
     
-    //      // Cleanup function to revoke the Object URL
-    //      return () => {
-    //       if (objectUrl) {
-    //           URL.revokeObjectURL(objectUrl);
-    //       }
-    //       };
-    //   },[bookData.file])
+         // Cleanup function to revoke the Object URL
+         return () => {
+          if (objectUrl) {
+              URL.revokeObjectURL(objectUrl);
+          }
+          };
+      },[bookData.file])
 
     //   get genre
       const getGenre = async()=>{

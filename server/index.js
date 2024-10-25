@@ -42,14 +42,28 @@ const upload = multer({ storage });
 
 app.post('/save', upload.single('file'), (req, res) => {
     const mediaType = req.body.mediaType;
-    const filePath = req.file.path; // Get the file path
-    const existingPublisher = req.body.publisher_id; //this is not 0 if pinili niya ay existing na publisher
+    let adviserFname;
+    let adviserLname;
+    let genre;
+    let existingPublisher;
+    let filePath;
+    
+    if(req.file){
+       filePath = req.file.path; // Get the file path 
+    }
+
     if(mediaType==='1'){
-        const genre = req.body.genre.split(',')
+        genre = req.body.genre.split(',')
+        existingPublisher = req.body.publisher_id; //this is not 0 if pinili niya ay existing na publisher
     }else if(mediaType==='4'){
-        const adviser = req.body.advisers.split(',')
+        // split string
+        //if req.body.adviser is 'name lastname'. pag ginamitan ng split(' ') it will be ['name','lastname']
+        const adviser = req.body.adviser.split(' ')
+        adviserFname = adviser[0];
+        adviserLname = adviser[1];
     }
     
+   
     const authors = req.body.authors.split(',')
 
     // //insert data in resources data
@@ -257,62 +271,45 @@ app.post('/save', upload.single('file'), (req, res) => {
             });
         }else{
             //if thesis, after inserting data to authors, resourceauthors, and resources, check if adviser exists. If existing, insert directly to thesis table. if not, insert advisers first then insert to thesis table
-          
-            const adviserQ = 'INSERT INTO adviser (adviser_fname, adviser_lname) VALUES (?, ?)'
-            const resourceAuthorQ = 'INSERT INTO resourceauthors (resource_id, author_id) VALUES (?, ?)'
-            const checkIfAuthorExist ='SELECT author_id FROM author WHERE author_fname = ? AND author_lname = ?'
-            authors.forEach(element => {
-                const nameParts = element.split(' '); 
-                const fname = nameParts[0]; // First name
-                const lname = nameParts.length > 1 ? nameParts.slice(1).join(' ') : ''; // Last name (handles multiple words)
 
-                const authorValue = [
-                    fname,
-                    lname
-                ]
+            const checkIfAdviserExist = "SELECT * FROM adviser WHERE adviser_fname = ? AND adviser_lname = ?"
+            const thesisQ = "INSERT INTO thesis (resource_id, adviser_id) VALUES (?,?)"
+            const insertAdviser = "INSERT INTO adviser (adviser_fname, adviser_lname) VALUES (?,?)"
 
-                // check if author already exist
-                db.query(checkIfAuthorExist,[fname,lname], (err,results)=>{
-                    if (err) {
-                        return res.status(500).send(err); 
-                    }
-                    
-                    //pag walang nahanap
-                    if(results.length===0){
-                        db.query(authorQ,authorValue,(err,results)=>{
+            db.query(checkIfAdviserExist,[adviserFname,adviserLname],(err,results)=>{
+                if (err) {
+                    return res.status(500).send(err); 
+                }
+
+                
+                //if exist, insert to thesis table
+                if(results.length>0){
+                    db.query(thesisQ,[resourceId,results[0].adviser_id],(err,results)=>{
+                        if (err) {
+                            return res.status(500).send(err); 
+                        }
+                        return res.send('successful')
+                    })
+                }else{
+                    //if adviser does not exist, insert it to adviser table
+                    db.query(insertAdviser,[adviserFname,adviserLname],(err,results)=>{
+                        if (err) {
+                            return res.status(500).send(err); 
+                        }
+                        
+                        //if inserted to adviser, insert to thesis table
+                        const adviserId = results.insertId
+                        db.query(thesisQ,[resourceId,adviserId],(err,results)=>{
                             if (err) {
                                 return res.status(500).send(err); 
                             }
-            
-                            //author Id nung author info na kakainsert lang
-                            const authorId = results.insertId;
-            
-                            //if author is inserted, insert sa resourceAuthor table
-                            db.query(resourceAuthorQ,[resourceId,authorId],(req,res)=>{
-                                if (err) {
-                                    return res.status(500).send(err); 
-                                }
-                            })
+                            return res.send('successful')
                         })
-                    }else{
-                        //if author is inserted, insert sa resourceAuthor table
-                        //results look like this: 
-                        // [
-                        //     {
-                        //         author_id: 5
-                        //     }
-                        // ]
-                        //so you have to use index to access id
-                        db.query(resourceAuthorQ,[resourceId,results[0].author_id],(req,res)=>{
-                            if (err) {
-                                return res.status(500).send(err); 
-                            }
-                        })
-                    }
-                })
-                
-                
-            });
+
+                    })
+                }
+            })
+            
 
         }
     });
