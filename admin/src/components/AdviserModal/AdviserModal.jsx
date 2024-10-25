@@ -26,14 +26,15 @@ const AdviserModal = ({open,close,handleChange,bookData,addAdviser,adviserList})
         setSelectedAdviser('')
     },[bookData])
 
-    // handles ung selected adviser sa dropdown
-    //value ng item ay like this->{ value: 'chocolate', label: 'Chocolate' },
+   
+    // kapag may pinili or tinanggal ka sa dropdown
     const handleAdviser = (item)=>{
+        console.log(item)
         if(item){
-            setSelectedAdviser(item.value)
-       }else{
-           setSelectedAdviser('')
-       }
+           setSelectedAdviser(item.value) 
+        }else{
+            setSelectedAdviser('') //remove choice is 'x' is clicked
+        }
     }
 
     if(!open){
@@ -42,6 +43,7 @@ const AdviserModal = ({open,close,handleChange,bookData,addAdviser,adviserList})
         console.log('adviser-modal')
     }
 
+    console.log(fname.length)
   return ReactDom.createPortal(
     <div className='adviser-modal-container'>
         {/* overlay */}
@@ -64,7 +66,8 @@ const AdviserModal = ({open,close,handleChange,bookData,addAdviser,adviserList})
                     placeholder="Search adviser's name"
                     classNamePrefix="select"
                     isClearable
-                    onChange={handleAdviser}/>
+                    onChange={handleAdviser}
+                    isDisabled={fname.length>0||lname.length>0}/>
                 </div>
                 <div className="col-12 modal-reminder">
                     Can’t find adviser? Add manually below
@@ -73,13 +76,13 @@ const AdviserModal = ({open,close,handleChange,bookData,addAdviser,adviserList})
                 <div className="col-12 adviser-name">
                     <label htmlFor="">Last name</label>
                     <input type="text" name="" id="" placeholder="Enter adviser's last name"
-                    onChange={(e)=>setLname(e.target.value)}
+                    onChange={(e)=>setLname(e.target.value)} disabled={selectedAdviser!=''}
                     />
                 </div>
                 <div className="col-12 adviser-name">
                     <label htmlFor="">First name</label>
                     <input type="text" name="" id="" placeholder="Enter adviser's first name"
-                    onChange={(e)=>setFname(e.target.value)}/>
+                    onChange={(e)=>setFname(e.target.value)} disabled={selectedAdviser!=''}/>
                 </div>
                 {/* button */}
                 <div className="col-12 adviser-button">
@@ -87,16 +90,16 @@ const AdviserModal = ({open,close,handleChange,bookData,addAdviser,adviserList})
                     Cancel
                     </button>
                     <button className="adviser-save" onClick={()=>{
-                        // if hindi ' ' ung author, hindi siya masasama sa authors na array
+                        // if manual ininput ung adviser
                         if(adviser){
                             addAdviser(adviser)
-                            close()
                         }
+                        // if pinili sa dropdown
                         if(selectedAdviser){
-                            if(addAdviser(selectedAdviser)){
-                                 close()
-                            }
+                            addAdviser(selectedAdviser)
                         }
+                        close()
+                        
                         }} disabled={adviser.length==0&&selectedAdviser.length==0?true:false}>
                         Save
                     </button>

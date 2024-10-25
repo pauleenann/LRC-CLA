@@ -88,7 +88,7 @@ const Catalog = () => {
 
         {/* table */}
         
-            <table class=" cat-table">
+            <table className="cat-table">
               <thead>
                 <tr>
                   <th >ID</th>

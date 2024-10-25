@@ -83,6 +83,20 @@
     border-radius: 5px;
 }
 
+.edit-btn-cont{
+    text-align: center;
+}
+
+.edit-item{
+    background-color: var(--tup-color);
+    color: var(--white);
+}
+
+.edit-item:hover, .edit-item:focus{
+    background-color: var(--button) !important;
+    color: var(--white) !important;
+}
+
 .add-item-cancel{
     background-color: transparent;
     border: 1px solid var(--tup-color);

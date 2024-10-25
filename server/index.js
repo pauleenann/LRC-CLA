@@ -256,6 +256,63 @@ app.post('/save', upload.single('file'), (req, res) => {
                 });
             });
         }else{
+            //if thesis, after inserting data to authors, resourceauthors, and resources, check if adviser exists. If existing, insert directly to thesis table. if not, insert advisers first then insert to thesis table
+          
+            const adviserQ = 'INSERT INTO adviser (adviser_fname, adviser_lname) VALUES (?, ?)'
+            const resourceAuthorQ = 'INSERT INTO resourceauthors (resource_id, author_id) VALUES (?, ?)'
+            const checkIfAuthorExist ='SELECT author_id FROM author WHERE author_fname = ? AND author_lname = ?'
+            authors.forEach(element => {
+                const nameParts = element.split(' '); 
+                const fname = nameParts[0]; // First name
+                const lname = nameParts.length > 1 ? nameParts.slice(1).join(' ') : ''; // Last name (handles multiple words)
+
+                const authorValue = [
+                    fname,
+                    lname
+                ]
+
+                // check if author already exist
+                db.query(checkIfAuthorExist,[fname,lname], (err,results)=>{
+                    if (err) {
+                        return res.status(500).send(err); 
+                    }
+                    
+                    //pag walang nahanap
+                    if(results.length===0){
+                        db.query(authorQ,authorValue,(err,results)=>{
+                            if (err) {
+                                return res.status(500).send(err); 
+                            }
+            
+                            //author Id nung author info na kakainsert lang
+                            const authorId = results.insertId;
+            
+                            //if author is inserted, insert sa resourceAuthor table
+                            db.query(resourceAuthorQ,[resourceId,authorId],(req,res)=>{
+                                if (err) {
+                                    return res.status(500).send(err); 
+                                }
+                            })
+                        })
+                    }else{
+                        //if author is inserted, insert sa resourceAuthor table
+                        //results look like this: 
+                        // [
+                        //     {
+                        //         author_id: 5
+                        //     }
+                        // ]
+                        //so you have to use index to access id
+                        db.query(resourceAuthorQ,[resourceId,results[0].author_id],(req,res)=>{
+                            if (err) {
+                                return res.status(500).send(err); 
+                            }
+                        })
+                    }
+                })
+                
+                
+            });
 
         }
     });
@@ -373,6 +430,24 @@ app.get('/catalogdetails/:pagination',(req,res)=>{
             
     })
 })
+
+//get specific resource for viewing purposes
+app.get('/resource/:resourceId',(req,res)=>{
+    console.log('hi')
+    const id = req.params.resourceId;
+
+    // check first the type so i know where to store them
+    const q = "SELECT type_id FROM resources WHERE resource_id = ?"
+
+    db.query(q,[id],(err,results)=>{
+        if(err) return res.send(err)
+        const resourceTypeId = results[0].type_id
+        console.log(resourceTypeId) //prints the type id
+        if(resourceTypeId===1){
+            const q = "SELECT * FROM resources WHERE resource_id = ?"
+        }
+    })
+}) 
 
 
 app.listen(3001,()=>{

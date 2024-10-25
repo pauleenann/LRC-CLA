@@ -19,30 +19,30 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
     const [options,setOptions] = useState([])
 
     //for displaying preview photo
-    useEffect(()=>{
-        if(!bookData.file){
-          setPreview(undefined)
-          return
-        }
+    // useEffect(()=>{
+    //     if(!bookData.file){
+    //       setPreview(undefined)
+    //       return
+    //     }
     
-        let objectUrl;
+    //     let objectUrl;
     
-        if (typeof bookData.file === 'string') {
-          // If data.file is a URL (string), set it directly as the preview
-          setPreview(bookData.file);
-        } else {
-            // If data.file is a File object, create an Object URL for it
-            objectUrl = URL.createObjectURL(bookData.file);
-            setPreview(objectUrl);
-        }
+    //     if (typeof bookData.file === 'string') {
+    //       // If data.file is a URL (string), set it directly as the preview
+    //       setPreview(bookData.file);
+    //     } else {
+    //         // If data.file is a File object, create an Object URL for it
+    //         objectUrl = URL.createObjectURL(bookData.file);
+    //         setPreview(objectUrl);
+    //     }
     
-         // Cleanup function to revoke the Object URL
-         return () => {
-          if (objectUrl) {
-              URL.revokeObjectURL(objectUrl);
-          }
-          };
-      },[bookData.file])
+    //      // Cleanup function to revoke the Object URL
+    //      return () => {
+    //       if (objectUrl) {
+    //           URL.revokeObjectURL(objectUrl);
+    //       }
+    //       };
+    //   },[bookData.file])
 
     //   get genre
       const getGenre = async()=>{
@@ -76,24 +76,23 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                         {/* media type */}
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Media Type *</label>
-                            <select name="mediaType" id="" className='form-select' disabled={disabled?true:false} onChange={handleChange}>
-                                {resourceType.length>0?resourceType.map(item=>(
+                            <select name="mediaType" id="" className='form-select' disabled={disabled} onChange={handleChange}>
+                                 {resourceType.length>0?resourceType.map(item=>(
                                     <option value={item.type_id}>{item.type_name}</option>
-                                )):''}
-
+                                )):''}                                 
                             </select>
                            
                         </div>
                         {/* quantity */}
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Quantity *</label>
-                            <input type="number" placeholder='Enter Quantity' min='0' disabled={disabled?true:false} name='quantity' onChange={handleChange} value={bookData.quantity?bookData.quantity:''} onBlur={formValidation}/>
+                            <input type="number" placeholder='Enter Quantity' min='0' disabled={disabled} name='quantity' onChange={handleChange} value={bookData.quantity?bookData.quantity:''} onBlur={formValidation}/>
                             <p className='resource-error'>{error.quantity}</p>
                         </div>
                         {/* status */}
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Status *</label>
-                            <select name="status" id="" className='form-select' disabled={disabled?true:false} onChange={handleChange} onBlur={formValidation}>
+                            <select name="status" id="" className='form-select' disabled={disabled} onChange={handleChange} onBlur={formValidation}>
                                 <option selected disabled>Select item status</option>
                                 <option value="available">Available</option>
                                 <option value="lost">Lost</option>
@@ -104,13 +103,13 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                         {/* title */}
                         <div className="col-12 info-input-box my-3">
                             <label htmlFor="">Title</label>
-                            <input type="text" placeholder='Enter Title' disabled={disabled?true:false} name='title' onChange={handleChange} value={bookData.title?bookData.title:''} onBlur={formValidation}/>
+                            <input type="text" placeholder='Enter Title' disabled={disabled} name='title' onChange={handleChange} value={bookData.title?bookData.title:''} onBlur={formValidation}/>
                             <p className='resource-error'>{error.title}</p>
                         </div>
                         {/* input field changes depending on type */}
                         <div className="col-12">
                             {bookData.mediaType==='2'||bookData.mediaType==='3'?<JournalInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setBookData={setBookData} formValidation={formValidation} error={error} publishers={publishers} authorOptions={authorOptions} handleAddAuthor={handleAddAuthor}
-                            selectedOptions={selectedOptions} deleteAuthor={deleteAuthor} authorList={authorList}/>:bookData.mediaType==='4'?<ThesisInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} authorOptions={authorOptions} setBookData={setBookData} handleAddAuthor={handleAddAuthor} selectedOptions={selectedOptions} deleteAuthor={deleteAuthor} authorList={authorList} addAdviser={addAdviser} adviserList={adviserList} deleteAdviser={deleteAdviser}/>:<BookInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setBookData={setBookData} formValidation={formValidation} error={error} publishers={publishers} authorOptions={authorOptions} handleAddAuthor={handleAddAuthor}
+                            selectedOptions={selectedOptions} deleteAuthor={deleteAuthor} authorList={authorList}/>:bookData.mediaType==='4'?<ThesisInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} authorOptions={authorOptions} setBookData={setBookData} handleAddAuthor={handleAddAuthor} selectedOptions={selectedOptions} deleteAuthor={deleteAuthor} authorList={authorList} addAdviser={addAdviser} adviserList={adviserList} deleteAdviser={deleteAdviser} formValidation={formValidation} error={error}/>:<BookInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setBookData={setBookData} formValidation={formValidation} error={error} publishers={publishers} authorOptions={authorOptions} handleAddAuthor={handleAddAuthor}
                             selectedOptions={selectedOptions} deleteAuthor={deleteAuthor} authorList={authorList}/>}
                         </div>
                         {/* genre */}
@@ -124,7 +123,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                                 className="basic-multi-select"
                                 classNamePrefix="select"
                                 placeholder="Enter to add genre/s"
-                                isDisabled={disabled?true:false}
+                                isDisabled={disabled}
                                 onChange={addGenre}
                                 onBlur={formValidation}
                             />
@@ -141,7 +140,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                     {/* cover */}
                     <div className="col-12 info-input-box mb-3">
                         <label htmlFor="">Cover</label>
-                        <input type="file" src="" alt="" className='cover-upload' id='cover'disabled={disabled?true:false} onChange={handleFileChange} onBlur={formValidation}/>
+                        <input type="file" src="" alt="" className='cover-upload' id='cover'disabled={disabled} onChange={handleFileChange} onBlur={formValidation}/>
                         <div className="cover-upload-box">
                             {bookData.file?'':<label htmlFor="cover">Add cover</label>}
                             {bookData.file && ( // Display the selected image if it exists
@@ -165,7 +164,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                     {/* description */}
                     <div className="col-12 info-input-box mb-3">
                         <label htmlFor="">Description</label>
-                        <textarea name="description" id="" disabled={disabled?true:false} onChange={handleChange} value={bookData.description?bookData.description:''} onBlur={formValidation}></textarea>
+                        <textarea name="description" id="" disabled={disabled} onChange={handleChange} value={bookData.description?bookData.description:''} onBlur={formValidation}></textarea>
                         <p className='resource-error'>{error.description}</p>
                     </div>
                 </div>

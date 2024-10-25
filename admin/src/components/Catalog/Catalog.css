@@ -139,17 +139,19 @@
     overflow: hidden;
     border-collapse: collapse;
     width: 100%;
+    outline: 1px solid var(--tup-color);
+    
 }
 
 .cat-table thead tr th{
     background-color: var(--tup-color) !important;
     color: var(--white);
-    font-size: 1rem !important;
+    /* font-size: 1rem !important; */
 }
 
 .cat-table tbody tr td{
     vertical-align: middle;
-    font-size: 1rem !important;
+    /* font-size: 1rem !important; */
     border-bottom: none;
 }
 

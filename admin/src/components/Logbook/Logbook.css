@@ -62,13 +62,13 @@
 }
 
 .log-search-button{
-    background-color: var(--button);
+    background-color: var(--tup-color);
     color: var(--white);
 }
 
 .log-search-button:hover,.log-search-button:focus{
     border-color: var(--button) !important;
-    background-color: var(--button-hover) !important;
+    background-color: var(--button) !important;
     color: var(--white) !important;
 }
 
@@ -127,31 +127,20 @@
 
 .logbook-filter-date{
     padding: 5px;
-    height: 30px;
+    height: 38px;
     width: 150px;
     border-color: var(--tup-color);
     border-radius: 5px;
 }
 
 .logbook-clear-button{
-    height: 30px;
-    border: none;
-    background-color: var(--button);
+    background-color: var(--tup-color);
     color: var(--white);
-    padding: 8px;
-    width: 80px;
-    font-size: 1rem;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.1s linear;
 }
 
-.logbook-clear-button:hover{
-    background-color: var(--button-hover)   ;
+.logbook-clear-button:hover,.logbook-clear-button:focus{
+    background-color: var(--button) !important;
+    color: var(--white) !important;
 }
 
 .logbook-table-box{
