@@ -46,7 +46,7 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation,
                             <label htmlFor="">Department</label>
                             <select className="form-select"
                             name='department'
-                            disabled={disabled?true:false} onChange={handleChange} onBlur={formValidation}>
+                            disabled={disabled} onChange={handleChange} onBlur={formValidation}>
                                 <option selected disabled className=''>Select department</option>
                                 {department?department.map((item,key)=>(
                                     <option value={item.dept_id} className='dept_name'>{item.dept_name}</option>
@@ -58,7 +58,7 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation,
                         {/* course */}
                         <div className="col-6 info-input-box">
                             <label htmlFor="">Course</label>
-                            <select className="form-select" name='course' disabled={disabled?true:false} onChange={handleChange} onBlur={formValidation}>
+                            <select className="form-select" name='course' disabled={disabled} onChange={handleChange} onBlur={formValidation}>
                                 <option selected disabled>Select Course</option>
                                 {catalog?catalog.map((item,key)=>(
                                     <option value={item.cat_id}>{`${item.cat_course_code} (${item.cat_course_name})`}</option>
@@ -94,7 +94,7 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation,
                         {/* circulation*/}
                         <div className="col-12 mt-3">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="circulation" disabled={disabled?true:false} onChange={handleToggle} name='isCirculation'/>
+                                <input class="form-check-input" type="checkbox" role="switch" id="circulation" disabled={disabled} onChange={handleToggle} name='isCirculation'/>
                                 <div className="switch-label">
                                     <label class="form-check-label" for="circulation">Circulation</label>
                                     <span>Enable circulation, uncheck if you want to disable circulation for this item.</span>

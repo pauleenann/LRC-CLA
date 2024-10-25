@@ -66,3 +66,22 @@
     align-items: center;
     font-style: italic;
 }
+
+.delete-adviser{
+    font-size: 10px;
+    margin-left: 5px;
+    position: relative;
+    top: -1px;
+    cursor: pointer;
+}
+
+.delete-adviser:hover{
+    color: var(--button);
+}
+
+.resource-error{
+    margin: 0;
+    color: var(--button);
+    font-style: italic;
+    font-size: 12px;
+}

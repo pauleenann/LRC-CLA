@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import './AddItem.css';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import CatalogInfo from '../CatalogInfo/CatalogInfo';
 import Cataloging from '../Cataloging/Cataloging';
 import axios from 'axios';
 import Loading from '../Loading/Loading';
 
+
 const AddItem = () => {
+    const [disabled,setDisabled] = useState(false)
     const [type, setType] = useState('');
     const [bookData, setBookData] = useState({
         mediaType: '1',
@@ -23,33 +25,37 @@ const AddItem = () => {
     const [adviserList, setAdviserList] = useState([]);
     // for loading modal
     const [loading,setLoading] = useState(false)
-
     const [resourceType,setResourceType]=useState([])
     // Reset bookData when mediaType changes
+
+    //this is for viewing resource purposes
+    const {resourceId} = useParams();
+    //console.log(resourceId)
+
     useEffect(() => {
-        if (bookData.mediaType==4) {
-            setBookData({
-                mediaType: bookData.mediaType, // keep the changed mediaType
-                authors: [],
-                advisers: [],
-                isCirculation: false,
-            });
-        } else if (bookData.mediaType== 1) {
-            setBookData({
-                mediaType: bookData.mediaType, // keep the changed mediaType
-                authors: [],
-                genre: [],
-                isCirculation: false,
-                publisher_id: 0,
-                publisher: ''
-            });
-        } else {
-            setBookData({
-                mediaType: bookData.mediaType, // keep the changed mediaType
-                authors: [],
-                isCirculation: false,
-            });
-        }
+        // if (bookData.mediaType==4) {
+        //     setBookData({
+        //         mediaType: bookData.mediaType, // keep the changed mediaType
+        //         authors: [],
+        //         advisers: [],
+        //         isCirculation: false,
+        //     });
+        // } else if (bookData.mediaType== 1) {
+        //     setBookData({
+        //         mediaType: bookData.mediaType, // keep the changed mediaType
+        //         authors: [],
+        //         genre: [],
+        //         isCirculation: false,
+        //         publisher_id: 0,
+        //         publisher: ''
+        //     });
+        // } else {
+        //     setBookData({
+        //         mediaType: bookData.mediaType, // keep the changed mediaType
+        //         authors: [],
+        //         isCirculation: false,
+        //     });
+        // }
     }, [bookData.mediaType]);
 
     // Fetch publishers when component mounts
@@ -58,7 +64,35 @@ const AddItem = () => {
         getAuthors();
         getType()
         getAdvisers()
+
+        //when first rendered, check if may resourceId. Pag may resourceId means its for viewing/editing purposes
+        if(resourceId>=0){
+            setDisabled(true)
+        }else{
+            setDisabled(false)
+        }
     }, []);
+
+    // this gets executed every first render and everytime disabled usestate changes
+    useEffect(()=>{
+        if(disabled){
+            viewResource()
+        }
+    },[disabled])
+
+    //get specific resource for viewing purposes
+    const viewResource = async ()=>{
+        try{
+            const response = await axios.get(`http://localhost:3001/resource/${resourceId}`).then(res=>res.data[0]);
+            console.log(response)
+            
+        }catch(err){
+            console.log(err.message)
+        }
+       
+    }
+
+    console.log(bookData)
 
     // Handle input changes
     const handleChange = (e) => {
@@ -96,13 +130,12 @@ const AddItem = () => {
     }
 
     // delete adviser 
-    const deleteAdviser = (index)=>{
-        //(_,i) is the index of each element in authors
-        //pag true ung condition marereturn sa updated adviserd
+    const deleteAdviser = ()=>{
+       
         setBookData(prevData => ({
             ...prevData,
-            advisers: prevData.advisers.filter((_, i) => i !== index)
-          }));
+            adviser: ''
+        }));
     }
 
     // Add publisher
@@ -119,20 +152,11 @@ const AddItem = () => {
 
     // Add adviser
     const addAdviser = (adviser) => {
-        if (adviser.length !== 1) {
-            //check if nandon na ung author
-            if(!bookData.advisers.includes(adviser)){
-                 setBookData((prevData) => ({
-                    ...prevData,
-                    advisers: [...prevData.advisers, adviser]
-                }));
-                return true
-            }else{
-                console.log('you inserted it already!')
-            }
-        } else {
-            console.log('Please enter valid author data');
-        }
+        console.log(adviser)
+        setBookData((prevdata)=>({
+            ...prevdata,
+            adviser: adviser
+        }))
     };
 
     // Handle chosen genre
@@ -203,6 +227,17 @@ const AddItem = () => {
             }
             if(!bookData.issue){
                 err.issue = 'Please enter issue'
+            }
+            if (!bookData.publishedDate) {
+                err.publishedDate = 'Please enter publish date';
+            }
+        }else{
+            if (!bookData.authors || bookData.authors.length === 0) {
+                err.authors = 'Please specify author/s';
+            }
+            if(!bookData.adviser){
+                err.adviser = 'Please specify adviser';
+
             }
             if (!bookData.publishedDate) {
                 err.publishedDate = 'Please enter publish date';
@@ -351,10 +386,10 @@ const AddItem = () => {
     };
     
 
-    console.log(error);
-    console.log(bookData);
-    console.log(publishers);
-    console.log(typeof bookData.file)
+    // console.log(error);
+    // console.log(bookData);
+    // console.log(publishers);
+    // console.log(typeof bookData.file)
 
     return (
         <div className='add-item-container'>
@@ -374,6 +409,7 @@ const AddItem = () => {
 
             <div className='item-information'>
                 <CatalogInfo
+                    disabled={disabled}
                     handleChange={handleChange}
                     bookData={bookData}
                     addAuthor={addAuthor}
@@ -395,6 +431,7 @@ const AddItem = () => {
 
             <div className="cataloging">
                 <Cataloging
+                    disabled={disabled}
                     handleChange={handleChange}
                     bookData={bookData}
                     handleToggle={handleToggle}
@@ -403,15 +440,18 @@ const AddItem = () => {
                 />
             </div>
 
-            <div className="cancel-save">
-                <button className="add-item-cancel">
+            {disabled?<div className='edit-btn-cont'><button className="btn edit-item">
+                    Edit
+                </button></div>:<div className="cancel-save">
+                <button className="btn add-item-cancel">
                     Cancel
                 </button>
-                <button className="add-item-save" onClick={handleSaveResource}>
+                <button className="btn add-item-save" onClick={handleSaveResource}>
                     <i className="fa-regular fa-floppy-disk"></i>
                     <span>Save</span>
                 </button>
-            </div>
+            </div>}
+            
             <Loading loading={loading}/>
         </div>
     );

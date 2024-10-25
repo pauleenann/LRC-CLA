@@ -3,7 +3,7 @@ import './ThesisInput.css'
 import AuthorInput from '../AuthorInput/AuthorInput'
 import AdviserModal from '../AdviserModal/AdviserModal'
 
-const ThesisInput = ({disabled,handleChange,bookData,addAuthor,addAdviser,authorOptions,setBookData,handleAddAuthor,selectedOptions,deleteAuthor,authorList,adviserList,deleteAdviser}) => {
+const ThesisInput = ({disabled,handleChange,bookData,addAuthor,addAdviser,authorOptions,setBookData,handleAddAuthor,selectedOptions,deleteAuthor,authorList,adviserList,deleteAdviser,error}) => {
     const [open,setOpen] = useState(false)
     
   return (
@@ -13,6 +13,7 @@ const ThesisInput = ({disabled,handleChange,bookData,addAuthor,addAdviser,author
             <label htmlFor="">Author/s *</label>
             {/* author box */}
             <AuthorInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} authorOptions={authorOptions} setBookData={setBookData} handleAddAuthor={handleAddAuthor} selectedOptions={selectedOptions} deleteAuthor={deleteAuthor} authorList={authorList}/>
+            <p className="resource-error">{error.authors?error.authors:''}</p>
         </div>
         {/* thesis adviser*/}
         <div className="col-6 info-input-box">
@@ -22,29 +23,31 @@ const ThesisInput = ({disabled,handleChange,bookData,addAuthor,addAdviser,author
                 <div className="advisers">
                     {/* adviser name */}
                         <div className="adviser">
-                            {bookData.advisers?bookData.advisers.map((item,key)=>{
-                                console.log(key)
-                                return <span>{item} <button className='delete-adviser' onClick={()=>deleteAdviser(key)}>x</button></span>
-                            }):''}
+                            {bookData.adviser?
+                                <span>{bookData.adviser}<button className='delete-adviser' onClick={deleteAdviser}>x</button></span>
+                            :''}
                             <button>
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </div>
                 </div>
                     {/* button */}
-                    <button className='add-adviser' onClick={()=>{disabled?setOpen(false):setOpen(!open)}}>
+                    <button className='add-adviser' onClick={()=>{disabled?setOpen(false):setOpen(!open)}} disabled={bookData.adviser?bookData.adviser.length>1:''}>
                         <i class="fa-solid fa-plus"></i>
                         <span>Add adviser</span>
                     </button>
                 </div>
-        </div>
+                <p className="resource-error">{error.adviser?error.adviser:''}</p>
+            </div>
+            
 
         {/* publish date */}
         <div className="col-6 info-input-box my-3">
             <label htmlFor="">Publish Date *</label>
             <input type="text" name="publishedDate" id="" placeholder='Select date' disabled={disabled?true:false} value={bookData.publishedDate?bookData.publishedDate:''} onChange={handleChange}/>
+            <p className="resource-error">{error.publishedDate?error.publishedDate:''}</p>
         </div>
-        <AdviserModal open={open} close={()=>setOpen(!open) } addAdviser={addAdviser} handleChange={handleChange} bookData={bookData} adviserList={adviserList}/>
+        <AdviserModal open={open} close={()=>setOpen(!open) } addAdviser={addAdviser} handleChange={handleChange} bookData={bookData} adviserList={adviserList} />
     </div>
   )
 }

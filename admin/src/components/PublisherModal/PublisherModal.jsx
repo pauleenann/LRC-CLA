@@ -5,8 +5,6 @@ import Select from 'react-select'
 
 const PublisherModal = ({open,close,handleChange,bookData,setBookData,publishers,publisherDetails,handlePublisher}) => {
     
-    
-
     const [selectedPublisher,setSelectedPublisher] = useState('')
     const [error,setError] = useState({})
 

@@ -48,7 +48,7 @@ const Logbook = () => {
                 <input type="date" className='logbook-filter-date'/>
                 <p>to</p>
                 <input type="date" className='logbook-filter-date'/>
-                <button className='logbook-clear-button'>Clear</button>
+                <button className='btn logbook-clear-button'>Clear</button>
             </div>
         </div>
 

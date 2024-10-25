@@ -85,7 +85,7 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formVal
                 {/* isbn */}
                 <div className="col-12 info-input-box mb-3">
                     <label htmlFor="">ISBN</label>
-                    <input type="number" placeholder='Enter ISBN' disabled={disabled?true:false} onChange={handleChange} name='isbn' value={bookData.isbn?bookData.isbn:''} onBlur={formValidation}/>
+                    <input type="number" placeholder='Enter ISBN' disabled={disabled} onChange={handleChange} name='isbn' value={bookData.isbn?bookData.isbn:''} onBlur={formValidation}/>
                     <p className="resource-error">{error.isbn?error.isbn:''}</p>
                 </div>
                 {/* publisher */}
@@ -93,7 +93,7 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formVal
                     <label htmlFor="">Publisher</label>
                     {bookData.publisher&&bookData.publisher.length >=1?
                        <div>
-                        <input type="text" value={bookData.publisher} name='publisher' onChange={handleChange} onBlur={formValidation}/> 
+                        <input type="text" value={bookData.publisher} name='publisher' onChange={handleChange} onBlur={formValidation} disabled={disabled}/> 
                        </div> 
                          
                    :<Select  
@@ -103,6 +103,7 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formVal
                     isClearable
                     onChange={handleSelectedPublisher}
                     onBlur={formValidation}
+                    isDisabled={disabled}
                     />}
 
                     <span className='add-publisher'>Publisher not listed? Please <button className='add-publisher-button' onClick={()=>{disabled?setOpen(false):setOpen(true)}} >"add publisher here"</button> first.</span>
