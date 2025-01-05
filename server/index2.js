@@ -15,12 +15,10 @@ import cookieParser from 'cookie-parser'
 import cron from 'node-cron'
 import nodemailer from 'nodemailer'
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-import validateTupIdRouter from './routes/validateTupId.js'; // Adjust the path if neededimport cron from 'node-cron'
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 dotenv.config();
 
-const dbPromise = mysqlPromise.createPool({ host: process.env.DB_HOST_LOCAL,
+const dbPromise = mysqlPromise.createConnection({ host: process.env.DB_HOST_LOCAL,
     user: process.env.DB_USER_LOCAL,
     password: process.env.DB_PASSWORD_LOCAL,
     database: process.env.DB_DATABASE_LOCAL, });
@@ -33,6 +31,7 @@ app.use(cors({
     methods: 'GET,POST,PUT,DELETE',
     credentials:true
 }));
+
 
 // app.use((req,res,next)=>{
 //     console.log(store)
@@ -285,7 +284,6 @@ const insertThesis = async (resourceId, adviserId,res)=>{
             return res.status(500).send(err); 
         }
 
-        io.emit('updatedCatalog')
         return res.send({status:201,message:'Thesis inserted successfully.'});
     })
 }
@@ -303,7 +301,6 @@ const insertJournalNewsletter = async(jn,res,filePath)=>{
         if (filePath) {
             fs.unlinkSync(filePath);
         }
-        io.emit('updatedCatalog')
         return res.send({status: 201, message:'Journal/Newsletter inserted successfully.'});
     });
 }
@@ -410,9 +407,7 @@ const insertBook = async(cover, isbn, resourceId, pubId, topic,res, filePath)=>{
         if (filePath) {
             fs.unlinkSync(filePath);
         }
-        
-        io.emit('updatedCatalog')
-        // console.log('Book inserted successfully')
+        console.log('Book inserted successfully')
         return res.send({status: 201, message:'Book inserted successfully.'});
     })
 
@@ -1064,7 +1059,7 @@ app.get("/getBorrowedBooks", (req, res) => {
         return res.status(400).json({ message: "Date is required" });
     }
 
-    const query = `SELECT COUNT(*) AS total_borrowed FROM checkout WHERE DATE(checkout_date) = ? AND status = 'borrowed'`;
+    const query = `SELECT COUNT(*) AS total_borrowed FROM checkout WHERE DATE(checkout_date) = ?`;
 
     db.query(query, [date], (err, result) => {
         if (err) {
@@ -1536,7 +1531,6 @@ app.get('/getBorrowers', (req, res) => {
             resources r ON c.resource_id = r.resource_id
         JOIN 
             course ON p.course_id = course.course_id
-        WHERE c.status = 'borrowed'
         GROUP BY 
             p.tup_id, 
             p.patron_fname, 
@@ -1887,7 +1881,6 @@ app.post('/checkout', async (req, res) => {
         // Commit the transaction
         await db.query('COMMIT');
 
-        io.emit('updatedCirculation')
         res.status(200).json({
             message: 'Checkout successful!',
             checkout_id: result.insertId,
@@ -1933,44 +1926,55 @@ app.post('/checkin', async (req, res) => {
         return res.status(400).json({ error: 'checkout_id and returned_date are required.' });
     }
 
-    const db = await dbPromise; // Assuming `dbPromise` resolves to the database connection
-
     try {
-        // Start a transaction
-        await db.query('START TRANSACTION');
+        await new Promise((resolve, reject) => {
+            db.beginTransaction((err) => {
+                if (err) {
+                    console.error('Transaction Start Error:', err);
+                    return reject('Failed to start transaction.');
+                }
 
-        // Fetch patron details
-        const [patron] = await db.query(
-            'SELECT patron_fname, patron_lname FROM patron WHERE patron_id = ?',
-            [patron_id]
-        );
+                // Insert into the checkin table
+                const checkinQuery = 'INSERT INTO checkin (checkout_id, checkin_date) VALUES (?, ?)';
+                db.query(checkinQuery, [checkout_id, returned_date], (err, results) => {
+                    if (err) {
+                        console.error('Checkin Insert Error:', err);
+                        return db.rollback(() => reject('Failed to insert into checkin table.'));
+                    }
 
-        if (!patron || !patron.length) {
-            await db.query('ROLLBACK');
-            return res.status(404).json({ error: 'Patron not found' });
-        }
+                    // Update checkout status
+                    const updateCheckoutStatusQuery = 'UPDATE checkout SET status = ? WHERE checkout_id = ?';
+                    db.query(updateCheckoutStatusQuery, ['returned', checkout_id], (err, results) => {
+                        if (err) {
+                            console.error('Update Checkout Status Error:', err);
+                            return db.rollback(() => reject('Failed to update checkout status.'));
+                        }
 
-        const { patron_fname, patron_lname } = patron[0];
-        const patron_name = `${patron_fname} ${patron_lname}`; // Combine patron_fname and patron_lname
+                        // Increment resource quantity
+                        const incrementResourceQuery =
+                            'UPDATE resources SET resource_quantity = resource_quantity + 1 WHERE resource_id = ?';
+                        db.query(incrementResourceQuery, [resource_id], (err, results) => {
+                            if (err) {
+                                console.error('Increment Resource Quantity Error:', err);
+                                return db.rollback(() => reject('Failed to update resource quantity.'));
+                            }
 
-        // Insert into the checkin table
-        const checkinQuery = 'INSERT INTO checkin (checkout_id, checkin_date) VALUES (?, ?)';
-        const [checkinResult] = await db.query(checkinQuery, [checkout_id, returned_date]);
-
-        // Update checkout status
-        const updateCheckoutStatusQuery = 'UPDATE checkout SET status = ? WHERE checkout_id = ?';
-        await db.query(updateCheckoutStatusQuery, ['returned', checkout_id]);
-
-        // Increment resource quantity
-        const incrementResourceQuery =
-            'UPDATE resources SET resource_quantity = resource_quantity + 1 WHERE resource_id = ?';
-        await db.query(incrementResourceQuery, [resource_id]);
-
-        // Commit the transaction
-        await db.query('COMMIT');
+                            // Commit the transaction
+                            db.commit((err) => {
+                                if (err) {
+                                    console.error('Transaction Commit Error:', err);
+                                    return db.rollback(() => reject('Transaction commit failed.'));
+                                }
+                                resolve();
+                            });
+                        });
+                    });
+                });
+            });
+        });
 
         // After the transaction is committed, fetch the resource title
-        const [resource] = await db.query(
+        const [resource] = await (await dbPromise).query(
             'SELECT resource_title FROM resources WHERE resource_id = ?',
             [resource_id]
         );
@@ -1989,25 +1993,16 @@ app.post('/checkin', async (req, res) => {
             'checkin',
             resource_id,
             null,
-            JSON.stringify({ book_name: resource_title, status: 'returned', patron: patron_name })
+            JSON.stringify({ book_name: resource_title, status: 'returned' })
         );
 
-        io.emit('updatedCirculation')
-        res.status(201).json({
-            message: 'Item successfully checked in and removed from checkout.',
-            patron_name
-        });
+        res.status(201).json({ message: 'Item successfully checked in and removed from checkout.' });
     } catch (error) {
         console.error('Error:', error);
-        
-        // Rollback transaction on error
-        await db.query('ROLLBACK');
-
-        res.status(500).json({ error: 'Failed to process checkin' });
+        res.status(500).json({ error: error });
     }
 });
 
-  
 
 app.get('/getCirculation1', (req, res) => {
     const q = `SELECT 
@@ -2095,9 +2090,11 @@ app.get('/getCirculation', (req, res) => {
         if (err) {
             console.error(err);
             res.status(500).send({ error: 'Database error', details: err.message });
-        } 
-        res.json(results);
-      
+        } else if (results.length > 0) {
+            res.json(results);
+        } else {
+            res.json({ message: 'No patrons with checkouts found' });
+        }
     });
 });
 
@@ -2937,7 +2934,6 @@ app.get('/resources/view', (req, res) => {
     const q = `
        SELECT 
         resources.resource_title,
-        resources.resource_quantity,
         resources.resource_published_date,
         resources.resource_id,
         resources.type_id,
@@ -3966,19 +3962,20 @@ const checkOverdue = async () => {
     console.log('checking overdue')
     const q = `
     SELECT 
-            c.checkout_id, 
-            c.checkout_date,
-            c.checkout_due,
-            p.patron_email, 
-            p.tup_id, 
-            p.patron_fname, 
-            p.patron_lname,
-            r.resource_title,
-            r.resource_id
-        FROM checkout c
-        JOIN patron p ON c.patron_id = p.patron_id
-        JOIN resources r ON r.resource_id = c.resource_id
-        WHERE c.status = 'borrowed' AND c.checkout_due < current_date()`;
+        c.checkout_id, 
+        c.checkout_date,
+        c.checkout_due,
+        p.patron_email, 
+        p.tup_id, 
+        p.patron_fname, 
+        p.patron_lname,
+        r.resource_title,
+        r.resource_id
+    FROM checkout c
+    LEFT JOIN checkin ci ON c.checkout_id = ci.checkout_id
+    LEFT JOIN patron p ON c.patron_id = p.patron_id
+    LEFT JOIN resources r ON r.resource_id = c.resource_id
+    WHERE ci.checkout_id IS NULL AND c.checkout_due < current_date()`;
 
     db.query(q, (err, result) => {
         if (err) {
@@ -4043,237 +4040,6 @@ const checkOverdue = async () => {
 cron.schedule('0 0 * * *', () => {
     checkOverdue()
 });
-
-/*-------- ADD PATRON -------- */
-
-
-
-// Middleware to parse JSON body
-app.use(express.json()); // This is the line you need to add
-
-// MySQL connection setup
-
-
-// POST route for adding a patron
-app.post('/add-patron', (req, res) => {
-  const { patron_fname, patron_lname, patron_sex, patron_mobile, patron_email, category, college_id, course_id } = req.body;
-  
-  // SQL query to insert new patron into the database
-  const query = 'INSERT INTO patron (patron_fname, patron_lname, patron_sex, patron_mobile, patron_email, category, college_id, course_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-
-  // Execute the query with the data from the request body
-  db.query(query, [patron_fname, patron_lname, patron_sex, patron_mobile, patron_email, category, college_id, course_id], (err, result) => {
-    if (err) {
-      return res.status(500).json({ message: 'Error adding patron', error: err });
-    }
-    res.status(200).json({ message: 'Patron added successfully', result });
-  });
-});
-
-
-/*-------- DELETE PATRON -------- */
-app.delete('/delete-patron/:id', (req, res) => {
-    const patronId = req.params.id;
-  
-    // Ensure patronId is not empty or invalid
-    if (!patronId) {
-      return res.status(400).json({ error: 'Patron ID is required' });
-    }
-  
-    // SQL query to delete the patron based on the patron_id
-    const query = 'DELETE FROM patron WHERE patron_id = ?';
-  
-    db.query(query, [patronId], (err, result) => {
-      if (err) {
-        console.error('Error deleting patron:', err);
-        return res.status(500).json({ error: 'Failed to delete patron' });
-      }
-  
-      // If no rows are affected, that means the patron doesn't exist
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ error: 'Patron not found' });
-      }
-  
-      // Success response
-      res.status(200).json({ message: 'Patron deleted successfully' });
-    });
-  });
-  
-
-
-
-  app.use((req, res, next) => {
-    console.log(`${req.method} ${req.path}`);
-    next();
-});
-
-
-/*-------- UPDATE PATRON -------- */
-app.get('/update-patron/:id', async (req, res) => {
-    console.log(`Received PUT request for patron ID: ${req.params.id}`);
-    console.log('Request body:', req.body);
-    const patronId = req.params.id;
-    const query = `
-        SELECT 
-            p.patron_id, 
-            p.tup_id, 
-            p.patron_fname, 
-            p.patron_lname, 
-            p.patron_sex, 
-            p.patron_mobile, 
-            p.patron_email, 
-            p.category, 
-            p.college_id, 
-            p.course_id, 
-            col.college_name, 
-            cr.course_name
-        FROM patron p
-        LEFT JOIN college col ON p.college_id = col.college_id
-        LEFT JOIN course cr ON p.course_id = cr.course_id
-        WHERE p.patron_id = ?;
-    `;
-
-    try {
-        const [results] = await (await dbPromise).execute(query, [patronId]);
-        if (results.length === 0) {
-            return res.status(404).json({ message: 'Patron not found' });
-        }
-
-        const patronData = results[0];
-
-        // Fetch colleges and courses for dropdown options
-        const [colleges] = await (await dbPromise).execute('SELECT * FROM college');
-        const [courses] = await (await dbPromise).execute('SELECT * FROM course');
-
-        res.json({ patronData, colleges, courses });
-    } catch (err) {
-        console.error('Error fetching patron data:', err);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-app.put('/update-patron/:id', async (req, res) => {
-    const patronId = req.params.id;
-    const {
-        patron_fname,
-        patron_lname,
-        patron_sex,
-        patron_mobile,
-        patron_email,
-        category,
-        college,  // college_id
-        program,  // course_id
-        tup_id,
-    } = req.body;
-
-    const query = `
-        UPDATE patron
-        SET 
-            patron_fname = ?, 
-            patron_lname = ?, 
-            patron_sex = ?, 
-            patron_mobile = ?, 
-            patron_email = ?, 
-            category = ?, 
-            college_id = ?, 
-            course_id = ?, 
-            tup_id = ?
-        WHERE patron_id = ?;
-    `;
-
-    try {
-        const [result] = await (await dbPromise).execute(query, [
-            patron_fname,
-            patron_lname,
-            patron_sex,
-            patron_mobile,
-            patron_email,
-            category,
-            college,
-            program,
-            tup_id,
-            patronId,
-        ]);
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'Patron not found' });
-        }
-
-        res.json({ message: 'Patron updated successfully' });
-    } catch (err) {
-        console.error('Error updating patron:', err);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-app.get('/category-options', async (req, res) => {
-    const query = `
-        SELECT COLUMN_TYPE
-        FROM INFORMATION_SCHEMA.COLUMNS
-        WHERE TABLE_NAME = 'patron' AND COLUMN_NAME = 'category';
-    `;
-
-    try {
-        const [results] = await (await dbPromise).execute(query);
-        if (results.length === 0) {
-            return res.status(404).json({ message: 'Category options not found' });
-        }
-
-        const enumString = results[0].COLUMN_TYPE; // e.g., "enum('Student','Faculty','','')"
-        const options = enumString
-            .match(/'([^']+)'/g) // Extract values within single quotes
-            .map(option => option.replace(/'/g, '')); // Remove quotes
-
-        res.json(options); // Send the array of options to the frontend
-    } catch (err) {
-        console.error('Error fetching category options:', err);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-// 
-app.post('/validate-tup-id', async (req, res) => {
-    const { tup_id } = req.body;
-
-    if (!tup_id) {
-        return res.status(400).json({ error: 'TUP ID is required.' });
-    }
-
-    try {
-        const query = 'SELECT 1 FROM patron WHERE tup_id = ? LIMIT 1';
-        const [rows] = await dbPromise.query(query, [tup_id]);
-
-        if (rows.length > 0) {
-            return res.status(200).json({ exists: true, message: 'TUP ID already exists.' });
-        }
-
-        res.status(200).json({ exists: false, message: 'TUP ID is available.' });
-    } catch (error) {
-        console.error('Error checking TUP ID:', error);
-        res.status(500).json({ error: 'Server error while checking TUP ID.' });
-    }
-});
-
-
-
-export { dbPromise, db };
-
-(async () => {
-    try {
-        const [rows] = await dbPromise.execute('SELECT 1');
-        console.log('Database connection test successful:', rows);
-    } catch (error) {
-        console.error('Database connection test failed:', error);
-    }
-})();
-
-app.use((req, res, next) => {
-    console.log(`Received request: ${req.method} ${req.url}`);
-    next();
-});
-
-app.use('/', validateTupIdRouter); // Connect the router
-
 
 server.listen(3001,()=>{
     console.log('this is the backend')
