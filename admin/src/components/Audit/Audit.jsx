@@ -115,7 +115,7 @@ const Audit = () => {
                             <td>{item.action_type}</td>
                             <td>{item.table_name}</td>
                             <td>{item.old_value}</td>
-                            <td>{item.new_value}</td>
+                            <td>{item.new_value.replace(/[{}"]/g, '').replace(/,/g, '\n')}</td>
                             <td>{item.formatted_timestamp}</td>
                         </tr>
                     ))
