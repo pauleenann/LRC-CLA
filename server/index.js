@@ -1085,68 +1085,55 @@ app.get("/getBorrowedBooks", (req, res) => {
 app.get('/catalogdetails', (req, res) => {
     const keyword = req.query.keyword || '';
     const offset = parseInt(req.query.offset, 10);
-    const type = parseInt(req.query.type);
-    const topic = parseInt(req.query.topic);
-    const department = parseInt(req.query.department);
-    const author = parseInt(req.query.author)
-    const title = parseInt(req.query.title);
+    const type = parseInt(req.query.type, 10) || 0;
+    const topic = parseInt(req.query.topic, 10) || 0;
+    const department = parseInt(req.query.department, 10) || 0;
+    const author = parseInt(req.query.author, 10) || 0;
+    const title = parseInt(req.query.title, 10) || 0;
 
     if (isNaN(offset)) {
-        res.status(400).send('Invalid offset value');
-        return;
+        return res.status(400).send('Invalid offset value');
     }
+
     const searchKeyword = `%${keyword}%`;
-    let orderClauses = '';
-    
-    // Handle sorting by title
-    if (title) {
-        if (title == '1') {
-            orderClauses='ORDER BY resources.resource_title ASC';
-        } else if (title == '2') {
-            orderClauses='ORDER BY resources.resource_title DESC';
-        }
-    }
-    
-    // Handle sorting by author
-    if (author) {
-        if (author == '1') {
-            orderClauses='ORDER BY author.author_fname ASC';
-        } else if (author == '2') {
-            orderClauses='ORDER BY author.author_fname DESC';
-        }
-    }
-   
     const params1 = [searchKeyword, searchKeyword, searchKeyword];
+
+    // Construct WHERE clauses dynamically
+    const whereClauses = [];
+    if (type > 0) whereClauses.push(`resources.type_id = ${type}`);
+    if (department > 0) whereClauses.push(`resources.dept_id = ${department}`);
+    if (topic > 0) whereClauses.push(`book.topic_id = ${topic} OR journalnewsletter.topic_id = ${topic}`);
+
+    const whereClause = whereClauses.length ? `AND ${whereClauses.join(' AND ')}` : '';
+
+    // Construct ORDER BY clause
+    let orderClauses = '';
+    if (title === 1) orderClauses = 'ORDER BY resources.resource_title ASC';
+    else if (title === 2) orderClauses = 'ORDER BY resources.resource_title DESC';
+    if (author === 1) orderClauses = 'ORDER BY author.author_fname ASC';
+    else if (author === 2) orderClauses = 'ORDER BY author.author_fname DESC';
 
     const q = `
         SELECT DISTINCT resources.resource_id
         FROM resources
         JOIN resourceauthors ON resources.resource_id = resourceauthors.resource_id
         JOIN author ON resourceauthors.author_id = author.author_id
-        WHERE resources.resource_title LIKE ?
-           OR author.author_fname LIKE ?
-           OR author.author_lname LIKE ?
+        WHERE (resources.resource_title LIKE ? OR author.author_fname LIKE ? OR author.author_lname LIKE ?)
+        ${whereClause}
         ${orderClauses}
-        LIMIT 5 OFFSET ?;`;
+        LIMIT 5 OFFSET ?;
+    `;
 
-    let whereClauses = [`resources.resource_id = ?`]
-    
-    let orderAuthor = ''
-    if(type>0){
-        whereClauses.push(`resources.type_id = ${type}`)
-    }
-    if(department>0){
-        whereClauses.push(`resources.dept_id = ${department}`)
-    }
-    if(topic>0){
-        whereClauses.push(`book.topic_id = ${topic} OR journalnewsletter.topic_id = ${topic}`)
-    }
-
-    const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
-    let countWhereClauses = whereClauses.shift()
-    const countWhereClause = countWhereClauses>0?`WHERE ${whereClauses.join(' AND ')}` : ''
-    
-
+    const countQ = `
+        SELECT COUNT(DISTINCT resources.resource_id) AS total
+        FROM resources
+        JOIN resourceauthors ON resources.resource_id = resourceauthors.resource_id
+        JOIN author ON resourceauthors.author_id = author.author_id
+        LEFT JOIN book ON resources.resource_id = book.resource_id
+        LEFT JOIN journalnewsletter ON resources.resource_id = journalnewsletter.resource_id
+        WHERE (resources.resource_title LIKE ? OR author.author_fname LIKE ? OR author.author_lname LIKE ?)
+        ${whereClause};
+    `;
 
     const resourceInfoQ = `
         SELECT 
@@ -1169,26 +1156,11 @@ app.get('/catalogdetails', (req, res) => {
         LEFT JOIN journalnewsletter ON resources.resource_id = journalnewsletter.resource_id
         LEFT JOIN topic 
             ON (book.topic_id = topic.topic_id OR journalnewsletter.topic_id = topic.topic_id)
-        ${whereClause}
-        GROUP BY resources.resource_id;`;
+        WHERE resources.resource_id = ?
+        GROUP BY resources.resource_id;
+    `;
 
-        console.log(resourceInfoQ)
-        
-        const countQ = `
-            SELECT COUNT(DISTINCT resources.resource_id) AS total
-            FROM resources
-            JOIN resourceauthors ON resources.resource_id = resourceauthors.resource_id
-            JOIN author ON resourceauthors.author_id = author.author_id
-            LEFT JOIN book ON resources.resource_id = book.resource_id
-            LEFT JOIN journalnewsletter ON resources.resource_id = journalnewsletter.resource_id
-            LEFT JOIN topic ON book.topic_id = topic.topic_id OR journalnewsletter.topic_id = topic.topic_id
-            WHERE resources.resource_title LIKE ? 
-            OR author.author_fname LIKE ? 
-            OR author.author_lname LIKE ?
-            ${countWhereClause};`;
-    
-            console.log(countQ)
-
+    // Execute count query
     db.query(countQ, params1, (err, countResult) => {
         if (err) {
             console.error('Error counting resources:', err);
@@ -1197,6 +1169,7 @@ app.get('/catalogdetails', (req, res) => {
 
         const totalResource = countResult[0]?.total || 0;
 
+        // Execute resource IDs query
         db.query(q, [...params1, offset], (err, result) => {
             if (err) {
                 console.error('Error fetching resource IDs:', err);
@@ -1229,6 +1202,7 @@ app.get('/catalogdetails', (req, res) => {
         });
     });
 });
+
 
 
 /*--------VIEW RESOURCE FROM CATALOG-------------*/ 
