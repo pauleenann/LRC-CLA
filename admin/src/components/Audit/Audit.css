@@ -1,4 +1,4 @@
-@font-face {
+@@font-face {
     font-family: 'Inter';
     font-weight: 400;
     src: url('../../assets/Fonts/Inter_24pt-Regular.ttf') format('ttf');
@@ -11,8 +11,6 @@
     font-family: 'Inter';
     text-decoration: none;
 }
-
-
 
 :root{
     --black:#1F1F1F;
@@ -33,12 +31,12 @@
     --light-red: rgba(148, 21, 43, 0.1);
 }
 
-.audit-container{
+.audit-container {
     padding: 10px 70px 50px;
     display: flex;
     flex-direction: column;
     gap: 25px;
-    overflow-x: hidden;   
+    overflow-x: auto; /* Add horizontal scrolling if content overflows */
 }
 
 .audit-container h1{
@@ -113,29 +111,50 @@
 }
 
 
-.audit-container table{
-    width: 100%;
+.audit-container table {
     border-radius: 10px;
     overflow: hidden;
     text-align: center;
     outline: 1px solid var(--tup-color);
+    width: 100%;
+    table-layout: fixed; /* Fix column width */
 }
 
-.audit-container table thead{
+
+
+.audit-container table thead tr td,
+.audit-container table tbody tr td {
+    padding: 10px;
+    word-wrap: break-word; /* Enable word wrapping */
+    white-space: normal; /* Allow text to wrap */
+    overflow-wrap: break-word; /* Break long words if necessary */
+    max-width: 150px; /* Adjust this value as needed for consistent cell size */
+}
+
+.audit-container table thead {
     background-color: var(--tup-color);
-    /* color: var(--white); */
-    
 }
 
-.audit-container table thead tr td{
+
+.audit-container table thead tr td {
     color: var(--white);
-    padding: 10px;
+    font-size: 1rem; /* Slightly larger for header */
 }
 
-.audit-container table tbody tr td{
+.audit-container table tbody tr td {
+    font-size: 0.8rem !important; /* Force smaller font size */
     padding: 10px;
+    word-wrap: break-word;
+    white-space: normal;
+    overflow-wrap: break-word;
+    max-width: 150px;
 }
 
-.audit-container table tbody tr:nth-child(even){
+
+/* .audit-container table tbody tr td{
+    padding: 10px;
+} */
+
+.audit-container table tbody tr:nth-child(even) {
     background-color: var(--light-red);
 }
