@@ -1991,51 +1991,6 @@ app.post('/checkin', async (req, res) => {
     }
 });
 
-  
-
-app.get('/getCirculation1', (req, res) => {
-    const q = `SELECT 
-            p.tup_id, 
-            p.patron_fname, 
-            p.patron_lname, 
-            p.patron_email, 
-            p.category, 
-            c.checkout_date,
-            c.status,
-            c.checkout_due,
-            GROUP_CONCAT(r.resource_title ORDER BY r.resource_title SEPARATOR ', \n') AS borrowed_books,
-            course.course_name AS course, 
-            COUNT(c.patron_id) AS total_checkouts
-        FROM 
-            patron p
-        INNER JOIN 
-            checkout c ON p.patron_id = c.patron_id
-        INNER JOIN 
-            resources r ON c.resource_id = r.resource_id
-        JOIN 
-            course ON p.course_id = course.course_id
-        GROUP BY 
-            p.tup_id, 
-            p.patron_fname, 
-            p.patron_lname, 
-            p.patron_email, 
-            p.category, 
-            course.course_name
-        ORDER BY 
-            MAX(c.checkout_date) DESC;
-`;
-    db.query(q, (err, results) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send({ error: 'Database error', details: err.message });
-        } else if (results.length > 0) {
-            res.json(results);
-        } else {
-            res.json({ message: 'No patrons with checkouts found' });
-        }
-    });
-});
-
 app.get('/getCirculation', (req, res) => {
     const q = `SELECT 
     p.tup_id, 
@@ -2077,6 +2032,46 @@ ORDER BY
       
     });
 });
+
+app.get('/getCirculation1', (req, res) => {
+    let { page, limit } = req.query;
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const countQuery = `SELECT COUNT(*) AS total FROM checkout`;
+    const dataQuery = `
+        SELECT 
+            p.tup_id, 
+            p.patron_fname, 
+            p.patron_lname, 
+            c.checkout_date,
+            c.status,
+            GROUP_CONCAT(r.resource_title ORDER BY r.resource_title SEPARATOR ', ') AS borrowed_books,
+            course.course_name AS course
+        FROM patron p
+        INNER JOIN checkout c ON p.patron_id = c.patron_id
+        INNER JOIN resources r ON c.resource_id = r.resource_id
+        JOIN course ON p.course_id = course.course_id
+        GROUP BY p.tup_id, p.patron_fname, p.patron_lname, c.checkout_date, c.status, course.course_name
+        ORDER BY MAX(c.checkout_date) DESC
+        LIMIT ? OFFSET ?;
+    `;
+
+    db.query(countQuery, (err, countResult) => {
+        if (err) return res.status(500).json({ error: 'Database error', details: err.message });
+
+        const totalRecords = countResult[0].total;
+        const totalPages = Math.ceil(totalRecords / limit);
+
+        db.query(dataQuery, [limit, offset], (err, results) => {
+            if (err) return res.status(500).json({ error: 'Database error', details: err.message });
+
+            res.json({ records: results, totalPages });
+        });
+    });
+});
+
 
 app.get('/getAudit', (req, res) => {
     const q = `SELECT * FROM audit_log`;
