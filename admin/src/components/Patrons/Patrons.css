@@ -87,12 +87,12 @@
 }
 
 .patrons-container .patrons-search-button{
-    height: 40px;
+    max-height: 40px;
     border: none;
     background-color: var(--tup-color);
     color: var(--white);
     padding: 8px;
-    width: 110px;
+    /* width: 110px; */
     font-size: 1rem;
     display: flex;
     gap: 10px;
@@ -107,11 +107,15 @@
     background-color: var(--button);
 }
 
+.patrons-table{
+    table-layout: fixed;
+}
+
 
 .patrons-table td {
     text-align: center;      /* Center horizontally */
     vertical-align: middle;  /* Center vertically */
-    font-size: 14px; /* Adjust to desired size, 14px is a typical average */
+    font-size: 14px !important; /* Adjust to desired size, 14px is a typical average */
 
     padding: 8px;    /* Optional: Adjust padding for better spacing */
 }

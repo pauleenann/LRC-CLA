@@ -9,7 +9,7 @@ const LoginPage = () => {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-
+    
     // Check if the user is already logged in when the component mounts
     useEffect(() => {
         const checkLoginStatus = async () => {

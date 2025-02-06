@@ -967,6 +967,25 @@ app.get('/bookData/:isbn',async (req,res)=>{
 })
 
 /*-----------RETRIEVE DATA-----------*/
+/*-----------RETRIEVE DATA-----------*/
+//retrieve list of colleges from database
+app.get('/college',(req,res)=>{
+    const q = 'SELECT * FROM college'
+
+    db.query(q,(err,results)=>{
+        if(err) return res.send(err)
+           return res.json(results)
+    })
+})
+//retrieve list of courses from database
+app.get('/course',(req,res)=>{
+    const q = 'SELECT * FROM course'
+
+    db.query(q,(err,results)=>{
+        if(err) return res.send(err)
+           return res.json(results)
+    })
+})
 //retrieve list of department from database
 app.get('/departments',(req,res)=>{
     const q = 'SELECT * FROM department'
@@ -2405,7 +2424,6 @@ app.post("/sync/resources", async (req, res) => {
         return res.send({ status: 409, message: `Resource with a title "${resource.resource_title}" already exists. Skipping insertion.` });
     }
 
-
     const q = `
     INSERT INTO 
         resources (resource_title, resource_description, resource_published_date, resource_quantity, resource_is_circulation, dept_id, type_id, avail_id) 
@@ -3623,7 +3641,7 @@ app.post('/login', async (req, res) => {
     if (!username || !password) {
         return res.status(400).json({ message: 'Username and password are required' });
     }
-
+    
     const query = `
         SELECT staff_uname, staff_password, role_name
         FROM staffaccount
@@ -4040,13 +4058,37 @@ app.use(express.json()); // This is the line you need to add
 
 // POST route for adding a patron
 app.post('/add-patron', (req, res) => {
-  const { patron_fname, patron_lname, patron_sex, patron_mobile, patron_email, category, college_id, course_id } = req.body;
+    const {
+        patron_fname,
+        patron_lname,
+        patron_sex,
+        patron_mobile,
+        patron_email,
+        category,
+        college,  // college_id
+        program,  // course_id
+        tup_id,
+    } = req.body;
+
+    const values = [
+        patron_fname,
+        patron_lname,
+        patron_sex,
+        patron_mobile,
+        patron_email,
+        category,
+        college,
+        program,
+        tup_id,
+    ]
+
+    console.log(values)
   
   // SQL query to insert new patron into the database
-  const query = 'INSERT INTO patron (patron_fname, patron_lname, patron_sex, patron_mobile, patron_email, category, college_id, course_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+  const query = 'INSERT INTO patron (patron_fname, patron_lname, patron_sex, patron_mobile, patron_email, category, college_id, course_id, tup_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)';
 
   // Execute the query with the data from the request body
-  db.query(query, [patron_fname, patron_lname, patron_sex, patron_mobile, patron_email, category, college_id, course_id], (err, result) => {
+  db.query(query, values, (err, result) => {
     if (err) {
       return res.status(500).json({ message: 'Error adding patron', error: err });
     }
@@ -4090,7 +4132,6 @@ app.delete('/delete-patron/:id', (req, res) => {
     console.log(`${req.method} ${req.path}`);
     next();
 });
-
 
 /*-------- UPDATE PATRON -------- */
 app.get('/update-patron/:id', async (req, res) => {

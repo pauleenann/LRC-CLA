@@ -1,33 +1,64 @@
 import React, { useEffect, useState } from 'react';
 import './EditPatron.css';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import axios from 'axios';
 
 const EditPatron = () => {
     const [patronData, setPatronData] = useState({
         patron_fname: '',
         patron_lname: '',
-        patron_sex: '',
+        patron_sex: 'Male',
         patron_mobile: '',
         patron_email: '',
-        category: '',
+        category: 'Student',
         college: '',
         program: '',
-        tup_id: ''
+        tup_id: 'TUPM-'
     });
 
-    const [categories, setCategories] = useState([]); // To store category options
+    // const [categories, setCategories] = useState([]); // To store category options
     const [colleges, setColleges] = useState([]); // To store college options
     const [courses, setCourses] = useState([]); // To store course options
-
     const { id } = useParams(); // ID from the route parameter
     const navigate = useNavigate(); // For programmatic navigation
     const [errors, setErrors] = useState({});
+    const [editMode, setEditMode] = useState(false);
+    const [isloading,setIsLoading]=useState(false)
+   
 
+    useEffect(()=>{
+       if(id>0){
+        setEditMode(true);
+        getPatronEdit();
+       }
 
-    const [isLoading, setIsLoading] = useState(true);
-  
-    useEffect(() => {
+       getColleges()
+       getCourses()  
+    },[])
+
+    const getColleges = async()=>{
+        try {
+            const response = await axios.get('http://localhost:3001/college').then(res=>res.data);
+            console.log(response)
+            setColleges(response)
+        } catch (err) {
+            console.log('Error fetching colleges ',err.message);
+        }
+    }
+
+    const getCourses = async()=>{
+        try {
+            const response = await axios.get('http://localhost:3001/course').then(res=>res.data);
+            console.log(response)
+            setCourses(response)
+        } catch (err) {
+            console.log('Error fetching colleges ',err.message);
+        }
+    }
+
+    const getPatronEdit = async ()=>{
+        setIsLoading(true)
         axios.get(`http://localhost:3001/update-patron/${id}`)
             .then(res => {
                 setPatronData({
@@ -43,15 +74,11 @@ const EditPatron = () => {
                     course_name: res.data.patronData.course_name, // Show name in dropdown
                     tup_id: res.data.patronData.tup_id || ''
                 });
-    
-                setColleges(res.data.colleges);
-                setCourses(res.data.courses);
                 setIsLoading(false);
             })
             .catch(err => console.error(err));
-    }, [id]);
+    }
     
-
     const handleChange = async (e) => {
         const { name, value } = e.target;
     
@@ -199,11 +226,55 @@ const EditPatron = () => {
             e.target.setSelectionRange(prefixLength, prefixLength);
         }
     };
-    
 
-    
+    const handleSave = () => {
+        // if formvalidation returns false, dont save data
+        if(!formValidation){
+            return;
+        }else{
+            if(editMode){
+                updatePatron()
+            }else{
+                addPatron()
+            }
+        }
+    };
 
-    const handleSave = async () => {
+    const addPatron = async ()=>{
+        if(!formValidation){
+            return
+        }
+        
+        try {
+            await axios.post(`http://localhost:3001/add-patron`, patronData);
+            navigate('/patrons'); // Redirect after saving
+            window.toast.fire({icon:"success", title:"Patron Added"})
+        } catch (error) {
+            console.error('Error saving patron:', error);
+        }
+    }
+
+    const updatePatron = async ()=>{
+        if(!formValidation){
+            return
+        }
+
+        try {
+            const updatedData = {
+                ...patronData,
+                category: patronData.category === 'None' ? '' : patronData.category,
+            };
+    
+            await axios.put(`http://localhost:3001/update-patron/${id}`, updatedData);
+            console.log('Patron updated successfully');
+            navigate('/patrons'); // Redirect after saving
+            window.toast.fire({icon:"success", title:"Patron Updated"})
+        } catch (error) {
+            console.error('Error saving patron:', error);
+        }
+    }
+
+    const formValidation = async ()=>{
         let errors = {};
     
         // Validate TUP ID and check if it exists
@@ -220,35 +291,21 @@ const EditPatron = () => {
         if (!patronData.patron_lname.trim()) {
             errors.patron_lname = 'Last name is required.';
         }
-    
+
         // If there are errors, block the save operation
         if (Object.keys(errors).length > 0) {
             setErrors(errors);
-            console.error('Validation errors:', errors);
-            return; // Stop the function if validation fails
+            console.error('Validation errors:', errors);  
+            return false
         }
-    
-        // Proceed with saving data if no errors
-        try {
-            const updatedData = {
-                ...patronData,
-                category: patronData.category === 'None' ? '' : patronData.category,
-            };
-    
-            await axios.put(`http://localhost:3001/update-patron/${id}`, updatedData);
-            console.log('Patron updated successfully');
-            navigate('/patrons'); // Redirect after saving
-        } catch (error) {
-            console.error('Error saving patron:', error);
-        }
-    };
-    
+    }
+
+    console.log(patronData)
     
     
     return (
         <div className='edit-patron-container'>
             <h1 className='m-0'>Patrons</h1>
-
             <div className='edit-patron-path-button'>
                 <Link to={'/patrons'}>
                     <button className='edit-patron-back-button'>
@@ -257,7 +314,9 @@ const EditPatron = () => {
                     </button>
                 </Link>
                 <div className='edit-patron-path'>
-                    <p>Patrons / <span>Edit Patron</span></p>
+                    <p>Patrons / 
+                        {editMode?<span>Edit Patron</span>:<span>Add Patron</span>}
+                    </p>
                 </div>
             </div>
 
@@ -265,7 +324,10 @@ const EditPatron = () => {
                 <div className='row'>
                     {/* header */}
                     <div className='col-12 patron-info-header'>
-                        Edit Patron Information
+                        <p className='m-0'>
+                            {editMode?<span>Edit </span>:<span>Add </span>}
+                            Patron Information
+                        </p>
                     </div>
 
                     <div className='row information-inputs'>
@@ -286,11 +348,6 @@ const EditPatron = () => {
                                     />
                                     <p className='patron-error'>{errors.tup_id}</p>
                                 </div>
-
-
-
-
-
                             </div>
 
                             <div className='row'>
