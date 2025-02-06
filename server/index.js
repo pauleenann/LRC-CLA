@@ -15,7 +15,7 @@ import cookieParser from 'cookie-parser'
 import cron from 'node-cron'
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 import validateTupIdRouter from './routes/validateTupId.js'; // Adjust the path if neededimport cron from 'node-cron'
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 
 dotenv.config();
 
@@ -41,18 +41,6 @@ app.use(cors({
 // api key for google books
 const apikey = process.env.API_KEY;
 
-// connect server to database
-// const db = mysql.createConnection({
-//     host: 'lrc-cla-lancewrt-dentsys.i.aivencloud.com',
-//     user: 'avnadmin',
-//     password: 'AVNS_JlmTwrEiTC51YRZliFQ',
-//     database: 'defaultdb',
-//     port: 21730,
-//     ssl: {
-//         rejectUnauthorized: true,
-//         ca: fs.readFileSync('./ca.pem').toString()
-//     }
-// });
 
  const db = mysql.createConnection({
     host: process.env.DB_HOST_LOCAL,
