@@ -3,10 +3,8 @@ import axios from 'axios';
 import './Patrons.css';
 import edit from '../../assets/Management System/patrons/edit-patron.svg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass,faPlus} from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass,faPlus,faPen, faFile} from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-
-
 
 const Patrons = () => {
     const [patrons, setPatrons] = useState([]);
@@ -155,8 +153,14 @@ const Patrons = () => {
                                     {userRole=='admin'?<td className="patron-edit-checkout">
                                         <Link to={`/edit-patron/${patron.patron_id}`}>
                                             <button className="patron-edit-button">
-                                                <img src={edit} alt="" />
+                                                <FontAwesomeIcon icon={faPen} />
                                                 Edit
+                                            </button>
+                                        </Link>
+                                        <Link to={`/edit-patron/${patron.patron_id}`}>
+                                            <button className="patron-edit-button mt-1">
+                                                <FontAwesomeIcon icon={faFile} />
+                                                View
                                             </button>
                                         </Link>
                                         

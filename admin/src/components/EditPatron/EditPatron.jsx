@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './EditPatron.css';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
 import axios from 'axios';
 
 const EditPatron = () => {
