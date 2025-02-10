@@ -133,12 +133,19 @@
 
 .audit-container table thead {
     background-color: var(--tup-color);
+    
 }
 
 
+.audit-container table{
+    overflow-y: auto;
+    height: 50vh;
+    
+}
 .audit-container table thead tr td {
     color: var(--white);
     font-size: 1rem; /* Slightly larger for header */
+    
 }
 
 .audit-container table tbody tr td {
@@ -149,7 +156,6 @@
     overflow-wrap: break-word;
     max-width: 150px;
 }
-
 
 /* .audit-container table tbody tr td{
     padding: 10px;
