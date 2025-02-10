@@ -142,23 +142,23 @@ const Patrons = () => {
                         {filteredPatrons.length > 0 ? (
                             filteredPatrons.map((patron, index) => (
                                 <tr key={index} style={{ borderBottom: '1px solid #ddd' }}>
-                                    <td style={{ padding: '10px' }} className='tup-id'>{patron.tup_id}</td>
-                                    <td style={{ padding: '10px' }}>
+                                    <td className='tup-id'>{patron.tup_id}</td>
+                                    <td>
                                         {patron.patron_fname} {patron.patron_lname}
                                     </td>
-                                    <td style={{ padding: '10px' }} className='email'>{patron.patron_email}</td>
-                                    <td style={{ padding: '10px' }} className='category'>{patron.category}</td>
-                                    <td style={{ padding: '10px' }}>{patron.total_checkouts}</td>
+                                    <td className='email'>{patron.patron_email}</td>
+                                    <td className='category'>{patron.category}</td>
+                                    <td>{patron.total_checkouts}</td>
                                     <td>₱<span>0.00</span></td>
                                     {userRole=='admin'?<td className="patron-edit-checkout">
                                         <Link to={`/edit-patron/${patron.patron_id}`}>
-                                            <button className="patron-edit-button">
+                                            <button className="btn patron-edit-button">
                                                 <FontAwesomeIcon icon={faPen} />
                                                 Edit
                                             </button>
                                         </Link>
-                                        <Link to={`/edit-patron/${patron.patron_id}`}>
-                                            <button className="patron-edit-button mt-1">
+                                        <Link to={`/view-patron`}>
+                                            <button className="btn patron-view-button mt-1">
                                                 <FontAwesomeIcon icon={faFile} />
                                                 View
                                             </button>
