@@ -470,7 +470,7 @@ const insertResources = async (res, req, authors, username) => {
 
                 // Get the `resource_id` of the newly inserted row
                 const resourceId = results.insertId;
-                logAuditAction(username, 'INSERT', 'resources', null, null, JSON.stringify({ resource_name: req.body.title }));
+                logAuditAction(username, 'INSERT', 'resources', null, null, JSON.stringify({ 'resource name': req.body.title }));
                 try {
                     // Insert authors for the resource
                     await insertAuthors(res, authors, resourceId);
@@ -1781,7 +1781,7 @@ app.post('/checkout1', async (req, res) => {
             'checkout',
             resource_id,
             null,
-            JSON.stringify({ book_name: resource_title, status: 'borrowed' })
+            JSON.stringify({ 'book name ': resource_title, status: ' borrowed' })
         );
 
         // Commit the transaction
@@ -1865,7 +1865,7 @@ app.post('/checkout', async (req, res) => {
             'checkout',
             resource_id,
             null,
-            JSON.stringify({ book_name: resource_title, status: 'borrowed', patron: patron_name })
+            JSON.stringify({ 'BOOK NAME': resource_title, STATUS: ' borrowed', PATRON: patron_name })
         );
 
         // Commit the transaction
@@ -1973,7 +1973,7 @@ app.post('/checkin', async (req, res) => {
             'checkin',
             resource_id,
             null,
-            JSON.stringify({ book_name: resource_title, status: 'returned', patron: patron_name })
+            JSON.stringify({ 'book name ': resource_title, status: 'returned', patron: patron_name })
         );
 
         io.emit('updatedCirculation')
@@ -3393,7 +3393,7 @@ app.put('/account/deactivate/:id', (req, res) => {
             }
 
             // Log the audit action
-            logAuditAction(username, 'UPDATE', 'staffaccount', staffUname, 'active', JSON.stringify({ staff_status: 'inactive' }));
+            logAuditAction(username, 'UPDATE', 'staffaccount', staffUname, 'active', JSON.stringify({ 'staff status ': 'inactive' }));
 
             // Notify clients via socket
             io.emit('userUpdated');
@@ -3441,7 +3441,7 @@ app.put('/account/activate/:id', (req, res) => {
             }
 
             // Log the audit action
-            logAuditAction(username, 'UPDATE', 'staffaccount', staffUname, 'inactive', JSON.stringify({ staff_status: 'active' }));
+            logAuditAction(username, 'UPDATE', 'staffaccount', staffUname, 'inactive', JSON.stringify({ 'staff status ': 'active' }));
 
             // Notify clients via socket
             io.emit('userUpdated');
