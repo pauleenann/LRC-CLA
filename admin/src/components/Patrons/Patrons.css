@@ -107,14 +107,14 @@
     background-color: var(--button);
 }
 
-.patrons-table td {
+.patrons-container .patrons-table td {
     text-align: center;      /* Center horizontally */
 }
 
-.patrons-table td.email,
-.patrons-table th.email,
-.patrons-table td.category,
-.patrons-table th.category {
+.patrons-container .patrons-table td.email,
+.patrons-container  .patrons-table th.email,
+.patrons-container  .patrons-table td.category,
+.patrons-container .patrons-table th.category {
     color: #555;     
 }
 
@@ -143,38 +143,23 @@
 }
 
 
-.patron-edit-button, .patron-view-button{
+.patrons-container .patron-edit-button,.patrons-container  .patron-view-button{
         display: flex;
         justify-content: center; /* Center horizontally */
         align-items: center;    /* Center vertically */
         height: 40px;           /* Ensure it fills the cell height */
         gap: 5px;               /* Keep this if needed */
-        width: 80px;
-        background-color: var(--tup-color);
-        color: var(--white) !important;
+        /* width: 80px; */
+        /* background-color: var(--tup-color); */
+        color: var(--tup-color) !important;
 }
 
-.patron-edit-button:hover, 
-.patron-edit-button:active, 
-.patron-edit-button:focus, 
-.patron-view-button:hover,
-.patron-view-button:active,
-.patron-view-button:focus{
-    background-color: var(--button) !important;
-
-}
-.patrons-container .patron-edit-button, .patron-checkout-button{
-    border-radius: 5px;
-    padding: 8px 10px;
+.patrons-container .patron-edit-button:hover,
+.patrons-container .patron-edit-button:active,
+.patrons-container .patron-edit-button:focus,
+.patrons-container .patron-view-button:hover,
+.patrons-container .patron-view-button:active,
+.patrons-container .patron-view-button:focus{
     background-color: var(--tup-color);
-    border: none;
-    color: var(--white);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-}
-
-.patrons-container .patron-edit-button img, .patrons-container.patron-checkout-button img{
-    width: 20px;
+    color: var(--white) !important;
 }
