@@ -107,31 +107,14 @@
     background-color: var(--button);
 }
 
-.patrons-table{
-    table-layout: fixed;
-}
-
-
 .patrons-table td {
     text-align: center;      /* Center horizontally */
-    vertical-align: middle;  /* Center vertically */
-    font-size: 14px !important; /* Adjust to desired size, 14px is a typical average */
-
-    padding: 8px;    /* Optional: Adjust padding for better spacing */
-}
-
-.patrons-table td.tup-id,
-.patrons-table th.tup-id {
-    width: 150px; /* Adjust this value as needed */
-    max-width: 130px; /* Optional: Set a maximum width */
-    text-align: center; /* Optional: Center-align the text */
 }
 
 .patrons-table td.email,
 .patrons-table th.email,
 .patrons-table td.category,
 .patrons-table th.category {
-    font-size: 12px; 
     color: #555;     
 }
 
@@ -160,13 +143,25 @@
 }
 
 
-.patron-edit-button{
+.patron-edit-button, .patron-view-button{
         display: flex;
         justify-content: center; /* Center horizontally */
         align-items: center;    /* Center vertically */
-        height: 100%;           /* Ensure it fills the cell height */
-        gap: 3px;               /* Keep this if needed */
-    
+        height: 40px;           /* Ensure it fills the cell height */
+        gap: 5px;               /* Keep this if needed */
+        width: 80px;
+        background-color: var(--tup-color);
+        color: var(--white) !important;
+}
+
+.patron-edit-button:hover, 
+.patron-edit-button:active, 
+.patron-edit-button:focus, 
+.patron-view-button:hover,
+.patron-view-button:active,
+.patron-view-button:focus{
+    background-color: var(--button) !important;
+
 }
 .patrons-container .patron-edit-button, .patron-checkout-button{
     border-radius: 5px;
