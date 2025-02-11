@@ -1419,8 +1419,6 @@ app.get('/resource/:id', (req,res)=>{
 
 
 app.get('/patron', (req, res) => {
-
-
 const q = `SELECT 
             p.patron_id,
             p.tup_id,
@@ -1443,7 +1441,6 @@ const q = `SELECT
             p.patron_email, 
             p.category, 
             cr.course_name;
-
 `;
 
 db.query(q, (err, results) => {
@@ -1456,6 +1453,69 @@ db.query(q, (err, results) => {
     }
 });
 });
+
+app.get('/patron/:id',(req,res)=>{
+    const id = req.params.id;
+    console.log(id)
+
+    const q = `SELECT  
+            p.patron_fname,
+            p.patron_lname,
+            p.tup_id,
+            p.patron_sex,
+            p.patron_mobile,
+            p.patron_email,
+            p.category,
+            col.college_name,
+            cou.course_name
+        FROM 
+            patron p
+        JOIN college col ON col.college_id = p.college_id
+        JOIN course cou ON cou.course_id = p.course_id
+        WHERE p.patron_id = ?`
+
+    db.query(q,[id],(err,results)=>{
+        if(err) return res.send(err)
+            return res.json(results)
+    })
+})
+
+app.get("/log-history/:id",(req,res)=>{
+    const id = req.params.id;
+
+    const q = `
+        SELECT att_log_in_time, att_date 
+        FROM attendance 
+        WHERE patron_id = ?`
+
+    db.query(q,[id],(err,results)=>{
+        if(err) return res.send(err)
+            return res.json(results)
+    })
+})
+
+app.get("/circulation-history/:id",(req,res)=>{
+    const id = req.params.id;
+    const q = `
+        SELECT 
+            cout.checkout_id,
+            res.resource_title,
+            cout.checkout_date,
+            cout.checkout_due,
+            cin.checkin_date,
+            COALESCE(ov.overdue_days, 0) AS overdue_days 
+        FROM 
+            checkout cout
+        JOIN resources res ON cout.resource_id = res.resource_id
+        LEFT JOIN checkin cin ON cin.checkout_id = cout.checkout_id
+        LEFT JOIN overdue ov ON ov.checkout_id = cout.checkout_id
+        WHERE cout.patron_id = ?`
+
+    db.query(q,[id],(err,results)=>{
+        if(err) return res.send(err)
+            return res.json(results)
+    })
+})
 
 app.get('/patronCheckin', (req, res) => {
 

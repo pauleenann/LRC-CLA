@@ -37,10 +37,13 @@ const Patrons = () => {
     }, []);
 
     useEffect(() => {
+        getPatron();
+    }, []);
+
+    const getPatron = async ()=>{
         // Fetch data from backend API
         setLoading(true)
-        axios
-            .get(`http://localhost:3001/patron`) // Replace with your backend endpoint
+        axios.get(`http://localhost:3001/patron`) // Replace with your backend endpoint
             .then((response) => {
                 setPatrons(response.data);
                 setFilteredPatrons(response.data); // Initialize filtered patrons
@@ -51,7 +54,7 @@ const Patrons = () => {
             .finally(()=>{
                 setLoading(false)
             });
-    }, []);
+    }
 
     // Handle search input change
     const handleSearchChange = (event) => {
@@ -149,18 +152,17 @@ const Patrons = () => {
                                     <td style={{ padding: '10px' }} className='email'>{patron.patron_email}</td>
                                     <td style={{ padding: '10px' }} className='category'>{patron.category}</td>
                                     <td style={{ padding: '10px' }}>{patron.total_checkouts}</td>
-                                    <td>₱<span>0.00</span></td>
-                                    {userRole=='admin'?<td className="patron-edit-checkout">
+                                    {/* <td>₱<span>0.00</span></td> */}
+                                    {userRole=='admin'?<td className="patron-edit-checkout d-flex align-items-center gap-1">
                                         <Link to={`/edit-patron/${patron.patron_id}`}>
-                                            <button className="btn patron-edit-button">
+                                            <button className="btn
+                                            patron-edit-button">
                                                 <FontAwesomeIcon icon={faPen} />
-                                                Edit
                                             </button>
                                         </Link>
-                                        <Link to={`/view-patron`}>
-                                            <button className="btn patron-view-button mt-1">
+                                        <Link to={`/view-patron/${patron.patron_id}`}>
+                                            <button className="btn patron-view-button">
                                                 <FontAwesomeIcon icon={faFile} />
-                                                View
                                             </button>
                                         </Link>
                                         
@@ -185,6 +187,8 @@ const Patrons = () => {
                           </tr>)}
                     </tbody>
                 </table>
+
+                
         </div>
     );
 };

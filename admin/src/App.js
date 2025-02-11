@@ -97,7 +97,7 @@ const App = () => {
               </ProtectedRoute>
           }/>
 
-          <Route path='/view-patron' element={
+          <Route path='/view-patron/:id' element={
             <ProtectedRoute allowedRoles={['staff', 'admin']}>
               <ViewPatronPage/>
             </ProtectedRoute>
