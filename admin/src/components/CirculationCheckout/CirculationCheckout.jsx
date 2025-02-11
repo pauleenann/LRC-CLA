@@ -8,6 +8,7 @@ import CirculationSuccessful from '../CirculationSuccessful/CirculationSuccessfu
 import Loading from '../Loading/Loading';
 
 
+
 const CirculationCheckout = () => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
@@ -92,7 +93,7 @@ const CirculationCheckout = () => {
           if (response.status !== 201) {
             throw new Error(`Failed to check in item with checkout_id: ${checkoutId}`);
           }
-  
+          
           return response.data;
         } catch (error) {
           console.error(`Error during check-in for item: ${item.resource_id}`, error.message);
