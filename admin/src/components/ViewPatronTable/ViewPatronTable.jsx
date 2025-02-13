@@ -150,7 +150,7 @@ const ViewPatronTable = ({header, title, data}) => {
             <span className='m-0'>to</span>
             <input type="date" name="end_date" id="" onChange={handleChange}/>
             <button className='btn search' onClick={search}>Search</button> */}
-            <button className='btn search' onClick={reset}>Reset filters </button>
+            <button className='btn search' onClick={reset}>Reset filter </button>
           </div>
           <button className="btn export">Export</button>
         </div>
