@@ -38,13 +38,15 @@
 
 .dashboard-table thead tr td{
     color:gray;
+    /* min-width: 100px; */
 }
 
 .dashboard-table tbody tr td{
     color: var(--black);
+    
 }
 
 .dashboard-table td{
-    padding: 15px 0;
+    padding: 5px;
     border-bottom:1px solid var(--table-border-bottom);
 }

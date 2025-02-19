@@ -19,8 +19,7 @@ ChartJS.register(
   Legend
 );
 
-
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+const labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 export const data = {
   labels,

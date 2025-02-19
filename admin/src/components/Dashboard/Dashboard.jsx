@@ -2,23 +2,38 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import './Dashboard.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers ,faBook, faPlus} from '@fortawesome/free-solid-svg-icons';
+import { faUsers ,faBook, faPlus, faBookBookmark, faTriangleExclamation} from '@fortawesome/free-solid-svg-icons';
 import { VerticalBarChart } from '../VerticalBarChart';
 import DashboardTable from '../DashboardTable/DashboardTable';
 import DashboardTopChoices from '../DashboardTopChoices/DashboardTopChoices';
-
-
+import DashBox from '../DashBox/DashBox';
 
 const Dashboard = () => {
   const [dateTime,setDateTime] = useState(new Date());
   const [uname, setUname] = useState(null)
-  const overdueListHeader = ["Tup ID","Borrower's Name","Book ID","Title","Author","Overdue","Status"]
+  const [totalVisitors, setTotalVisitors] = useState("");
+  const [totalBorrowed, setTotalBorrowed] = useState("");
+  const [totalReturned, setTotalReturned] = useState("");
+  const [totalOverdue, setTotalOverdue] = useState("");
+  const [overdueBooks, setOverdueBooks] = useState([]);
+  const [bookList, setBookList] = useState([]);
+  const [issuedBooks, setIssuedBooks] = useState([]);
+  const [popularChoices, setPopularChoices] = useState([]);
+  const [booksData, setBooksData] = useState([])
+  const overdueListHeader = ["Tup ID","Borrower's Name","Book ID","Title","Overdue Days"]
   const bookListHeader = ["Book ID","Title","Author","Copies Available"]
   const bookIssuedHeader = ["Tup ID","Title","Return Date"]
 
-
   useEffect(() => {
     getUsername()
+    getTotalVisitors();
+    getTotalBorrowed();
+    getTotalReturned();
+    getTotalOverdue();
+    getOverdueBooks();
+    getBookList();
+    getIssued();
+    getPopularChoices();
   }, []);
 
   const getUsername = async()=>{
@@ -38,6 +53,110 @@ const Dashboard = () => {
     }
   }
 
+  //total visitors
+  const getTotalVisitors = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3001/getTotalVisitors`);
+      setTotalVisitors(response.data.total_attendance); // Adjust based on your backend response
+      console.log(response.data);
+    } catch (err) {
+      console.error("Error fetching total visitors:", err.message);
+    }
+  };
+
+  //total borrowed
+  const getTotalBorrowed = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3001/getBorrowedBooks`);
+      setTotalBorrowed(response.data.total_borrowed); // Adjust based on your backend response
+      console.log(response.data);
+    } catch (err) {
+      console.error("Error fetching total borrowed books:", err.message);
+    }
+  };
+
+  //total returned
+  const getTotalReturned = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3001/getReturnedBooks`);
+      setTotalReturned(response.data.total_returned); // Adjust based on your backend response
+      console.log(response.data);
+    } catch (err) {
+      console.error("Error fetching total returned books:", err.message);
+    }
+  };
+
+  //total overdue
+  const getTotalOverdue = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3001/getOverdueBooks`);
+      setTotalOverdue(response.data.total_overdue); // Adjust based on your backend response
+      console.log(response.data);
+    } catch (err) {
+      console.error("Error fetching total overdue books:", err.message);
+    }
+  };
+
+  //overdue books
+  const getOverdueBooks = async () => {
+    try {
+        await axios.get(`http://localhost:3001/api/overdue-books`)
+        .then(response=>{
+          console.log(response.data)
+          setOverdueBooks(response.data);
+        })
+    } catch (error) {
+        console.error('Error fetching overdue books:', error);
+    }
+  };
+
+  //get book trends
+  const getBookTrends = async()=>{
+    try{
+      const response = await axios.get(`http://localhost:3001/borrowed/book/trends`)
+      const books = response.data;
+      console.log(books)
+      const borrowingTrends = books.map(item=>
+        item.total_books_borrowed
+      )
+      setBooksData(borrowingTrends)
+    }catch(err){
+      console.log('Cannot get borrowed book trends. An error occurred: ', err.message)
+    }
+  }
+
+  //books list
+  const getBookList = async()=>{
+    try {
+      const response = await axios.get(`http://localhost:3001/getAddedBooks`).then(res=>res.data);
+      setBookList(response)
+      console.log(response)
+    } catch (err) {
+        console.log(err.message);
+    }
+  }
+
+   //book issued
+   const getIssued = async()=>{
+    try {
+      const response = await axios.get(`http://localhost:3001/issued-books`).then(res=>res.data);
+      setIssuedBooks(response)
+      console.log(response)
+    } catch (err) {
+        console.log(err.message);
+    }
+  }
+
+  //book issued
+  const getPopularChoices = async()=>{
+    try {
+      const response = await axios.get(`http://localhost:3001/popular-choices`).then(res=>res.data);
+      setPopularChoices(response)
+      console.log(response)
+    } catch (err) {
+        console.log(err.message);
+    }
+  }
   return (
     <div className='dashboard-container'>
        {/* dashboard heading */}
@@ -51,40 +170,16 @@ const Dashboard = () => {
         {/* column 1 */}
         <div className="dashboard-1 row gap-3">
           {/* total visitors */}
-          <div className="dash-box col">
-            <div className="total-box">
-              <span className='total'>{}</span>
-              <span className='label'>Total Visits</span>
-            </div>
-            <FontAwesomeIcon icon={faUsers} className='icon'/>
-          </div>
+          <DashBox icon={<FontAwesomeIcon icon={faUsers} className='icon'/>} title={"Total Visits"} total={totalVisitors}/>
 
           {/* borrowed resources */}
-          <div className="dash-box col">
-            <div className="total-box">
-              <span className='total'>{}</span>
-              <span className='label'>Borrowed Resources</span>
-            </div>
-            <FontAwesomeIcon icon={faBook} className='icon'/>
-          </div>
+          <DashBox icon={<FontAwesomeIcon icon={faBookBookmark} className='icon'/>} title={"Borrowed Resources"} total={totalBorrowed}/>
 
           {/* returned resources */}
-          <div className="dash-box col">
-            <div className="total-box">
-              <span className='total'>{}</span>
-              <span className='label'>Returned Resources</span>
-            </div>
-            <FontAwesomeIcon icon={faBook} className='icon'/>
-          </div>
-
+          <DashBox icon={<FontAwesomeIcon icon={faBook} className='icon'/>} title={"Returned Resources"} total={totalReturned}/>
+          
           {/* overdue resources */}
-          <div className="dash-box col">
-            <div className="total-box">
-              <span className='total'>{}</span>
-              <span className='label'>Overdue Resources</span>
-            </div>
-            <FontAwesomeIcon icon={faBook} className='icon'/>
-          </div>
+          <DashBox icon={<FontAwesomeIcon icon={faTriangleExclamation} className='icon'/>} title={"Overdue Resources"} total={totalOverdue}/>
 
           {/* bar chart */}
           <div className="bar-chart col-12">
@@ -98,7 +193,7 @@ const Dashboard = () => {
               <h5 className='m-0'>Overdue Book List</h5>
               <button className='see-all btn'>See all</button>
             </div>
-            <DashboardTable header={overdueListHeader} isBookList={false}/>
+            <DashboardTable header={overdueListHeader} data={overdueBooks}/>
           </div>
 
           {/* book list */}
@@ -114,20 +209,18 @@ const Dashboard = () => {
                 </button>
             </div>
             
-            <DashboardTable header={bookListHeader} isBookList={true}/>
+            <DashboardTable header={bookListHeader}  data={bookList}/>
           </div>
         </div>
 
         {/* column 2 */}
         <div className="dashboard-2">
           {/* top choices*/}
-          <div className="top-choices d-flex flex-column gap-2">
-            <h5>Top Choices</h5>
-            <DashboardTopChoices number={"1"}/>
-            <DashboardTopChoices number={"2"}/>
-            <DashboardTopChoices number={"3"}/>
-            <DashboardTopChoices number={"4"}/>
-            <DashboardTopChoices number={"5"}/>
+          <div className="top-choices d-flex flex-column gap-3">
+            <h5>Popular Choices</h5>
+            {popularChoices ? popularChoices.map((item, index) => (
+              <DashboardTopChoices key={index} data={item} number={index + 1} />
+            )) : ''} 
           </div>
 
           {/* books issued list */}
@@ -135,12 +228,12 @@ const Dashboard = () => {
             <div className='d-flex align-items-center justify-content-between'>
               <div className='d-flex align-items-center justify-content-start gap-3 py-3'>
                 <h5 className='m-0'>Books Issued</h5>
-                <p className='books-issued-total m-0 d-flex align-items-center justify-content-center rounded-5'>1</p>
+                <p className='books-issued-total m-0 d-flex align-items-center justify-content-center rounded-5'>{issuedBooks&&issuedBooks.length}</p>
               </div>
               <button className='btn see-all'>See all</button>
             </div>
             
-            <DashboardTable header={bookIssuedHeader} isBookList={false}/>
+            <DashboardTable header={bookIssuedHeader} data={issuedBooks}/>
           </div>
 
         </div>

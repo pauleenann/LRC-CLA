@@ -145,12 +145,10 @@ const Dashboard = () => {
       const response = await axios.get(`http://localhost:3001/borrowed/book/trends`)
       const books = response.data;
       console.log(books)
-
       const borrowingTrends = books.map(item=>
         item.total_books_borrowed
       )
       setBooksData(borrowingTrends)
-      
     }catch(err){
       console.log('Cannot get borrowed book trends. An error occurred: ', err.message)
     }
