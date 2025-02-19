@@ -52,12 +52,12 @@
 .dashboard-container .dashboard{
     display: grid;
     grid-template-columns: 70% 30%;
-    gap: 50px;
+    /* gap: 50px; */
 }
 
 .dashboard-container .dashboard-1{
     /* background-color: #6F6A6A; */
-    
+    padding: 0 50px 0 0;
 }
 
 .dashboard-container .dash-box{
@@ -99,6 +99,7 @@
     background-color: var(--white);
     padding: 40px;
     border-radius: 5px;
+    /* max-width: 900px; */
     box-shadow: 0px 1px 2px var(--shadow);
 }
 
@@ -130,10 +131,11 @@
 
 .dashboard-container .dashboard-2{
     border-left: 1px solid var(--table-border-bottom);
+    padding: 0 30px;
 }
 
 .dashboard-container .dashboard-2 .top-choices{
-    padding: 0 20px;
+    /* padding: 0 20px; */
 }
 
 .dashboard-container .books-issued-total{

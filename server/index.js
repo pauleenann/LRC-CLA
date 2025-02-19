@@ -1047,15 +1047,9 @@ app.get('/roles', (req,res)=>{
 })
 
 app.get("/getTotalVisitors", (req, res) => {
-    const { date } = req.query;
+    const query = `SELECT COUNT(*) AS total_attendance FROM attendance WHERE DATE(att_date) = curdate()`;
   
-    if (!date) {
-      return res.status(400).json({ message: "Date is required" });
-    }
-  
-    const query = `SELECT COUNT(*) AS total_attendance FROM attendance WHERE DATE(att_date) = ?`;
-  
-    db.query(query, [date], (err, result) => {
+    db.query(query, (err, result) => {
       if (err) {
         console.error("Database error:", err);
         return res.status(500).json({ message: "Internal server error" });
@@ -1067,15 +1061,9 @@ app.get("/getTotalVisitors", (req, res) => {
   });
 
 app.get("/getBorrowedBooks", (req, res) => {
-    const { date } = req.query;
+    const query = `SELECT COUNT(*) AS total_borrowed FROM checkout WHERE DATE(checkout_date) = curdate() AND status = 'borrowed'`;
 
-    if (!date) {
-        return res.status(400).json({ message: "Date is required" });
-    }
-
-    const query = `SELECT COUNT(*) AS total_borrowed FROM checkout WHERE DATE(checkout_date) = ? AND status = 'borrowed'`;
-
-    db.query(query, [date], (err, result) => {
+    db.query(query, (err, result) => {
         if (err) {
         console.error("Database error:", err);
         return res.status(500).json({ message: "Internal server error" });
@@ -1086,6 +1074,33 @@ app.get("/getBorrowedBooks", (req, res) => {
     });
 });
 
+app.get("/getReturnedBooks", (req, res) => {
+    const query = `SELECT COUNT(*) AS total_returned FROM checkin WHERE DATE(checkin_date) = curdate()`;
+
+    db.query(query, (err, result) => {
+        if (err) {
+        console.error("Database error:", err);
+        return res.status(500).json({ message: "Internal server error" });
+        }
+
+        const total_returned = result[0]?.total_returned || 0;
+        res.json({ total_returned });
+    });
+});
+
+app.get("/getOverdueBooks", (req, res) => {
+    const query = `SELECT COUNT(*) AS total_overdue FROM overdue`;
+
+    db.query(query, (err, result) => {
+        if (err) {
+        console.error("Database error:", err);
+        return res.status(500).json({ message: "Internal server error" });
+        }
+
+        const total_overdue = result[0]?.total_overdue || 0;
+        res.json({ total_overdue });
+    });
+});
 
 
 /*-------DISPLAY DATA FOR CATALOG PAGE & DYNAMIC SEARCH----- */
@@ -2213,9 +2228,10 @@ app.get('/getAudit', (req, res) => {
 app.get('/getAddedBooks', (req, res) => {
     const q = `SELECT 
     r.resource_id, 
-    r.resource_title, 
-    r.resource_quantity, 
-    GROUP_CONCAT(CONCAT(a.author_fname, ' ', a.author_lname) ORDER BY a.author_lname SEPARATOR ', ') AS authors
+    r.resource_title,  
+    GROUP_CONCAT(CONCAT(a.author_fname, ' ', a.author_lname)
+    ORDER BY a.author_lname SEPARATOR ', ') AS authors,
+    r.resource_quantity
     FROM 
         resources AS r
     JOIN 
@@ -2225,7 +2241,7 @@ app.get('/getAddedBooks', (req, res) => {
     GROUP BY 
         r.resource_id, r.resource_title, r.resource_quantity
     ORDER BY 
-        r.resource_id DESC LIMIT 5;
+        r.resource_id ASC LIMIT 5;
 `;
 
     db.query(q, (err, results) => {
@@ -2477,12 +2493,11 @@ app.get('/getCover', (req, res) => {
 app.get('/api/overdue-books', (req, res) => {
     const query = `
        SELECT 
-            o.overdue_days,
-            p.patron_fname, 
-            p.patron_lname,
             p.tup_id,
+            CONCAT(p.patron_fname, ' ', p.patron_lname) ,
             co.resource_id,
-            r.resource_title
+            r.resource_title,
+            o.overdue_days
         FROM overdue o
         JOIN checkout co ON o.checkout_id = co.checkout_id
         JOIN patron p ON p.patron_id = co.patron_id
@@ -2492,10 +2507,56 @@ app.get('/api/overdue-books', (req, res) => {
     
     db.query(query, (error, results) => {
         if (error) return res.status(500).json({ error });
-        
+    
         res.json(results);
     });
 });
+
+app.get('/issued-books', (req, res) => {
+    const query = `
+       SELECT
+            p.tup_id,
+            r.resource_title,
+            DATE_FORMAT(cout.checkout_due, '%Y-%m-%d')
+        FROM 
+            checkout cout
+        JOIN patron p ON cout.patron_id = p.patron_id
+        JOIN resources r ON cout.resource_id = r.resource_id
+        WHERE cout.status = 'borrowed';
+    `;
+    
+    db.query(query, (error, results) => {
+        if (error) return res.status(500).json({ error });
+    
+        res.json(results);
+    });
+});
+
+
+app.get('/popular-choices', (req, res) => {
+    const query = `
+       SELECT 
+            r.resource_title, 
+            CONCAT(a.author_fname, ' ', a.author_lname) AS authors,
+            r.resource_published_date,
+            b.book_cover
+        FROM 
+            resources r
+        JOIN book b ON b.resource_id = r.resource_id
+        JOIN resourceauthors ra ON ra.resource_id = r.resource_id
+        JOIN author a ON a.author_id = ra.author_id
+        JOIN checkout cout ON cout.resource_id = r.resource_id
+        WHERE r.resource_id = cout.resource_id
+        GROUP BY r.resource_title, r.resource_published_date, b.book_cover
+        LIMIT 5`;
+    
+    db.query(query, (error, results) => {
+        if (error) return res.status(500).json({ error });
+    
+        res.json(results);
+    });
+});
+
 
 app.get('/checkout-info', async (req, res) => {
     /* try {
