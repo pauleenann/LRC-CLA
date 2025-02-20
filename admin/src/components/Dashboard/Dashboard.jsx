@@ -7,6 +7,7 @@ import { VerticalBarChart } from '../VerticalBarChart';
 import DashboardTable from '../DashboardTable/DashboardTable';
 import DashboardTopChoices from '../DashboardTopChoices/DashboardTopChoices';
 import DashBox from '../DashBox/DashBox';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const [dateTime,setDateTime] = useState(new Date());
@@ -157,6 +158,7 @@ const Dashboard = () => {
         console.log(err.message);
     }
   }
+
   return (
     <div className='dashboard-container'>
        {/* dashboard heading */}
@@ -191,9 +193,9 @@ const Dashboard = () => {
           <div className="overdue-table py-4">
             <div className='d-flex align-items-center justify-content-start gap-5 py-3'>
               <h5 className='m-0'>Overdue Book List</h5>
-              <button className='see-all btn'>See all</button>
+              {/* <button className='see-all btn'>See all</button> */}
             </div>
-            <DashboardTable header={overdueListHeader} data={overdueBooks}/>
+            <DashboardTable header={overdueListHeader} data={overdueBooks} type={"overdue"}/>
           </div>
 
           {/* book list */}
@@ -201,15 +203,21 @@ const Dashboard = () => {
             <div className='d-flex justify-content-between'>
               <div className='d-flex align-items-center justify-content-start gap-5 py-3'>
                 <h5 className='m-0'>Book List</h5>
-                <button className='see-all btn'>See all</button>
+                <Link to='/catalog'>
+                  <button className='see-all btn'>See all</button>
+                </Link>
+                
               </div>
-              <button className="btn add-btn d-flex align-items-center justify-content-center gap-3">
-                <FontAwesomeIcon icon={faPlus} className='icon'/>
-                Add new
+              <Link to="/add-item">
+                <button className="btn add-btn d-flex align-items-center justify-content-center gap-3">
+                  <FontAwesomeIcon icon={faPlus} className='icon'/>
+                  Add new
                 </button>
+              </Link>
+              
             </div>
             
-            <DashboardTable header={bookListHeader}  data={bookList}/>
+            <DashboardTable header={bookListHeader}  data={bookList} type={"books"}/>
           </div>
         </div>
 
@@ -230,10 +238,13 @@ const Dashboard = () => {
                 <h5 className='m-0'>Books Issued</h5>
                 <p className='books-issued-total m-0 d-flex align-items-center justify-content-center rounded-5'>{issuedBooks&&issuedBooks.length}</p>
               </div>
-              <button className='btn see-all'>See all</button>
+              <Link to='/circulation'>
+                <button className='btn see-all'>See all</button>
+              </Link>
+              
             </div>
             
-            <DashboardTable header={bookIssuedHeader} data={issuedBooks}/>
+            <DashboardTable header={bookIssuedHeader} data={issuedBooks} type={"issued"}/>
           </div>
 
         </div>

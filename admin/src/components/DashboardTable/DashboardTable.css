@@ -36,14 +36,20 @@
     /* table-layout: fixed; */
 }
 
+.dashboard-table .clickable:hover{
+    cursor: pointer;
+    background-color: var(--light-gray);
+}
+
 .dashboard-table thead tr td{
     color:gray;
+    font-size: 0.9rem;
     /* min-width: 100px; */
 }
 
 .dashboard-table tbody tr td{
     color: var(--black);
-    
+    font-size: 0.9rem;
 }
 
 .dashboard-table td{
