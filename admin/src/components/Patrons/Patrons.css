@@ -13,7 +13,6 @@
 }
 
 
-
 :root{
     --black:#1F1F1F;
     --tup-color: #94152B;
@@ -109,6 +108,7 @@
 
 .patrons-container .patrons-table td {
     text-align: center;      /* Center horizontally */
+    font-size: 0.9rem;
 }
 
 .patrons-container .patrons-table td.email,
