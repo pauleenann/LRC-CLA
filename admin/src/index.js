@@ -4,6 +4,8 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Swal from 'sweetalert2';
+import {Provider} from 'react-redux'
+import store from './store/store.js';
 
 // Define global SweetAlert2
 window.Swal = Swal;
@@ -24,7 +26,9 @@ root.render(
   // <React.StrictMode>
   //   <App />
   // </React.StrictMode>
-  <App/> //removed strict mode to avoid double mounting
+  <Provider store={store}>
+    <App/> 
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function
