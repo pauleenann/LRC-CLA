@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import './DashboardTopChoices.css'
+import { Link, useNavigate } from 'react-router-dom'
 
 const DashboardTopChoices = ({data, number}) => {
   const [preview, setPreview] = useState(null)
+  const navigate = useNavigate()
+
   useEffect(()=>{
           if(!data.book_cover) return;
   
@@ -23,9 +26,13 @@ const DashboardTopChoices = ({data, number}) => {
               }
             };
         },[data.book_cover])
+
+        const handleClick = ()=>{
+            navigate(`/view-item/${data.resource_id}`)
+        }
         
   return (
-    <div className='top-choices-container d-flex align-items-center gap-3'>
+    <div className='top-choices-container d-flex align-items-center gap-3' onClick={handleClick}>
         {/* top number */}
         <div>
             <span className='m-0 top-number d-flex align-items-center justify-content-center'>{number}</span>

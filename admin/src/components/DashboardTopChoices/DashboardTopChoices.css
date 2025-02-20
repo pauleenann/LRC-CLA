@@ -31,6 +31,9 @@
     --gray: #313131;
 }
 
+.top-choices-container{
+    cursor: pointer;
+}
 
 .top-choices-container .top-number{
     background-color: var(--gray);
