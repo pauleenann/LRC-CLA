@@ -2494,7 +2494,8 @@ app.get('/api/overdue-books', (req, res) => {
     const query = `
        SELECT 
             p.tup_id,
-            CONCAT(p.patron_fname, ' ', p.patron_lname) ,
+            p.patron_id,
+            CONCAT(p.patron_fname, ' ', p.patron_lname) as pname,
             co.resource_id,
             r.resource_title,
             o.overdue_days
@@ -2517,7 +2518,7 @@ app.get('/issued-books', (req, res) => {
        SELECT
             p.tup_id,
             r.resource_title,
-            DATE_FORMAT(cout.checkout_due, '%Y-%m-%d')
+            DATE_FORMAT(cout.checkout_due, '%Y-%m-%d') AS duedate
         FROM 
             checkout cout
         JOIN patron p ON cout.patron_id = p.patron_id

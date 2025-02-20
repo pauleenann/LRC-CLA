@@ -39,7 +39,11 @@ const DashboardTopChoices = ({data, number}) => {
 
             {/* book details */}
             <div className='top-choices-details'>
-                <p className='m-0 fw-semibold'>{data.resource_title}</p>
+                <p className='m-0 fw-semibold'>
+                    {data.resource_title.length>=50
+                    ?(data.resource_title.slice(0,50))+"..."
+                    :data.resource_title}
+                </p>
                 <p className='m-0'>By {data.authors}</p>
                 <p className='mt-2'>Published in {data.resource_published_date}</p>
             </div>
