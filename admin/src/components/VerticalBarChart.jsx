@@ -9,6 +9,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { useSelector } from 'react-redux';
 
 ChartJS.register(
   CategoryScale,
@@ -19,24 +20,27 @@ ChartJS.register(
   Legend
 );
 
-const labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Visitors',
-      data:[1,2,3,4,5,6,7],
-      backgroundColor: '#94152B',
-    },
-    {
-      label: 'Borrowers',
-      data: [1,2,3,4,5,6,7],
-      backgroundColor: '#b1b1b1',
-    },
-  ],
-};
 
 export function VerticalBarChart() {
+  const {borrowedStats} = useSelector((state)=>state.chart);
+  const {visitorStats} = useSelector((state)=>state.chart)
+
+  const labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: 'Visitors',
+        data:visitorStats,
+        backgroundColor: '#94152B',
+      },
+      {
+        label: 'Borrowers',
+        data: borrowedStats,
+        backgroundColor: '#b1b1b1',
+      },
+    ],
+  };
+
   return <Bar data={data} />;
 }

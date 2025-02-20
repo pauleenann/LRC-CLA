@@ -8,6 +8,8 @@ import DashboardTable from '../DashboardTable/DashboardTable';
 import DashboardTopChoices from '../DashboardTopChoices/DashboardTopChoices';
 import DashBox from '../DashBox/DashBox';
 import { Link } from 'react-router-dom';
+import {useDispatch} from 'react-redux';
+import { setBorrowedStats, setVisitorStats } from '../../features/chartSlice.js';
 
 const Dashboard = () => {
   const [dateTime,setDateTime] = useState(new Date());
@@ -20,11 +22,11 @@ const Dashboard = () => {
   const [bookList, setBookList] = useState([]);
   const [issuedBooks, setIssuedBooks] = useState([]);
   const [popularChoices, setPopularChoices] = useState([]);
-  const [booksData, setBooksData] = useState([])
-  const overdueListHeader = ["Tup ID","Borrower's Name","Book ID","Title","Overdue Days"]
-  const bookListHeader = ["Book ID","Title","Author","Copies Available"]
-  const bookIssuedHeader = ["Tup ID","Title","Return Date"]
-
+  const overdueListHeader = ["Tup ID","Borrower's Name","Book ID","Title","Overdue Days"];
+  const bookListHeader = ["Book ID","Title","Author","Copies Available"];
+  const bookIssuedHeader = ["Tup ID","Title","Return Date"];
+  const dispatch = useDispatch()
+  
   useEffect(() => {
     getUsername()
     getTotalVisitors();
@@ -35,6 +37,8 @@ const Dashboard = () => {
     getBookList();
     getIssued();
     getPopularChoices();
+    getBookTrends();
+    getVisitorStats();
   }, []);
 
   const getUsername = async()=>{
@@ -120,7 +124,23 @@ const Dashboard = () => {
       const borrowingTrends = books.map(item=>
         item.total_books_borrowed
       )
-      setBooksData(borrowingTrends)
+      dispatch(setBorrowedStats(borrowingTrends))
+    }catch(err){
+      console.log('Cannot get borrowed book trends. An error occurred: ', err.message)
+    }
+  }
+
+  const getVisitorStats = async()=>{
+    try{
+      const response = await axios.get(`http://localhost:3001/visitor/stats`)
+      const visitors = response.data;
+      console.log(visitors)
+
+      const visitorsStats = visitors.map(item=>
+        item.total_attendance
+      )
+      dispatch(setVisitorStats(visitorsStats))
+      
     }catch(err){
       console.log('Cannot get borrowed book trends. An error occurred: ', err.message)
     }
