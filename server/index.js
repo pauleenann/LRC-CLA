@@ -1062,6 +1062,7 @@ app.get("/getTotalVisitors", (req, res) => {
 
 app.get("/getBorrowedBooks", (req, res) => {
     const query = `SELECT COUNT(*) AS total_borrowed FROM checkout WHERE DATE(checkout_date) = curdate() AND status = 'borrowed'`;
+    
 
     db.query(query, (err, result) => {
         if (err) {
@@ -2537,6 +2538,7 @@ app.get('/issued-books', (req, res) => {
 app.get('/popular-choices', (req, res) => {
     const query = `
        SELECT 
+            r.resource_id,
             r.resource_title, 
             CONCAT(a.author_fname, ' ', a.author_lname) AS authors,
             r.resource_published_date,
@@ -2548,7 +2550,7 @@ app.get('/popular-choices', (req, res) => {
         JOIN author a ON a.author_id = ra.author_id
         JOIN checkout cout ON cout.resource_id = r.resource_id
         WHERE r.resource_id = cout.resource_id
-        GROUP BY r.resource_title, r.resource_published_date, b.book_cover
+        GROUP BY r.resource_title, r.resource_published_date, b.book_cover, r.resource_id
         LIMIT 5`;
     
     db.query(query, (error, results) => {

@@ -20,7 +20,6 @@ window.toast = Swal.mixin({
 });
 
 //import { register } from './serviceWorkerRegistration'; // Import the register function
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // <React.StrictMode>
