@@ -138,7 +138,7 @@
     color: var(--white);
     width: 70px;
     padding: 10px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     /* font-size: 1rem !important; */
 }
 
@@ -147,7 +147,7 @@
     /* font-size: 1rem !important; */
     border-bottom: none;
     padding: 10px;
-    font-size: 1rem;
+    font-size: 0.9rem;
 }
 
 .circulation-container .circ-table tbody tr:nth-child(odd){

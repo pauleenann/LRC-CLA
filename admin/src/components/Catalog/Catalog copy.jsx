@@ -433,7 +433,19 @@ console.log(selectedFilters)
                 </button>
               </Link>
           </div>
-         
+          {/* sync*/}
+          {isOnline?
+          <div className="add-author-publisher">
+              {/* sync to database */}
+              <button
+              className='btn sync-2-db'
+              onClick={syncData2DB}
+              disabled={!navigator.onLine}
+              title='You need internet connection to sync to database.'
+            >
+              Sync offline data to database
+            </button>
+           </div>:''}
         </div>
         
         {/* search-filter */}

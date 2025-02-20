@@ -3,11 +3,7 @@ import axios from 'axios'
 import './Logbook.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faArrowLeft, faArrowRight} from '@fortawesome/free-solid-svg-icons';
-import exportIcon from '../../assets/Management System/logbook/export.svg'
 import * as XLSX from 'xlsx'; // Import xlsx for Excel export
-import io from 'socket.io-client';
-
-const socket = io('http://localhost:3001'); // Connect to the Socket.IO server
 
 const Logbook = () => {
     const [patron, setPatron] = useState([]);
@@ -21,15 +17,6 @@ const Logbook = () => {
 
     useEffect(() => {
         getPatron();
-        // Listen for updates from the server (via socket)
-        socket.on('attendanceUpdated', () => {
-            console.log('attendance updated, refreshing attendance...');
-            getPatron();
-        });
-  
-        return () => {
-            socket.off('attendanceUpdated'); // Cleanup on component unmount
-        };
     }, [currentPage, entriesPerPage]);
 
     const getPatron = async () => {
