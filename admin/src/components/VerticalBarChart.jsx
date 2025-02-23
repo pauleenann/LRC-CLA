@@ -25,7 +25,7 @@ export function VerticalBarChart() {
   const {borrowedStats} = useSelector((state)=>state.chart);
   const {visitorStats} = useSelector((state)=>state.chart)
 
-  const labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
   const data = {
     labels,
     datasets: [

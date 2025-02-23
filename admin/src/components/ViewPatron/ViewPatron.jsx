@@ -20,7 +20,7 @@ const ViewPatron = () => {
   },[])
 
   const getPatron = async ()=>{
-    axios.get(`http://localhost:3001/patron/${id}`) 
+    axios.get(`http://localhost:3001/api/patron/${id}`) 
       .then((response) => {
          setPatron(response.data[0]);
       })
@@ -30,7 +30,7 @@ const ViewPatron = () => {
   }
 
   const getLogHistory = async ()=>{
-    axios.get(`http://localhost:3001/log-history/${id}`) 
+    axios.get(`http://localhost:3001/api/patron/log/${id}`) 
       .then((response) => {
          setLogHistory(response.data);
       })
@@ -40,7 +40,7 @@ const ViewPatron = () => {
   }
 
   const getCirculationHistory = async ()=>{
-    axios.get(`http://localhost:3001/circulation-history/${id}`) 
+    axios.get(`http://localhost:3001/api/patron/circulation/${id}`) 
       .then((response) => {
          setCirculationHistory(response.data);
       })
@@ -48,9 +48,6 @@ const ViewPatron = () => {
         console.error('Error fetching patron data:', error);
       })
   }
-
-  console.log(logHistory)
-  console.log(circulationHistory)
 
   return (
     <div className='viewpatron-container'>

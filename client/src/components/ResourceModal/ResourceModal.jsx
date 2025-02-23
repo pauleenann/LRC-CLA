@@ -13,9 +13,6 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 // import required modules
 import { Pagination } from 'swiper/modules';
-import io from 'socket.io-client';
-
-const socket = io('http://localhost:3001'); // Connect to the Socket.IO server
 
 const ResourceModal = () => {
   console.log('resource modal rendered');
@@ -40,15 +37,6 @@ const ResourceModal = () => {
 
   useEffect(()=>{
     viewResource();
-    
-    socket.on('updatedCatalog', () => {
-      console.log('catalog updated, refreshing catalog...');
-      viewResource();
-    });
-
-    return () => {
-      socket.off('updatedCatalog');
-    };
   },[])
 
   useEffect(() => {
@@ -86,10 +74,10 @@ const ResourceModal = () => {
     console.log('viewing resource');
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:3001/resources/view', {
+      const response = await axios.get('http://localhost:3001/api/online-catalog/resources/view', {
         params: { id },
       });
-
+      
       setResource(response.data.results[0]);
       setRelatedBooks(response.data.relatedBooks);
       console.log('Resource viewed:', response.data);

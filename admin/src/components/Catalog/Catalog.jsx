@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import './Catalog.css'
-
 import axios from 'axios'
 import io from 'socket.io-client';
 import Loading from '../Loading/Loading'
@@ -10,8 +9,6 @@ import ResourceStatusModal from '../ResourceStatusModal/ResourceStatusModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-
-const socket = io('http://localhost:3001'); // Connect to the Socket.IO server
 
 const Catalog = () => {
   const [catalog, setCatalog] = useState([])
@@ -91,8 +88,7 @@ const getCatalogOnline = async (resetPage = false) => {
       
       const offset = (currentPage - 1) * pagination;
       console.log(offset);
-
-      const response = await axios.get(`http://localhost:3001/catalogdetails`, {
+      const response = await axios.get(`http://localhost:3001/api/catalog`, {
           params: { 
             limit: pagination, 
             offset, 
@@ -157,7 +153,7 @@ const getCatalogOffline = async (resetPage = false) => {
 // fetch resourceType ( book, journal, newsletter, thesis)
 const getType = async()=>{
   try {
-      const response = await axios.get('http://localhost:3001/type').then(res=>res.data);
+      const response = await axios.get('http://localhost:3001/api/data/type').then(res=>res.data);
       //console.log(response)
       setType(response)
   } catch (err) {
@@ -168,7 +164,7 @@ const getType = async()=>{
 //get existing department online
 const getDept = async()=>{
   try{
-      const response = await axios.get('http://localhost:3001/departments').then(res=>res.data)
+      const response = await axios.get('http://localhost:3001/api/data/departments').then(res=>res.data)
       setDepartment(response)
   }catch(err){
       console.log("Couldn't retrieve department online. An error occurred: ", err.message)
@@ -178,13 +174,12 @@ const getDept = async()=>{
 //get existing topics online
 const getTopics =async ()=>{
   try{
-      const response = await axios.get('http://localhost:3001/topic').then(res=>res.data)
+      const response = await axios.get('http://localhost:3001/api/data/topic').then(res=>res.data)
       setTopic(response)
   }catch(err){
       console.log("Couldn't retrieve topics online. An error occurred: ", err.message)
   }
 }
-
 
 /*------------HANDLE CHANGES------------------------------------*/
   const handleChange = (e)=>{
@@ -235,7 +230,7 @@ const syncResourcesOnline = async () => {
     for (const resource of resources) {
       try {
         // Sync the resource
-        const response = await axios.post('http://localhost:3001/sync/resources', resource);
+        const response = await axios.post('http://localhost:3001/api/sync/resources', resource);
         if (response.data.status === 409) {
           alert(response.data.message);
           continue; // Skip the resource if there's a conflict
@@ -319,7 +314,7 @@ const syncResourcesOnline = async () => {
 const syncAdviserOnline = async(adviser,resourceId)=>{
   try {
     console.log('syncing advisers')
-    const response = await axios.post('http://localhost:3001/sync/adviser', { adviser, resourceId });
+    const response = await axios.post('http://localhost:3001/api/sync/adviser', { adviser, resourceId });
     console.log(`Synced adviser: ${adviser.adviser_id}`, response.data);
    
   } catch (error) {
@@ -332,7 +327,7 @@ const syncAuthorsOnline = async (authors, resourceId) => {
   try {
     for (const author of authors) {
       try {
-        const response = await axios.post('http://localhost:3001/sync/authors', { author, resourceId });
+        const response = await axios.post('http://localhost:3001/api/sync/authors', { author, resourceId });
         console.log(`Synced author: ${author.author_id}`, response.data);
       } catch (error) {
         console.error(`Failed to sync author: ${author.author_id}`, error.message);
@@ -347,7 +342,7 @@ const syncAuthorsOnline = async (authors, resourceId) => {
 // Sync publisher
 const syncPublisherOnline = async (publisher) => {
   try {
-    const response = await axios.post('http://localhost:3001/sync/publisher', publisher);
+    const response = await axios.post('http://localhost:3001/api/sync/publisher', publisher);
     const { pub_id } = response.data;
     console.log('Publisher synced successfully with ID:', pub_id);
     return pub_id
@@ -371,7 +366,7 @@ const syncBookOnline = async (book, resourceId, pubId) => {
     formData.append('pubId', pubId);
 
     // Send the FormData to the backend
-    const response = await axios.post('http://localhost:3001/sync/book', formData, {
+    const response = await axios.post('http://localhost:3001/api/sync/book', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
 
@@ -394,7 +389,7 @@ const syncJournalNewsletterOnline = async (jn, resourceId) => {
     formData.append('resourceId', resourceId);
 
     // Send the FormData to the backend
-    const response = await axios.post('http://localhost:3001/sync/journalnewsletter', formData, {
+    const response = await axios.post('http://localhost:3001/api/sync/journalnewsletter', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
 
