@@ -38,7 +38,7 @@ const EditPatron = () => {
 
     const getColleges = async()=>{
         try {
-            const response = await axios.get('http://localhost:3001/college').then(res=>res.data);
+            const response = await axios.get('http://localhost:3001/api/data/college').then(res=>res.data);
             console.log(response)
             setColleges(response)
         } catch (err) {
@@ -48,7 +48,7 @@ const EditPatron = () => {
 
     const getCourses = async()=>{
         try {
-            const response = await axios.get('http://localhost:3001/course').then(res=>res.data);
+            const response = await axios.get('http://localhost:3001/api/data/course').then(res=>res.data);
             console.log(response)
             setCourses(response)
         } catch (err) {
@@ -58,7 +58,7 @@ const EditPatron = () => {
 
     const getPatronEdit = async ()=>{
         setIsLoading(true)
-        axios.get(`http://localhost:3001/update-patron/${id}`)
+        axios.get(`http://localhost:3001/api/patron/update/${id}`)
             .then(res => {
                 setPatronData({
                     patron_fname: res.data.patronData.patron_fname,
@@ -245,7 +245,7 @@ const EditPatron = () => {
         }
         
         try {
-            await axios.post(`http://localhost:3001/add-patron`, patronData);
+            await axios.post(`http://localhost:3001/api/patron`, patronData);
             navigate('/patrons'); // Redirect after saving
             window.toast.fire({icon:"success", title:"Patron Added"})
         } catch (error) {
@@ -264,7 +264,7 @@ const EditPatron = () => {
                 category: patronData.category === 'None' ? '' : patronData.category,
             };
     
-            await axios.put(`http://localhost:3001/update-patron/${id}`, updatedData);
+            await axios.put(`http://localhost:3001/api/patron/update/${id}`, updatedData);
             console.log('Patron updated successfully');
             navigate('/patrons'); // Redirect after saving
             window.toast.fire({icon:"success", title:"Patron Updated"})
@@ -300,7 +300,6 @@ const EditPatron = () => {
     }
 
     console.log(patronData)
-    
     
     return (
         <div className='edit-patron-container'>

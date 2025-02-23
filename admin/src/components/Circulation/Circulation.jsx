@@ -22,26 +22,10 @@ const Circulation = () => {
 
   }, [currentPage]);
 
-  /* const getBorrowers = async () => {
-    setLoading(true)
-    try {
-      const response = await axios
-        .get(`http://localhost:3001/getCirculation`)
-        .then((res) => res.data);
-      setBorrowers(response);
-      setFilteredBorrowers(response); 
-      console.log(response);
-    } catch (err) {
-      console.log(err.message);
-    }finally{
-      setLoading(false)
-    }
-  }; */
-
   const getBorrowers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:3001/getCirculation`, {
+      const response = await axios.get(`http://localhost:3001/api/patron/borrowers`, {
         params: { page: currentPage, limit: itemsPerPage }
       });
 

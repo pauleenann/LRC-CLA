@@ -54,7 +54,7 @@ const DashboardTable = ({ header, data, type }) => {
         </tr>
       </thead>
       <tbody>
-        {data.length !== 0 ? (
+        {Array.isArray(data) && data.length !== 0 ? (
           data.map((item, rowIndex) => (
             <tr key={rowIndex} className={type!='issued'?'clickable':''} onClick={()=>{
               if(type=='overdue'){

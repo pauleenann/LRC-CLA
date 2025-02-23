@@ -1,4 +1,4 @@
-    import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import './Logbook.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -30,7 +30,7 @@ const Logbook = () => {
                 page: currentPage, // Include current page in the request
             };
             const query = new URLSearchParams(params).toString();
-            const response = await axios.get(`http://localhost:3001/patronSort?${query}`);
+            const response = await axios.get(`http://localhost:3001/api/patron/sort?${query}`);
             setPatron(response.data.results); // Expect results array in response
             setTotalEntries(response.data.total); // Set total entries for pagination
         } catch (err) {
@@ -96,7 +96,7 @@ const Logbook = () => {
         }
     };
 
-
+    console.log(patron)
     return (
         <div className='logbook-container'>
             <h1>Logbook</h1>
@@ -159,7 +159,7 @@ const Logbook = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {patron.length > 0 ? (
+                        {Array.isArray(patron)?patron.length > 0 ? (
                             patron.map((item, index) => (
                                 <tr key={index}>
                                     <td>{entriesPerPage === "All"
@@ -190,7 +190,7 @@ const Logbook = () => {
                               </div>
                             </td>
                           </tr>
-                        )}
+                        ):''}
                     </tbody>
                     
                 </table>
@@ -199,7 +199,7 @@ const Logbook = () => {
             {/* pagination */}
             <div className="logbook-table-pagination">
                 <p className="logbook-table-entries m-0">
-                    Showing {patron.length} of {totalEntries}   Entries
+                    Showing {patron?patron.length:0} of {totalEntries}   Entries
                 </p>
                 {entriesPerPage !== "All" && (
                     <div className="logbook-table-button-pagination">

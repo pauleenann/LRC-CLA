@@ -10,10 +10,6 @@ import axios from 'axios';
 import Loading from '../Loading/Loading';
 import ResourceStatusModal from '../ResourceStatusModal/ResourceStatusModal';
 
-import io from 'socket.io-client';
-
-const socket = io('http://localhost:3001'); // Connect to the Socket.IO server
-
 const Accounts = () => {
   const [openCreateUser, setOpenCreateUser] = useState(false);
   const [openEditUser, setEditUser] = useState(false);
@@ -45,18 +41,6 @@ const Accounts = () => {
   useEffect(() => {
     userAccounts();
     getUsername(); 
-    console.log("account: ", account)
-    console.log("to edit account: ", toEditAccount)
-    
-    // Listen for updates from the server (via socket)
-    socket.on('userUpdated', () => {
-      console.log('User updated, refreshing accounts...');
-      userAccounts(); // Call userAccounts to refresh the list
-    });
-
-    return () => {
-      socket.off('userUpdated'); // Cleanup on component unmount
-    };
   }, [currentPage, selectedFilters]);
 
   const appendToAccount = (key, value) => {
@@ -86,7 +70,7 @@ const Accounts = () => {
   const getUsername = async()=>{
     try {
       // Request server to verify the JWT token
-      const response = await axios.get(`http://localhost:3001/check-session`, { withCredentials: true });
+      const response = await axios.get(`http://localhost:3001/api/user/check-session`, { withCredentials: true });
       console.log(response.data)
       // If session is valid, set the role
       if (response.data.loggedIn) {
@@ -114,7 +98,7 @@ const Accounts = () => {
 
 
     try {
-      const response = await axios.get('http://localhost:3001/accounts', {
+      const response = await axios.get('http://localhost:3001/api/account', {
         params: {
           limit: pagination,
           offset,
@@ -146,7 +130,7 @@ const Accounts = () => {
     if (Object.keys(error).length === 0) {
       setLoading(true);
       try {
-        const response = await axios.post('http://localhost:3001/accounts/create', account);
+        const response = await axios.post('http://localhost:3001/api/account', account);
         console.log(account)
         setLoading(false);
 
@@ -169,7 +153,7 @@ const Accounts = () => {
   // Get account to be edited
   const getToEdit = async (id) => {
     try {
-      const response = await axios.get(`http://localhost:3001/account/${id}`);
+      const response = await axios.get(`http://localhost:3001/api/account/${id}`);
       setToEditAccount({
         id: response.data[0].staff_id,
         fname: response.data[0].staff_fname,
@@ -192,7 +176,7 @@ const Accounts = () => {
       try {
         console.log('Editing account with id: ', id);
         appendToEditAccount('username', staffUname);
-        const response = await axios.put(`http://localhost:3001/account`, toEditAccount);
+        const response = await axios.put(`http://localhost:3001/api/account`, toEditAccount);
         if (response.data.status === 201) {
           console.log("to edit", toEditAccount)
           setEditUser(false);
@@ -212,7 +196,7 @@ const Accounts = () => {
     setLoading(true);
     try {
       console.log('account: ', staffUname)
-      const response = await axios.put(`http://localhost:3001/account/deactivate/${selectedId}`, {staffUname});
+      const response = await axios.put(`http://localhost:3001/api/account/deactivate/${selectedId}`, {staffUname});
       if (response.data.status === 201) {
         setOpenDeactivate(false);
         setStatusModal(true);
@@ -229,7 +213,7 @@ const Accounts = () => {
   const activateUser = async () => {
     setLoading(true);
     try {
-      const response = await axios.put(`http://localhost:3001/account/activate/${selectedId}`, {staffUname});
+      const response = await axios.put(`http://localhost:3001/api/account/activate/${selectedId}`, {staffUname});
       if (response.data.status === 201) {
         setOpenActivate(false);
         setStatusModal(true);
