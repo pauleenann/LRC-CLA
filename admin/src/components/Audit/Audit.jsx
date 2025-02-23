@@ -100,7 +100,7 @@ const Audit = () => {
                 <tr>
                     <td class="col-1">User</td>
                     <td class="col-1">Action</td>
-                    <td class="col-1"> Affected Table</td>
+                    {/* <td class="col-1"> Affected Table</td> */}
                     {/* <td>Old Value</td> */}
                     <td class="col-4">New Value</td>
                     <td class="col-1">Timestamp</td>
@@ -115,7 +115,7 @@ const Audit = () => {
                         <tr key={index}>
                             <td class="col-1">{item.user_id}</td>
                             <td class="col-1">{item.action_type}</td>
-                            <td class="col-1">{item.table_name}</td>
+                            {/* <td class="col-1">{item.table_name}</td> */}
                             {/* <td>{item.old_value}</td> */}
                             <td class="col-4 text-start">{item.new_value.replace(/[{}"]/g, '').replace(/,/g, '\n')}</td>
                             <td class="col-1">{item.formatted_timestamp}</td>

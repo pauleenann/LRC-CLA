@@ -92,9 +92,6 @@
     cursor: pointer;
 }
 
-
-
-
 .reports-container .buttons .clear-btn{
     background-color: var(--white);
     color: var(--tup-color);
@@ -132,6 +129,7 @@
     outline: 1px solid var(--tup-color);
     max-height: 500px;
     overflow-y: scroll;
+    font-size: 0.8rem;
 }
 
 .reports-container .report thead tr td{
@@ -140,6 +138,7 @@
     /* font-size: 1rem !important; */
     padding: 10px;
     text-align: start;
+    text-transform: capitalize;
 }
 
 .reports-container .report tbody tr td{

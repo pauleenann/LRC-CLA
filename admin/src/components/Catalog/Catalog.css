@@ -106,7 +106,6 @@
     border-collapse: collapse;
     width: 100%;
     outline: 1px solid var(--tup-color);
-    /* table-layout: fixed; */
     font-size: 0.9rem;
     text-transform: capitalize;
     

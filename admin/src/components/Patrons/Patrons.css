@@ -107,7 +107,7 @@
 }
 
 .patrons-container .patrons-table td {
-    text-align: center;      /* Center horizontally */
+    text-align: start;      /* Center horizontally */
     font-size: 0.9rem;
 }
 
@@ -123,6 +123,7 @@
     outline: 1px solid var(--tup-color);
     border-radius: 10px;
     overflow: hidden;
+    text-align: start;
 }
 
 .patrons-container .patrons-table thead{
@@ -133,6 +134,7 @@
 
 .patrons-container .patrons-table tr td{
     padding: 10px;
+    border-bottom: none !important;
 }
 
 .patrons-container .patrons-table thead tr td{
