@@ -27,17 +27,17 @@ export const reports = (req, res) => {
   const generateAttendance = async (res, kind, startDate, endDate) => {
     let q = `
       SELECT 
-          patron.tup_id,
-          patron.patron_fname,
-          patron.patron_lname,
-          patron.patron_sex,
-          patron.patron_mobile,
-          patron.patron_email,
-          patron.category,
-          college.college_name,
-          course.course_name,
-          attendance.att_log_in_time,
-          attendance.att_date
+          patron.tup_id as 'TUP ID',
+          patron.patron_fname as 'first name',
+          patron.patron_lname as 'last name',
+          patron.patron_sex as sex,
+          patron.patron_mobile as mobile,
+          patron.patron_email as email,
+          patron.category as category,
+          college.college_name as college,
+          course.course_name as course,
+          attendance.att_log_in_time as 'time in',
+          attendance.att_date as date
       FROM attendance
       JOIN patron ON patron.patron_id = attendance.patron_id
       JOIN college ON patron.college_id = college.college_id
@@ -70,15 +70,14 @@ const generateCirculation = async (res, kind, startDate, endDate) => {
     if(kind!='Borrowed Resources'){
         let q = `
         SELECT
-            checkout.checkout_id,
-            resources.resource_title,
-            patron.patron_fname,
-            patron.patron_lname,
-            patron.category,
-            college.college_name,
-            course.course_name,
-            checkout.checkout_date,
-            checkout.checkout_due
+            resources.resource_title as 'resource title',
+            patron.patron_fname as 'first name',
+            patron.patron_lname as 'last name',
+            patron.category as category,
+            college.college_name as college, 
+            course.course_name as course,
+            checkout.checkout_date as 'borrowed date',
+            checkout.checkout_due as 'due date'
         FROM 
             checkout
         JOIN patron ON patron.patron_id = checkout.patron_id
@@ -107,15 +106,15 @@ const generateCirculation = async (res, kind, startDate, endDate) => {
         })
     }else if(kind=='Borrowed Resources'){
         const q = `
-        SELECT	resources.resource_id,
-            resources.resource_title, 
-            resourcetype.type_name, 
-            department.dept_name,
+        SELECT	
+            resources.resource_title as 'resource title', 
+            resourcetype.type_name as 'resource type',  
+            department.dept_name as department,
             CASE
                 WHEN resources.type_id IN ('1', '2', '3') THEN topic.topic_name
                 ELSE 'n/a'
-            END AS topic_name,
-            GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS author_names
+            END AS topic,
+            GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS author
         FROM resources
         JOIN checkout ON checkout.resource_id = resources.resource_id
         JOIN resourceauthors ON resourceauthors.resource_id = resources.resource_id 

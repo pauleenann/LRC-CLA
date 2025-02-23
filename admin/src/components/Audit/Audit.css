@@ -113,8 +113,8 @@
 
 .audit-container table {
     border-radius: 10px;
-    overflow: hidden;
-    text-align: center;
+    overflow: hidden !important;
+    text-align: start;
     outline: 1px solid var(--tup-color);
     width: 100%;
     table-layout: fixed; /* Fix column width */

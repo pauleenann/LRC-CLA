@@ -1,7 +1,8 @@
 import { db } from "../config/db.js";
 import fs, { stat } from 'fs';
 import { logAuditAction } from "./auditController.js";
-import { dbPromise } from "../config/db.js";
+import axios from 'axios'
+
 
 /*-------------SAVE RESOURCE----------------- */
 export const saveResource = async (req, res) => {

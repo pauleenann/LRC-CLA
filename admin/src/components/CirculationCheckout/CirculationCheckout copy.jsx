@@ -98,12 +98,12 @@ const CirculationCheckout = () => {
       });
   
       await Promise.all(checkinPromises);
+      console.log('All items checked in successfully!');
+      setOpen(true);
       setSelectedItems([]);
-      navigate('/circulation')
-      window.toast.fire({icon:"success", title:"Item checked in successfully"})
     } catch (error) {
       console.error('Error during check-in:', error.message);
-      window.toast.fire({icon:"error", title:"Failed to check in items"})
+      alert('Failed to check in some items. Please try again.');
     }finally{
       setLoading(false)
     }
@@ -124,12 +124,13 @@ const CirculationCheckout = () => {
       });
       // Await all promises to complete
       await Promise.all(checkoutPromises);
+
+      console.log('All items checked out successfully!');
+      setOpen(true); // Open success modal
+      
       setSelectedItems([]); // Update state
-      navigate('/circulation')
-      window.toast.fire({icon:"success", title:"Item checked out successfully"})
     } catch (error) {
       console.error('Error during checkout:', error.message);
-      window.toast.fire({icon:"error", title:"Failed to check our items"})
     }finally{
       setLoading(false)
     }

@@ -10,7 +10,6 @@ import { getAllFromStore } from '../../indexedDb/getDataOffline';
 import { saveResourceOffline } from '../../indexedDb/saveResourcesOffline';
 import { viewResourcesOffline } from '../../indexedDb/viewResourcesOffline';
 import { editResourceOffline } from '../../indexedDb/editResourcesOffline';
-import ResourceStatusModal from '../ResourceStatusModal/ResourceStatusModal';
 
 const AddItem = () => {
     //pag may id, nagiging view ung purpose ng add item component
@@ -41,12 +40,6 @@ const AddItem = () => {
     const [resourceStatus,setResourceStatus] = useState([])
     const [editMode, setEditMode] = useState(false)
     const [isOnline, setIsOnline] = useState(true)
-    const [statusModal, setStatusModal] = useState(false)
-    const [statusModalContent, setStatusModalContent] =useState({
-        status:'',
-        message:''
-    })
-
 
     const getUsername = async()=>{
         try {
@@ -408,24 +401,16 @@ const AddItem = () => {
             );
                 console.log(formData)
                 const response = await axios.post('http://localhost:3001/api/resources', formData);
-               
                 console.log(response)
                  // close loading
                  setLoading(false)
 
                  //handle status
                 if(response.data.status==409){
-                    setStatusModal(true)
-                    setStatusModalContent({
-                        status:'duplicated',
-                        message: response.data.message
-                    })
+                    window.toast.fire({icon:"warning", title:"Resource already exist"})
                 }else if(response.data.status==201){
-                    setStatusModal(true)
-                    setStatusModalContent({
-                        status:'success',
-                        message: response.data.message
-                    })
+                    navigate('/catalog')
+                    window.toast.fire({icon:"success", title:"Resource added successfully"})
                 }
                
                  // Reset bookData if saved successfully
@@ -438,22 +423,10 @@ const AddItem = () => {
                 });
 
             }catch(err){
-                setLoading(false)
-                setStatusModal(true)
-                setStatusModalContent({
-                    status:'error',
-                    message: 'Cannot save resource online. Please try again.'
-                })
-                console.log('Cannot save resource online. An error occurred: ',err.message);
+                window.toast.fire({icon:"error", title:"Cannot save resource"})
             }
         } else {
-            setLoading(false)
-            setStatusModal(true)
-            setStatusModalContent({
-                status:'error',
-                message: 'Please enter complete information'
-            })
-            console.log("Please enter complete information.");
+            window.toast.fire({icon:"warning", title:"Please enter complete information"})
         }
     };
 
@@ -463,31 +436,13 @@ const AddItem = () => {
             setLoading(true)
             try{
                 const response = await saveResourceOffline(bookData);
-                console.log(response)
-                // close loading
-                setLoading(false)
-                setStatusModal(true)
-                setStatusModalContent(response)  
-                
-                
+                navigate('/catalog')
+                window.toast.fire({icon:"success", title:"Resource added successfully"})
             }catch(err){
-                setLoading(false)
-                setStatusModal(true)
-                setStatusModalContent({
-                    status:'error',
-                    message: 'Cannot save resource offline. Please try again.'
-                })
-                console.log('Cannot save resource offline. An error occurred: ',err.message);
+                window.toast.fire({icon:"error", title:"Cannot save resource offline"})
             }
         } else {
-            setLoading(false)
-            setStatusModal(true)
-            setStatusModalContent({
-                status:'error',
-                message: 'Please enter complete information'
-            })
-            console.log("Please enter complete information.");
-            console.log("Please enter complete information");
+            window.toast.fire({icon:"warning", title:"Please enter complete information"})
         }
     }
 
@@ -505,21 +460,11 @@ const AddItem = () => {
                 const response = await axios.put(`http://localhost:3001/api/resources/${id}`, formData);
                 setLoading(false)
                 if(response.data.status==201){
-                    //if resource is inserted successfully
-                    setStatusModal(true)
-                    setStatusModalContent({
-                        status:'success',
-                        message: response.data.message
-                    })
+                    navigate('/catalog')
+                    window.toast.fire({icon:"success", title:"Resource edited successfully"})
                 }            
             }catch(err){
-                setLoading(false)
-                setStatusModal(true)
-                setStatusModalContent({
-                    status:'error',
-                    message: 'Cannot save resource online. Please try again.'
-                })
-                console.log('Cannot edit resource online. An error occurred: ',err.message);
+                window.toast.fire({icon:"error", title:"Cannot edit resource"})
             }
     };
 
@@ -529,20 +474,10 @@ const AddItem = () => {
             try{
                 setLoading(true)
                 const response = await editResourceOffline(bookData,parseInt(id))
-                setLoading(false)
-                setStatusModal(true)
-                setStatusModalContent({
-                    status:'success',
-                     message: 'Resource edited offline.'
-                })
+                navigate('/catalog')
+                window.toast.fire({icon:"success", title:"Resource edited successfully"})
             }catch(err){
-                setLoading(false)
-                setStatusModal(true)
-                setStatusModalContent({
-                    status:'error',
-                     message: 'Cannot edit resource online. Please try again.'
-                })
-                console.log('Cannot edit resource online. An error occurred: ',err.message);
+                window.toast.fire({icon:"error", title:"Cannot edit resource offline"})
             }
     };
 
@@ -757,7 +692,6 @@ const AddItem = () => {
             </div>}
             
             <Loading loading={loading}/>
-            <ResourceStatusModal open={statusModal} close={()=>setStatusModal(false)} content={statusModalContent} isOnline={isOnline}/>
         </div>
     );
 };

@@ -94,15 +94,13 @@ const Reports = () => {
     }
   
     // Prepare the headers dynamically based on the report data
-    const headers = Object.keys(generatedReport[0]).map((key) =>
-      key.replace(/_/g, ' ').toUpperCase() // Format the header (replace underscores with spaces)
-    );
+    const headers = Object.keys(generatedReport[0]);
   
     // Format the data for Excel export
     const data = generatedReport.map((item, index) => {
       const formattedItem = {};
       Object.keys(item).forEach((key) => {
-        formattedItem[key.replace(/_/g, ' ').toUpperCase()] = item[key];
+        formattedItem[key.replace(/_/g, ' ')] = item[key];
       });
       return formattedItem;
     });
@@ -212,7 +210,7 @@ const Reports = () => {
             <thead>
               <tr>
                 {Object.keys(generatedReport[0]).map((key, index) => (
-                  <td key={index}>{key.replace(/_/g, ' ').toUpperCase()}</td>
+                  <td key={index}>{key}</td>
                 ))}
               </tr>
             </thead>
