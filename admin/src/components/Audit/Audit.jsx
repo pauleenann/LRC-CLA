@@ -53,12 +53,8 @@ const Audit = () => {
 
         {/* filter dropdown */}
         <div className="filter-dropdown">
-            {/* filter by user */}
-            {/*  <select name="" id="">
-                <option value="" selected disabled>Filter by user</option>
-            </select> */}
             {/* filter by activity */}
-            <select name="" id="">
+            <select name="" id="" className='form-select'>
                 <option value="" selected disabled>Filter by activity</option>
                 <option value="">Catalog item</option>
                 <option value="">Edit item</option>

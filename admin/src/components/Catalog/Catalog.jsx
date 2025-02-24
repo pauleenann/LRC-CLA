@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import './Catalog.css'
 import axios from 'axios'
-import io from 'socket.io-client';
-import Loading from '../Loading/Loading'
 import { getAllFromStore, getAllUnsyncedFromStore, getBook, getBookPub, getCatalogDetailsOffline, getPub, getResource, getResourceAdviser, getResourceAuthors } from '../../indexedDb/getDataOffline'
 import { clearObjectStore, deleteResourceFromIndexedDB, markAsSynced } from '../../indexedDb/syncData'
 import ResourceStatusModal from '../ResourceStatusModal/ResourceStatusModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Catalog = () => {
   const [catalog, setCatalog] = useState([])
@@ -29,6 +27,7 @@ const Catalog = () => {
   const [department, setDepartment] = useState([])
   const [topic,setTopic] = useState([])
   const [selectedFilters, setSelectedFilters] = useState({ title:0, author:0, type: 0, department: 0, topic: 0 });
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -496,27 +495,18 @@ console.log(selectedFilters)
                     </select>:''}
                   </td>
                   <td >Copies</td>
-                  <td ></td>
                 </tr>
               </thead>
               <tbody>
               {catalog.length > 0 ? (
                   catalog.map((item, key) => (
-                    <tr key={key}>
+                    <tr key={key} onClick={()=>navigate(`/view-item/${item.resource_id}`)}>
                       <td>{item.resource_title}</td>
                       <td>{item.type_name}</td>
                       <td>{item.author_names}</td>
                       <td>{item.dept_name}</td>
                       <td>{item.topic_name}</td>
                       <td>{item.resource_quantity}</td>
-                      <td>
-                        <Link to={`/view-item/${item.resource_id}`}>
-                          <button className="btn cat-view">
-                            <i className="fa-solid fa-bars"></i>
-                            View
-                          </button>
-                        </Link>
-                      </td>
                     </tr>
                   ))
                 ) : !loading && catalog.length === 0 ? (

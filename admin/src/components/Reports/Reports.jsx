@@ -128,14 +128,13 @@ const Reports = () => {
           )}
         </div>
 
-        
 
         <div className="buttons">
           <button className="btn clear-btn" disabled={!selectedType.type} onClick={handleClear}>Clear</button>
           <button className="btn generate-report" onClick={handleGenerate} disabled={!selectedType.type || !selectedType.kind}>Generate Report</button>
         </div>
-
-        {generatedReport.length > 0 && <input type="text" placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className='search'/>}
+        
+        {generatedReport.length > 0 && <input type="text" placeholder="Search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className='search mt-4'/>}
 
         {generatedReport.length > 0 && (
           <div >
@@ -159,10 +158,10 @@ const Reports = () => {
             <div className="pagination">
               <span>Page {currentPage} of {totalPages}</span>
               <div className='buttons'>
-                <button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>
+                <button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)} className='btn'>
                   <FontAwesomeIcon icon={faArrowLeft} className='icon' />
                 </button>
-                <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>
+                <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)} className='btn'>
                   <FontAwesomeIcon icon={faArrowRight} className='icon'/>
                 </button>
               </div>
