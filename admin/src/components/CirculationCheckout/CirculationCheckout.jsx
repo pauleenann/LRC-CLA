@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import CirculationSuccessful from '../CirculationSuccessful/CirculationSuccessful';
 import Loading from '../Loading/Loading';
+import Swal from 'sweetalert2'
 
 const CirculationCheckout = () => {
   const [open, setOpen] = useState(false);
@@ -62,54 +63,108 @@ const CirculationCheckout = () => {
   }, []);
 
   const handleCheckin = async () => {
-    setLoading(true)
+    if (selectedItems.length === 0) {
+      window.toast.fire({ icon: "warning", title: "No items selected for check-in" });
+      return;
+    }
+  
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#54CB58",
+      cancelButtonColor: "#94152b",
+      confirmButtonText: "Yes, check in!"
+    });
+  
+    if (!result.isConfirmed) return; // Exit if user cancels
+  
+    setLoading(true);
+  
     try {
       const checkinPromises = selectedItems.map(async (item) => {
         try {
           // Get checkout record
           const checkoutResponse = await axios.get(`http://localhost:3001/api/circulation/checkout-record`, {
             params: { resource_id: item.resource_id, patron_id: id },
-          }); 
+          });
+  
           if (!checkoutResponse.data.checkout_id) {
             throw new Error(`No checkout record found for resource_id: ${item.resource_id}`);
           }
   
           const checkoutId = checkoutResponse.data.checkout_id;
-          const resourceid = item.resource_id;
-          console.log(resourceid)
+  
           // Post to checkin endpoint
           const response = await axios.post(`http://localhost:3001/api/circulation/checkin`, {
             checkout_id: checkoutId,
             returned_date: date,
             patron_id: id,
-            resource_id: resourceid,
+            resource_id: item.resource_id,
             username: uname,
           });
   
           if (response.status !== 201) {
             throw new Error(`Failed to check in item with checkout_id: ${checkoutId}`);
           }
-          
-          return response.data;
+  
+          return { success: true, resource_id: item.resource_id };
         } catch (error) {
           console.error(`Error during check-in for item: ${item.resource_id}`, error.message);
-          throw error;
+          return { success: false, resource_id: item.resource_id, error: error.message };
         }
       });
   
-      await Promise.all(checkinPromises);
-      setSelectedItems([]);
-      navigate('/circulation')
-      window.toast.fire({icon:"success", title:"Item checked in successfully"})
+      // Execute all check-in requests safely
+      const results = await Promise.allSettled(checkinPromises);
+  
+      // Separate successes and failures
+      const successfulCheckins = results.filter(r => r.status === "fulfilled" && r.value.success);
+      const failedCheckins = results.filter(r => r.status === "fulfilled" && !r.value.success);
+  
+      setSelectedItems([]); // Clear selection
+  
+      if (successfulCheckins.length > 0) {
+        Swal.fire({
+          title: "Checked in!",
+          text: `Resource checked in successfully.`,
+          icon: "success"
+        });
+        navigate('/circulation')
+      }
+  
+      if (failedCheckins.length > 0) {
+        console.error("Failed check-ins:", failedCheckins);
+        window.toast.fire({ icon: "error", title: `${failedCheckins.length} item(s) failed to check in.` });
+      }
+  
     } catch (error) {
-      console.error('Error during check-in:', error.message);
-      window.toast.fire({icon:"error", title:"Failed to check in items"})
-    }finally{
-      setLoading(false)
+      console.error("Error during check-in:", error.message);
+      window.toast.fire({ icon: "error", title: "Failed to check in items" });
+    } finally {
+      setLoading(false);
     }
   };
-
+  
   const handleCheckout = async () => {
+    if (selectedItems.length === 0) {
+      window.toast.fire({ icon: "warning", title: "No items selected for check-out" });
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#54CB58",
+      cancelButtonColor: "#94152b",
+      confirmButtonText: "Yes, check out!"
+    });
+
+    if (!result.isConfirmed) return; // Exit if user cancels
+    
     setLoading(true)
     try {
       // Create an array of promises to insert all items
@@ -125,8 +180,12 @@ const CirculationCheckout = () => {
       // Await all promises to complete
       await Promise.all(checkoutPromises);
       setSelectedItems([]); // Update state
+      Swal.fire({
+        title: "Checked out!",
+        text: `Resource checked out successfully.`,
+        icon: "success"
+      });
       navigate('/circulation')
-      window.toast.fire({icon:"success", title:"Item checked out successfully"})
     } catch (error) {
       console.error('Error during checkout:', error.message);
       window.toast.fire({icon:"error", title:"Failed to check our items"})
