@@ -170,16 +170,15 @@ const generateInventory = async(res,kind)=>{
     
     let q = `
         SELECT 
-			resources.resource_id,
-            resources.resource_title, 
-            resourcetype.type_name, 
-            resources.resource_quantity, 
-            department.dept_name,
+            resources.resource_title as 'resource title', 
+            resourcetype.type_name as 'resource type', 
+            resources.resource_quantity as quantity, 
+            department.dept_name as department,
             CASE
                 WHEN resources.type_id IN ('1', '2', '3') THEN topic.topic_name
                 ELSE 'n/a'
-            END AS topic_name,
-            GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS author_names
+            END AS topic,
+            GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS authors
         FROM resources
         JOIN resourceauthors ON resourceauthors.resource_id = resources.resource_id 
         JOIN author ON resourceauthors.author_id = author.author_id 
