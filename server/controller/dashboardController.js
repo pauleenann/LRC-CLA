@@ -183,7 +183,8 @@ export const issuedBooks = (req, res) => {
             checkout cout
         JOIN patron p ON cout.patron_id = p.patron_id
         JOIN resources r ON cout.resource_id = r.resource_id
-        WHERE cout.status = 'borrowed';
+        WHERE cout.status = 'borrowed' OR cout.status = 'overdue'
+        LIMIT 5;
     `;
     
     db.query(query, (error, results) => {
@@ -198,18 +199,23 @@ export const popularChoices = (req, res) => {
        SELECT 
             r.resource_id,
             r.resource_title, 
-            CONCAT(a.author_fname, ' ', a.author_lname) AS authors,
+            (SELECT CONCAT(a.author_fname, ' ', a.author_lname) 
+            FROM resourceauthors ra 
+            JOIN author a ON a.author_id = ra.author_id 
+            WHERE ra.resource_id = r.resource_id 
+            ORDER BY ra.author_id ASC 
+            LIMIT 1) AS authors,
             r.resource_published_date,
-            b.book_cover
+            b.book_cover,
+            COUNT(r.resource_id) AS borrowed_times
         FROM 
             resources r
         JOIN book b ON b.resource_id = r.resource_id
-        JOIN resourceauthors ra ON ra.resource_id = r.resource_id
-        JOIN author a ON a.author_id = ra.author_id
         JOIN checkout cout ON cout.resource_id = r.resource_id
         WHERE r.resource_id = cout.resource_id
         GROUP BY r.resource_title, r.resource_published_date, b.book_cover, r.resource_id
-        LIMIT 5`;
+        ORDER BY borrowed_times DESC
+        LIMIT 5;`;
     
     db.query(query, (error, results) => {
         if (error) return res.status(500).json({ error });
