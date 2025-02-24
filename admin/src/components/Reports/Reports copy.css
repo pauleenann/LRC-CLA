@@ -55,17 +55,10 @@
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    align-items: start;
-    gap: 15px;
+    gap: 25px;
     /* width: 50%; */
     margin: auto;
     margin-top: 50px;
-}
-
-.reports-container .report-choices{
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
 }
 
 .reports-container .custom{
@@ -91,22 +84,12 @@
     margin-top: 20px;
 }
 
-.reports-container .report-type select,
-.reports-container .sub-options select,
-.reports-container .search{
-    height: 40px;
+.reports-container input, .reports-container select{
+    height: 50px;
+    padding: 10px;
     border-radius: 5px;
-    border: 1px solid var(--tup-color);
-    width: 500px;
-    padding: 5px;
-}
-
-.reports-container .custom input{
-    height: 40px;
-    border-radius: 5px;
-    border: 1px solid var(--tup-color);
-    width: 200px;
-    padding: 5px;
+    border-color: var(--tup-color);
+    cursor: pointer;
 }
 
 .reports-container .buttons .clear-btn{
@@ -138,11 +121,10 @@
 }
 
 .reports-container .report{
-    border-radius: 5px;
-    font-size: 0.8rem;
-    overflow: hidden !important;
+    /* font-size: 0.8rem;
+    overflow: hidden !important; */
+    /* border: 1px solid var(--tup-color); */
 }
-
 
 .reports-container .report thead tr td{
     background-color: var(--tup-color) !important;
@@ -167,24 +149,4 @@
 
 .reports-container .report tbody tr:nth-child(even){
     background-color: var(--light-red) !important;
-}
-
-.reports-container .pagination{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.reports-container .pagination .buttons{
-    display: flex;
-    gap: 10px;
-}
-
-.reports-container .pagination .buttons button{
-    border: none;
-}
-
-.reports-container .pagination .buttons .icon{
-    color: var(--tup-color);
-    background-color: none !important;
 }
