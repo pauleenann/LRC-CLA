@@ -16,8 +16,8 @@ import cron from 'node-cron'
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 import validateTupIdRouter from './routes/validateTupId.js'; // Adjust the path if neededimport cron from 'node-cron'
 
-
 dotenv.config();
+
 
 const dbPromise = mysqlPromise.createPool({ host: process.env.DB_HOST_LOCAL,
     user: process.env.DB_USER_LOCAL,
@@ -43,6 +43,7 @@ const apikey = process.env.API_KEY;
     password: process.env.DB_PASSWORD_LOCAL,
     database: process.env.DB_DATABASE_LOCAL,
 }); 
+
 
 db.connect((err) => {
     if (err) {
