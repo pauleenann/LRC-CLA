@@ -130,7 +130,7 @@
     border-collapse: collapse;
     width: 100%;
     outline: 1px solid var(--tup-color);
-    font-size: 0.9rem;
+    font-size: 0.8rem !important;
 }
 
 .circulation-container .circ-table thead tr td{

@@ -140,7 +140,8 @@
 .reports-container .report{
     border-radius: 5px;
     font-size: 0.8rem;
-    overflow: hidden !important;
+    overflow: hidden;
+    border: 1px solid var(--tup-color) !important;
 }
 
 
@@ -182,9 +183,14 @@
 
 .reports-container .pagination .buttons button{
     border: none;
+    color: var(--tup-color);
+}
+
+.reports-container .pagination .buttons button:hover{
+    background-color: var(--tup-color);
+    color: var(--white) !important;
 }
 
 .reports-container .pagination .buttons .icon{
-    color: var(--tup-color);
     background-color: none !important;
 }

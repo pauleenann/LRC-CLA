@@ -95,7 +95,7 @@ const Patrons = () => {
                     <select
                         name=""
                         id=""
-                        className="patrons-filter"
+                        className="form-select"
                         value={categoryFilter}
                         onChange={handleCategoryChange}
                     >

@@ -62,13 +62,6 @@
     gap: 10px;
 }
 
-.patrons-container .patrons-filter{
-    padding: 5px;
-    height: 40px;
-    
-    border-color: var(--tup-color);
-    border-radius: 5px;
-}
 
 .patrons-container .patrons-search-bar{
     height: 40px;
