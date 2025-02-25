@@ -1,5 +1,7 @@
 import { db } from "../config/db.js";
 import { logAuditAction } from "./auditController.js";
+import bcrypt from 'bcrypt';
+const saltRounds = 10;
 
 export const getAccounts = (req,res)=>{
     const keyword = req.query.keyword || '';
@@ -97,6 +99,7 @@ export const getAccounts = (req,res)=>{
 }
 
 export const createAccount = (req,res)=>{
+    
     console.log(req.body)
     const username = req.body.username;
     const password = req.body.password;
@@ -143,7 +146,7 @@ export const createAccount = (req,res)=>{
                         return res.status(500).send({ error: 'Database query failed' });
                     }
 
-                    logAuditAction(username, 'INSERT', 'staffaccount', null, null, JSON.stringify({ account_info: values}));
+                    logAuditAction(username, 'INSERT', 'staffaccount', null, null, JSON.stringify("Added a new user: " + req.body.uname));
                     res.send({status: 201, message:'User Created Successfully'});
                 
                 })
