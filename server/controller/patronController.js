@@ -71,7 +71,7 @@ export const patronSort = (req, res) => {
         });
 };
 
-export const borrowers = (req, res) => {
+/* export const borrowers = (req, res) => {
     const { page = 1, limit = 10 } = req.query  ; // default to page 1 and limit 10
     const offset = (page - 1) * limit;
 
@@ -131,7 +131,75 @@ export const borrowers = (req, res) => {
             res.json({ data: results, totalCount });
         });
     });
+}; */
+
+export const borrowers = (req, res) => {
+    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
+    const offset = (page - 1) * limit;
+
+    const countQuery = `
+        SELECT COUNT(*) AS totalCount 
+        FROM checkout c
+        INNER JOIN patron p ON p.patron_id = c.patron_id
+        INNER JOIN resources r ON c.resource_id = r.resource_id
+        INNER JOIN course ON p.course_id = course.course_id
+        LEFT JOIN checkin ci ON c.checkout_id = ci.checkout_id
+    `;
+
+    const dataQuery = `
+        SELECT 
+            p.tup_id, 
+            p.patron_fname, 
+            p.patron_lname, 
+            p.patron_email, 
+            p.category, 
+            c.checkout_id,
+            c.checkout_date,
+            c.checkout_due,
+            c.status,
+            r.resource_title AS borrowed_book,
+            course.course_name AS course, 
+            ci.checkin_date, -- Added checkin_date from checkin table
+            CASE 
+                WHEN c.status = 'borrowed' THEN 'Currently Borrowed'
+                WHEN c.status = 'returned' THEN 'Returned'
+                ELSE 'Other'
+            END AS status_category
+        FROM 
+            patron p
+        INNER JOIN 
+            checkout c ON p.patron_id = c.patron_id
+        INNER JOIN 
+            resources r ON c.resource_id = r.resource_id
+        INNER JOIN 
+            course ON p.course_id = course.course_id
+        LEFT JOIN 
+            checkin ci ON c.checkout_id = ci.checkout_id -- Join checkin table
+        ORDER BY 
+            status_category, 
+            c.checkout_date DESC
+        LIMIT ? OFFSET ?
+    `;
+
+    db.query(countQuery, (err, countResult) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send({ error: 'Database error', details: err.message });
+        }
+
+        const totalCount = countResult[0].totalCount;
+
+        db.query(dataQuery, [parseInt(limit), parseInt(offset)], (err, results) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send({ error: 'Database error', details: err.message });
+            }
+
+            res.json({ data: results, totalCount });
+        });
+    });
 };
+
 
 export const patron = (req, res) => {
     const q = `SELECT 
