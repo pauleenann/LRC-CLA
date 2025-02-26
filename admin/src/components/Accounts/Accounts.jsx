@@ -176,7 +176,7 @@ const Accounts = () => {
       try {
         console.log('Editing account with id: ', id);
         appendToEditAccount('username', staffUname);
-        const response = await axios.put(`http://localhost:3001/api/account`, toEditAccount);
+        const response = await axios.put(`http://localhost:3001/api/account/${id}`, toEditAccount);
         if (response.data.status === 201) {
           console.log("to edit", toEditAccount)
           setEditUser(false);
