@@ -7,7 +7,7 @@ import { VerticalBarChart } from '../VerticalBarChart';
 import DashboardTable from '../DashboardTable/DashboardTable';
 import DashboardTopChoices from '../DashboardTopChoices/DashboardTopChoices';
 import DashBox from '../DashBox/DashBox';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {useDispatch} from 'react-redux';
 import { setBorrowedStats, setVisitorStats } from '../../features/chartSlice.js';
 
@@ -179,6 +179,12 @@ const Dashboard = () => {
         console.log(err.message);
     }
   }
+
+  const navigate = useNavigate();
+
+  const handleTodayEntriesClick = () => {
+      navigate('/logbook?filter=today'); // Navigate to logbook with filter
+  };
 
   return (
     <div className='dashboard-container'>

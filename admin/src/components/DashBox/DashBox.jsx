@@ -8,7 +8,7 @@ const DashBox = ({icon, title,total}) => {
   const handleClick = ()=>{
     switch(title){
       case 'Total Visits': 
-        navigate('/logbook');
+        navigate('/logbook?filter=today');
         break;
       case 'Returned Resources':
       case 'Overdue Resources':
