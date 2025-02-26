@@ -179,7 +179,7 @@ export const checkIn = async (req, res) => {
             'checkin',
             resource_id,
             null,
-            JSON.stringify({ 'book name ': resource_title, status: 'returned', patron: patron_name })
+            JSON.stringify("Patron: " + patron_name + " returned a book: '" + resource_title + "'")
         );
 
         res.status(201).json({
@@ -263,7 +263,7 @@ export const checkOut =  async (req, res) => {
             'checkout',
             resource_id,
             null,
-            JSON.stringify({ 'BOOK NAME': resource_title, STATUS: ' borrowed', PATRON: patron_name })
+            JSON.stringify("Patron: " + patron_name + " borrowed a book: '" + resource_title + "'")
         );
 
         // Commit the transaction

@@ -60,7 +60,7 @@ const AdminTopNavbar = () => {
     const logout = async () => {
         try {
             // Send a logout request to the server
-            await axios.post('http://localhost:3001/api/user/logout', {}, { withCredentials: true });
+            await axios.post('http://localhost:3001/api/user/logout', { username: uname }, { withCredentials: true});
 
             // Clear all relevant data from localStorage
             localStorage.removeItem('role');  // Remove the user's role
