@@ -246,7 +246,7 @@ const EditPatron = () => {
         
         try {
             await axios.post(`http://localhost:3001/api/patron`, patronData);
-            navigate('/patrons'); // Redirect after saving
+            navigate('/patron'); // Redirect after saving
             window.toast.fire({icon:"success", title:"Patron Added"})
         } catch (error) {
             console.error('Error saving patron:', error);
@@ -266,7 +266,7 @@ const EditPatron = () => {
     
             await axios.put(`http://localhost:3001/api/patron/update/${id}`, updatedData);
             console.log('Patron updated successfully');
-            navigate('/patrons'); // Redirect after saving
+            navigate(''); // Redirect after saving
             window.toast.fire({icon:"success", title:"Patron Updated"})
         } catch (error) {
             console.error('Error saving patron:', error);
@@ -305,7 +305,7 @@ const EditPatron = () => {
         <div className='edit-patron-container'>
             <h1 className='m-0'>Patrons</h1>
             <div className='edit-patron-path-button'>
-                <Link to={'/patrons'}>
+                <Link to={'/patron'}>
                     <button className='edit-patron-back-button'>
                         <i className='fa-solid fa-arrow-left'></i>
                         <p>Back</p>

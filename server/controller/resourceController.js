@@ -3,7 +3,6 @@ import fs, { stat } from 'fs';
 import { logAuditAction } from "./auditController.js";
 import axios from 'axios'
 
-
 /*-------------SAVE RESOURCE----------------- */
 export const saveResource = async (req, res) => {
     console.log('Saving resource...');
@@ -11,17 +10,15 @@ export const saveResource = async (req, res) => {
     const username = req.body.username;
     let adviserFname, adviserLname, filePath, imageFile;
     let pub = {};
-    console.log('username 1: ', username)
-
+    
     // Handle image upload or URL
     try{
         if (req.file) {
-            filePath = req.file.path;
-            imageFile = fs.readFileSync(filePath); // Read file synchronously
+            // filePath = req.file.path.replace(/\\/g, "/").toString();
+            // imageFile = fs.readFileSync(filePath); // Read file synchronously
+            imageFile = req.file.path.replace(/\\/g, "/").toString();
         } else if (req.body.url) {
-            const imageUrl = req.body.url;
-            const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
-            imageFile = response.data;
+            imageFile = req.body.url;
         }
         
         // initialize variables based on media type
@@ -53,7 +50,7 @@ export const saveResource = async (req, res) => {
             // Handle books
             const pubId = await checkIfPubExist(pub);
             console.log('Publisher ID:', pubId);
-            await insertBook(imageFile, req.body.isbn, resourceId, pubId, req.body.topic, res, filePath);
+            await insertBook(req.body.isbn, resourceId, pubId, req.body.topic, res, imageFile);
         }else if(['2', '3'].includes(mediaType)){
             // insert journal/newsletter in database
             const jn = [
@@ -64,7 +61,7 @@ export const saveResource = async (req, res) => {
                 req.body.topic,
             ];
 
-            await insertJournalNewsletter(jn,res,filePath)
+            await insertJournalNewsletter(jn,res)
         }else{
             //if thesis, after inserting data to authors, resourceauthors, and resources, check if adviser exists. If existing, insert directly to thesis table. if not, insert advisers first then insert to thesis table
             const adviser = [
@@ -137,18 +134,16 @@ const insertThesis = async (resourceId, adviserId,res)=>{
 }
 
 //insert journal and newsletter
-const insertJournalNewsletter = async(jn,res,filePath)=>{
-    const q = 'INSERT INTO journalnewsletter (jn_volume, jn_issue, jn_cover, resource_id,topic_id) VALUES (?, ?, ?, ?,?)';
+const insertJournalNewsletter = async(jn,res)=>{
+    const q = 'INSERT INTO journalnewsletter (jn_volume, jn_issue, filepath, resource_id,topic_id) VALUES (?, ?, ?, ?,?)';
+
+    console.log(jn)
             
     db.query(q, jn, (err, result) => {
         if (err) {
             return res.status(500).send(err); 
         }
     
-        // Cleanup uploaded file
-        if (filePath) {
-            fs.unlinkSync(filePath);
-        }
         return res.send({status: 201, message:'Journal/Newsletter inserted successfully.'});
     });
 }
@@ -235,27 +230,33 @@ const insertPublisher = async (pub) => {
 };
 
 //insert book
-const insertBook = async(cover, isbn, resourceId, pubId, topic,res, filePath)=>{
+const insertBook = async(isbn, resourceId, pubId, topic, res, imageFile)=>{
     const q = `
-    INSERT INTO book (book_cover, book_isbn, resource_id, pub_id, topic_id) VALUES (?,?,?,?,?)`
+    INSERT INTO book (book_isbn, resource_id, pub_id, topic_id, filepath) VALUES (?,?,?,?,?)`
 
-    const values = [
-        cover,
+    console.log("INSERT BOOK DATA:", {
         isbn,
         resourceId,
         pubId,
-        topic
+        topic,
+        imageFile,
+    });
+    
+
+    const values = [
+        isbn || null,
+        Number(resourceId) || 0,
+        Number(pubId) || 0,
+        Number(topic) || 0,
+        imageFile || null
     ]
+
+    
 
     db.query(q, values, (err,results)=>{
         if (err) {
             return res.status(500).send(err); 
         }
-        // Cleanup uploaded file
-        if (filePath) {
-            fs.unlinkSync(filePath);
-        }
-        
         // console.log('Book inserted successfully')
         return res.send({status: 201, message:'Book inserted successfully.'});
     })
@@ -417,12 +418,6 @@ export const updateResource = async (req, res) => {
     try{
         if(req.file){
             filePath = req.file.path; // Get the file path 
-            fs.readFile(filePath, (err, data) => {
-                 if (err) {
-                     return res.status(500).send(err); 
-                 }
-                 imageFile = data;
-             })
          }
 
          // initialize variables based on media type
@@ -453,9 +448,9 @@ export const updateResource = async (req, res) => {
             //check publisher if exist
             const pubId = await checkIfPubExist(pub)
             console.log('pubId: ', pubId)
-            editBook(imageFile,req.body.isbn,resourceId,pubId,req.body.topic,res,filePath)
+            editBook(req.body.isbn,resourceId,pubId,req.body.topic,res,filePath)
         }else if(mediaType==='2'|| mediaType==='3'){
-            await editJournalNewsletter(filePath,res,req.body.volume,req.body.issue,imageFile,resourceId)
+            await editJournalNewsletter(filePath,res,req.body.volume,req.body.issue,resourceId)
         }else{
             const adviser = [
                 adviserFname,
@@ -474,15 +469,15 @@ export const updateResource = async (req, res) => {
 };
 
 //edit book
-const editBook = async (cover, isbn, resourceId, pubId, topic,res,filePath)=>{
+const editBook = async (isbn, resourceId, pubId, topic,res,filePath)=>{
     let q;
     let book;
 
     console.log('filepath: ', filePath)
 
     if (typeof filePath === 'string') {
-        q = `UPDATE book SET book_cover = ?, book_isbn = ?, pub_id = ?, topic_id = ? WHERE resource_id = ?`;
-        book = [cover, isbn, pubId, topic, resourceId];
+        q = `UPDATE book SET filepath = ?, book_isbn = ?, pub_id = ?, topic_id = ? WHERE resource_id = ?`;
+        book = [filePath, isbn, pubId, topic, resourceId];
     } else {
         q = `UPDATE book SET book_isbn = ?, pub_id = ?, topic_id = ? WHERE resource_id = ?`;
         book = [isbn, pubId, topic, resourceId];
@@ -493,11 +488,7 @@ const editBook = async (cover, isbn, resourceId, pubId, topic,res,filePath)=>{
         if (err) {
             return res.status(500).send(err); 
         }
-        if(typeof filePath === 'string'){
-            fs.unlink(filePath, (unlinkErr) => {
-                if (unlinkErr) console.error('Error deleting file:', unlinkErr);
-            }); 
-        }
+        
         console.log('Book edited successfully')
         // Successfully inserted 
         return res.send({status: 201, message:'Book edited successfully.'});
@@ -515,13 +506,13 @@ const editJournalNewsletter = async(filePath,res,volume,issue,cover,resourceId)=
             SET
                 jn_volume = ?,
                 jn_issue = ?,
-                jn_cover = ?
+                filepath = ?
                 WHERE
                 resource_id = ?`;
         jn = [
                 volume,
                 issue,
-                cover,
+                filePath,
                 resourceId
         ]
         }else{
@@ -545,11 +536,6 @@ const editJournalNewsletter = async(filePath,res,volume,issue,cover,resourceId)=
                 return res.status(500).send(err); 
             }
 
-            if(typeof filePath === 'string'){
-                fs.unlink(filePath, (unlinkErr) => {
-                    if (unlinkErr) console.error('Error deleting file:', unlinkErr);
-                }); 
-            }
             return res.send({status:201,message:'Journal/Newsletter edited successfully.'});
         });
 }
@@ -820,7 +806,7 @@ const getBookResource = (id,res)=>{
         resources.resource_quantity, 
         resources.resource_title, 
         publisher.pub_name,
-        book.book_cover,
+        book.filepath,
 		book.topic_id 
     FROM resources 
     JOIN resourceauthors ON resourceauthors.resource_id = resources.resource_id 
@@ -853,7 +839,7 @@ const getNewsletterJournalResource = (id,res)=>{
         GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS author_names,
         journalnewsletter.jn_volume,
         journalnewsletter.jn_issue,
-        journalnewsletter.jn_cover
+        journalnewsletter.filepath
     FROM resources
     JOIN resourceauthors ON resourceauthors.resource_id = resources.resource_id
     JOIN author ON resourceauthors.author_id = author.author_id

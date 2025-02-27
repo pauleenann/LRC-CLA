@@ -10,6 +10,8 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formVal
     const [open, setOpen] = useState(false)
     // dito ko muna isstore ung publisher details then kapag clinick ung save, tsaka lang sya masstore sa bookdata
     const [publisherDetails, setPublisherDetails] = useState({})
+    const [isDeptOpen, setIsDeptOpen] = useState(false)
+    const [isTopicOpen, setIsTopicOpen] = useState(false)
     
     useEffect(()=>{
         if(bookData.isbn&&!disabled){

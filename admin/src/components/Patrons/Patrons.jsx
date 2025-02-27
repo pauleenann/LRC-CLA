@@ -119,7 +119,7 @@ const Patrons = () => {
                     <FontAwesomeIcon icon={faMagnifyingGlass} />
                     Search
                 </button>
-                <Link to="/add-patron">
+                <Link to="/patron/add">
                     <button className="patrons-search-button">
                         <FontAwesomeIcon icon={faPlus} />
                         Add Patron
@@ -154,13 +154,13 @@ const Patrons = () => {
                                     <td style={{ padding: '10px' }}>{patron.total_checkouts}</td>
                                     {/* <td>₱<span>0.00</span></td> */}
                                     {userRole=='admin'?<td className="patron-edit-checkout d-flex align-items-center gap-1">
-                                        <Link to={`/edit-patron/${patron.patron_id}`}>
+                                        <Link to={`/patron/edit/${patron.patron_id}`}>
                                             <button className="btn
                                             patron-edit-button">
                                                 <FontAwesomeIcon icon={faPen} />
                                             </button>
                                         </Link>
-                                        <Link to={`/view-patron/${patron.patron_id}`}>
+                                        <Link to={`/patron/view/${patron.patron_id}`}>
                                             <button className="btn patron-view-button">
                                                 <FontAwesomeIcon icon={faFile} />
                                             </button>

@@ -28,7 +28,7 @@ const DashboardTopChoices = ({data, number}) => {
         },[data.book_cover])
 
         const handleClick = ()=>{
-            navigate(`/view-item/${data.resource_id}`)
+            navigate(`/catalog/view/${data.resource_id}`)
         }
         
   return (
