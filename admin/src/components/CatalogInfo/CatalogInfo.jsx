@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import {useParams} from 'react-router-dom';
 import './CatalogInfo.css'
-import BookInput from '../BookInput/BookInput'
+import BookInput from '../BookInput/BookInput'  
 import JournalInput from '../JournalInput/JournalInput'
 import ThesisInput from '../ThesisInput/ThesisInput'
+import {useParams} from 'react-router-dom';
 
-const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,addAdviser,setBookData,handleFileChange,error,formValidation,publishers,authorOptions,handleAddAuthor,selectedOptions,deleteAuthor,authorList,resourceType,adviserList,deleteAdviser,resourceStatus,genreList,editMode,isOnline}) => {
+
+const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBookData,handleFileChange,error,formValidation,publishers,authorOptions,handleAddAuthor,selectedOptions,deleteAuthor,authorList,resourceType,adviserList,deleteAdviser,resourceStatus,editMode}) => {
     // disabled is passed by the viewItem component. This disables the input fields so users can only access the page in view mode 
     const [preview,setPreview] =useState() //for preview kapag pumili ng photo or may naretrieve na photo
     const {id} = useParams();
 
-    console.log("id",id);   
-
-    //for displaying preview photo
-    useEffect(()=>{
+    //for displaying preview photo/hindi pa nasasave
+    useEffect(() => {
         if(!bookData.file) return;
 
         let objectUrl;
@@ -42,7 +41,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                 if (bookData.file.includes("http://books.google.com")) {
                     setPreview(bookData.file);
                 } else {
-                    setPreview(`http://localhost:3001/server/${bookData.file}`);
+                    setPreview(`https://api.tuplrc-cla.com/${bookData.file}`);
                 }
             }
             
@@ -54,7 +53,8 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
                 URL.revokeObjectURL(objectUrl);
             }
           };
-      },[bookData.file])
+    }, [bookData.file]);
+    
 
       useEffect(()=>{
         if(bookData.url){
@@ -66,8 +66,8 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
           };
       },[bookData.url])
 
-   
       console.log(preview)
+   
   return (
     <div className='cat-info'>
         <div className="row">
