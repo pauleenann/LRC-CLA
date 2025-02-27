@@ -38,6 +38,12 @@ const CirculationSelectPatron = () => {
     localStorage.removeItem('selectedItems');
   }, [clickedAction]);
 
+  useEffect(()=>{
+    if(searchQuery==''){
+      getPatrons();
+    }
+  },[searchQuery])
+
   const handleSearch = () => {
     const query = searchQuery.toLowerCase();
     const filtered = patrons.filter((patron) => {
@@ -87,8 +93,8 @@ const CirculationSelectPatron = () => {
           value={searchQuery}
           onChange={(e) => {
             setSearchQuery(e.target.value);
-            handleSearch();
           }}
+          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder="Search by name, ID, category, or course"
         />
         <button className="btn" onClick={handleSearch}>Search</button>
@@ -96,7 +102,7 @@ const CirculationSelectPatron = () => {
 
       {/* list of patrons */}
       <div className="patron-list">
-        <p>List of registered patrons</p>
+        <p>List of registered patrons <span>(patrons can only borrow 1 resource at a time)</span></p>
 
         {/* header */}
         <div className="row patron-list-header">
