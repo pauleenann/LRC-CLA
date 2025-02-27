@@ -167,7 +167,10 @@ const Circulation = () => {
                       ? new Date(borrower.checkin_date).toLocaleDateString('en-CA')
                       : "Not Yet Returned"}
                   </td>
-                  <td style={{ padding: '10px' }}>{borrower.status}</td>
+                  <td style={{ padding: '10px' }}>
+                    <span className={borrower.status=='overdue'?'overdue':borrower.status=='returned'?'returned':'borrowed'}>{borrower.status}</span>
+                    
+                  </td>
                 </tr>
               ))
             ) : filteredBorrowers.length === 0 && !loading ? (

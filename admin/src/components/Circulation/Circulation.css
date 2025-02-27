@@ -148,6 +148,7 @@
     border-bottom: none !important;
     padding: 10px;
     font-size: 0.9rem;
+    text-transform: capitalize;
 }
 
 .circulation-container .circ-table tbody tr:nth-child(odd){
@@ -205,4 +206,25 @@
 .circulation-container .resource:hover{
     cursor: pointer;
     text-decoration: underline;
+}
+
+.circulation-container .borrowed{
+    background-color: var(--blue);
+    padding: 5px 10px;
+    border-radius: 20px;
+    color: var(--white);
+}
+
+.circulation-container .returned{
+    background-color: var(--green);
+    padding: 5px 10px;
+    border-radius: 20px;
+    color: var(--white);
+}
+
+.circulation-container .overdue{
+    background-color: var(--tup-color);
+    padding: 5px 10px;
+    border-radius: 20px;
+    color: var(--white);
 }
