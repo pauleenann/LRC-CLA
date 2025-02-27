@@ -294,8 +294,6 @@ export const borrowers = (req, res) => {
     });
 };
 
-
-
 export const patron = (req, res) => {
     const q = `SELECT 
                 p.patron_id,
