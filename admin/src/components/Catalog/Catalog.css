@@ -111,6 +111,7 @@
     outline: 1px solid var(--tup-color);
     font-size: 0.8rem;
     text-transform: capitalize;
+    height: 500px;
     
 }
 
