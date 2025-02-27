@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 27, 2025 at 12:17 PM
+-- Generation Time: Feb 27, 2025 at 12:27 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -333,19 +333,7 @@ INSERT INTO `book` (`book_id`, `book_isbn`, `resource_id`, `pub_id`, `topic_id`,
 (110, '9786214063284', 244, 76, 15, NULL),
 (111, '9786210403824', 245, 75, 15, NULL),
 (112, '9789814336642', 246, 80, 15, NULL),
-(113, '4915249042', 249, 81, 15, NULL),
-(123, NULL, 260, 71, 14, NULL),
-(124, '9781496413290', 263, 70, 1, NULL),
-(125, NULL, 264, 70, 8, NULL),
-(126, '', 265, 71, 12, NULL),
-(127, NULL, 268, 70, 5, NULL),
-(128, '2121', 269, 70, 7, NULL),
-(129, NULL, 270, 70, 1, 'public\\images\\1740371208877_blob'),
-(130, NULL, 271, 70, 10, NULL),
-(131, NULL, 282, 72, 6, 'public/images/passwordBg.png'),
-(132, '9781496413290', 286, 70, 13, '????\0JFIF\0\0\0\0\0??\0C\0	\Z!\Z\"$\"$??\0C'),
-(133, '9781496413290', 287, 70, 1, 'http://books.google.com/books/content?id=1HbGCgAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_ap'),
-(134, NULL, 288, 70, 2, 'public/images/not_found.png');
+(113, '4915249042', 249, 81, 15, NULL);
 
 -- --------------------------------------------------------
 
@@ -475,15 +463,6 @@ CREATE TABLE `journalnewsletter` (
   `topic_id` int(11) DEFAULT NULL,
   `filepath` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `journalnewsletter`
---
-
-INSERT INTO `journalnewsletter` (`jn_id`, `jn_volume`, `jn_issue`, `resource_id`, `topic_id`, `filepath`) VALUES
-(20, 'Volume 11', '2004', 247, 10, ''),
-(21, 'journal', 'journal', 261, 8, ''),
-(22, 'journaltest8', 'journaltest8', 285, 10, 'public/images/passwordBg.png');
 
 -- --------------------------------------------------------
 
@@ -618,38 +597,12 @@ INSERT INTO `resourceauthors` (`resource_id`, `author_id`) VALUES
 (245, 163),
 (245, 174),
 (246, 175),
-(247, 176),
 (248, 177),
 (248, 178),
 (248, 179),
 (248, 180),
 (249, 181),
-(249, 182),
-(260, 149),
-(261, 149),
-(262, 149),
-(262, 188),
-(263, 189),
-(263, 190),
-(264, 148),
-(265, 149),
-(268, 151),
-(269, 148),
-(270, 148),
-(271, 149),
-(272, 149),
-(275, 149),
-(278, 149),
-(279, 152),
-(280, 150),
-(281, 150),
-(282, 149),
-(283, 148),
-(285, 150),
-(286, 189),
-(286, 190),
-(287, 189),
-(287, 190);
+(249, 182);
 
 -- --------------------------------------------------------
 
@@ -693,31 +646,8 @@ INSERT INTO `resources` (`resource_id`, `resource_title`, `resource_description`
 (244, 'Bar and Beverage Service', 'n/a', '2022', 2, 0, 4, 1, 1),
 (245, 'Kitchen Essentials and Basic Food Preparation', 'n/a', '2021', 2, 0, 4, 1, 1),
 (246, 'Modern Food Service Purchasing: A Complete Resource', 'n/a', '2011', 1, 0, 4, 1, 1),
-(247, 'Our Daily Bread 2005 Annual Edition', 'n/a', '2004', 1, 0, 1, 2, 1),
 (248, 'A TRACER STUDY OF THE BSHRM PROGRAM OF TECHNOLOGICAL UNIVERSITY OF THE PHILIPPINES FOR THE SCHOOL YEAR 2019-2022', 'n/a', '2024', 2, 0, 4, 4, 1),
-(249, 'Quick and Easy Sushi Cook Book', 'n/a', '1983', 1, 0, 4, 1, 1),
-(260, 'sample', 'sample', '2001', 1, 0, 1, 1, 2),
-(261, 'journal', 'journal', '2001', 1, 0, 1, 2, 1),
-(262, 'thesis', 'sasa', '2001', 1, 0, 1, 4, 2),
-(263, 'Under Our Skin', 'Jesus Christ died for all people. Every heart that beats was made alive by the very breath of God. Is there hope for honest and healing conversation on issues that are ultimately about so much more than black and white? Watson draws from his own life, his family legacy, and his role as a husband and father to sensitively examine both sides of the race debate and appeal to the power and possibility of faith as a step toward healing.', '2015', 1, 0, 1, 1, 1),
-(264, 'sample2', 'sample2', '2002', 1, 0, 1, 1, 1),
-(265, 'sample4', 'sample3', '2015', 1, 0, 1, 1, 1),
-(268, 'sample5', 'sample5', '2002', 1, 0, 3, 1, 1),
-(269, 'sample6', 'sample6', '2002', 1, 0, 5, 1, 1),
-(270, 'filepath', 'filepath', '2002', 1, 0, 1, 1, 1),
-(271, '1', 'sample', '2001', 1, 0, 4, 1, 1),
-(272, 'test', 'test', '2222', 1, 0, 3, 1, 1),
-(275, 'test3', 'sampl', '2222', 1, 0, 2, 1, 1),
-(278, 'test9', 'test9', '2222', 1, 0, 5, 1, 1),
-(279, 'test10', 'TypeError: val.toString is not a function', '2222', 1, 0, 4, 1, 1),
-(280, 'sdsda', 'weqeq', '1111', 1, 0, 1, 1, 2),
-(281, 'adsd', 'asa', '2222', 1, 0, 1, 1, 1),
-(282, '1232', '32131', '2133', 1, 1, 2, 1, 1),
-(283, 'newslettertest', 'newslettertest', '2002', 1, 0, 5, 3, 2),
-(285, 'journaltest8', 'journaltest8', '2002', 1, 0, 3, 2, 1),
-(286, 'testing11', 'Jesus Christ died for all people. Every heart that beats was made alive by the very breath of God. Is there hope for honest and healing conversation on issues that are ultimately about so much more than black and white? Watson draws from his own life, his family legacy, and his role as a husband and father to sensitively examine both sides of the race debate and appeal to the power and possibility of faith as a step toward healing.', '2015', 1, 0, 1, 1, 1),
-(287, 'testing12', 'Jesus Christ died for all people. Every heart that beats was made alive by the very breath of God. Is there hope for honest and healing conversation on issues that are ultimately about so much more than black and white? Watson draws from his own life, his family legacy, and his role as a husband and father to sensitively examine both sides of the race debate and appeal to the power and possibility of faith as a step toward healing.', '2015', 1, 0, 1, 1, 1),
-(288, 'testing13', 'fsdf', '2002', 1, 0, 1, 1, 1);
+(249, 'Quick and Easy Sushi Cook Book', 'n/a', '1983', 1, 0, 4, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -803,8 +733,7 @@ CREATE TABLE `thesis` (
 --
 
 INSERT INTO `thesis` (`thesis_id`, `resource_id`, `adviser_id`) VALUES
-(34, 248, 29),
-(35, 262, 29);
+(34, 248, 29);
 
 -- --------------------------------------------------------
 
