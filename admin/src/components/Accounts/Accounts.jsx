@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Accounts.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faUser, faPen, faUserSlash,faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faUser, faPen, faUserSlash,faArrowLeft, faArrowRight, faSearch } from '@fortawesome/free-solid-svg-icons';
 import CreateUserModal from '../CreateUserModal/CreateUserModal';
 import EditUserModal from '../EditUserModal/EditUserModal';
 import DeactivateModal from '../DeactivateModal/DeactivateModal';
@@ -202,6 +202,7 @@ const Accounts = () => {
         setStatusModal(true);
         setStatusModalContent({ status: 'success', message: response.data.message });
       }
+      window.location.reload();
     } catch (err) {
       console.log('Cannot deactivate user. An error occurred: ', err.message);
     } finally {
@@ -219,6 +220,7 @@ const Accounts = () => {
         setStatusModal(true);
         setStatusModalContent({ status: 'success', message: response.data.message });
       }
+      window.location.reload();
     } catch (err) {
       console.log('Cannot activate user. An error occurred: ', err.message);
     } finally {
@@ -360,7 +362,7 @@ const Accounts = () => {
             onChange={handleSearch}
           />
           <button className="btn" onClick={()=>userAccounts(true)}>
-            Search
+            <FontAwesomeIcon icon={faSearch} className='icon'/>
           </button>
           <button className="btn" onClick={()=>setSelectedFilters({ fname:0, lname:0, uname: 0, role: 0, status:''})}>
             Reset Filter
@@ -428,23 +430,22 @@ const Accounts = () => {
               <td>{item.staff_lname}</td>
               <td>{item.staff_uname}</td>
               <td>{item.role_name}</td>
-              <td>{item.staff_status}</td>
+              <td>
+                <span className={item.staff_status=='active'?'active':'inactive'}>{item.staff_status}</span>
+              </td>
               <td className="action">
                 {/* Edit user */}
-                <button className="btn edit-btn" onClick={() => handleEdit(item.staff_id)}>
+                <button className="btn edit-btn" onClick={() => handleEdit(item.staff_id)} title='Edit user'>
                   <FontAwesomeIcon icon={faPen} />
-                  <span>Edit user</span>
                 </button>
                 {/* Deactivate / Activate */}
                 {item.staff_status === 'active' ? (
-                  <button className="btn deac-acc-btn" onClick={() => handleDeac(item.staff_uname, item.staff_id)}>
+                  <button className="btn deac-acc-btn" onClick={() => handleDeac(item.staff_uname, item.staff_id)} title='Deactivate user'>
                     <FontAwesomeIcon icon={faUserSlash} />
-                    Deactivate user
                   </button>
                 ) : (
-                  <button className="btn deac-acc-btn" onClick={() => handleAct(item.staff_uname, item.staff_id)}>
+                  <button className="btn deac-acc-btn" onClick={() => handleAct(item.staff_uname, item.staff_id)} title='Activate user'>
                     <FontAwesomeIcon icon={faUser} />
-                    Activate user
                   </button>
                 )}
               </td>
