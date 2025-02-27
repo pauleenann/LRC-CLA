@@ -328,7 +328,7 @@ const insertResources = async (res, req, authors, username) => {
 
                 // Get the `resource_id` of the newly inserted row
                 const resourceId = results.insertId;
-                logAuditAction(username, 'INSERT', 'resources', null, null, JSON.stringify({ 'resource name': req.body.title }));
+                logAuditAction(username, 'INSERT', 'resources', null, null, JSON.stringify("Added a new resource: '" + req.body.title + "'"));
                 try {
                     // Insert authors for the resource
                     await insertAuthors(res, authors, resourceId);
@@ -658,7 +658,7 @@ const editResource = async (res, req, authors, resourceId, username) => {
                             'resources',
                             resourceId,
                             oldValue,
-                            newValue
+                            JSON.stringify("Edited a resource: '" + req.body.title + "'")
                         );
 
                         resolve('success');

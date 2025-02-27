@@ -114,6 +114,7 @@
     outline: 1px solid var(--tup-color);
     width: 100%;
     table-layout: fixed; /* Fix column width */
+    
 }
 
 
