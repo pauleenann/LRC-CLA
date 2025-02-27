@@ -213,7 +213,7 @@ export const popularChoices = (req, res) => {
         JOIN book b ON b.resource_id = r.resource_id
         JOIN checkout cout ON cout.resource_id = r.resource_id
         WHERE r.resource_id = cout.resource_id
-        GROUP BY r.resource_title, r.resource_published_date, b.book_cover, r.resource_id
+        GROUP BY r.resource_title, r.resource_published_date, b.filepath, r.resource_id
         ORDER BY borrowed_times DESC
         LIMIT 5;`;
     
