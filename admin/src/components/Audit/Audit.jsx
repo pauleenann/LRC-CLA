@@ -89,7 +89,7 @@ const Audit = () => {
         {/* table */}
 
     
-        <div className='t-overflow'>
+        <div className='t-overflow' >
         <table>
             
             <thead>
@@ -105,7 +105,7 @@ const Audit = () => {
                 </tr>
             </thead>
             
-            <tbody>
+            <tbody >
                 {audit.length > 0 ? (
                     audit.map((item, index) => (
                         <tr key={index}>
