@@ -89,7 +89,7 @@
     margin: 0;
     height: 40px;
     border: 1px solid  var(--shadow);
-    width: 400px;
+    width: 50%;
     border-radius: 5px;
     padding-left: 10px;
 }
@@ -200,4 +200,9 @@
 .circulation-container .spinner-box{
     width: 100%;
     /* background-color: red !important; */
+}
+
+.circulation-container .resource:hover{
+    cursor: pointer;
+    text-decoration: underline;
 }

@@ -5,8 +5,9 @@ import { getAllFromStore, getAllUnsyncedFromStore, getBook, getBookPub, getCatal
 import { clearObjectStore, deleteResourceFromIndexedDB, markAsSynced } from '../../indexedDb/syncData'
 import ResourceStatusModal from '../ResourceStatusModal/ResourceStatusModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowRight, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom';
+
 
 const Catalog = () => {
   const [catalog, setCatalog] = useState([])
@@ -434,9 +435,9 @@ console.log(selectedFilters)
           <div className="search-filter">
             <input type="search" placeholder="Search by title or author" onChange={handleChange} onKeyDown={handleEnter}/>
             <button 
-              className="btn" 
+              className="btn cat-search-button" 
               onClick={() => {isOnline?getCatalogOnline(true):getCatalogOffline(true)}}>
-              Search
+              <FontAwesomeIcon icon={faSearch} className='icon'/>
             </button>
             {isOnline?
             <button 
