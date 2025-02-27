@@ -223,7 +223,7 @@
 }
 
 .circulation-container .overdue{
-    background-color: var(--tup-color);
+    background-color: var(--button);
     padding: 5px 10px;
     border-radius: 20px;
     color: var(--white);
