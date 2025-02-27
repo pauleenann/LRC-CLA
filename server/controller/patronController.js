@@ -249,10 +249,11 @@ export const borrowers = (req, res) => {
             c.checkout_date,
             c.checkout_due,
             c.status,
+            r.resource_id,
             r.resource_title AS borrowed_book,
             course.course_name AS course, 
             ci.checkin_date,
-            CASE 
+           CASE 
                 WHEN c.status = 'borrowed' THEN 'Currently Borrowed'
                 WHEN c.status = 'returned' THEN 'Returned'
                 ELSE 'Other'
