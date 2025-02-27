@@ -88,11 +88,13 @@ const Audit = () => {
         
         {/* table */}
 
+
     
-        <div className='t-overflow' >
-        <table>
+        <div class='t-overflow table-bordered' style={{ height: '50vh', overflowY: 'auto'}}>
             
-            <thead>
+        <table> 
+            
+            <thead style={{ position: 'fixed', zIndex: 10 }}>
                 <tr>
                     <td class="col-2 text-center">User</td>
                     <td class="col-2 text-center">Action</td>
@@ -104,16 +106,18 @@ const Audit = () => {
                     
                 </tr>
             </thead>
-            
+           
+
+          
             <tbody >
                 {audit.length > 0 ? (
                     audit.map((item, index) => (
                         <tr key={index}>
-                            <td class="col-1 text-center">{item.user_id}</td>
+                            <td class="col-2 text-center">{item.user_id}</td>
                             {/* <td class="col-1">{item.table_name}</td> */}
-                            <td class="col-1 text-center">{item.action_type}</td>
-                            <td class="col-4 text-center">{item.new_value.replace(/[{}"]/g, '').replace(/,/g, '\n')}</td>
-                            <td class="col-1 text-center">{item.formatted_timestamp}</td>
+                            <td class="col-2 text-center">{item.action_type}</td>
+                            <td class="col-6 text-start">{item.new_value.replace(/[{}"]/g, '').replace(/,/g, '\n')}</td>
+                            <td class="col-2 text-center">{item.formatted_timestamp}</td>
                         </tr>
                     ))
                 ) : !loading ? (
@@ -132,7 +136,7 @@ const Audit = () => {
                     </tr>
                 )}
             </tbody>
-
+           
         </table>
         </div>
     </div>
