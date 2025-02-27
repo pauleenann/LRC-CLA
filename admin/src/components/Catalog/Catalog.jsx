@@ -420,7 +420,7 @@ console.log(selectedFilters)
           {/* add and scan item buttons */}
           <div className="add-scan-item">
               {/* add item */}
-              <Link to='/add-item'>
+              <Link to='/catalog/add'>
                 <button type="button" class="btn cat-add-item">
                   <i class="fa-solid fa-pen"></i>
                   Add item
@@ -500,7 +500,7 @@ console.log(selectedFilters)
               <tbody>
               {catalog.length > 0 ? (
                   catalog.map((item, key) => (
-                    <tr key={key} onClick={()=>navigate(`/view-item/${item.resource_id}`)}>
+                    <tr key={key} onClick={()=>navigate(`/catalog/view/${item.resource_id}`)}>
                       <td>{item.resource_title}</td>
                       <td>{item.type_name}</td>
                       <td>{item.author_names}</td>

@@ -426,7 +426,7 @@ console.log(selectedFilters)
           {/* add and scan item buttons */}
           <div className="add-scan-item">
               {/* add item */}
-              <Link to='/add-item'>
+              <Link to='/catalog/add'>
                 <button type="button" class="btn cat-add-item">
                   <i class="fa-solid fa-pen"></i>
                   Add item

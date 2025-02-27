@@ -1,52 +1,36 @@
 import React, { useEffect, useState } from 'react'
-import {useParams} from 'react-router-dom';
 import './CatalogInfo.css'
 import BookInput from '../BookInput/BookInput'
+// for the multi select input
+import Select from 'react-select'
 import JournalInput from '../JournalInput/JournalInput'
 import ThesisInput from '../ThesisInput/ThesisInput'
+import axios from 'axios'
 
 const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,addAdviser,setBookData,handleFileChange,error,formValidation,publishers,authorOptions,handleAddAuthor,selectedOptions,deleteAuthor,authorList,resourceType,adviserList,deleteAdviser,resourceStatus,genreList,editMode,isOnline}) => {
     // disabled is passed by the viewItem component. This disables the input fields so users can only access the page in view mode 
     const [preview,setPreview] =useState() //for preview kapag pumili ng photo or may naretrieve na photo
-    const {id} = useParams();
-
-    console.log("id",id);   
 
     //for displaying preview photo
     useEffect(()=>{
         if(!bookData.file) return;
 
         let objectUrl;
-
-        if(!id || editMode){
-            try{
-                objectUrl = URL.createObjectURL(bookData.file);
-                setPreview(objectUrl);
-            }catch{
-                const blob = new Blob([new Uint8Array(bookData.file.data)], { type: 'image/jpeg' });
-                objectUrl = URL.createObjectURL(blob);
-                setPreview(objectUrl)
-            }
-                
-            //reset URl
-            //pag may naupload na file, wala dapat url
-            setBookData((prevdata)=>({
-                ...prevdata,
-                url:''
-            })) 
-        }else{
-            try{
-                objectUrl = URL.createObjectURL(bookData.file);
-                setPreview(objectUrl);
-            }catch{
-                if (bookData.file.includes("http://books.google.com")) {
-                    setPreview(bookData.file);
-                } else {
-                    setPreview(`http://localhost:3001/server/${bookData.file}`);
-                }
-            }
-            
+        try{
+            objectUrl = URL.createObjectURL(bookData.file);
+            setPreview(objectUrl);
+        }catch{
+            const blob = new Blob([new Uint8Array(bookData.file.data)], { type: 'image/jpeg' });
+            objectUrl = URL.createObjectURL(blob);
+            setPreview(objectUrl)
         }
+            
+        //reset URl
+        //pag may naupload na file, wala dapat url
+        setBookData((prevdata)=>({
+            ...prevdata,
+            url:''
+        }))
 
          // Cleanup function to revoke the Object URL
          return () => {
@@ -67,7 +51,6 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,setType,addGenre,
       },[bookData.url])
 
    
-      console.log(preview)
   return (
     <div className='cat-info'>
         <div className="row">

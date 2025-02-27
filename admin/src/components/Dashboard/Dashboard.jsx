@@ -229,7 +229,7 @@ const Dashboard = () => {
                 </Link>
                 
               </div>
-              <Link to="/add-item">
+              <Link to="/catalog/add">
                 <button className="btn add-btn d-flex align-items-center justify-content-center gap-3">
                   <FontAwesomeIcon icon={faPlus} className='icon'/>
                   Add new

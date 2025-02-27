@@ -170,7 +170,7 @@ const AddItem = () => {
                         status:data.avail_id.toString(),
                         publisher_id:data.pub_id,
                         publisher: data.pub_name?data.pub_name.toString():'',
-                        file:data.filepath,
+                        file:data.book_cover,
                         publishedDate:data.resource_published_date.toString(),
                         department: data.dept_id.toString(),
                         topic:data.topic_id.toString(),
@@ -188,7 +188,7 @@ const AddItem = () => {
                         quantity:data.resource_quantity.toString(),
                         title:data.resource_title.toString(),
                         status:data.avail_id.toString(),
-                        file:data.filepath,
+                        file:data.jn_cover,
                         publishedDate:data.resource_published_date.toString(),
                         department: data.dept_id.toString(),
                         topic:data.topic_id.toString(),
@@ -291,12 +291,16 @@ const AddItem = () => {
     // Handle file input
     const handleFileChange = (e) => {
         const file = e.target.files[0];  // Get the first file from the input
-        setBookData((prevData) => ({
-            ...prevData,
-            file: file  
-        }));
+        console.log(file)
+        if (file) {  // Check if a file was selected
+            const blob = new Blob([file], { type: file.type });  // Create a Blob from the file
+
+            setBookData((prevData) => ({
+                ...prevData,
+                file: blob  // Store the Blob in the bookData state
+            }));
+        }
     };
-    
     // Handle toggle buttons
     const handleToggle = (e) => {
         const { name, checked } = e.target;
