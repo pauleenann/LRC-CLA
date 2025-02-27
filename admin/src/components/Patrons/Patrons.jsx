@@ -108,17 +108,18 @@ const Patrons = () => {
 
             {/* search bar */}
             <div className="search-bar-box">
-                <input
-                    type="text"
-                    className="patrons-search-bar"
-                    placeholder="Search"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                />
-                <button className="patrons-search-button">
-                    <FontAwesomeIcon icon={faMagnifyingGlass} />
-                    Search
-                </button>
+                <div className='d-flex gap-2'>
+                    <input
+                        type="text"
+                        className="patrons-search-bar"
+                        placeholder="Search"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                    />
+                    <button className="patrons-search-button">
+                        <FontAwesomeIcon icon={faMagnifyingGlass} />
+                    </button>
+                </div>
                 <Link to="/patron/add">
                     <button className="patrons-search-button">
                         <FontAwesomeIcon icon={faPlus} />

@@ -146,7 +146,6 @@ const Logbook = () => {
                     />
                     <button className="btn log-search-button" onClick={getPatron}>
                         <FontAwesomeIcon icon={faSearch} className='icon'/> 
-                        Search
                     </button>
                 </div>
                 
