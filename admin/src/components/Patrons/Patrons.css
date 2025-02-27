@@ -48,7 +48,7 @@
 
 .patrons-container .search-bar-box{
     display: flex;
-    gap: 15px;
+    justify-content: space-between;
 }
 
 .patrons-container .search-field-category-filter{

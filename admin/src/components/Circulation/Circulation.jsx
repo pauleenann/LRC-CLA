@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Circulation.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCartPlus, faCartShopping, faL,faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faCartPlus, faCartShopping, faSearch,faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Circulation = () => {
@@ -124,7 +124,9 @@ const Circulation = () => {
           onChange={handleSearch}
           onKeyDown={(e)=>e.key=='Enter'&&search()}
         />
-        <button className="btn search-btn" onClick={search}>Search</button>
+        <button className="btn search-btn" onClick={search}>
+          <FontAwesomeIcon icon={faSearch} className='icon'/> 
+        </button>
       </div>
 
       <div>
