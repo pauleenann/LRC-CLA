@@ -94,7 +94,7 @@ const Audit = () => {
             
         <table> 
             
-            <thead style={{ position: 'fixed', zIndex: 10 }}>
+            <thead style={{ position: 'sticky', zIndex: 10 }}>
                 <tr>
                     <td class="col-2 text-center">User</td>
                     <td class="col-2 text-center">Action</td>
