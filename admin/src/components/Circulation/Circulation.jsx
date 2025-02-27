@@ -3,7 +3,7 @@ import axios from 'axios';
 import './Circulation.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartPlus, faCartShopping, faL,faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Circulation = () => {
   const location = useLocation();
@@ -15,6 +15,7 @@ const Circulation = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 5;
+  const navigate = useNavigate()
   let query;
   
   useEffect(() => {
@@ -143,7 +144,7 @@ const Circulation = () => {
                   <td style={{ padding: '10px' }}>
                     {borrower.patron_fname} {borrower.patron_lname}
                   </td>
-                  <td style={{ padding: '10px' }}>{borrower.borrowed_book}</td>
+                  <td style={{ padding: '10px' }} onClick={()=>navigate(`/catalog/view/${borrower.resource_id}`)}> {borrower.borrowed_book} </td>
                   <td style={{ padding: '10px' }}>{borrower.course}</td>
                   <td style={{ padding: '10px' }}>
                     {new Date(borrower.checkout_date).toLocaleDateString('en-CA')}
