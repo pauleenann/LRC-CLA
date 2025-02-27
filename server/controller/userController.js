@@ -65,8 +65,6 @@ export const login = async (req, res) => {
                 message: 'Login successful',
                 token, // Send the token (if needed for client-side use)
                 user: { username: user.staff_uname, role },
-
-                
             });
         });
     } catch (error) {

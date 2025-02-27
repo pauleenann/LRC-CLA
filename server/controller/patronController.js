@@ -216,8 +216,17 @@ export const patronSort = (req, res) => {
 }; */
 
 export const borrowers = (req, res) => {
-    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
-    const offset = (page - 1) * limit;
+    const { page = 1, limit = 10, query = '' } = req.query;
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+
+    console.log('Query:', query);
+
+    let whereQuery = '';
+    if (query === 'returned' || query === 'borrowed' || query === 'overdue') {
+        whereQuery = `WHERE c.status = '${query}'`;
+    }
+
+    console.log('Where Clause:', whereQuery);
 
     const countQuery = `
         SELECT COUNT(*) AS totalCount 
@@ -226,6 +235,7 @@ export const borrowers = (req, res) => {
         INNER JOIN resources r ON c.resource_id = r.resource_id
         INNER JOIN course ON p.course_id = course.course_id
         LEFT JOIN checkin ci ON c.checkout_id = ci.checkout_id
+        ${whereQuery}
     `;
 
     const dataQuery = `
@@ -242,8 +252,8 @@ export const borrowers = (req, res) => {
             r.resource_id,
             r.resource_title AS borrowed_book,
             course.course_name AS course, 
-            ci.checkin_date, 
-            CASE 
+            ci.checkin_date,
+           CASE 
                 WHEN c.status = 'borrowed' THEN 'Currently Borrowed'
                 WHEN c.status = 'returned' THEN 'Returned'
                 ELSE 'Other'
@@ -257,7 +267,8 @@ export const borrowers = (req, res) => {
         INNER JOIN 
             course ON p.course_id = course.course_id
         LEFT JOIN 
-            checkin ci ON c.checkout_id = ci.checkout_id -- Join checkin table
+            checkin ci ON c.checkout_id = ci.checkout_id
+        ${whereQuery}
         ORDER BY 
             status_category, 
             c.checkout_date DESC
@@ -282,7 +293,6 @@ export const borrowers = (req, res) => {
         });
     });
 };
-
 
 export const patron = (req, res) => {
     const q = `SELECT 
