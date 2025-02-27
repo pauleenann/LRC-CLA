@@ -116,7 +116,7 @@ const Audit = () => {
                             <td class="col-2 text-center">{item.user_id}</td>
                             {/* <td class="col-1">{item.table_name}</td> */}
                             <td class="col-2 text-center">{item.action_type}</td>
-                            <td class="col-6 text-start">{item.new_value.replace(/[{}"]/g, '').replace(/,/g, '\n')}</td>
+                            <td class="col-6 text-start border-start border-end">{item.new_value.replace(/[{}"]/g, '').replace(/,/g, '\n')}</td>
                             <td class="col-2 text-center">{item.formatted_timestamp}</td>
                         </tr>
                     ))
