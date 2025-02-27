@@ -124,6 +124,8 @@ const Circulation = () => {
               <td>Book/s issued</td>
               <td>Course</td>
               <td>Borrow Date</td>
+              <td>Due Date</td>
+              <td>Return Date</td>
               <td>Status</td>
             </tr>
           </thead>
@@ -139,6 +141,14 @@ const Circulation = () => {
                   <td style={{ padding: '10px' }}>{borrower.course}</td>
                   <td style={{ padding: '10px' }}>
                     {new Date(borrower.checkout_date).toLocaleDateString('en-CA')}
+                  </td>
+                  <td style={{ padding: '10px' }}>
+                    {new Date(borrower.checkout_due).toLocaleDateString('en-CA')}
+                  </td>
+                  <td style={{ padding: '10px' }}>
+                    {borrower.checkin_date
+                      ? new Date(borrower.checkin_date).toLocaleDateString('en-CA')
+                      : "Not Yet Returned"}
                   </td>
                   <td style={{ padding: '10px' }}>{borrower.status}</td>
                 </tr>

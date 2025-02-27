@@ -89,41 +89,40 @@ const Audit = () => {
         {/* table */}
 
     
-        <div className='t-overflow'>
+        <div className='t-overflow' >
         <table>
             
             <thead>
                 <tr>
-                    <td class="col-1">User</td>
-                    <td class="col-1">Action</td>
+                    <td class="col-2 text-center">User</td>
+                    <td class="col-2 text-center">Action</td>
+                    <td class="col-6 text-center">Description</td>
                     {/* <td class="col-1"> Affected Table</td> */}
                     {/* <td>Old Value</td> */}
-                    <td class="col-4">New Value</td>
-                    <td class="col-1">Timestamp</td>
+                    <td class="col-2 text-center">Timestamp</td>
 
                     
                 </tr>
             </thead>
             
-            <tbody>
+            <tbody >
                 {audit.length > 0 ? (
                     audit.map((item, index) => (
                         <tr key={index}>
-                            <td class="col-1">{item.user_id}</td>
-                            <td class="col-1">{item.action_type}</td>
+                            <td class="col-1 text-center">{item.user_id}</td>
                             {/* <td class="col-1">{item.table_name}</td> */}
-                            {/* <td>{item.old_value}</td> */}
-                            <td class="col-4 text-start">{item.new_value.replace(/[{}"]/g, '').replace(/,/g, '\n')}</td>
-                            <td class="col-1">{item.formatted_timestamp}</td>
+                            <td class="col-1 text-center">{item.action_type}</td>
+                            <td class="col-4 text-center">{item.new_value.replace(/[{}"]/g, '').replace(/,/g, '\n')}</td>
+                            <td class="col-1 text-center">{item.formatted_timestamp}</td>
                         </tr>
                     ))
                 ) : !loading ? (
                     <tr>
-                        <td colSpan="6">No records available</td>
+                        <td colSpan="3" className='text-center'>No records available</td>
                     </tr>
                 ) : (
                     <tr>
-                        <td colSpan="6" style={{ textAlign: 'center', padding: '20px' }}>
+                        <td colSpan="3" style={{ textAlign: 'center', padding: '20px' }}>
                             <div className="spinner-box">
                                 <div className="spinner-grow text-danger" role="status">
                                     <span className="sr-only">Loading...</span>
