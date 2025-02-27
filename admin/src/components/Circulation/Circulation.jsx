@@ -3,9 +3,10 @@ import axios from 'axios';
 import './Circulation.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartPlus, faCartShopping, faL,faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Circulation = () => {
+  const location = useLocation();
   const [borrowers, setBorrowers] = useState([]);
   const [filteredBorrowers, setFilteredBorrowers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -14,8 +15,13 @@ const Circulation = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 5;
+  let query;
   
   useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    query = params.get('filter');
+
+        
     getBorrowers();
     localStorage.removeItem('clickedAction');
     localStorage.removeItem('selectedItems');
@@ -26,7 +32,7 @@ const Circulation = () => {
     setLoading(true);
     try {
       const response = await axios.get(`http://localhost:3001/api/patron/borrowers`, {
-        params: { page: currentPage, limit: itemsPerPage }
+        params: { page: currentPage, limit: itemsPerPage, query:  query}
       });
 
       setBorrowers(response.data.data);

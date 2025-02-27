@@ -74,9 +74,9 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation,
                                 <option selected disabled className=''>Select department</option>
                                 {department.length>0?department.map((item,key)=>(
                                     <option value={item.dept_id} className='dept_name' selected={disabled||editMode?item.dept_id==bookData.department:''}>{item.dept_name}</option>
-                                )):''}        
+                                )):''}
+                                
                             </select>
-                            <span className='add-publisher'>Department not listed? Please <button className='add-publisher-button' >"add department here"</button> first.</span>
                             <p className='resource-error'>{error.department}</p>
                         </div>
                         {/* topic */}
@@ -88,10 +88,34 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation,
                                     <option value={item.topic_id} selected={disabled||editMode?item.topic_id==bookData.topic:''}>{item.topic_name}</option>
                                 )):''}
                             </select>
-                            <span className='add-publisher'>Topic not listed? Please <button className='add-publisher-button' >"add topic here"</button> first.</span>
                             <p className='resource-error'>{error.topic}</p>
                         </div>}
                         
+                        {/* shelf no */}
+                        {/* <div className="col-3 info-input-box">
+                            <label htmlFor="">Shelf No.</label>
+                            <input type="number" name='shelfNo' placeholder='Enter shelf number' disabled={disabled?true:false} onChange={handleChange}/>
+                        </div> */}
+                        {/* active item */}
+                        {/* <div className="col-12 mt-5">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="active-item" disabled={disabled?true:false} onChange={handleToggle} name='isActive'/>
+                                <div className="switch-label">
+                                    <label class="form-check-label" for="active-item">Active Item</label>
+                                    <span>Item is available for checking out and OPAC listing</span>
+                                </div>
+                            </div>
+                        </div> */}
+                        {/* published*/}
+                        {/* <div className="col-12 mt-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="published" disabled={disabled?true:false} onChange={handleToggle} name='isPublished'/>
+                                <div className="switch-label">
+                                    <label class="form-check-label" for="published">Published</label>
+                                    <span>Enable OPAC listing, uncheck if you don't want to put this item on OPAC.</span>
+                                </div>
+                            </div>
+                        </div> */}
                         {/* circulation*/}
                         <div className="col-12 mt-3">
                             <div class="form-check form-switch">
