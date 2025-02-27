@@ -6,19 +6,21 @@ import axios from 'axios'
 /*-------------SAVE RESOURCE----------------- */
 export const saveResource = async (req, res) => {
     console.log('Saving resource...');
+    
     const mediaType = req.body.mediaType;
     const username = req.body.username;
     let adviserFname, adviserLname, filePath, imageFile;
     let pub = {};
-    
+    console.log('username 1: ', username)
+
     // Handle image upload or URL
     try{
         if (req.file) {
             // filePath = req.file.path.replace(/\\/g, "/").toString();
-            // imageFile = fs.readFileSync(filePath); // Read file synchronously
+            //imageFile = fs.readFileSync(filePath); // Read file synchronously
             imageFile = req.file.path.replace(/\\/g, "/").toString();
         } else if (req.body.url) {
-            imageFile = req.body.url;
+            imageFile = req.body.url
         }
         
         // initialize variables based on media type
@@ -135,15 +137,13 @@ const insertThesis = async (resourceId, adviserId,res)=>{
 
 //insert journal and newsletter
 const insertJournalNewsletter = async(jn,res)=>{
-    const q = 'INSERT INTO journalnewsletter (jn_volume, jn_issue, filepath, resource_id,topic_id) VALUES (?, ?, ?, ?,?)';
-
-    console.log(jn)
+    const q = 'INSERT INTO journalnewsletter (jn_volume, jn_issue, filepath, resource_id, topic_id) VALUES (?, ?, ?, ?,?)';
             
     db.query(q, jn, (err, result) => {
         if (err) {
             return res.status(500).send(err); 
         }
-    
+        
         return res.send({status: 201, message:'Journal/Newsletter inserted successfully.'});
     });
 }
@@ -234,15 +234,6 @@ const insertBook = async(isbn, resourceId, pubId, topic, res, imageFile)=>{
     const q = `
     INSERT INTO book (book_isbn, resource_id, pub_id, topic_id, filepath) VALUES (?,?,?,?,?)`
 
-    console.log("INSERT BOOK DATA:", {
-        isbn,
-        resourceId,
-        pubId,
-        topic,
-        imageFile,
-    });
-    
-
     const values = [
         isbn || null,
         Number(resourceId) || 0,
@@ -250,8 +241,6 @@ const insertBook = async(isbn, resourceId, pubId, topic, res, imageFile)=>{
         Number(topic) || 0,
         imageFile || null
     ]
-
-    
 
     db.query(q, values, (err,results)=>{
         if (err) {
@@ -328,7 +317,7 @@ const insertResources = async (res, req, authors, username) => {
 
                 // Get the `resource_id` of the newly inserted row
                 const resourceId = results.insertId;
-                logAuditAction(username, 'INSERT', 'resources', null, null, JSON.stringify("Added a new resource: '" + req.body.title + "'"));
+                logAuditAction(username, 'INSERT', 'resources', null, null, JSON.stringify({ 'resource name': req.body.title }));
                 try {
                     // Insert authors for the resource
                     await insertAuthors(res, authors, resourceId);
@@ -488,14 +477,13 @@ const editBook = async (isbn, resourceId, pubId, topic,res,filePath)=>{
         if (err) {
             return res.status(500).send(err); 
         }
-        
         console.log('Book edited successfully')
         // Successfully inserted 
         return res.send({status: 201, message:'Book edited successfully.'});
     });
 }
 //edit journal/newsletter
-const editJournalNewsletter = async(filePath,res,volume,issue,cover,resourceId)=>{
+const editJournalNewsletter = async(filePath,res,volume,issue,resourceId)=>{
     let q;
     let jn;
 
@@ -658,7 +646,7 @@ const editResource = async (res, req, authors, resourceId, username) => {
                             'resources',
                             resourceId,
                             oldValue,
-                            JSON.stringify("Edited a resource: '" + req.body.title + "'")
+                            newValue
                         );
 
                         resolve('success');
@@ -815,7 +803,7 @@ const getBookResource = (id,res)=>{
     LEFT JOIN book ON book.resource_id = resources.resource_id 
     LEFT JOIN publisher ON book.pub_id = publisher.pub_id 
     WHERE resources.resource_id = ?
-    GROUP BY  resources.resource_id`
+    GROUP BY resources.resource_id`
 
     db.query(q,[id],(err,result)=>{
         if(err) return res.send(err)
