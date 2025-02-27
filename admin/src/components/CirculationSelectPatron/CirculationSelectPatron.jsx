@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import './CirculationSelectPatron.css';
 import { Link, useNavigate } from 'react-router-dom';
@@ -13,6 +13,13 @@ const CirculationSelectPatron = () => {
   const [currentPage, setCurrentPage] = useState(1); // Current page number
   const [itemsPerPage] = useState(5); // Number of items per page
   const clickedAction = localStorage.getItem('clickedAction');
+  const searchInputRef = useRef(null); // Create a ref for the input
+  
+  useEffect(() => {
+    searchInputRef.current?.focus(); // Automatically focus on mount
+  }, []);
+
+
   const getPatrons = async () => {
     try {
       // Determine the URL based on clickedAction
@@ -89,13 +96,15 @@ const CirculationSelectPatron = () => {
       <div className="search-container">
         <p className='m-0'>{actionText}</p>
         <input
+          ref={searchInputRef}  // Attach ref to input
           type="text"
           value={searchQuery}
           onChange={(e) => {
             setSearchQuery(e.target.value);
+            handleSearch();
           }}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          placeholder="Search by name, ID, category, or course"
+          placeholder="Search by name, ID, category, or course, or simply scan the student ID."
         />
         <button className="btn" onClick={handleSearch}>Search</button>
       </div>
