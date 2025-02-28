@@ -25,7 +25,6 @@ const Footer = () => {
           <i class="fa-brands fa-x-twitter"></i>
           <i class="fa-brands fa-instagram"></i>
           <i class="fa-regular fa-envelope"></i>
-          <i class="fa-regular fa-phone"></i>
         </div>
       </div>
       {/* copyright */}
