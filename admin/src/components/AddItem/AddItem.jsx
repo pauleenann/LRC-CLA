@@ -387,7 +387,7 @@ const AddItem = () => {
     // save resource online
     const handleSaveResourceOnline = async () => {
         if (formValidation() === true) {
-            // setLoading(true)
+            setLoading(true)
             try{
                 const formData = new FormData();
                 formData.append('username', uname);
@@ -405,7 +405,7 @@ const AddItem = () => {
                 if(response.data.status==409){
                     window.toast.fire({icon:"warning", title:"Resource already exist"})
                 }else if(response.data.status==201){
-                    // navigate('/catalog')
+                    navigate('/catalog')
                     window.toast.fire({icon:"success", title:"Resource added successfully"})
                 }
                
