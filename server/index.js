@@ -52,6 +52,7 @@ app.use('/api/isbn',isbnRoutes)
 app.use('/api/validate-tup-id', validateTupId)
 app.use('/api/online-catalog', onlineCatalogRoutes)
 app.use('/api/attendance', attendanceRoutes)
+// app.use('/server', express.static(path.join(__dirname, 'server')));
 
 /*--------------check overdue resources using cron-------- */
 const sendEmail = (email, name, tupid, borrowDate, borrowDue, resourceTitle, resourceId) => {

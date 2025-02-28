@@ -14,7 +14,7 @@ export const checkoutSearch = async (req, res) => {
         `
         SELECT 
             b.book_isbn, 
-            b.book_cover,
+            b.filepath,
             r.resource_title AS title, 
             r.resource_quantity AS quantity, 
             r.resource_id
@@ -33,7 +33,7 @@ export const checkoutSearch = async (req, res) => {
       );
       
       const covers = results.map(book => ({
-        cover: Buffer.from(book.book_cover).toString('base64'),
+        cover: book.filepath,
         resource_id: (book.resource_id),
         resource_title: (book.title),
         resource_quantity: (book.quantity),
@@ -63,7 +63,7 @@ export const checkinSearch = async (req, res) => {
             `
             SELECT 
                 b.book_isbn, 
-                b.book_cover,
+                b.filepath,
                 r.resource_title AS title, 
                 r.resource_id
             FROM 
@@ -86,9 +86,7 @@ export const checkinSearch = async (req, res) => {
         );
 
         const covers = results.map(book => ({
-            cover: book.book_cover
-                ? Buffer.from(book.book_cover).toString('base64')
-                : null, // Handle potential null book covers
+            cover: book.filepath,
             resource_id: book.resource_id,
             resource_title: book.title,
             book_isbn: book.book_isbn,

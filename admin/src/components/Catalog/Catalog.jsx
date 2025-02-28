@@ -416,7 +416,7 @@ console.log(selectedFilters)
   return (
     <div className='cat-container'>
       <h1>Catalog</h1>
-
+      {/* <img src="https://barcodeapi.org/api/128/9789719654025" /> */}
         <div className='cat-buttons'>
           {/* add and scan item buttons */}
           <div className="add-scan-item">
