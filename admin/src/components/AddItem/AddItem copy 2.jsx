@@ -320,26 +320,26 @@ const AddItem = () => {
         if (!bookData.title || bookData.title.length === 0) {
             err.title = 'Please enter title';
         }
-        // if (!bookData.description) {
-        //     err.description = 'Please enter description';
-        // }
+        if (!bookData.description) {
+            err.description = 'Please enter description';
+        }
         if (!bookData.department) {
             err.department = 'Please select department';
         }
 
         if (bookData.mediaType === '1') {
-            // if (!bookData.file&&!bookData.url) {
-            //     err.file = 'Please select cover';
-            // }
+            if (!bookData.file&&!bookData.url) {
+                err.file = 'Please select cover';
+            }
             if (!bookData.authors || bookData.authors.length === 0) {
                 err.authors = 'Please specify author/s';
             }
             // if (!bookData.isbn) {
             //     err.isbn = 'Please enter ISBN';
             // } 
-            // if (bookData.publisher_id === 0 && bookData.publisher === '') {
-            //     err.publisher = 'Please enter publisher';
-            // }
+            if (bookData.publisher_id === 0 && bookData.publisher === '') {
+                err.publisher = 'Please enter publisher';
+            }
             if (!bookData.publishedDate) {
                 err.publishedDate = 'Please enter publish date';
             }
@@ -347,18 +347,18 @@ const AddItem = () => {
                 err.topic = 'Please select topic';
             }
         }else if(bookData.mediaType==='2'||bookData.mediaType==='3'){
-            // if (!bookData.file&&!bookData.url) {
-            //     err.file = 'Please select cover';
-            // }
+            if (!bookData.file&&!bookData.url) {
+                err.file = 'Please select cover';
+            }
             if (!bookData.authors || bookData.authors.length === 0) {
                 err.authors = 'Please specify author/s';
             }
-            // if(!bookData.volume){
-            //     err.volume = 'Please enter volume'
-            // }
-            // if(!bookData.issue){
-            //     err.issue = 'Please enter issue'
-            // }
+            if(!bookData.volume){
+                err.volume = 'Please enter volume'
+            }
+            if(!bookData.issue){
+                err.issue = 'Please enter issue'
+            }
             if (!bookData.publishedDate) {
                 err.publishedDate = 'Please enter publish date';
             }
@@ -387,7 +387,7 @@ const AddItem = () => {
     // save resource online
     const handleSaveResourceOnline = async () => {
         if (formValidation() === true) {
-            // setLoading(true)
+            setLoading(true)
             try{
                 const formData = new FormData();
                 formData.append('username', uname);
@@ -405,7 +405,7 @@ const AddItem = () => {
                 if(response.data.status==409){
                     window.toast.fire({icon:"warning", title:"Resource already exist"})
                 }else if(response.data.status==201){
-                    // navigate('/catalog')
+                    navigate('/catalog')
                     window.toast.fire({icon:"success", title:"Resource added successfully"})
                 }
                

@@ -21,6 +21,8 @@ export const saveResource = async (req, res) => {
             imageFile = req.file.path.replace(/\\/g, "/").toString();
         } else if (req.body.url) {
             imageFile = req.body.url
+        } else{
+            imageFile = 'public/images/not_found.png'; // this image must not be deleted in the server because this is the default value
         }
         
         // initialize variables based on media type
@@ -236,9 +238,9 @@ const insertBook = async(isbn, resourceId, pubId, topic, res, imageFile)=>{
 
     const values = [
         isbn || null,
-        Number(resourceId) || 0,
-        Number(pubId) || 0,
-        Number(topic) || 0,
+        Number(resourceId) || null,
+        Number(pubId) || null,
+        Number(topic) || null,
         imageFile || null
     ]
 
@@ -301,7 +303,7 @@ const insertResources = async (res, req, authors, username) => {
 
             const resourceValues = [
                 req.body.title,
-                req.body.description,
+                req.body.description || '',
                 req.body.publishedDate,
                 req.body.quantity,
                 req.body.isCirculation,
@@ -407,7 +409,9 @@ export const updateResource = async (req, res) => {
     try{
         if(req.file){
             filePath = req.file.path; // Get the file path 
-         }
+        }else{
+            filePath = 'public/images/not_found.png'
+        }
 
          // initialize variables based on media type
         if(mediaType==='1'){
