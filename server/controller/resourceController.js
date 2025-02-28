@@ -58,9 +58,9 @@ export const saveResource = async (req, res) => {
         }else if(['2', '3'].includes(mediaType)){
             // insert journal/newsletter in database
             const jn = [
-                req.body.volume,
-                req.body.issue,
-                imageFile,
+                req.body.volume || '',
+                req.body.issue || '',
+                imageFile, 
                 resourceId,
                 req.body.topic,
             ];
