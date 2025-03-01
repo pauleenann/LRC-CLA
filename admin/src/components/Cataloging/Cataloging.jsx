@@ -3,15 +3,17 @@ import React, { useEffect, useState } from 'react'
 import './Cataloging.css'
 import axios from 'axios'
 import { getAllFromStore } from '../../indexedDb/getDataOffline'
-
+import { useSelector } from 'react-redux'
 
 const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation, error,editMode}) => {
     const [department, setDepartment] = useState([])
     const [catalog, setCatalog] = useState([])
     const [topic,setTopic] = useState([])
+    const isOnline = useSelector(state=>state.isOnline.isOnline)
+    
 
     useEffect(() => {
-        if(navigator.onLine){
+        if(isOnline){
             console.log('getting cataloging info online')
             getDept()
             getTopics()
