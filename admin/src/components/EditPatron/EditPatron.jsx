@@ -117,8 +117,6 @@ const EditPatron = () => {
     };
     
     
-
- 
     const validateField = async (name, value) => {
         const phoneRegex = /^[0-9]{10,15}$/;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -176,42 +174,6 @@ const EditPatron = () => {
     
         return error; // Return the error for blocking logic
     };
-    
-    
-    /* const handleTupIdChange = async (e) => {
-        const { value, selectionStart } = e.target;
-        const prefix = "TUPM-";
-        const prefixLength = prefix.length;
-    
-        // Ensure the input starts with "TUPM-"
-        if (!value.startsWith(prefix)) return;
-    
-        // Extract and clean the editable portion
-        let editablePart = value.slice(prefixLength).replace(/[^0-9]/g, ""); // Allow digits only
-    
-        // Auto-format the editable part as **-****
-        if (editablePart.length > 2) {
-            editablePart = `${editablePart.slice(0, 2)}-${editablePart.slice(2)}`;
-        }
-    
-        const formattedValue = `${prefix}${editablePart}`;
-    
-        // Update state with the formatted value
-        setPatronData((prev) => ({
-            ...prev,
-            tup_id: formattedValue,
-        }));
-    
-        // Adjust cursor position after formatting
-        const newCursorPos = Math.max(
-            prefixLength,
-            Math.min(selectionStart, formattedValue.length)
-        );
-        setTimeout(() => e.target.setSelectionRange(newCursorPos, newCursorPos), 0);
-    
-        // Validate the TUP ID
-        await validateField("tup_id", formattedValue);
-    }; */
 
     const handleTupIdChange = async (e) => {
         const { value, selectionStart } = e.target;
@@ -549,11 +511,9 @@ const EditPatron = () => {
                                         <p className='patron-error'></p>
                                     </div>
                             </div>
-
-                            
                         </div>
                         <div className="col">
-                        <div className='row'>
+                            <div className='row'>
                                 {/* patron photo */}
                                 <div className='col-12 patron-input-box'>
                                     <label htmlFor=''>Patron Photo</label>
