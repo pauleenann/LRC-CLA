@@ -10,6 +10,8 @@ import { getAllFromStore } from '../../indexedDb/getDataOffline';
 import { saveResourceOffline } from '../../indexedDb/saveResourcesOffline';
 import { viewResourcesOffline } from '../../indexedDb/viewResourcesOffline';
 import { editResourceOffline } from '../../indexedDb/editResourcesOffline';
+import { useSelector } from 'react-redux';
+
 
 const AddItem = () => {
     //pag may id, nagiging view ung purpose ng add item component
@@ -39,7 +41,7 @@ const AddItem = () => {
     //console.log(resourceId)
     const [resourceStatus,setResourceStatus] = useState([])
     const [editMode, setEditMode] = useState(false)
-    const [isOnline, setIsOnline] = useState(true)
+    const isOnline = useSelector(state=>state.isOnline.isOnline)
 
     const getUsername = async()=>{
         try {
@@ -80,40 +82,35 @@ const AddItem = () => {
     }, [bookData.mediaType]);
 
     useEffect(() => {
-        const handleOnline = () => {
-            getOnlineData();
-            setIsOnline(true);
-        };
-    
-        const handleOffline = () => {
-            initDB();
-            getOfflineData();
-            setIsOnline(false);
-        };
-    
-        // Initialize online/offline state
-        if (navigator.onLine) {
-            handleOnline();
-        } else {
-            handleOffline();
+
+        if (isOnline == null) {
+            return;
         }
-    
+        
+        initDB();
+         // Initialize online/offline state
+        if (isOnline) {
+            getOnlineData();
+        } else {
+            getOfflineData();
+        }
+
         // Handle resource view logic (inside useEffect)
         if (id) {
             setDisabled(true);
             // Check if online or offline after setting the state
-            if (navigator.onLine) {
+            if(isOnline) {
                 getOnlineData();
                 viewResourceOnline();
-            } else {
+            }else{
                 getOfflineData();
                 viewResourceOffline();
             }
         }
-    }, [id]);  // Add `id` as a dependency to run the effect when `id` changes
+    }, [id, isOnline]);  // Add `id` as a dependency to run the effect when `id` changes
     
+    console.log('isonline? ', isOnline)
 
-    console.log('isOnline? ', isOnline)
 
 /*-----------------INITIALIZE INPUT---------------------- */
     //get online data
@@ -227,6 +224,8 @@ const AddItem = () => {
         console.log('viewing resource offline')
         await viewResourcesOffline(parseInt(id),setBookData)
     }
+
+    console.log(bookData)
 
 /*-------------------HANDLE CHANGES---------------------- */
     // Handle input changes
@@ -600,9 +599,6 @@ const AddItem = () => {
             console.log(err.message);
         }
     };
-
-    console.log(bookData)
-    console.log(publishers)
 
     return (
         <div className='add-item-container'>
