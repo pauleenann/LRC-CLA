@@ -2,8 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import './EditPatron.css';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faP, faPen, faUser} from '@fortawesome/free-solid-svg-icons';
 
 const EditPatron = () => {
     const [patronData, setPatronData] = useState({
@@ -15,10 +13,8 @@ const EditPatron = () => {
         category: 'Student',
         college: '',
         program: '',
-        tup_id: 'TUPM-',
-        photo:''
+        tup_id: 'TUPM-'
     });
-    const [preview, setPreview] = useState('')
 
     // const [categories, setCategories] = useState([]); // To store category options
     const [colleges, setColleges] = useState([]); // To store college options
@@ -117,6 +113,8 @@ const EditPatron = () => {
     };
     
     
+
+ 
     const validateField = async (name, value) => {
         const phoneRegex = /^[0-9]{10,15}$/;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -174,6 +172,42 @@ const EditPatron = () => {
     
         return error; // Return the error for blocking logic
     };
+    
+    
+    /* const handleTupIdChange = async (e) => {
+        const { value, selectionStart } = e.target;
+        const prefix = "TUPM-";
+        const prefixLength = prefix.length;
+    
+        // Ensure the input starts with "TUPM-"
+        if (!value.startsWith(prefix)) return;
+    
+        // Extract and clean the editable portion
+        let editablePart = value.slice(prefixLength).replace(/[^0-9]/g, ""); // Allow digits only
+    
+        // Auto-format the editable part as **-****
+        if (editablePart.length > 2) {
+            editablePart = `${editablePart.slice(0, 2)}-${editablePart.slice(2)}`;
+        }
+    
+        const formattedValue = `${prefix}${editablePart}`;
+    
+        // Update state with the formatted value
+        setPatronData((prev) => ({
+            ...prev,
+            tup_id: formattedValue,
+        }));
+    
+        // Adjust cursor position after formatting
+        const newCursorPos = Math.max(
+            prefixLength,
+            Math.min(selectionStart, formattedValue.length)
+        );
+        setTimeout(() => e.target.setSelectionRange(newCursorPos, newCursorPos), 0);
+    
+        // Validate the TUP ID
+        await validateField("tup_id", formattedValue);
+    }; */
 
     const handleTupIdChange = async (e) => {
         const { value, selectionStart } = e.target;
@@ -313,29 +347,6 @@ const EditPatron = () => {
         }
     }
 
-    useEffect(()=>{
-        if(!patronData.file) return;
-
-        let objectUrl = URL.createObjectURL(patronData.file);
-        setPreview(objectUrl);
-            
-
-         // Cleanup function to revoke the Object URL
-         return () => {
-            if (objectUrl) {
-                URL.revokeObjectURL(objectUrl);
-            }
-          };
-    },[patronData.file])
-
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];  // Get the first file from the input
-        setPatronData((prevData) => ({
-            ...prevData,
-            file: file  
-        }));
-    };
-
     console.log(patronData)
     
     return (
@@ -366,10 +377,10 @@ const EditPatron = () => {
                     </div>
 
                     <div className='row information-inputs'>
-                        <div className='col-8'>
+                        <div className='col-12'>
                             <div className='row'>
                                 {/* TUP ID */}
-                                <div className='col-12 patron-input-box'>
+                                <div className='col-3 patron-input-box'>
                                     <label htmlFor=''>TUP ID</label>
                                     <input
                                         type='text'
@@ -456,7 +467,7 @@ const EditPatron = () => {
                                 </div>
 
                                 {/* CATEGORY */}
-                                <div className="col-6 patron-input-box">
+                                <div className="col-3 patron-input-box">
                                     <label htmlFor="">Category</label>
                                     <select
                                         name="category"
@@ -493,7 +504,7 @@ const EditPatron = () => {
 
                             <div className='row'>
                                 {/* PROGRAM */}
-                                    <div className='col-12 patron-input-box'>
+                                    <div className='col-9 patron-input-box'>
                                         <label htmlFor="">Program</label>
                                         <select
                                             name='program'
@@ -511,28 +522,9 @@ const EditPatron = () => {
                                         <p className='patron-error'></p>
                                     </div>
                             </div>
-                        </div>
-                        <div className="col">
                             <div className='row'>
-                                {/* patron photo */}
-                                <div className='col-12 patron-input-box'>
-                                    <label htmlFor=''>Patron Photo</label>
-                                    <input type="file" src="" alt="" className='patron-photo' id='photo' name='file' onChange={handleFileChange}/>
-                                    <div className="patron-photo-box">       
-                                        {preview?<img src={preview} alt="" className='patron-image'/>:<FontAwesomeIcon icon={faUser} className='no-profile'/>}     
-                                        
-                                    
-                                    </div>
-                                    <label htmlFor="photo" className='photo-edit'>
-                                        <FontAwesomeIcon icon={faPen} className='icon'/>
-                                    </label>
-                                    <p className='patron-error'>{errors.tup_id}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className='row'>
                                 {/* Save Button */}
-                                <div className='col-12'>
+                                <div className='col-16'>
                                     <button 
                                         type='button' 
                                         className='save-button' 
@@ -542,6 +534,7 @@ const EditPatron = () => {
                                     </button>
                                 </div>
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
