@@ -11,7 +11,8 @@ import { saveResourceOffline } from '../../indexedDb/saveResourcesOffline';
 import { viewResourcesOffline } from '../../indexedDb/viewResourcesOffline';
 import { editResourceOffline } from '../../indexedDb/editResourcesOffline';
 import { useSelector } from 'react-redux';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 
 const AddItem = () => {
     //pag may id, nagiging view ung purpose ng add item component
@@ -678,7 +679,7 @@ const AddItem = () => {
                         
                     }
                 }} disabled={Object.values(error).length>=1&&!editMode}>
-                    <i className="fa-regular fa-floppy-disk"></i>
+                    <FontAwesomeIcon icon={faFloppyDisk} className='icon'/>
                     <span>Save</span>
                 </button>
             </div>}
