@@ -60,9 +60,13 @@ const Audit = () => {
     }
 
     if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999); // Set end date to the end of the day
+
       filtered = filtered.filter((item) => {
         const itemDate = new Date(item.action_timestamp);
-        return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
+        return itemDate >= start && itemDate <= end;
       });
     }
 
@@ -74,7 +78,7 @@ const Audit = () => {
     setStartDate("");
     setEndDate("");
     setSelectedActivity("");
-    setFilteredAudit(audit); // Reset to all data
+    setFilteredAudit(audit);
   };
 
   return (
