@@ -81,6 +81,36 @@ const Audit = () => {
     setFilteredAudit(audit);
   };
 
+  // Function to export filtered data to CSV
+  const exportToCSV = () => {
+    if (filteredAudit.length === 0) {
+      alert("No data to export.");
+      return;
+    }
+
+    const header = ["User", "Action", "Description", "Timestamp"];
+    const csvRows = [header.join(",")];
+
+    filteredAudit.forEach((item) => {
+      const row = [
+        `"${item.user_id}"`,
+        `"${item.action_type}"`,
+        `"${item.new_value.replace(/[{}"]/g, "").replace(/,/g, ";")}"`, // Formatting description properly
+        `"${item.formatted_timestamp}"`
+      ];
+      csvRows.push(row.join(","));
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8," + csvRows.join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "audit_log.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="audit-container">
       <h1>User Activity Log</h1>
@@ -122,7 +152,7 @@ const Audit = () => {
             Clear
           </button>
         </div>
-        <button className="btn export-btn" onClick={() => console.log("Exporting data...")}>
+        <button className="btn export-btn" onClick={exportToCSV}>
           <FontAwesomeIcon icon={faFileExport} />
           Export
         </button>
