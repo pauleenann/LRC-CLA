@@ -22,6 +22,7 @@ import EditPatronPage from './pages/EditPatronPage/EditPatronPage';
 import ProtectedRoute from './components/ProtectedRoute'
 import ViewPatronPage from './pages/ViewPatron/ViewPatronPage';
 import AuthorsPage from './pages/AuthorsPage/AuthorsPage';
+import GenerateBarcodePage from './pages/GenerateBarcodePage/GenerateBarcodePage';
 
 const App = () => {
   return (
@@ -82,6 +83,11 @@ const App = () => {
           <Route path='/catalog/view/:id' element={
             <ProtectedRoute allowedRoles={['admin','staff']}>
               <AddItemPage/>
+            </ProtectedRoute>
+          } />
+          <Route path='/catalog/generate-barcode' element={
+            <ProtectedRoute allowedRoles={['admin','staff']}>
+              <GenerateBarcodePage/>
             </ProtectedRoute>
           } />
           <Route path='/attendance' element={
