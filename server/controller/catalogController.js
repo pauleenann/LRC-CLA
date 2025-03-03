@@ -120,3 +120,22 @@ export const catalog = (req, res) => {
         });
     });
 };
+
+export const barcodeData = (req,res)=>{
+    const q = `
+        SELECT 
+            r.resource_id,
+            r.resource_title,
+            t.type_name,
+            b.book_isbn AS isbn
+        FROM resources r
+        JOIN resourcetype t ON r.type_id = t.type_id
+        LEFT JOIN book b ON r.resource_id = b.resource_id
+        WHERE r.type_id = '1'
+    `;
+
+        db.query(q,(err,results)=>{
+            if(err) return res.send(err)
+               return res.json(results)
+        })
+}
