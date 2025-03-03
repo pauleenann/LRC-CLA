@@ -138,3 +138,7 @@
 .barcodepage .barcode-data{
     min-height: 400px;
 }
+
+.barcodepage .qnty-reminder{
+    font-size: 0.6rem;
+}
