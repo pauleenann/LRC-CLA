@@ -122,7 +122,7 @@ const GenerateBarcodePage = () => {
                     </div>
                 </div>
                 <div className='barcode-data m-auto d-flex flex-column gap-2'>
-                    <div className='row text-center header rounded'>
+                    <div className='row d-flex align-items-center header rounded'>
                         <div className="col-2 d-flex gap-2 justify-content-center">
                             <input type="checkbox" onChange={handleSelectAll} checked={selectedResource.length === dataToGenerate.length && dataToGenerate.length > 0}/>
                             Select all
@@ -130,7 +130,7 @@ const GenerateBarcodePage = () => {
                         <div className="col-3">Title</div>
                         <div className="col-3">Type</div>
                         <div className="col-2">ISBN</div>
-                        <div className="col-2">Quantity</div>
+                        <div className="col-2">Quantity <span className='qnty-reminder'>(Specify no. of barcode to generate)</span></div>
                     </div>
                     {currentItems.length!=0?currentItems.map((item) => (
                         <BarcodeData
