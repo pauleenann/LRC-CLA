@@ -26,7 +26,7 @@ const AddItem = () => {
         mediaType: '1',
         authors: [],
         genre: [],
-        isCirculation: false,
+        isCirculation: true,
         publisher_id: 0,
         publisher: '',
     });
@@ -68,7 +68,7 @@ const AddItem = () => {
                 setBookData({
                     mediaType: bookData.mediaType, // keep the changed mediaType
                     authors: [],
-                    isCirculation: false,
+                    isCirculation: true,
                     publisher_id: 0,
                     publisher: '',
                 });
