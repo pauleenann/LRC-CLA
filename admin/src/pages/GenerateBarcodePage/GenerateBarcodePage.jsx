@@ -92,6 +92,7 @@ const GenerateBarcodePage = () => {
                 <div className='barcode-path-box'>
                     <Link to={'/catalog'}>
                         <button className='back'>
+                            <FontAwesomeIcon icon={faArrowLeft} />
                             <p>Back</p>
                         </button>
                     </Link>

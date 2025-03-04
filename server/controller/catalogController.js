@@ -20,7 +20,7 @@ export const catalog = (req, res) => {
     const whereClauses = [];
     if (type > 0) whereClauses.push(`resources.type_id = ${type}`);
     if (department > 0) whereClauses.push(`resources.dept_id = ${department}`);
-    if (topic > 0) whereClauses.push(`book.topic_id = ${topic} OR journalnewsletter.topic_id = ${topic}`);
+    if (topic > 0) whereClauses.push(`(book.topic_id = ${topic} OR journalnewsletter.topic_id = ${topic})`);
 
     const whereClause = whereClauses.length ? `AND ${whereClauses.join(' AND ')}` : '';
 
@@ -36,6 +36,8 @@ export const catalog = (req, res) => {
         FROM resources
         JOIN resourceauthors ON resources.resource_id = resourceauthors.resource_id
         JOIN author ON resourceauthors.author_id = author.author_id
+        LEFT JOIN book ON resources.resource_id = book.resource_id
+        LEFT JOIN journalnewsletter ON resources.resource_id = journalnewsletter.resource_id
         WHERE (resources.resource_title LIKE ? OR author.author_fname LIKE ? OR author.author_lname LIKE ?)
         ${whereClause}
         ${orderClauses}
