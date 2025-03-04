@@ -26,6 +26,7 @@ const EditPatron = () => {
     const [editMode, setEditMode] = useState(false);
     const [isloading,setIsLoading]=useState(false)
     const inputRef = useRef(null);
+    const [userName, setUserName ]= useState('');
    
 
     useEffect(()=>{
@@ -47,8 +48,12 @@ const EditPatron = () => {
           console.log(response.data)
           // If session is valid, set the role
           if (response.data.loggedIn) {
-            setPatronData({username: response.data.username});
-            console.log(patronData.username)
+            setUserName(response.data.username)
+            setPatronData(prevData => ({
+                ...prevData, 
+                username: response.data.username
+              }));
+            
           } 
         } catch (error) {
           console.error('Error verifying session:', error);
@@ -92,8 +97,10 @@ const EditPatron = () => {
                     program: res.data.patronData.course_id, // Keep ID for saving
                     course_name: res.data.patronData.course_name, // Show name in dropdown
                     tup_id: res.data.patronData.tup_id || '',
-                    username: res.data.patronData.username,
                 });
+                getUsername();
+                console.log("username: ",userName)
+
                 setIsLoading(false);
             })
             .catch(err => console.error(err));
