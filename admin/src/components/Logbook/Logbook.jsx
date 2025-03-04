@@ -27,37 +27,55 @@ const Logbook = () => {
 
         if (filterToday) {
             fetchTodayEntries();
-            const interval = setInterval(fetchTodayEntries, 1000); // Fetch new logs every 5 seconds
+            const interval = setInterval(fetchTodayEntries, 1000); // Fetch new logs every 1 seconds
 
             return () => clearInterval(interval);
         } else {
             getPatron();
-            const interval = setInterval(getPatron, 1000); // Fetch new logs every 5 seconds
+            const interval = setInterval(getPatron, 1000); // Fetch new logs every 1 seconds
 
             return () => clearInterval(interval);
         }
     }, [location.search, currentPage, entriesPerPage]);
 
+    function backupData() {
+        const backup = localStorage.getItem("backupData");
+        const parsedData = backup ? JSON.parse(backup) : [];
+        setPatron(parsedData)
+        if (backup) {
+            console.log("Using backup data:", JSON.parse(backup));
+        } else {
+            console.log("No backup data available.");
+        }
+    }
+
     const getPatron = async () => {
         setLoading(true)
-        try {
-            const params = {
-                search: searchInput,
-                startDate,
-                endDate,
-                limit: entriesPerPage,
-                page: currentPage, // Include current page in the request
-            };
-            const query = new URLSearchParams(params).toString();
-            const response = await axios.get(`http://localhost:3001/api/patron/sort?${query}`);
-            setPatron(response.data.results); // Expect results array in response
-            setTotalEntries(response.data.total); // Set total entries for pagination
-        } catch (err) {
-            console.log(err.message);
-        }finally{
-            setLoading(false)
+        if (navigator.onLine) {
+            try {
+                const params = {
+                    search: searchInput,
+                    startDate,
+                    endDate,
+                    limit: entriesPerPage,
+                    page: currentPage, // Include current page in the request
+                };
+                const query = new URLSearchParams(params).toString();
+                const response = await axios.get(`http://localhost:3001/api/patron/sort?${query}`);
+                setPatron(response.data.results); // Expect results array in response
+                setTotalEntries(response.data.total); // Set total entries for pagination
+                localStorage.setItem("backupData", JSON.stringify(response.data.results));
+            } catch (err) {
+                console.log(err.message);
+            }finally{
+                setLoading(false)
+            }
+        } else {
+            backupData();
         }
     };
+
+    
 
     const fetchTodayEntries = async () => {
         setLoading(true);
