@@ -126,6 +126,8 @@ const Audit = () => {
           <option value="Added a new user">Insert User</option>
           <option value="Added a new resource">Insert Resource</option>
           <option value="Edited a resource">Update Resource</option>
+          <option value="Added new patron"> Insert Patron</option>
+          <option value="Edited a patron"> Update Patron</option>
           <option value="borrowed a book">Issue Book</option>
           <option value="returned a book">Return Book</option>
           <option value="Edited a user">Edited User</option>
