@@ -27,8 +27,14 @@ const Logbook = () => {
 
         if (filterToday) {
             fetchTodayEntries();
+            const interval = setInterval(fetchTodayEntries, 1000); // Fetch new logs every 5 seconds
+
+            return () => clearInterval(interval);
         } else {
             getPatron();
+            const interval = setInterval(getPatron, 1000); // Fetch new logs every 5 seconds
+
+            return () => clearInterval(interval);
         }
     }, [location.search, currentPage, entriesPerPage]);
 
