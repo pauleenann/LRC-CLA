@@ -1,5 +1,6 @@
 import { db } from "../config/db.js";
 import { dbPromise } from "../config/db.js";
+import { logAuditAction } from "./auditController.js";
 
 /* export const patronSort = (req, res) => {
         const { search, startDate, endDate, limit, page } = req.query;
@@ -461,6 +462,7 @@ export const addPatron = (req, res) => {
         college,  // college_id
         program,  // course_id
         tup_id,
+        username,
     } = req.body;
 
     const values = [
@@ -485,6 +487,14 @@ export const addPatron = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Error adding patron', error: err });
     }
+    logAuditAction(
+        username,
+        'INSERT',
+        'patron',
+        null,
+        null,
+        JSON.stringify("Added new patron: " + patron_fname + " " + patron_lname)
+    );
     res.status(200).json({ message: 'Patron added successfully', result });
   });
 };
@@ -501,6 +511,7 @@ export const updatePatron = async (req, res) => {
         college,  // college_id
         program,  // course_id
         tup_id,
+        username,
     } = req.body;
 
     const query = `
@@ -535,6 +546,14 @@ export const updatePatron = async (req, res) => {
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'Patron not found' });
         }
+
+        logAuditAction(
+            username,
+            'UPDATE',
+            'patron',
+            null,
+            null,
+            JSON.stringify("Edited a patron: " + patron_fname + " " + patron_lname))
 
         res.json({ message: 'Patron updated successfully' });
     } catch (err) {
