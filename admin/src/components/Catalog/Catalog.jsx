@@ -32,6 +32,9 @@ const Catalog = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
+    if(isOnline == null){
+      return 
+    }
     const fetchData = async () => {
       if (isOnline) {
         getType();
