@@ -123,7 +123,7 @@ const Dashboard = () => {
       const books = response.data;
       console.log(books)
       const borrowingTrends = books.map(item=>
-        item.total_books_borrowed
+        item.total_checkouts
       )
       dispatch(setBorrowedStats(borrowingTrends))
     }catch(err){
