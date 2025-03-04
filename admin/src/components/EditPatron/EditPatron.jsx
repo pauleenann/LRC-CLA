@@ -13,7 +13,8 @@ const EditPatron = () => {
         category: 'Student',
         college: '',
         program: '',
-        tup_id: 'TUPM-'
+        tup_id: 'TUPM-',
+        username: '',
     });
 
     // const [categories, setCategories] = useState([]); // To store category options
@@ -32,10 +33,28 @@ const EditPatron = () => {
         setEditMode(true);
         getPatronEdit();
        }
-
+       getUsername()
        getColleges()
        getCourses()  
     },[])
+
+    
+
+    const getUsername = async()=>{
+        try {
+          // Request server to verify the JWT token
+          const response = await axios.get(`http://localhost:3001/api/user/check-session`, { withCredentials: true });
+          console.log(response.data)
+          // If session is valid, set the role
+          if (response.data.loggedIn) {
+            setPatronData({username: response.data.username});
+            console.log(patronData.username)
+          } 
+        } catch (error) {
+          console.error('Error verifying session:', error);
+          
+        }
+      }
 
     const getColleges = async()=>{
         try {
@@ -72,7 +91,8 @@ const EditPatron = () => {
                     college_name: res.data.patronData.college_name, // Show name in dropdown
                     program: res.data.patronData.course_id, // Keep ID for saving
                     course_name: res.data.patronData.course_name, // Show name in dropdown
-                    tup_id: res.data.patronData.tup_id || ''
+                    tup_id: res.data.patronData.tup_id || '',
+                    username: res.data.patronData.username,
                 });
                 setIsLoading(false);
             })
@@ -81,7 +101,7 @@ const EditPatron = () => {
     
     const handleChange = async (e) => {
         const { name, value } = e.target;
-    
+        
         if (name === 'tup_id') {
             let formattedValue = value;
     
