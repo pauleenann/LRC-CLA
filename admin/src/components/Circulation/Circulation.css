@@ -79,17 +79,11 @@
     font-size: 1.5rem;
 }
 
-.circulation-container .search-container{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
 .circulation-container .search-bar{
     margin: 0;
     height: 40px;
     border: 1px solid  var(--shadow);
-    width: 50%;
+    width: 500px;
     border-radius: 5px;
     padding-left: 10px;
 }
@@ -97,6 +91,12 @@
 .circulation-container .search-container .search-btn{
     background-color: var(--tup-color);
     color: var(--white);
+}
+
+.circulation-container .search-container .dropdown{
+    border: 1px solid var(--table-border-bottom);
+    border-radius: 5px;
+    width: auto;
 }
 
 .circulation-container .search-container .search-btn:hover,
@@ -129,6 +129,7 @@
     overflow: hidden;
     border-collapse: collapse;
     width: 100%;
+    min-height: 400px;
     outline: 1px solid var(--tup-color);
     font-size: 0.8rem !important;
 }
