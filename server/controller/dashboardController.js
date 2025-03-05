@@ -70,8 +70,7 @@ export const overdueBooks = (req, res) => {
         JOIN checkout co ON o.checkout_id = co.checkout_id
         JOIN patron p ON p.patron_id = co.patron_id
         JOIn resources r ON r.resource_id = co.resource_id 
-        LIMIT 5;
-    `;
+        LIMIT 5`;
     
     db.query(query, (error, results) => {
         if (error) return res.status(500).json({ error });
@@ -92,10 +91,10 @@ export const bookStatistics = (req,res)=>{
     SELECT 
         wd.day_name,
         wd.date,
-        COALESCE(COUNT(c.checkout_id), 0) AS total_checkouts
+        COUNT(c.checkout_id) AS total_checkouts  -- COALESCE not needed; COUNT automatically returns 0 for NULLs
     FROM week_days wd
     LEFT JOIN checkout c 
-        ON wd.date = c.checkout_date
+        ON wd.date = c.checkout_date AND c.status = 'borrowed'  -- Move condition here
     GROUP BY wd.day_name, wd.date
     ORDER BY wd.date`
 

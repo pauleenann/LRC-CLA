@@ -11,17 +11,17 @@ const Circulation = () => {
   const [filteredBorrowers, setFilteredBorrowers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState('Borrowed');
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 5;
   const navigate = useNavigate()
-  const [query, setQuery] = useState('');
+  let query;
   
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    setQuery(params.get('filter'));
-    
+    query = params.get('filter');
         
     getBorrowers();
     localStorage.removeItem('clickedAction');
@@ -34,10 +34,6 @@ const Circulation = () => {
       getBorrowers();
     }
   },[searchTerm])
-
-  useEffect(()=>{
-    getBorrowers()
-  },[query])
 
   const getBorrowers = async () => {
     setLoading(true);
@@ -78,10 +74,10 @@ const Circulation = () => {
         const fullName = `${borrower.patron_fname ?? ''} ${borrower.patron_lname ?? ''}`.toLowerCase();
         
         return (
-            fullName.includes(searchTerm) ||
+            (fullName.includes(searchTerm) ||
             (borrower.tup_id?.toLowerCase() ?? '').includes(searchTerm) ||
             (borrower.course?.toLowerCase() ?? '').includes(searchTerm) ||
-            (borrower.borrowed_books?.toLowerCase() ?? '').includes(searchTerm)
+            (borrower.borrowed_books?.toLowerCase() ?? '').includes(searchTerm))
         );
     });
     setFilteredBorrowers(filtered);
@@ -92,7 +88,12 @@ const Circulation = () => {
     setCurrentPage(newPage);
   };
 
-  console.log(query)
+  useEffect(()=>{
+    const borrowersByCategory = borrowers.filter(item=>item.status==selectedFilter)
+    setFilteredBorrowers(borrowersByCategory)
+  },[selectedFilter])
+
+  console.log(filteredBorrowers)
   
 
   return (
@@ -136,8 +137,7 @@ const Circulation = () => {
             <FontAwesomeIcon icon={faSearch} className='icon'/> 
           </button>
         </div>
-        <select className="form-select dropdown" onChange={(e)=>setQuery(e.target.value)}>
-            <option value="">Any</option>
+        <select className="form-select dropdown" onClick={(e)=>setSelectedFilter(e.target.value)}>
             <option value="borrowed">Borrowed</option>
             <option value="returned">Returned</option>
             <option value="overdue">Overdue</option>
