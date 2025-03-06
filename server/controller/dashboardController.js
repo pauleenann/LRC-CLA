@@ -94,7 +94,7 @@ export const bookStatistics = (req,res)=>{
         COUNT(c.checkout_id) AS total_checkouts  -- COALESCE not needed; COUNT automatically returns 0 for NULLs
     FROM week_days wd
     LEFT JOIN checkout c 
-        ON wd.date = c.checkout_date AND c.status = 'borrowed'  -- Move condition here
+        ON wd.date = c.checkout_date
     GROUP BY wd.day_name, wd.date
     ORDER BY wd.date`
 
