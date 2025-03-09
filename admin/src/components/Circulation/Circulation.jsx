@@ -16,28 +16,27 @@ const Circulation = () => {
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 5;
   const navigate = useNavigate()
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(null);
   
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    setQuery(params.get('filter'));
-    
+    const params = new URLSearchParams(location.search).get('filter');
+    console.log(params)
+    setQuery(params);
         
-    getBorrowers();
+    // getBorrowers();
     localStorage.removeItem('clickedAction');
     localStorage.removeItem('selectedItems');
 
-  }, [currentPage]);
+  }, []);
+
+  console.log(query)
 
   useEffect(()=>{
-    if(searchTerm==''){
-      getBorrowers();
+    if(!query){
+      return
     }
-  },[searchTerm])
-
-  useEffect(()=>{
-    getBorrowers()
-  },[query])
+    getBorrowers();
+  },[currentPage, query,searchTerm])
 
   const getBorrowers = async () => {
     setLoading(true);
@@ -137,7 +136,7 @@ const Circulation = () => {
           </button>
         </div>
         <select className="form-select dropdown" onChange={(e)=>setQuery(e.target.value)}>
-            <option value="">Any</option>
+            <option value="any">Any</option>
             <option value="borrowed">Borrowed</option>
             <option value="returned">Returned</option>
             <option value="overdue">Overdue</option>
