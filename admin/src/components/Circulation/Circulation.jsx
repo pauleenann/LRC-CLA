@@ -23,7 +23,7 @@ const Circulation = () => {
     console.log(params)
     setQuery(params);
         
-    // getBorrowers();
+    getBorrowers();
     localStorage.removeItem('clickedAction');
     localStorage.removeItem('selectedItems');
 
