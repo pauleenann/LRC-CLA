@@ -109,17 +109,25 @@ const GenerateBarcodePage = () => {
                 <div className='d-flex align-items-end justify-content-between barcode-instruct m-auto'>
                     <p className='m-0'>Select book/s to generate its barcode</p>
                     <div className='d-flex gap-2'>
+                    {selectedResourcesWithQuantity.length > 0 ? (
                     <PDFDownloadLink 
                         document={<BarcodePDF selectedResources={selectedResourcesWithQuantity} />} 
                         fileName="Generated_Barcodes.pdf"
                     >
                         {({ loading }) => (
-                            <button className='btn d-flex align-items-center gap-2 generate-btn' disabled={selectedResource.length==0}>
+                            <button className='btn d-flex align-items-center gap-2 generate-btn' disabled={loading}>
                                 <FontAwesomeIcon icon={faBarcode} className='icon' />
                                 {loading ? "Generating PDF..." : "Export as PDF"}
                             </button>
                         )}
                     </PDFDownloadLink>
+                ) : (
+                    <button className='btn d-flex align-items-center gap-2 generate-btn' disabled>
+                        <FontAwesomeIcon icon={faBarcode} className='icon' />
+                        Export as PDF
+                    </button>
+                )}
+
                     </div>
                 </div>
                 <div className='barcode-data m-auto d-flex flex-column gap-2'>

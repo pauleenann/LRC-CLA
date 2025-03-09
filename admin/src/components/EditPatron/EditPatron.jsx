@@ -12,10 +12,12 @@ const EditPatron = () => {
         patron_email: '',
         category: 'Student',
         college: '',
-        program: '',
+        program: null,
         tup_id: 'TUPM-',
         username: '',
     });
+
+    console.log(patronData)
 
     // const [categories, setCategories] = useState([]); // To store category options
     const [colleges, setColleges] = useState([]); // To store college options
@@ -528,7 +530,8 @@ const EditPatron = () => {
                                     <p className='patron-error'></p>
                                 </div>
                             </div>
-
+                            
+                            {patronData.category=='Student'&&
                             <div className='row'>
                                 {/* PROGRAM */}
                                     <div className='col-9 patron-input-box'>
@@ -549,6 +552,8 @@ const EditPatron = () => {
                                         <p className='patron-error'></p>
                                     </div>
                             </div>
+                            }
+                            
                             <div className='row'>
                                 {/* Save Button */}
                                 <div className='col-16'>
