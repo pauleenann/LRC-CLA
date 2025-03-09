@@ -22,6 +22,7 @@ const EditPatron = () => {
     // const [categories, setCategories] = useState([]); // To store category options
     const [colleges, setColleges] = useState([]); // To store college options
     const [courses, setCourses] = useState([]); // To store course options
+    const [filteredCourses, setFilteredCourses] = useState([]);
     const { id } = useParams(); // ID from the route parameter
     const navigate = useNavigate(); // For programmatic navigation
     const [errors, setErrors] = useState({});
@@ -77,7 +78,8 @@ const EditPatron = () => {
         try {
             const response = await axios.get('http://localhost:3001/api/data/course').then(res=>res.data);
             console.log(response)
-            setCourses(response)
+            setCourses(response);
+            setFilteredCourses(response);
         } catch (err) {
             console.log('Error fetching colleges ',err.message);
         }
@@ -140,10 +142,15 @@ const EditPatron = () => {
     
         await validateField(name, value);
     };
-    
-    
 
- 
+    useEffect(() => {
+        if (!patronData.college) return;
+    
+        setFilteredCourses(courses.filter(item => item.college_id == patronData.college));
+    }, [patronData.college, courses]);
+    
+    console.log(filteredCourses)
+
     const validateField = async (name, value) => {
         const phoneRegex = /^[0-9]{10,15}$/;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -543,7 +550,7 @@ const EditPatron = () => {
                                             className='patron-dropdown'
                                         >
                                             <option value="">Select Course</option>
-                                            {courses.map(course => (
+                                            {filteredCourses.length>0&&filteredCourses.map(course => (
                                                 <option key={course.course_id} value={course.course_id}>
                                                     {course.course_name}
                                                 </option>
