@@ -59,11 +59,11 @@ const CatalogManage = () => {
 
                   <div className='departments'>
                     {departments.map((dept, index) => (
-                      <button className='btn border border-danger rounded-3'>
-                        <div key={index} className='dept'>
+                      <button className='btn border border-danger rounded-3 d-flex mb-2 w-100 '>
+                        <div key={index} className='dept '>
                           
-                            <span>{dept.dept_name}</span>
-                            <span>{dept.dept_shelf_no}</span>
+                            <span className='col text-capitalize'>{dept.dept_name}</span>
+                           
                           
                         </div>
                       </button>
