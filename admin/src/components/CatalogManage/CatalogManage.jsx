@@ -56,7 +56,21 @@ const CatalogManage = () => {
                 {/* Scan or manual */}
                 <div className="col scan-manual">
                  <span className='fw-bold'>Departments</span>
+
+                  <div className='departments'>
+                    {departments.map((dept, index) => (
+                      <button className='btn border border-danger rounded-3'>
+                        <div key={index} className='dept'>
+                          
+                            <span>{dept.dept_name}</span>
+                            <span>{dept.dept_shelf_no}</span>
+                          
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
+                
 
                 {/* Items added */}
                 <div className="col summary">
