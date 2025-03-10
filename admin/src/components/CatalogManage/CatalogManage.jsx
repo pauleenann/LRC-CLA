@@ -2,11 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import './CatalogManage.css';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBarcode, faTrashCan, faX, faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import AdminNavbar from '../AdminNavbar/AdminNavbar';
-import AdminTopNavbar from '../AdminTopNavbar/AdminTopNavbar';
+import { faBarcode, faTrashCan, faX, faArrowRight, faBookOpenReader } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-
+import { Table, Button, Form, Card, Pagination } from "react-bootstrap";
 
 const CatalogManage = () => {
   const navigate = useNavigate();
@@ -55,16 +53,20 @@ const CatalogManage = () => {
               <div className="row add-items">
                 {/* Scan or manual */}
                 <div className="col scan-manual">
-                 <span className='fw-bold'>Departments</span>
+                 <span className='fw-bold fs-3'>Departments</span>
 
                   <div className='departments'>
                     {departments.map((dept, index) => (
-                      <button className='btn border border-danger rounded-3 d-flex mb-2 w-100 '>
+                      <button className='btn border border-danger rounded-3 d-flex mb-2 w-100' 
+                        key={dept.dept_id}
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target={`#collapse${dept.dept_id}`}
+                        aria-expanded="false"
+                        aria-controls={`collapse${dept.dept_id}`}>
                         <div key={index} className='dept '>
-                          
-                            <span className='col text-capitalize'>{dept.dept_name}</span>
-                           
-                          
+                            <FontAwesomeIcon icon={faBookOpenReader} className='ms-2 me-3'/>
+                            <span className='col text-capitalize'>{dept.dept_name}</span> 
                         </div>
                       </button>
                     ))}
@@ -74,23 +76,21 @@ const CatalogManage = () => {
 
                 {/* Items added */}
                 <div className="col summary">
-                  <div>
-                    <div className="header">
-                      
-                    </div>
-
-                    <div className='inner overflow-y-auto'>
-                      
-                    </div>
-                  </div>
-
-                  <div className='checkout'>
-                    {/* <Link to='/circulation/patron/item/checkout'> */}
-                      
-                      
-                        <FontAwesomeIcon icon={faArrowRight} />
+                  
+                    {departments.map((item) => (
+                      <div className="col accordion" id="accordionExample" key={item.dept_id}>
+                        <div className="collapse multi-collapse" id={`collapse${item.dept_id}`}>
+                          <Card className="row d-flex mb-2 w-100 h-100">
+                            <div className="card card-body">{item.dept_name}</div>
+                          </Card>
+                        </div>
+                      </div>
+                    ))}
+                  
+                  
+                  <div class="row">
                     
-                    {/* </Link> */}
+                    
                   </div>
                 </div>
               </div>
