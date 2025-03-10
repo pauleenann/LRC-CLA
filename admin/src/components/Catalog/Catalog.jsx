@@ -5,7 +5,7 @@ import { getAllFromStore, getAllUnsyncedFromStore, getBook, getBookPub, getCatal
 import { clearObjectStore, deleteResourceFromIndexedDB, markAsSynced } from '../../indexedDb/syncData'
 import ResourceStatusModal from '../ResourceStatusModal/ResourceStatusModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight, faSearch, faPlus, faBarcode, faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowRight, faSearch, faPlus, faBarcode, faArrowsRotate, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux'
 
@@ -422,6 +422,13 @@ console.log(selectedFilters)
                 <button type="button" class="btn cat-add-item">
                   <FontAwesomeIcon icon={faBarcode} className='icon'/>
                   Generate Barcode
+                </button>
+              </Link>
+              {/* generate barcode */}
+              <Link to='/catalog/manage-catalog'>
+                <button type="button" class="btn cat-add-item">
+                  <FontAwesomeIcon icon={faPenToSquare} className='icon'/>
+                  Manage Catalog
                 </button>
               </Link>
             </div>
