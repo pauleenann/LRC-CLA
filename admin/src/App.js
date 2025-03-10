@@ -23,6 +23,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import ViewPatronPage from './pages/ViewPatron/ViewPatronPage';
 import AuthorsPage from './pages/AuthorsPage/AuthorsPage';
 import GenerateBarcodePage from './pages/GenerateBarcodePage/GenerateBarcodePage';
+import CatalogManage from './components/CatalogManage/CatalogManage';
 
 const App = () => {
   return (
@@ -73,6 +74,11 @@ const App = () => {
           <Route path='/catalog' element={
             <ProtectedRoute allowedRoles={['admin','staff']}>
               <CatalogPage/>
+            </ProtectedRoute>
+          } />
+          <Route path='/catalog/manage-catalog' element={
+            <ProtectedRoute allowedRoles={['admin','staff']}>
+              <CatalogManage/>
             </ProtectedRoute>
           } />
           <Route path='/catalog/add' element={
