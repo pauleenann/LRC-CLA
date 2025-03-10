@@ -11,14 +11,38 @@ import axios from 'axios';
 const CatalogManage = () => {
   const navigate = useNavigate();
 
+  const [departments, setDepartments] = useState([]);
+  const [topics, setTopics] = useState([]);
+
+  useEffect(() => {
+    getDepartments();
+    getTopics();
+  }, []);
+
+  const getDepartments = async () => {
+    try{
+      const response = await axios.get('http://localhost:3001/api/data/departments').then(res=>res.data)
+      setDepartments(response)
+      console.log(response)
+    }catch(err){
+        console.log("Couldn't retrieve department online. An error occurred: ", err.message)
+    }
+  }
+
+  const getTopics =async ()=>{
+    try{
+        const response = await axios.get('http://localhost:3001/api/data/topic').then(res=>res.data)
+        setTopics(response)
+        console.log(response)
+    }catch(err){
+        console.log("Couldn't retrieve topics online. An error occurred: ", err.message)
+    }
+}
+
 
   return (
     <div> 
-      <div>
-        <AdminNavbar /> 
-      </div>
-      <div>
-                <AdminTopNavbar />
+      
             <div className='circ-select-item-container'>
               <h1>Cataloging</h1>
 
@@ -31,16 +55,7 @@ const CatalogManage = () => {
               <div className="row add-items">
                 {/* Scan or manual */}
                 <div className="col scan-manual">
-                  <div className="barcode">
-                    <FontAwesomeIcon icon={faBarcode} className='icon' />
-                    <p>Scan items in the scanner </p>
-                  </div>
-                  <p>No barcode available? Input manually instead</p>
-
-                  <div className='circ-info'>
-                    <label htmlFor="">ISBN / Title</label>
-                    
-                  </div>
+                 <span className='fw-bold'>Departments</span>
 
                   
                 </div>
@@ -69,7 +84,6 @@ const CatalogManage = () => {
               </div>
             </div>
 
-        </div>
     </div>
   );
 };
