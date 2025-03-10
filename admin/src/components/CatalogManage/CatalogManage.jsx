@@ -56,8 +56,6 @@ const CatalogManage = () => {
                 {/* Scan or manual */}
                 <div className="col scan-manual">
                  <span className='fw-bold'>Departments</span>
-
-                  
                 </div>
 
                 {/* Items added */}
