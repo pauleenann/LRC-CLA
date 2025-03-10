@@ -148,6 +148,7 @@ const Audit = () => {
           <option value="Edited a user">Edited User</option>
           <option value="Logged In">Login</option>
           <option value="Logged Out">Logout</option>
+          
         </select>
       </div>
 
