@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './CatalogManage.css';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBarcode, faTrashCan, faX, faArrowRight, faBookOpenReader } from '@fortawesome/free-solid-svg-icons';
+import { faBarcode, faTrashCan, faX, faArrowRight, faBookOpenReader, faSortDown } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { Table, Button, Form, Card, Pagination } from "react-bootstrap";
 
@@ -11,6 +11,7 @@ const CatalogManage = () => {
 
   const [departments, setDepartments] = useState([]);
   const [topics, setTopics] = useState([]);
+  const [selectedDepartment, setSelectedDepartment] = useState(null);
 
   useEffect(() => {
     getDepartments();
@@ -57,19 +58,18 @@ const CatalogManage = () => {
 
                   <div className='departments'>
                     {departments.map((dept, index) => (
-                      <button className='btn border border-danger rounded-3 d-flex mb-2 w-100' 
-                        key={dept.dept_id}
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target={`#collapse${dept.dept_id}`}
-                        aria-expanded="false"
-                        aria-controls={`collapse${dept.dept_id}`}>
-                        <div key={index} className='dept '>
-                            <FontAwesomeIcon icon={faBookOpenReader} className='ms-2 me-3'/>
-                            <span className='col text-capitalize'>{dept.dept_name}</span> 
-                        </div>
-                      </button>
+                      <div key={index} className='dept '>
+                        <button className='btn border border-danger rounded-3 d-flex mb-2 w-100' onClick={() => setSelectedDepartment(dept)}>
+                          
+                          <FontAwesomeIcon icon={faBookOpenReader} className='ms-2 me-3'/>
+                          <span className='col text-capitalize'>{dept.dept_name}</span> 
+                    
+                        </button>
+                      </div>
                     ))}
+                  </div>
+                  <div>
+                    <Button className='btn btn-danger w-100 mt-3'>Add new Department</Button>
                   </div>
                 </div>
                 
@@ -77,15 +77,19 @@ const CatalogManage = () => {
                 {/* Items added */}
                 <div className="col summary">
                   
-                    {departments.map((item) => (
-                      <div className="col accordion" id="accordionExample" key={item.dept_id}>
-                        <div className="collapse multi-collapse" id={`collapse${item.dept_id}`}>
-                          <Card className="row d-flex mb-2 w-100 h-100">
-                            <div className="card card-body">{item.dept_name}</div>
+                  <div className="col-md-12 pt-3 h-100 ps-2 pe-2">
+                      {selectedDepartment ? (
+                          <Card className="p-3 shadow-sm h-100">
+                              <h4 className='fw-bolder text-capitalize mb-3 mt-2 '>{selectedDepartment.dept_name}</h4>
+                              
+                              <p className='fw-bold text-capitalize '>Shelf no.: <input type="text" className="form-control mb-3" placeholder={selectedDepartment.dept_shelf_no}/></p>
+                              <span className='fw-light ms-2 fs-6'>Topics under {selectedDepartment.dept_name} &nbsp; <FontAwesomeIcon className='mb-1' icon={faSortDown} /> </span>
+                              
                           </Card>
-                        </div>
-                      </div>
-                    ))}
+                      ) : (
+                          <p className="text-muted">Select a department to view details.</p>
+                      )}
+                  </div>
                   
                   
                   <div class="row">
