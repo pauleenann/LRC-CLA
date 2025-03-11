@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './CatalogManage.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookOpenReader, faPlus, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faBookOpenReader, faPlus, faPen, faTrash, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
 const CatalogManage = () => {
@@ -36,8 +36,28 @@ const CatalogManage = () => {
     }
   }
 
-  const handleSelectedDepartment = (id) => {
+  const getTopicsByDepartment = async (dept) => {
+    try{
+      const response = await axios.get(`http://localhost:3001/api/data/topic/${dept.dept_id}`).then(res=>res.data)
+      setTopics(response)
+      setSelectedDepartment(dept)
+      console.log(response)
+    }catch(err){
+        console.log("Couldn't retrieve topics online. An error occurred: ", err.message)
+    }
+  }
+
+
+  const handleSelectedDepartment = async (id) => {
     setSelectedDepartmentId(id);
+    try{
+      const response = await axios.get(`http://localhost:3001/api/data/topic/${id}`).then(res=>res.data)
+      setTopics(response)
+      
+      console.log(response)
+    }catch(err){
+        console.log("Couldn't retrieve topics online. An error occurred: ", err.message)
+    }
   };
 
   useEffect(() => {
@@ -63,11 +83,7 @@ const CatalogManage = () => {
           {/* Department Dropdown */}
           <div className='d-flex flex-column align-items-start'>
             <div>
-              <select className="form-select border-0 fw-semibold">
-                <option value="">Department</option>
-                <option value="Student">Student</option>
-                <option value="Faculty">Faculty</option>
-              </select>
+            <span className='fw-semibold'>Departments  &nbsp; <FontAwesomeIcon icon={faChevronDown} /></span>
             </div>
             <span className='instructions mt-3'>* Choose the department you want to manage</span>
           </div>
@@ -133,19 +149,34 @@ const CatalogManage = () => {
             </div>
 
             {/* topics under chosen department */}
-            <div className='d-flex flex-column align-items-start gap-2'>
+            <div className='gap-2 container'>
               {/* dropdown */}
-              <div>
-                <select className="form-select bg-transparent border-0 mt-4 text-capitalize fw-semibold">
-                  <option value="">Topics under {selectedDepartment.dept_name}</option>
-                  <option value="Student">Student</option>
-                  <option value="Faculty">Faculty</option>
-                </select>
+              <div className='row justify-content-between'> 
+
+                <div className="col  fw-semibold mt-4 align-self-start">
+                  <span>Topics under {selectedDepartment.dept_name} &nbsp; <FontAwesomeIcon icon={faChevronDown} /></span>
+                </div>
+                <div className="col-2   fw-semibold mt-4 align-self-end">
+                  <span>Row</span>
+                </div>
+
               </div>
               
               {/* topics */}
-              <div className='p-3 border-bottom border-top w-100'>
-                Accounting
+              <div className=''>
+                {topics.map(topic=>(
+                  <div key={topic.topic_id} className='row justify-content-between'> 
+                    <div  className='p-2 border-bottom border-top text-capitalize col flex-column' >
+                      
+                      <input placeholder={topic.topic_name} readOnly  type="text" className="rounded p-2 ps-3 text-capitalize w-100" />
+                    
+                    </div>
+                    <div  className='p-2 border-bottom border-top text-capitalize col-2 flex-column' >
+                      <input placeholder={topic.topic_row_no} value={topic.topic_row_no} type="number" className="rounded p-2 ps-3 text-capitalize w-50" />
+                    </div>
+                  </div>
+                ))}
+                
               </div>
               
               {/* add new topic */}
