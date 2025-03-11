@@ -100,3 +100,49 @@ export const getTopicsByDepartment = (req,res)=>{
             return res.json(results)
     })
 };
+
+export const addDept = (req, res) => {
+    const { dept_name, dept_shelf_no } = req.body;
+
+    if (!dept_name || !dept_shelf_no) {
+        return res.status(400).json({ success: false, message: "All fields are required." });
+    }
+
+    const q = `INSERT INTO department (dept_name, dept_shelf_no) VALUES (?, ?)`;
+
+    db.query(q, [dept_name, dept_shelf_no], (err, results) => {
+        if (err) {
+            console.error("Error inserting department:", err);
+            return res.status(500).json({ success: false, message: "Database error", error: err });
+        }
+
+        return res.status(201).json({ 
+            success: true, 
+            message: "Department added successfully!", 
+            insertedId: results.insertId 
+        });
+    });
+};
+
+export const addTopic = (req, res) => {
+    const { topic_name, topic_row_no, dept_id } = req.body;
+
+    if (!topic_name || !topic_row_no || !dept_id) {
+        return res.status(400).json({ success: false, message: "All fields are required." });
+    }
+
+    const q = `INSERT INTO topic (topic_name, topic_row_no, dept_id) VALUES (?, ?, ?)`;
+
+    db.query(q, [topic_name, topic_row_no, dept_id], (err, results) => {
+        if (err) {
+            console.error("Error inserting topic:", err);
+            return res.status(500).json({ success: false, message: "Database error", error: err });
+        }
+
+        return res.status(201).json({ 
+            success: true, 
+            message: "Topic added successfully!", 
+            insertedId: results.insertId 
+        });
+    });
+};
