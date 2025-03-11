@@ -229,3 +229,11 @@
     border-radius: 20px;
     color: var(--white);
 }
+
+.circulation-container .no-data-box{
+    text-transform: none !important;
+}
+
+.circulation-container .no-data{
+    color: var(--tup-color);
+}

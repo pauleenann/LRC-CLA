@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Circulation.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCartPlus, faCartShopping, faSearch,faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faCartPlus, faCartShopping, faSearch,faArrowLeft, faArrowRight, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Circulation = () => {
@@ -91,6 +91,14 @@ const Circulation = () => {
     setCurrentPage(newPage);
   };
 
+  const clearFilter = () => {
+    setQuery('Any'); // Reset query filter
+    setSearchTerm(''); // Clear search term
+    setCurrentPage(1); // Reset pagination to first page
+  
+    getBorrowers(); // Refetch the borrower data
+  };
+  
   console.log(query)
   
 
@@ -189,8 +197,12 @@ const Circulation = () => {
               ))
             ) : filteredBorrowers.length === 0 && !loading ? (
               <tr>
-                <td colSpan="7" style={{ textAlign: 'center', padding: '10px' }}>
-                  No records found...
+                <td colSpan="8" className='no-data-box text-center'>
+                  <div className='d-flex flex-column align-items-center gap-2 '>
+                    <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
+                    <span>No {query} resources available.<br/>Please try a different filter.</span>
+                    <button className='btn btn-secondary' onClick={clearFilter}>Clear Filter</button>
+                  </div>
                 </td>
               </tr>
             ) : (
@@ -204,6 +216,7 @@ const Circulation = () => {
                 </td>
               </tr>
             )}
+
           </tbody>
         </table>
       </div>

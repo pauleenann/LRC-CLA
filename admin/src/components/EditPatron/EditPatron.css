@@ -139,8 +139,8 @@
 }
 
 
-.patron-input-box select {
-    border-color: var(--tup-color);
+.patron-input-box select, .patron-input-box input {
+    border: 1px solid var(--tup-color) !important;
     background-color: var(--white);
 }
 
@@ -169,50 +169,4 @@
     color: var(--tup-color);
     font-style: italic;
     font-size: 12px;
-}
-
-
-
-.patron-photo{
-    display: none;
-}
-
-.patron-photo-box{
-    background-color: var(--white);
-    height: 300px;
-    width: 300px;
-    border-radius: 50%;
-    margin: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid var(--table-border-bottom);
-    overflow: hidden !important;
-}
-
-.photo-edit{
-    background-color: var(--white) !important;
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    padding: 20px;
-    border: 1px solid var(--table-border-bottom);
-    right: 50px;
-    bottom: 20px;
-}
-
-.photo-edit .icon{
-    font-size: 2rem;
-}
-
-.patron-image{
-   width: 100%;
-   object-fit: fill;
-}
-
-.no-profile{
-    font-size: 10rem;
-    color: var(--table-border-bottom);
 }
