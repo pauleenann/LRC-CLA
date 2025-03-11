@@ -3,7 +3,7 @@ import axios from 'axios'
 import './Logbook.css'
 import { useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faArrowLeft, faArrowRight} from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faArrowLeft, faArrowRight, faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
 import * as XLSX from 'xlsx'; // Import xlsx for Excel export
 
 const Logbook = () => {
@@ -230,18 +230,23 @@ const Logbook = () => {
                             ))
                         ) : patron.length==0 && !loading?(
                             <tr>
-                                <td colSpan="10">No records available</td>
+                                <td colSpan="10" className='no-data-box text-center'>
+                                    <div className='d-flex flex-column align-items-center gap-2 '>
+                                        <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
+                                        <span>No logbook data available.<br/></span>
+                                    </div>
+                                </td>
                             </tr>
                         ):(
                             <tr>
-                            <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>
-                              <div className="spinner-box">
-                                <div className="spinner-grow text-danger" role="status">
-                                  <span className="sr-only">Loading...</span>
+                                <td colSpan="10" style={{ textAlign: 'center', padding: '20px' }}>
+                                <div className="spinner-box">
+                                    <div className="spinner-grow text-danger" role="status">
+                                    <span className="sr-only">Loading...</span>
+                                    </div>
                                 </div>
-                              </div>
-                            </td>
-                          </tr>
+                                </td>
+                            </tr>
                         ):''}
                     </tbody>
                     
