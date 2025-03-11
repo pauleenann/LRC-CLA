@@ -152,8 +152,8 @@ const EditPatron = () => {
     console.log(filteredCourses)
 
     const validateField = async (name, value) => {
-        const phoneRegex = /^[0-9]{10,15}$/;
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const phoneRegex = /^09[0-9]{9}$/; //must start with 09-
+        const emailRegex = /^[^\s@]+@gmail\.com$/; //ensures that it ends with gmail.com
         const tupIdRegex = /^TUPM-\d{2}-\d{4}$/;
     
         let error = '';
@@ -390,14 +390,13 @@ const EditPatron = () => {
             <h1 className='m-0'>Patrons</h1>
             <div className='edit-patron-path-button'>
                 <Link to={'/patron'}>
-                    <button className='edit-patron-back-button'>
-                        <i className='fa-solid fa-arrow-left'></i>
+                    <button className='edit-patron-back-button btn'>
                         <p>Back</p>
                     </button>
                 </Link>
                 <div className='edit-patron-path'>
                     <p>Patrons / 
-                        {editMode?<span>Edit Patron</span>:<span>Add Patron</span>}
+                        {editMode?<span> Edit Patron</span>:<span>Add Patron</span>}
                     </p>
                 </div>
             </div>
