@@ -14,7 +14,7 @@ const Logbook = () => {
     const [entriesPerPage, setEntriesPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalEntries, setTotalEntries] = useState(0); // Total number of entries
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
     const location = useLocation();
 
     /* useEffect(() => {
@@ -24,19 +24,20 @@ const Logbook = () => {
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const filterToday = params.get('filter') === 'today';
-
+    
         if (filterToday) {
             fetchTodayEntries();
-            const interval = setInterval(fetchTodayEntries, 1000); // Fetch new logs every 1 seconds
-
-            return () => clearInterval(interval);
         } else {
-            getPatron();
-            const interval = setInterval(getPatron, 1000); // Fetch new logs every 1 seconds
-
-            return () => clearInterval(interval);
+            if (searchInput !== '') {
+                getPatron(); // Fetch once if searchInput is not empty
+            } else {
+                const interval = setInterval(getPatron, 1000); // Start polling if searchInput is empty
+    
+                return () => clearInterval(interval); // Cleanup on unmount or re-run
+            }
         }
-    }, [location.search, currentPage, entriesPerPage]);
+    }, [location.search, currentPage, entriesPerPage, searchInput]); // Add searchInput to dependency array
+    
 
     function backupData() {
         const backup = localStorage.getItem("backupData");
@@ -164,6 +165,7 @@ const Logbook = () => {
                         onChange={(e) => setSearchInput(e.target.value)}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
+                               
                               getPatron();
                             }
                           }}
