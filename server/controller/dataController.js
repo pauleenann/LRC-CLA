@@ -91,3 +91,12 @@ export const roles = (req,res)=>{
     })
 };
 
+export const getTopicsByDepartment = (req,res)=>{
+    const {dept_id} = req.params
+    const q = `SELECT * FROM topic WHERE dept_id = ${dept_id}`
+
+    db.query(q,(err,results)=>{
+        if(err) return res.send(err)
+            return res.json(results)
+    })
+};
