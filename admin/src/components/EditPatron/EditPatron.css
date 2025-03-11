@@ -155,9 +155,8 @@
     margin-right: auto; /* Align to the left */
 }
 
-
-.save-button:hover {
-    background-color: var(--button-hover); /* Darker green on hover */
+.save-button:disabled{
+    background-color: var(--shadow);
 }
 
 .patron-error{
