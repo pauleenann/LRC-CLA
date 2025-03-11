@@ -163,8 +163,9 @@ const CatalogManage = () => {
         </div>
 
         {/* Selected Department Section */}
-        {selectedDepartment?
+        
         <div className="col d-flex flex-column justify-content-between selected rounded p-4 ">
+        {selectedDepartment?
           <div className='d-flex flex-column gap-3'>
             {/* Edit Button */}
             <div className="d-flex justify-content-end">
@@ -250,11 +251,10 @@ const CatalogManage = () => {
             </div>
           </div>
 
-          {/* trash */}
-          
-          
+         
+          :''}
         </div>
-        :''}
+        
         
       </div>
 
