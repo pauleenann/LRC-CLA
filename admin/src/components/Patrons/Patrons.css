@@ -224,3 +224,21 @@
 .patrons-container select{
     height: 50px;
 }
+
+.patrons-container .no-data{
+    color: var(--tup-color);
+}
+
+.patrons-container .sort{
+    height: auto;
+    width: 20px;
+    background-color: transparent;
+    border: none;
+    margin-left: 5px;
+    color: var(--white);
+    cursor: pointer;
+}
+
+.patrons-container .sort option{
+    color: var(--black);
+}
