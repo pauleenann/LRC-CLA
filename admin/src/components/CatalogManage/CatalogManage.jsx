@@ -131,14 +131,28 @@ const CatalogManage = () => {
 
           {/* Department Buttons */}
           {departments.map(item => (
-            <button 
-              key={item.dept_id} // ✅ Added key to avoid React warnings
-              className="d-flex gap-4 align-items-center px-4 dept-btn border-0 bg-transparent text-capitalize"
-              onClick={() => handleSelectedDepartment(item.dept_id)}
-            >
-              <FontAwesomeIcon icon={faBookOpenReader} className="icon" />
-              {item.dept_name}
-            </button>
+            <div className='row justify-content-between w-100 me-5 pe-5 ps-5 '>
+              <div className='text-capitalize col flex-column align-items-start d-flex justify-content-center '>
+                <button 
+                  key={item.dept_id} // ✅ Added key to avoid React warnings
+                  className="d-flex gap-4 align-items-center px-4 dept-btn border-0 bg-transparent text-capitalize"
+                  onClick={() => handleSelectedDepartment(item.dept_id)}
+                >
+                  <FontAwesomeIcon icon={faBookOpenReader} className="icon" />
+                  {item.dept_name}
+                </button>
+              </div>
+
+              <div className='text-capitalize col-1 flex-column align-items-center d-flex justify-content-center pe-5 me-5'>
+                <button className="btn trash-btn">
+                  <FontAwesomeIcon icon={faTrash} className="icon" />
+                </button>
+              </div>
+                  
+              
+
+            </div>
+            
           ))}
 
           {/* Add Department */}
@@ -161,6 +175,7 @@ const CatalogManage = () => {
                 <FontAwesomeIcon icon={faPen} className="icon" />
                 <span>Edit</span>
               </button>
+              
             </div>
 
             {/* Department Name Input */}
