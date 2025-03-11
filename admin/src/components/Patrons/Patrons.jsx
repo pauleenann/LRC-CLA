@@ -116,7 +116,7 @@ const Patrons = () => {
                     </button>
                 </div>
                 <Link to="/patron/add">
-                    <button className="patrons-search-button">
+                    <button className="patrons-add-btn">
                         <FontAwesomeIcon icon={faPlus} /> Add Patron
                     </button>
                 </Link>
