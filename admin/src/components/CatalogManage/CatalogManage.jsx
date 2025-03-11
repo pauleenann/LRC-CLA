@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import './CatalogManage.css';
-import { Link, useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBarcode, faTrashCan, faX, faArrowRight, faBookOpenReader } from '@fortawesome/free-solid-svg-icons';
+import { faBookOpenReader, faPlus, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import { Table, Button, Form, Card, Pagination } from "react-bootstrap";
 
 const CatalogManage = () => {
-  const navigate = useNavigate();
-
   const [departments, setDepartments] = useState([]);
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState(null);
+  const [selectedDepartment, setSelectedDepartment] = useState(null);
+  const [selectedTopics, setSelectedTopics] = useState(null);
   const [topics, setTopics] = useState([]);
+  const [isEdit,setIsEdit] = useState(false);
 
   useEffect(() => {
     getDepartments();
@@ -18,14 +18,13 @@ const CatalogManage = () => {
   }, []);
 
   const getDepartments = async () => {
-    try{
-      const response = await axios.get('http://localhost:3001/api/data/departments').then(res=>res.data)
-      setDepartments(response)
-      console.log(response)
-    }catch(err){
-        console.log("Couldn't retrieve department online. An error occurred: ", err.message)
+    try {
+      const response = await axios.get('http://localhost:3001/api/data/departments');
+      setDepartments(response.data);
+    } catch (err) {
+      console.log("Couldn't retrieve department data. Error:", err.message);
     }
-  }
+  };
 
   const getTopics =async ()=>{
     try{
@@ -35,67 +34,139 @@ const CatalogManage = () => {
     }catch(err){
         console.log("Couldn't retrieve topics online. An error occurred: ", err.message)
     }
-}
+  }
 
+  const handleSelectedDepartment = (id) => {
+    setSelectedDepartmentId(id);
+  };
+
+  useEffect(() => {
+    setSelectedDepartment(departments.find(dept => dept.dept_id === selectedDepartmentId) || null);
+    // setSelectedTopics(topics.filter(topic=>topic.topic_id ===))
+  }, [selectedDepartmentId, departments]);
+
+  console.log(selectedDepartmentId); 
 
   return (
-    <div> 
-      
-            <div className='circ-select-item-container'>
-              <h1>Cataloging</h1>
+    <div className="manage-catalog">
+      <h1>Cataloging</h1>
 
-              {/* Path and back */}
-              <div className="back-path">
-                <button onClick={() => navigate(-1)} className="btn">Back</button>
-                <p>Cataloging / <span>Manage Catalog</span></p>
-              </div>
+      {/* Path and back */}
+      <div className="back-path">
+        <p>Cataloging / <span>Manage Catalog</span></p>
+      </div>
 
-              <div className="row add-items">
-                {/* Scan or manual */}
-                <div className="col scan-manual">
-                 <span className='fw-bold fs-3'>Departments</span>
+      {/* Columns */}
+      <div className="row">
+        {/* Department List */}
+        <div className="col d-flex flex-column align-items-start gap-3">
+          {/* Department Dropdown */}
+          <div className='d-flex flex-column align-items-start'>
+            <div>
+              <select className="form-select border-0 fw-semibold">
+                <option value="">Department</option>
+                <option value="Student">Student</option>
+                <option value="Faculty">Faculty</option>
+              </select>
+            </div>
+            <span className='instructions mt-3'>* Choose the department you want to manage</span>
+          </div>
+          
 
-                  <div className='departments'>
-                    {departments.map((dept, index) => (
-                      <button className='btn border border-danger rounded-3 d-flex mb-2 w-100' 
-                        key={dept.dept_id}
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target={`#collapse${dept.dept_id}`}
-                        aria-expanded="false"
-                        aria-controls={`collapse${dept.dept_id}`}>
-                        <div key={index} className='dept '>
-                            <FontAwesomeIcon icon={faBookOpenReader} className='ms-2 me-3'/>
-                            <span className='col text-capitalize'>{dept.dept_name}</span> 
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                
+          {/* Department Buttons */}
+          {departments.map(item => (
+            <button 
+              key={item.dept_id} // ✅ Added key to avoid React warnings
+              className="d-flex gap-4 align-items-center px-4 dept-btn border-0 bg-transparent text-capitalize"
+              onClick={() => handleSelectedDepartment(item.dept_id)}
+            >
+              <FontAwesomeIcon icon={faBookOpenReader} className="icon" />
+              {item.dept_name}
+            </button>
+          ))}
 
-                {/* Items added */}
-                <div className="col summary">
-                  
-                    {departments.map((item) => (
-                      <div className="col accordion" id="accordionExample" key={item.dept_id}>
-                        <div className="collapse multi-collapse" id={`collapse${item.dept_id}`}>
-                          <Card className="row d-flex mb-2 w-100 h-100">
-                            <div className="card card-body">{item.dept_name}</div>
-                          </Card>
-                        </div>
-                      </div>
-                    ))}
-                  
-                  
-                  <div class="row">
-                    
-                    
-                  </div>
-                </div>
-              </div>
+          {/* Add Department */}
+          <button className="btn d-flex gap-3 align-items-center add-dept-btn mt-5">
+            <FontAwesomeIcon icon={faPlus} className="icon" />
+            Add new department
+          </button>
+        </div>
+
+        {/* Selected Department Section */}
+        {selectedDepartment?
+        <div className="col d-flex flex-column justify-content-between selected rounded p-4 ">
+          <div className='d-flex flex-column gap-3'>
+            {/* Edit Button */}
+            <div className="d-flex justify-content-end">
+              <button 
+                className="btn d-flex align-items-center gap-2 text-end edit-btn"
+                onClick={()=>setIsEdit(!isEdit)}
+              >
+                <FontAwesomeIcon icon={faPen} className="icon" />
+                <span>Edit</span>
+              </button>
             </div>
 
+            {/* Department Name Input */}
+            <div className='row d-flex'>
+              <div className="col d-flex flex-column">
+                <label>Department Name</label>
+                <input 
+                  type="text" 
+                  className="rounded p-2 text-capitalize" 
+                  value={selectedDepartment ? selectedDepartment.dept_name : ""} 
+                  readOnly
+                />
+              </div>
+
+              {/* shelf no */}
+              <div className="col-2 d-flex flex-column">
+                <label>Shelf No.</label>
+                <input 
+                  type="number" 
+                  className="rounded p-2 text-capitalize" 
+                  value={selectedDepartment ? selectedDepartment.dept_shelf_no : ""} 
+                  readOnly
+                />
+              </div>
+              
+            </div>
+
+            {/* topics under chosen department */}
+            <div className='d-flex flex-column align-items-start gap-2'>
+              {/* dropdown */}
+              <div>
+                <select className="form-select bg-transparent border-0 mt-4 text-capitalize fw-semibold">
+                  <option value="">Topics under {selectedDepartment.dept_name}</option>
+                  <option value="Student">Student</option>
+                  <option value="Faculty">Faculty</option>
+                </select>
+              </div>
+              
+              {/* topics */}
+              <div className='p-3 border-bottom border-top w-100'>
+                Accounting
+              </div>
+              
+              {/* add new topic */}
+              <button className="btn add-topic d-flex align-items-center gap-3">
+                <FontAwesomeIcon icon={faPlus} className="icon" />
+                Add new topic
+              </button>
+            </div>
+          </div>
+
+          {/* trash */}
+          <div className='d-flex justify-content-end'>
+            <button className="btn trash-btn">
+              <FontAwesomeIcon icon={faTrash} className="icon" />
+            </button>
+          </div>
+          
+        </div>
+        :''}
+        
+      </div>
     </div>
   );
 };

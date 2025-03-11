@@ -418,19 +418,19 @@ console.log(selectedFilters)
                 </button>
               </Link>
               {/* generate barcode */}
-              <Link to='/catalog/generate-barcode'>
+              {/* <Link to='/catalog/generate-barcode'>
                 <button type="button" class="btn cat-add-item">
                   <FontAwesomeIcon icon={faBarcode} className='icon'/>
                   Generate Barcode
                 </button>
-              </Link>
+              </Link> */}
               {/* generate barcode */}
-              <Link to='/catalog/manage-catalog'>
+              {/* <Link to='/catalog/manage-catalog'>
                 <button type="button" class="btn cat-add-item">
                   <FontAwesomeIcon icon={faPenToSquare} className='icon'/>
                   Manage Catalog
                 </button>
-              </Link>
+              </Link> */}
             </div>
               
               {/* sync*/}

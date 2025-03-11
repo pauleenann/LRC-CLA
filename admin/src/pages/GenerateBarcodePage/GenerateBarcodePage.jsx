@@ -90,12 +90,12 @@ const GenerateBarcodePage = () => {
                 <div className='cat-container'>
                 <h1>Catalog</h1>
                 <div className='barcode-path-box'>
-                    <Link to={'/catalog'}>
+                    {/* <Link to={'/catalog'}>
                         <button className='back'>
                             <FontAwesomeIcon icon={faArrowLeft} />
                             <p>Back</p>
                         </button>
-                    </Link>
+                    </Link> */}
                     <div className='barcode-path'>
                         <p>Catalog / <span> Generate Barcode</span></p>
                     </div>
