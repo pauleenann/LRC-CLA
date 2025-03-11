@@ -63,21 +63,17 @@
 }
 
 .edit-patron-back-button{
-    width: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    padding: 5px;
-    border-radius: 20px;
     color: var(--button);
     border: 1px solid var(--button);
     background-color: var(--white);
     transition: all 0.2s linear;
 }
 
-.edit-patron-back-button:hover{
+.edit-patron-back-button:hover,
+.edit-patron-back-button:focus,
+.edit-patron-back-button:active{
     background-color: var(--button);
+    /* border: 1px solid var(--button); */
     color: var(--white);
 
 }
