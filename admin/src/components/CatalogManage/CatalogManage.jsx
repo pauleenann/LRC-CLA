@@ -11,10 +11,15 @@ const CatalogManage = () => {
   const [selectedTopics, setSelectedTopics] = useState(null);
   const [topics, setTopics] = useState([]);
   const [isEdit,setIsEdit] = useState(false);
+  const [deptName, setDeptName] = useState("");
+  const [shelfNo, setShelfNo] = useState("");
+  const [topicName, setTopicName] = useState("");
+  const [topicRowNo, setTopicRowNo] = useState("");
+
 
   useEffect(() => {
     getDepartments();
-    getTopics();
+
   }, []);
 
   const getDepartments = async () => {
@@ -25,27 +30,6 @@ const CatalogManage = () => {
       console.log("Couldn't retrieve department data. Error:", err.message);
     }
   };
-
-  const getTopics =async ()=>{
-    try{
-        const response = await axios.get('http://localhost:3001/api/data/topic').then(res=>res.data)
-        setTopics(response)
-        console.log(response)
-    }catch(err){
-        console.log("Couldn't retrieve topics online. An error occurred: ", err.message)
-    }
-  }
-
-  const getTopicsByDepartment = async (dept) => {
-    try{
-      const response = await axios.get(`http://localhost:3001/api/data/topic/${dept.dept_id}`).then(res=>res.data)
-      setTopics(response)
-      setSelectedDepartment(dept)
-      console.log(response)
-    }catch(err){
-        console.log("Couldn't retrieve topics online. An error occurred: ", err.message)
-    }
-  }
 
 
   const handleSelectedDepartment = async (id) => {
@@ -66,6 +50,62 @@ const CatalogManage = () => {
   }, [selectedDepartmentId, departments]);
 
   console.log(selectedDepartmentId); 
+
+  const handleSaveDept = async () => {
+        if (!deptName.trim() || !shelfNo.trim()) {
+            alert("Please fill in all fields.");
+            return;
+        }
+
+        try {
+            const response = await axios.post("http://localhost:3001/api/data/dept", {
+                dept_name: deptName,
+                dept_shelf_no: shelfNo,
+            });
+
+            if (response.data.success) {
+              alert("Department added successfully!");
+                getDepartments();
+                setDeptName("");
+                setShelfNo("");
+                document.querySelector('#AddDept .btn-close').click();
+                
+            } else {
+                alert("Error adding department: " + response);
+            }
+        } catch (error) {
+            console.error("Error saving department:", error);
+            alert("Failed to save department.");
+        }
+    };
+
+    const handleSaveTopic = async () => {
+      if (!topicName.trim() || !topicRowNo.trim() || !selectedDepartmentId) {
+          alert("Please fill in all fields.");
+          return;
+      }
+
+      try {
+          const response = await axios.post("http://localhost:3001/api/data/topic", {
+              topic_name: topicName,
+              topic_row_no: topicRowNo,
+              dept_id: selectedDepartmentId,
+          });
+
+          if (response.data.success) {
+              alert("Topic added successfully!");
+              setTopicName("");
+              setTopicRowNo("");
+              document.querySelector('#AddTopic .btn-close').click();
+              handleSelectedDepartment(selectedDepartmentId);
+          } else {
+              alert("Error adding topic: " + response);
+          }
+      } catch (error) {
+          console.error("Error saving topic:", error);
+          alert("Failed to save topic.");
+      }
+  };
 
   return (
     <div className="manage-catalog">
@@ -102,7 +142,7 @@ const CatalogManage = () => {
           ))}
 
           {/* Add Department */}
-          <button className="btn d-flex gap-3 align-items-center add-dept-btn mt-5">
+          <button className="btn d-flex gap-3 align-items-center add-dept-btn mt-5" data-bs-toggle="modal" data-bs-target="#AddDept"> 
             <FontAwesomeIcon icon={faPlus} className="icon" />
             Add new department
           </button>
@@ -156,8 +196,11 @@ const CatalogManage = () => {
                 <div className="col  fw-semibold mt-4 align-self-start">
                   <span>Topics under {selectedDepartment.dept_name} &nbsp; <FontAwesomeIcon icon={faChevronDown} /></span>
                 </div>
-                <div className="col-2   fw-semibold mt-4 align-self-end">
+                <div className="col-2 fw-semibold mt-4 align-self-end align-items-center d-flex justify-content-center">
                   <span>Row</span>
+                </div>
+                <div className="col-1 fw-semibold mt-4 align-self-end align-items-center d-flex justify-content-center">
+                  <span>Remove</span>
                 </div>
 
               </div>
@@ -171,8 +214,13 @@ const CatalogManage = () => {
                       <input placeholder={topic.topic_name} readOnly  type="text" className="rounded p-2 ps-3 text-capitalize w-100" />
                     
                     </div>
-                    <div  className='p-2 border-bottom border-top text-capitalize col-2 flex-column' >
-                      <input placeholder={topic.topic_row_no} value={topic.topic_row_no} type="number" className="rounded p-2 ps-3 text-capitalize w-50" />
+                    <div  className='p-2 border-bottom border-top text-capitalize col-2 flex-column align-items-center d-flex justify-content-center' >
+                      <input placeholder={topic.topic_row_no} value={topic.topic_row_no} type="number" className="rounded p-2  text-capitalize w-50" />
+                    </div>
+                    <div className='p-2 border-bottom border-top text-capitalize col-1 flex-column align-items-center d-flex justify-content-center'>
+                      <button className="btn trash-btn">
+                        <FontAwesomeIcon icon={faTrash} className="icon" />
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -180,7 +228,7 @@ const CatalogManage = () => {
               </div>
               
               {/* add new topic */}
-              <button className="btn add-topic d-flex align-items-center gap-3">
+              <button className="btn add-topic d-flex align-items-center gap-3" data-bs-toggle="modal" data-bs-target="#AddTopic">
                 <FontAwesomeIcon icon={faPlus} className="icon" />
                 Add new topic
               </button>
@@ -188,16 +236,96 @@ const CatalogManage = () => {
           </div>
 
           {/* trash */}
-          <div className='d-flex justify-content-end'>
-            <button className="btn trash-btn">
-              <FontAwesomeIcon icon={faTrash} className="icon" />
-            </button>
-          </div>
+          
           
         </div>
         :''}
         
       </div>
+
+
+      {/*Add Department Modal */}
+      <div class="modal fade " id="AddDept" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add New Department</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <div className='row d-flex'>
+              <div className="col d-flex flex-column">
+                <label className='fw-bold'>Department Name</label>
+                <input 
+                  type="text" 
+                  className="rounded p-2 text-capitalize" 
+                  value={deptName} 
+                  onChange={(e) => setDeptName(e.target.value)}
+                />
+              </div>
+
+              {/* shelf no */}
+              <div className="col-2 d-flex flex-column">
+                <label className='fw-bold'>Shelf No.</label>
+                <input 
+                  type="number" 
+                  className="rounded p-2 text-capitalize" 
+                  value={shelfNo} 
+                  onChange={(e) => setShelfNo(e.target.value)}
+                />
+              </div>
+              
+            </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" onClick={handleSaveDept}>Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/*Add Topic Modal */}
+      <div class="modal fade " id="AddTopic" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add New Topic</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <div className='row d-flex'>
+              <div className="col d-flex flex-column">
+                <label className='fw-bold'>Topic Name</label>
+                <input 
+                  type="text" 
+                  className="rounded p-2 text-capitalize" 
+                  value={topicName} 
+                  onChange={(e) => setTopicName(e.target.value)}
+                />
+              </div>
+
+              {/* shelf no */}
+              <div className="col-2 d-flex flex-column">
+                <label className='fw-bold'>Row No.</label>
+                <input 
+                  type="number" 
+                  className="rounded p-2 text-capitalize" 
+                  value={topicRowNo} 
+                  onChange={(e) => setTopicRowNo(e.target.value)}
+                />
+              </div>
+              
+            </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" onClick={handleSaveTopic}>Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 };
