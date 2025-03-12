@@ -211,7 +211,7 @@ const CatalogManage = () => {
                 
               </div>
               
-            </div>
+            </div> 
 
             {/* topics under chosen department */}
             <div className='gap-2 container'>
@@ -236,7 +236,7 @@ const CatalogManage = () => {
                   <div key={topic.topic_id} className='row justify-content-between'> 
                     <div  className='p-2 border-bottom border-top text-capitalize col flex-column' >
                       
-                      <input placeholder={topic.topic_name} readOnly  type="text" className="rounded p-2 ps-3 text-capitalize w-100" />
+                      <input placeholder={topic.topic_name} value={topic.topic_name}  type="text" className="rounded p-2 ps-3 text-capitalize w-100" />
                     
                     </div>
                     <div  className='p-2 border-bottom border-top text-capitalize col-2 flex-column align-items-center d-flex justify-content-center' >
