@@ -104,27 +104,6 @@ export const getTopicsByDepartment = (req,res)=>{
 
 
 export const addDept = (req, res) => {
-    /* const { dept_name, dept_shelf_no } = req.body;
-
-    if (!dept_name || !dept_shelf_no) {
-        return res.status(400).json({ success: false, message: "All fields are required." });
-    }
-
-    const q = `INSERT INTO department (dept_name, dept_shelf_no) VALUES (?, ?)`;
-
-    db.query(q, [dept_name, dept_shelf_no], (err, results) => {
-        if (err) {
-            console.error("Error inserting department:", err);
-            return res.status(500).json({ success: false, message: "Database error", error: err });
-        }
-
-        return res.status(201).json({ 
-            success: true, 
-            message: "Department added successfully!", 
-            insertedId: results.insertId 
-        });
-    }); */
-
     const { dept_id, dept_name, dept_shelf_no } = req.body;
 
     if (!dept_name || !dept_shelf_no) {
@@ -158,7 +137,7 @@ export const addDept = (req, res) => {
     }
 };
 
-export const addTopic = (req, res) => {
+/* export const addTopic = (req, res) => {
     const { topic_name, topic_row_no, dept_id } = req.body;
 
     if (!topic_name || !topic_row_no || !dept_id) {
@@ -179,4 +158,45 @@ export const addTopic = (req, res) => {
             insertedId: results.insertId 
         });
     });
+};
+ */
+
+export const addTopic = (req, res) => {
+    const { topic_id, topic_name, topic_row_no, dept_id } = req.body;
+
+    if (!topic_name || !topic_row_no || !dept_id) {
+        return res.status(400).json({ success: false, message: "All fields are required." });
+    }
+
+    if (topic_id) {
+        // Update existing topic
+        const updateQuery = `UPDATE topic SET topic_name = ?, topic_row_no = ?, dept_id = ? WHERE topic_id = ?`;
+        db.query(updateQuery, [topic_name, topic_row_no, dept_id, topic_id], (err, results) => {
+            if (err) {
+                console.error("Error updating topic:", err);
+                return res.status(500).json({ success: false, message: "Database error", error: err });
+            }
+            
+            return res.status(200).json({ 
+                success: true, 
+                message: "Topic updated successfully!", 
+                affectedRows: results.affectedRows 
+            });
+        });
+    } else {
+        // Insert new topic
+        const insertQuery = `INSERT INTO topic (topic_name, topic_row_no, dept_id) VALUES (?, ?, ?)`;
+        db.query(insertQuery, [topic_name, topic_row_no, dept_id], (err, results) => {
+            if (err) {
+                console.error("Error inserting topic:", err);
+                return res.status(500).json({ success: false, message: "Database error", error: err });
+            }
+
+            return res.status(201).json({ 
+                success: true, 
+                message: "Topic added successfully!", 
+                insertedId: results.insertId 
+            });
+        });
+    }
 };
