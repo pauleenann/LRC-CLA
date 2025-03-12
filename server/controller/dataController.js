@@ -104,27 +104,6 @@ export const getTopicsByDepartment = (req,res)=>{
 
 
 export const addDept = (req, res) => {
-    /* const { dept_name, dept_shelf_no } = req.body;
-
-    if (!dept_name || !dept_shelf_no) {
-        return res.status(400).json({ success: false, message: "All fields are required." });
-    }
-
-    const q = `INSERT INTO department (dept_name, dept_shelf_no) VALUES (?, ?)`;
-
-    db.query(q, [dept_name, dept_shelf_no], (err, results) => {
-        if (err) {
-            console.error("Error inserting department:", err);
-            return res.status(500).json({ success: false, message: "Database error", error: err });
-        }
-
-        return res.status(201).json({ 
-            success: true, 
-            message: "Department added successfully!", 
-            insertedId: results.insertId 
-        });
-    }); */
-
     const { dept_id, dept_name, dept_shelf_no } = req.body;
 
     if (!dept_name || !dept_shelf_no) {
