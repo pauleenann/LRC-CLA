@@ -16,6 +16,7 @@ const CatalogManage = () => {
   const [topicName, setTopicName] = useState("");
   const [topicRowNo, setTopicRowNo] = useState("");
   const [editDeptId, setEditDeptId] = useState(null);
+  const [editTopicId, setEditTopicId] = useState(null);
 
 
   useEffect(() => {
@@ -66,11 +67,11 @@ const CatalogManage = () => {
             });
 
             if (response.data.success) {
-              alert("Department added successfully!");
+              alert("Department added/edited successfully!");
                 getDepartments();
-                setDeptName("");
+                /* setDeptName("");
                 setShelfNo("");
-                setEditDeptId(null);
+                setEditDeptId(null); */
                 document.querySelector('#AddDept .btn-close').click();
                 
             } else {
@@ -93,10 +94,11 @@ const CatalogManage = () => {
               topic_name: topicName,
               topic_row_no: topicRowNo,
               dept_id: selectedDepartmentId,
+              topic_id: editTopicId,
           });
 
           if (response.data.success) {
-              alert("Topic added successfully!");
+              alert("Topic added/edited successfully!");
               setTopicName("");
               setTopicRowNo("");
               document.querySelector('#AddTopic .btn-close').click();
@@ -139,18 +141,18 @@ const CatalogManage = () => {
                 <button 
                   key={item.dept_id} // ✅ Added key to avoid React warnings
                   className="d-flex gap-4 align-items-center px-4 dept-btn border-0 bg-transparent text-capitalize"
-                  onClick={() => handleSelectedDepartment(item.dept_id)}
+                  onClick={() => {handleSelectedDepartment(item.dept_id); setDeptName(item.dept_name); setShelfNo(item.dept_shelf_no); setEditDeptId(item.dept_id)}}
                 >
                   <FontAwesomeIcon icon={faBookOpenReader} className="icon" />
                   {item.dept_name}
                 </button>
               </div>
 
-              <div className='text-capitalize col-1 flex-column align-items-center d-flex justify-content-center pe-5 me-5'>
+              {/* <div className='text-capitalize col-1 flex-column align-items-center d-flex justify-content-center pe-5 me-5'>
                 <button className="btn trash-btn " data-bs-toggle="modal" data-bs-target="#AddDept" onClick={()=>{setEditDeptId(item.dept_id); setDeptName(item.dept_name); setShelfNo(item.dept_shelf_no)}}>
                   <FontAwesomeIcon icon={faPen} className="icon" />
                 </button>
-              </div>
+              </div> */}
                   
               
 
@@ -159,7 +161,7 @@ const CatalogManage = () => {
           ))}
 
           {/* Add Department */}
-          <button className="btn d-flex gap-3 align-items-center add-dept-btn mt-5" data-bs-toggle="modal" data-bs-target="#AddDept" > 
+          <button className="btn d-flex gap-3 align-items-center add-dept-btn mt-5" data-bs-toggle="modal" data-bs-target="#AddDept" onClick={()=>{setEditDeptId(null); setDeptName(""); setShelfNo("")}}> 
             <FontAwesomeIcon icon={faPlus} className="icon" />
             Add new department
           </button>
@@ -170,21 +172,11 @@ const CatalogManage = () => {
         <div className="col d-flex flex-column justify-content-between selected rounded p-4 ">
         {selectedDepartment?
           <div className='d-flex flex-column gap-3'>
-            {/* Edit Button */}
-            <div className="d-flex justify-content-end">
-              <button 
-                className="btn d-flex align-items-center gap-2 text-end edit-btn"
-                onClick={()=>setIsEdit(!isEdit)}
-              >
-                <FontAwesomeIcon icon={faPen} className="icon" />
-                <span>Edit</span>
-              </button>
-              
-            </div>
+            
 
             {/* Department Name Input */}
             <div className='row d-flex'>
-              <div className="col d-flex flex-column">
+              <div className="col d-flex flex-column fw-semibold ">
                 <label>Department Name</label>
                 <input 
                   type="text" 
@@ -195,7 +187,7 @@ const CatalogManage = () => {
               </div>
 
               {/* shelf no */}
-              <div className="col-2 d-flex flex-column">
+              <div className="col-2 d-flex flex-column fw-semibold ">
                 <label>Shelf No.</label>
                 <input 
                   type="number" 
@@ -203,6 +195,20 @@ const CatalogManage = () => {
                   value={selectedDepartment ? selectedDepartment.dept_shelf_no : ""} 
                   readOnly
                 />
+              </div>
+
+              {/* Edit Button */}
+              <div className="col-2 d-flex flex-column fw-semibold  align-self-end align-items-center d-flex justify-content-center">
+                <label>Edit</label>
+                <button 
+                  className="btn  edit-btn p-2 "
+                  onClick={()=>setIsEdit(!isEdit) }
+                  data-bs-toggle="modal" data-bs-target="#AddDept"
+                >
+                  <FontAwesomeIcon icon={faPen} className="icon" />
+                
+                </button>
+                
               </div>
               
             </div>
@@ -219,7 +225,7 @@ const CatalogManage = () => {
                   <span>Row</span>
                 </div>
                 <div className="col-1 fw-semibold mt-4 align-self-end align-items-center d-flex justify-content-center">
-                  <span>Remove</span>
+                  <span>Edit</span>
                 </div>
 
               </div>
@@ -237,9 +243,17 @@ const CatalogManage = () => {
                       <input placeholder={topic.topic_row_no} value={topic.topic_row_no} type="number" className="rounded p-2  text-capitalize w-50" />
                     </div>
                     <div className='p-2 border-bottom border-top text-capitalize col-1 flex-column align-items-center d-flex justify-content-center'>
-                      <button className="btn trash-btn">
-                        <FontAwesomeIcon icon={faTrash} className="icon" />
+                      
+
+                      <button 
+                        className="btn d-flex align-items-center gap-2 text-end edit-btn"
+                        onClick={()=>{setIsEdit(!isEdit); setTopicName(topic.topic_name); setTopicRowNo(topic.topic_row_no); setEditTopicId(topic.topic_id)}}
+                        data-bs-toggle="modal" data-bs-target="#AddTopic"
+                      >
+                        <FontAwesomeIcon icon={faPen} className="icon" />
+                        
                       </button>
+
                     </div>
                   </div>
                 ))}
@@ -247,7 +261,7 @@ const CatalogManage = () => {
               </div>
               
               {/* add new topic */}
-              <button className="btn add-topic d-flex align-items-center gap-3" data-bs-toggle="modal" data-bs-target="#AddTopic">
+              <button className="btn add-topic d-flex align-items-center gap-3" data-bs-toggle="modal" data-bs-target="#AddTopic" onClick={()=>{setEditTopicId(null); setTopicName(""); setTopicRowNo("")}}>
                 <FontAwesomeIcon icon={faPlus} className="icon" />
                 Add new topic
               </button>
@@ -267,7 +281,7 @@ const CatalogManage = () => {
         <div class="modal-dialog modal-dialog-centered modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Add Department</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Add/Edit Department</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -308,7 +322,7 @@ const CatalogManage = () => {
         <div class="modal-dialog modal-dialog-centered modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Add New Topic</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Add/Edit Topic</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
