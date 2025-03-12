@@ -73,7 +73,7 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation,
                             <select className="form-select"
                             name='department'
                             disabled={disabled} onChange={handleChange} onBlur={formValidation}>
-                                <option selected disabled className=''>Select department</option>
+                                <option selected disabled className=''>Select department</option>xam
                                 {department.length>0?department.map((item,key)=>(
                                     <option value={item.dept_id} className='dept_name' selected={disabled||editMode?item.dept_id==bookData.department:''}>{item.dept_name}</option>
                                 )):''}
