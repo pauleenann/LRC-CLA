@@ -94,6 +94,7 @@ const CatalogManage = () => {
               topic_name: topicName,
               topic_row_no: topicRowNo,
               dept_id: selectedDepartmentId,
+              topic_id: editTopicId,
           });
 
           if (response.data.success) {
