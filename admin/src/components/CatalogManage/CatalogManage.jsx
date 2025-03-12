@@ -15,6 +15,7 @@ const CatalogManage = () => {
   const [shelfNo, setShelfNo] = useState("");
   const [topicName, setTopicName] = useState("");
   const [topicRowNo, setTopicRowNo] = useState("");
+  const [editDeptId, setEditDeptId] = useState(null);
 
 
   useEffect(() => {
@@ -61,6 +62,7 @@ const CatalogManage = () => {
             const response = await axios.post("http://localhost:3001/api/data/dept", {
                 dept_name: deptName,
                 dept_shelf_no: shelfNo,
+                dept_id: editDeptId,
             });
 
             if (response.data.success) {
@@ -68,6 +70,7 @@ const CatalogManage = () => {
                 getDepartments();
                 setDeptName("");
                 setShelfNo("");
+                setEditDeptId(null);
                 document.querySelector('#AddDept .btn-close').click();
                 
             } else {
@@ -144,8 +147,8 @@ const CatalogManage = () => {
               </div>
 
               <div className='text-capitalize col-1 flex-column align-items-center d-flex justify-content-center pe-5 me-5'>
-                <button className="btn trash-btn">
-                  <FontAwesomeIcon icon={faTrash} className="icon" />
+                <button className="btn trash-btn " data-bs-toggle="modal" data-bs-target="#AddDept" onClick={()=>{setEditDeptId(item.dept_id); setDeptName(item.dept_name); setShelfNo(item.dept_shelf_no)}}>
+                  <FontAwesomeIcon icon={faPen} className="icon" />
                 </button>
               </div>
                   
@@ -156,7 +159,7 @@ const CatalogManage = () => {
           ))}
 
           {/* Add Department */}
-          <button className="btn d-flex gap-3 align-items-center add-dept-btn mt-5" data-bs-toggle="modal" data-bs-target="#AddDept"> 
+          <button className="btn d-flex gap-3 align-items-center add-dept-btn mt-5" data-bs-toggle="modal" data-bs-target="#AddDept" > 
             <FontAwesomeIcon icon={faPlus} className="icon" />
             Add new department
           </button>
@@ -264,7 +267,7 @@ const CatalogManage = () => {
         <div class="modal-dialog modal-dialog-centered modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Add New Department</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Add Department</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
