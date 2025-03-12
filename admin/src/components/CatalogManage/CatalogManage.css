@@ -131,3 +131,9 @@
 .manage-catalog input{
     border: 1px solid var(--tup-color);
 }
+
+.btn-secondary {
+    background-color: transparent !important;
+    color: #1F1F1F;
+    border: none;
+}
