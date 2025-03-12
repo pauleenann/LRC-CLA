@@ -101,8 +101,10 @@ export const getTopicsByDepartment = (req,res)=>{
     })
 };
 
+
+
 export const addDept = (req, res) => {
-    const { dept_name, dept_shelf_no } = req.body;
+    /* const { dept_name, dept_shelf_no } = req.body;
 
     if (!dept_name || !dept_shelf_no) {
         return res.status(400).json({ success: false, message: "All fields are required." });
@@ -121,7 +123,39 @@ export const addDept = (req, res) => {
             message: "Department added successfully!", 
             insertedId: results.insertId 
         });
-    });
+    }); */
+
+    const { dept_id, dept_name, dept_shelf_no } = req.body;
+
+    if (!dept_name || !dept_shelf_no) {
+        return res.status(400).json({ success: false, message: "All fields are required." });
+    }
+
+    if (dept_id) {
+        // Update existing department
+        const updateQuery = `UPDATE department SET dept_name = ?, dept_shelf_no = ? WHERE dept_id = ?`;
+        db.query(updateQuery, [dept_name, dept_shelf_no, dept_id], (err, results) => {
+            if (err) {
+                console.error("Error updating department:", err);
+                return res.status(500).json({ success: false, message: "Database error", error: err });
+            }
+            return res.status(200).json({ success: true, message: "Department updated successfully!" });
+        });
+    } else {
+        // Insert new department
+        const insertQuery = `INSERT INTO department (dept_name, dept_shelf_no) VALUES (?, ?)`;
+        db.query(insertQuery, [dept_name, dept_shelf_no], (err, results) => {
+            if (err) {
+                console.error("Error inserting department:", err);
+                return res.status(500).json({ success: false, message: "Database error", error: err });
+            }
+            return res.status(201).json({ 
+                success: true, 
+                message: "Department added successfully!", 
+                insertedId: results.insertId 
+            });
+        });
+    }
 };
 
 export const addTopic = (req, res) => {
