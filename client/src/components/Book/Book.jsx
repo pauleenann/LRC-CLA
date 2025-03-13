@@ -22,9 +22,10 @@ const Book = ({ isSearch, isView, item }) => {
         objectUrl = URL.createObjectURL(item.resource_cover);
         setPreview(objectUrl);
       } catch {
-        const blob = new Blob([new Uint8Array(item.resource_cover.data)], { type: 'image/jpeg' });
-        objectUrl = URL.createObjectURL(blob);
-        setPreview(objectUrl);
+        //const blob = new Blob([new Uint8Array(item.resource_cover.data)], { type: 'image/jpeg' });
+        //objectUrl = URL.createObjectURL(blob);
+        setPreview(`https://api.tuplrc-cla.com/${item.resource_cover}`);
+        //setPreview(objectUrl);
       }
 
       // Cleanup function to revoke the Object URL

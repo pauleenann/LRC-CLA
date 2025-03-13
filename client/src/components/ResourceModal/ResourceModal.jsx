@@ -58,7 +58,8 @@ const ResourceModal = () => {
           const blob = new Blob([new Uint8Array(resource.resource_cover.data)], { type: 'image/jpeg' });
           objectUrl = URL.createObjectURL(blob);
         }
-        setPreview(objectUrl);
+        //setPreview(objectUrl);
+        setPreview(`https://api.tuplrc-cla.com/${resource.resource_cover}`);
       } catch (error) {
         console.error('Error creating object URL:', error);
       }
