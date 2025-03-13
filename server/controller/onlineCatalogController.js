@@ -92,6 +92,7 @@ export const resourcesView = (req, res) => {
        SELECT 
         resources.resource_title,
         resources.resource_quantity,
+        resources.original_resource_quantity,
         resources.resource_published_date,
         resources.resource_id,
         resources.resource_is_circulation,

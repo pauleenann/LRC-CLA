@@ -60,6 +60,7 @@ export const catalog = (req, res) => {
             resources.resource_title, 
             resources.resource_id, 
             resourcetype.type_name, 
+            resources.original_resource_quantity, 
             resources.resource_quantity, 
             department.dept_name,
             CASE
