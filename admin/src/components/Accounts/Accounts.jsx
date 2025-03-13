@@ -86,6 +86,7 @@ const Accounts = () => {
     }
   }
 
+
   // Fetch user accounts
   const userAccounts = async (resetPage = false) => {
     if (resetPage) {
@@ -403,12 +404,12 @@ const Accounts = () => {
           <button className="btn" onClick={()=>userAccounts(true)}>
             <FontAwesomeIcon icon={faSearch} className='icon'/>
           </button>
-          <button className="btn" onClick={()=>setSelectedFilters({ fname:0, lname:0, uname: 0, role: 0, status:''})}>
+          <button className="btn" onClick={()=>setSelectedFilters({ fname:0, lname:0, uname: 0, role: 0, status:''}) }>
             Reset Filter
           </button>
         </div>
         {/* Add */}
-        <button className="btn create-btn" onClick={() => setOpenCreateUser(true)}>
+        <button className="btn create-btn" onClick={() => setOpenCreateUser(true)} >
           <FontAwesomeIcon icon={faPlus} />
           Create account
         </button>
