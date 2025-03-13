@@ -67,7 +67,7 @@ const CatalogManage = () => {
             });
 
             if (response.data.success) {
-              alert("Department added/edited successfully!");
+              // alert("Department added/edited successfully!");
                 getDepartments();
                 /* setDeptName("");
                 setShelfNo("");
@@ -98,7 +98,7 @@ const CatalogManage = () => {
           });
 
           if (response.data.success) {
-              alert("Topic added/edited successfully!");
+              // alert("Topic added/edited successfully!");
               setTopicName("");
               setTopicRowNo("");
               document.querySelector('#AddTopic .btn-close').click();
@@ -168,9 +168,9 @@ const CatalogManage = () => {
         </div>
 
         {/* Selected Department Section */}
-        
-        <div className="col d-flex flex-column justify-content-between selected rounded p-4 ">
         {selectedDepartment?
+        <div className="col d-flex flex-column justify-content-between selected rounded p-4 ">
+        
           <div className='d-flex flex-column gap-3'>
             
 
@@ -267,11 +267,8 @@ const CatalogManage = () => {
               </button>
             </div>
           </div>
-
-         
-          :''}
         </div>
-        
+        :''}
         
       </div>
 
