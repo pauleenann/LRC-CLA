@@ -311,7 +311,7 @@ const CatalogManage = () => {
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary" style={{ backgroundColor: "#94152b", borderColor: "#94152b" }}  onClick={handleSaveDept}>Save changes</button>
+              <button type="button" class="btn btn-primary" style={{ backgroundColor: "#94152b", borderColor: "#94152b", color: "fff" }}  onClick={handleSaveDept}>Save changes</button>
             </div> 
           </div>
         </div>
@@ -352,7 +352,10 @@ const CatalogManage = () => {
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary" onClick={handleSaveTopic}>Save changes</button>
+              <button type="button" 
+                      class="btn"
+                      style={{ backgroundColor: "#97170E", borderColor: "#97170E", color: "fff"}}     
+                      onClick={handleSaveTopic}>Save changes</button>
             </div>
           </div>
         </div>

@@ -157,7 +157,6 @@
     color: var(--white);
 }
 
-
 .accounts-container .pagination .btn:disabled{
     border: none !important;
     background-color: var(--disabled);
@@ -165,7 +164,7 @@
 
 .accounts-container .pagination .btn:enabled{
     background-color: var(--tup-color);
-    color: var(--white);
+    border: none !important;
 }
 
 .accounts-container table .sort{
