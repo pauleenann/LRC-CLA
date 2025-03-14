@@ -1,11 +1,5 @@
 import { db } from "../config/db.js";
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { logAuditAction } from "./auditController.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 export const fetchCategory = (req,res)=>{
     const q = `SELECT * from reportcategory`
@@ -56,8 +50,7 @@ export const fetchReport = (req,res)=>{
             r.report_end_date,
             r.report_name,
             r.report_description,
-            r.created_at,
-            filepath
+            r.created_at
         FROM reports r
         JOIN reportcategory rc ON rc.cat_id = r.cat_id
         JOIN reportdetail rd ON rd.detail_id = r.detail_id
@@ -74,8 +67,7 @@ export const fetchReport = (req,res)=>{
 }
 
 export const saveReport = (req, res)=>{
-    const filePath = req.file ? `/public/reports/${req.file.filename}` : null;
-
+    console.log('saving report')
         const {
           name,
           description,
@@ -84,7 +76,7 @@ export const saveReport = (req, res)=>{
           startDate,
           endDate,
           staff_id ,
-          staff_uname,
+          staff_uname
         } = req.body;
     
         // SQL query to insert report
@@ -96,10 +88,9 @@ export const saveReport = (req, res)=>{
             detail_id, 
             report_start_date, 
             report_end_date, 
-            staff_id,
-            filepath
+            staff_id
           ) 
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
         `;
 
         const values = [
@@ -109,8 +100,7 @@ export const saveReport = (req, res)=>{
             detail_id,
             startDate,
             endDate,
-            staff_id,
-            filePath
+            staff_id
         ]
     
         db.query(q, values, (err, result) => {
@@ -125,12 +115,10 @@ export const saveReport = (req, res)=>{
                 null,
                 JSON.stringify("Added new report: " + name)
             );
-            res.status(200).json({ message: 'Patron added successfully', result });
+            res.status(200).json({ message: 'Report added successfully', result });
           });
         
 }
-
-
 
 export const generateReports = (req, res) => {
     const {cat_name, detail_name, report_start_date, report_end_date} = req.query
@@ -142,7 +130,7 @@ export const generateReports = (req, res) => {
           generateAttendance(res, detail_name, report_start_date, report_end_date);
           break;
         case 'inventory':
-          generateInventory(res, detail_name, report_start_date, report_end_date);
+          generateInventory(res, detail_name);
           break; 
         case 'circulation':
           generateCirculation(res, detail_name, report_start_date, report_end_date);
@@ -154,53 +142,63 @@ export const generateReports = (req, res) => {
       }
 };
 
-const generateInventory = async (res, detail, startDate, endDate) => {
-    let whereClause = ``;
+const generateInventory = async(res,detail)=>{
+    let whereClause = ''
 
-    const filterConditions = {
-        'books': 'resources.type_id = 1',
-        'journals': 'resources.type_id = 2',
-        'newsletters': 'resources.type_id = 3',
-        'theses': 'resources.type_id = 4',
-        'available resources': 'resources.avail_id = 1',
-        'lost resources': 'resources.avail_id = 2',
-        'damaged resources': 'resources.avail_id = 3'
-    };
-
-    if (filterConditions[detail]) {
-        whereClause += `WHERE ${filterConditions[detail]} `;
+    switch(detail){
+        case 'books':
+            whereClause+='WHERE resources.type_id = 1'
+            break;
+        case 'journals':
+            whereClause+='WHERE resources.type_id = 2'
+            break;
+        case 'newsletters':
+            whereClause+='WHERE resources.type_id = 3'
+            break;
+        case 'theses':
+            whereClause+='WHERE resources.type_id = 4'
+            break;
+        case 'available resources':
+            whereClause+='WHERE resources.avail_id = 1'
+            break;
+        case 'lost resources':
+            whereClause+='WHERE resources.avail_id = 2'
+            break;
+        case 'damaged resources':
+            whereClause+='WHERE resources.avail_id = 3'
+            break;
     }
-
+    
     let q = `
         SELECT 
-            resources.resource_title AS 'resource title', 
-            resourcetype.type_name AS 'resource type', 
-            resources.resource_quantity AS quantity, 
-            department.dept_name AS department,
-            COALESCE(topic.topic_name, 'n/a') AS topic,
+            resources.resource_title as 'resource title', 
+            resourcetype.type_name as 'resource type', 
+            resources.resource_quantity as quantity, 
+            department.dept_name as department,
+            CASE
+                WHEN resources.type_id IN ('1', '2', '3') THEN topic.topic_name
+                ELSE 'n/a'
+            END AS topic,
             GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS authors
         FROM resources
+        JOIN resourceauthors ON resourceauthors.resource_id = resources.resource_id 
+        JOIN author ON resourceauthors.author_id = author.author_id 
         JOIN resourcetype ON resources.type_id = resourcetype.type_id 
         JOIN department ON department.dept_id = resources.dept_id
-        LEFT JOIN resourceauthors ON resourceauthors.resource_id = resources.resource_id 
-        LEFT JOIN author ON resourceauthors.author_id = author.author_id 
         LEFT JOIN book ON resources.resource_id = book.resource_id
         LEFT JOIN journalnewsletter ON resources.resource_id = journalnewsletter.resource_id
         LEFT JOIN topic 
-            ON book.topic_id = topic.topic_id OR journalnewsletter.topic_id = topic.topic_id
+            ON (book.topic_id = topic.topic_id OR journalnewsletter.topic_id = topic.topic_id)
         ${whereClause}
-        GROUP BY resources.resource_id
-    `;
+        GROUP BY resources.resource_id`
 
-
-    console.log(q)
-    db.query(q, (err, results) => {
-        if (err) {
-            console.error("Database Error:", err);
-            return res.status(500).send({ error: 'Database query failed' });
-        }
-        res.send(results);
-    });
+        db.query(q,(err,results)=>{
+            if (err) {
+                console.error(err);
+                return res.status(500).send({ error: 'Database query failed' });
+            }
+            res.send(results)
+        })
 };
 
 const generateCirculation = async (res, detail, startDate, endDate) => {
@@ -337,20 +335,3 @@ const generateAttendance = async (res, kind, startDate, endDate) => {
     })
     
 };
-
-export const fetchExcel = (req, res) => {
-    const filePath = req.query.filePath; // e.g., "/uploads/reports/sample.xlsx"
-
-    if (!filePath) {
-        return res.status(400).json({ error: 'File path is required' });
-    }
-
-    const absolutePath = path.join(process.cwd(), filePath); // Get full server path
-
-    res.sendFile(absolutePath, (err) => {
-        if (err) {
-            console.error('Error sending file:', err);
-            res.status(500).json({ error: 'File not found or inaccessible' });
-        }
-    });
-}

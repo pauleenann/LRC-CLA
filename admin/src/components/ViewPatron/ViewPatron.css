@@ -60,9 +60,9 @@
 .viewpatron-container .loadingInfo,
 .viewpatron-container .loadingTable {
     border-radius: 5px;
-    background: linear-gradient(90deg, #E0E0E0 25%, rgba(255, 255, 255, 0.4) 50%, #E0E0E0 75%);
+    background: #E0E0E0 25%;
     background-size: 200% 100%;
-    animation: shimmer 2s infinite linear;
+    animation: pulse 2s infinite linear;
 }
 
 /* Adjusting sizes individually */
@@ -86,11 +86,14 @@
     height: 500px;
 }
 
-@keyframes shimmer {
-0% {
-    background-position: -200px 0;
-}
-100% {
-    background-position: 200px 0;
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.6;
     }
 }
