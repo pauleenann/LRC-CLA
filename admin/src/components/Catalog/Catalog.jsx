@@ -524,7 +524,7 @@ console.log(selectedFilters)
                       <td>{item.author_names}</td>
                       <td>{item.dept_name}</td>
                       <td>{item.topic_name}</td>
-                      <td>{item.original_resource_quantity}/{item.resource_quantity}</td>
+                      <td>{item.resource_quantity}/{item.original_resource_quantity}</td>
                     </tr>
                   ))
                 ) : !loading && catalog.length === 0 ? (
