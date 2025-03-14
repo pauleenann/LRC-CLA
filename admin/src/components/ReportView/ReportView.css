@@ -127,3 +127,8 @@
   .reports-view-container .export-btn{
     background-color: var(--yellow);
   }
+
+  .reports-view-container .no-data{
+    font-size: 1.5rem;
+    color: var(--tup-color);
+  }
