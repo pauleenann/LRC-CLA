@@ -42,28 +42,32 @@ const ReportsModal = ({ open, close, onReportCreate }) => {
   }, [open]);
 
   useEffect(() => {
-    // Reset date fields when detail changes
-    if (reportData.detail) {
-      const detailId = parseInt(reportData.detail);
-      const catID = parseInt(reportData.category)
-      
-      if (detailId === 1 || detailId === 18 || catID === 3) {
-        // Today's date for both start and end
+    if (reportData.detail_name) {
+      const detail = reportData.detail_name.toLowerCase(); // Normalize for consistent checks
+  
+      if (detail.includes("daily")) {
         setReportData(prevData => ({
           ...prevData,
-          startDate: dayjs().format('YYYY-MM-DD'),
-          endDate: dayjs().format('YYYY-MM-DD')
+          startDate: dayjs().format("YYYY-MM-DD"),
+          endDate: dayjs().format("YYYY-MM-DD"),
         }));
-      } else if (detailId === 2 || detailId === 19) {
-        // Current month range
+      } else if (detail.includes("monthly")) {
         setReportData(prevData => ({
           ...prevData,
-          startDate: dayjs().startOf('month').format('YYYY-MM-DD'),
-          endDate: dayjs().endOf('month').format('YYYY-MM-DD')
+          startDate: dayjs().startOf("month").format("YYYY-MM-DD"),
+          endDate: dayjs().endOf("month").format("YYYY-MM-DD"),
+        }));
+      } else{
+        // Keep existing dates if they are already set
+        setReportData(prevData => ({
+          ...prevData,
+          startDate: "",
+          endDate: "",
         }));
       }
     }
-  }, [reportData.detail]);
+  }, [reportData.detail_name]);
+  
 
   useEffect(()=>{
     setReportData((prevdata)=>({
@@ -162,7 +166,7 @@ const ReportsModal = ({ open, close, onReportCreate }) => {
     
     const categoryId = parseInt(reportData.category);
     const detailId = parseInt(reportData.detail);
-    const datesRequired = categoryId !== 3 && categoryId !== 4 && detailId !== 7 && detailId !== 8;
+    const datesRequired = categoryId !== 3 && categoryId !== 4 && detailId !== 6 && detailId !== 7;
     
     if (!reportData.startDate && datesRequired) {
       newErrors.startDate = 'Start date is required';
@@ -308,14 +312,17 @@ const ReportsModal = ({ open, close, onReportCreate }) => {
     setIsGenerating(true);
     
     try {
-      const formattedStartDate = reportData.startDate ? dayjs(reportData.startDate).format('YYYY-MM-DD') : null;
-      const formattedEndDate = reportData.endDate ? dayjs(reportData.endDate).format('YYYY-MM-DD') : null;
+      const formattedStartDate = reportData.startDate ? dayjs(reportData.startDate).format('YYYY-MM-DD') : "";
+      const formattedEndDate = reportData.endDate ? dayjs(reportData.endDate).format('YYYY-MM-DD') : "";
       
       const params = {
         ...reportData,
         report_start_date: formattedStartDate,
         report_end_date: formattedEndDate
       };
+
+      console.log("Sending request with params:", params);
+
       
       const response = await axios.get(`http://localhost:3001/api/reports/generate-report`, {
         params: params,
@@ -384,7 +391,7 @@ const ReportsModal = ({ open, close, onReportCreate }) => {
       <div className="reports-modal-box">
         {/* header with close button - restored from commented code */}
         <div className="reports-modal-header d-flex justify-content-between align-items-center p-4">
-          <h4 className="m-0">Generate Report</h4>
+          <h4 className="mt-2">Generate Report</h4>
           <button 
             className="close-button border-0 bg-transparent" 
             onClick={handleCancel}
@@ -471,7 +478,7 @@ const ReportsModal = ({ open, close, onReportCreate }) => {
           </div>
 
           {/* Only show date fields for categories other than 3 and 4 */}
-         
+          {reportData.category != 3 && reportData.category != 4 &&  reportData.detail !=6 && reportData.detail != 7 && (
             <div className='d-flex gap-3'>
               {/* start date */}
               <div className='d-flex flex-column w-100'>
@@ -499,11 +506,13 @@ const ReportsModal = ({ open, close, onReportCreate }) => {
                   onChange={handleInputChange}
                   min={reportData.startDate || undefined}
                   className={errors.endDate ? 'error-input' : ''}
-                  disabled={reportData.detail == '1' || reportData.detail == '2' || reportData.detail == '18' || reportData.detail == '19'}
+                  disabled={reportData.detail == '1' || reportData.detail == '2' || reportData.detail == '18'}
                   />
                   {errors.endDate && <span className="error-message">{errors.endDate}</span>}
               </div>
             </div>
+          )}
+            
           
 
           {/* buttons */}
