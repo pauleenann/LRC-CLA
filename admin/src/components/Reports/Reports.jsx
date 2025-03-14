@@ -161,13 +161,20 @@ const Reports = () => {
             <div className="text-center py-4">
               <Loading />
             </div>
+          ) : reports.length === 0 ? (
+            <div className="d-flex flex-column align-items-center text-center my-4 gap-2">
+              <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
+              <span>No reports available.<br/>Please create one.</span>
+              {/* <button className='btn clear-btn' onClick={clearFilters}>Clear Filter</button> */}
+            </div>
           ) : currentReports.length === 0 ? (
             <div className="d-flex flex-column align-items-center text-center my-4 gap-2">
               <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
               <span>Report not found.<br/>Please try a different search.</span>
               <button className='btn clear-btn' onClick={clearFilters}>Clear Filter</button>
             </div>
-          ) : (
+          )
+          : (
             currentReports.map(report => (
               <div key={report.report_id} className='m-0 p-0 d-flex align-items-center text-center row rounded data'>
                 <div className='col-3'>{report.report_name}</div>

@@ -243,7 +243,8 @@ const generateCirculation = async (res, detail, startDate, endDate) => {
             return res.status(400).send({ error: 'Invalid report type' });
     }
 
-    if (detail === 'most borrowed books' || detail === 'least borrowed books') {
+    if (detail == 'most borrowed books' || detail == 'least borrowed books') {
+        console.log('most/least borrowed')
         // Shared query structure for both most and least borrowed books
         q = `SELECT 
             r.resource_id,
@@ -284,7 +285,6 @@ const generateCirculation = async (res, detail, startDate, endDate) => {
     
     console.log("whereClause:", whereClause);
     console.log("Final Query:", q);
-
 
     // Use promises for database query
     try {
