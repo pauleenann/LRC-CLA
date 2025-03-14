@@ -201,7 +201,7 @@ const Circulation = () => {
                   <div className='d-flex flex-column align-items-center gap-2 '>
                     <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
                     <span>No {query} resources available.<br/>Please try a different filter.</span>
-                    <button className='btn btn-secondary' onClick={clearFilter}>Clear Filter</button>
+                    <button className='btn clear-btn' onClick={clearFilter}>Clear Filter</button>
                   </div>
                 </td>
               </tr>

@@ -3,7 +3,7 @@ import ReactDom from 'react-dom';
 import './ReportView.css';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDownload, faX } from '@fortawesome/free-solid-svg-icons';
+import { faDownload, faExclamationCircle, faX } from '@fortawesome/free-solid-svg-icons';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -177,7 +177,10 @@ const ReportView = ({open, close, id}) => {
           </div>
           
         ) : (
-          <p>No report data available.</p>
+          <div className='d-flex flex-column justify-content-center align-items-center gap-2 my-5'>
+            <FontAwesomeIcon icon={faExclamationCircle} className='no-data'/>
+            <p>No report data available.</p>
+          </div>
         )}
       </div>     
     </div>,

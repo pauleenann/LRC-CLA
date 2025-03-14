@@ -118,6 +118,14 @@ li p{
     background-color: var(--button);
 }
 
-.navbar-menu .selected-sub{
+.navbar-menu .submenu{
     background-color: var(--button-hover);
+}
+
+.navbar-menu .submenu .submenu-item{
+   display: flex;
+   gap: 15px;
+   color: var(--white);
+   padding: 10px 0;
+   padding-left: 50px;
 }

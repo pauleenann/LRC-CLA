@@ -50,14 +50,16 @@
 
 .reports-container .header{
     background-color: var(--tup-color);
-    height: 50px;
+    height: 60px;
     font-size: 0.9rem;
+    box-shadow: 0px 1px 5px var(--shadow);
 }
 
 .reports-container .data{
-    background-color: var(--table-border-bottom);
-    min-height: 50px;
+    background-color: var(--table-border-bottom) !important;
+    min-height: 60px;
     font-size: 0.9rem;
+    box-shadow: 0px 1px 5px var(--shadow);
 }
 
 .reports-container .download-btn .icon,
@@ -78,7 +80,7 @@
     background-color: var(--tup-color);
     height: 50px;
     color: var(--white);
-    
+    box-shadow: 0px 1px 5px var(--shadow);
 }
 
 .reports-container .sort-btn{
@@ -95,6 +97,7 @@
     height: 50px;
     width: 400px;
     border: 1px solid var(--shadow);
+    box-shadow: 0px 1px 5px var(--shadow);
 }
 
 .reports-container .search-bar:hover,
@@ -107,5 +110,20 @@
     background-color: var(--tup-color);
     height: 50px;
     width: 50px;
+    color: var(--white);
+    box-shadow: 0px 1px 5px var(--shadow);
+}
+
+.reports-container .pagination-btn{
+    color: var(--tup-color);
+    border: none;
+}
+
+.reports-container .data-box{
+    min-height: 400px;
+}
+
+.reports-container .clear-btn{
+    background-color: var(--tup-color);
     color: var(--white);
 }

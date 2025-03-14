@@ -8,18 +8,21 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Loading from '../Loading/Loading';
 import axios from 'axios';
 
-
 const AdminNavbar = () => {
     const [role, setRole] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isCatalogingOpen, setIsCatalogingOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
-    const currentPathname = '/' + location.pathname.split('/')[1];
-
-    console.log(currentPathname)
+    const currentPathname = location.pathname;
+    const basePath = '/' + location.pathname.split('/')[1];
 
     useEffect(() => {
+        // Check if the current path is under cataloging to set dropdown state
+        if (currentPathname.startsWith('/catalog')) {
+            setIsCatalogingOpen(true);
+        }
+        
         const fetchUserRole = async () => {
             try {
                 const response = await axios.get('http://localhost:3001/api/user/check-session', { withCredentials: true });
@@ -27,16 +30,23 @@ const AdminNavbar = () => {
                     setRole(response.data.userRole);
                 } else {
                     setRole(null);
+                    // Redirect to login if not logged in
+                    navigate('/login');
                 }
             } catch (error) {
                 console.error('Error verifying session:', error);
                 setRole(null);
+                navigate('/login');
             } finally {
                 setLoading(false);
             }
         };
         fetchUserRole();
-    }, [navigate]);
+    }, [navigate, currentPathname]);
+
+    const toggleCataloging = () => {
+        setIsCatalogingOpen(!isCatalogingOpen);
+    };
 
     if (loading) {
         return <Loading />;
@@ -60,7 +70,7 @@ const AdminNavbar = () => {
             <div className="navbar-menu">
                 <ul>
                     {/* Dashboard */}
-                    <li className={currentPathname=='/dashboard'?'selected':''}>
+                    <li className={basePath === '/dashboard' ? 'selected' : ''}>
                         <Link to='/dashboard' className='menu'>
                             <div><FontAwesomeIcon icon={faChartSimple} className='menu-icon'/></div>
                             <div><p>Dashboard</p></div>
@@ -68,7 +78,7 @@ const AdminNavbar = () => {
                     </li>
 
                     {/* Logbook */}
-                    <li className={currentPathname=='/logbook'?'selected':''}>
+                    <li className={basePath === '/logbook' ? 'selected' : ''}>
                         <Link to='/logbook' className="menu">
                             <div><FontAwesomeIcon icon={faFileLines} className='menu-icon'/></div>
                             <div><p>Logbook</p></div>
@@ -76,7 +86,7 @@ const AdminNavbar = () => {
                     </li>
 
                     {/* Circulation */}
-                    <li className={currentPathname=='/circulation'?'selected':''}>
+                    <li className={basePath === '/circulation' ? 'selected' : ''}>
                         <Link to='/circulation' className="menu">
                             <div><FontAwesomeIcon icon={faCartShopping} className='menu-icon'/></div>
                             <div><p>Circulation</p></div>
@@ -84,63 +94,59 @@ const AdminNavbar = () => {
                     </li>
 
                     {/* Patrons */}
-                    <li className={currentPathname=='/patron'?'selected':''}>
+                    <li className={basePath === '/patron' ? 'selected' : ''}>
                         <Link to='/patron' className="menu">
                             <div><FontAwesomeIcon icon={faUser} className='menu-icon' /></div>
                             <div><p>Patrons</p></div>
                         </Link>
                     </li>
 
-                    {/* Cataloging */}
-                    <li className={currentPathname=='/catalog'?'selected':''}>
-                        <Link to='/catalog'className='d-flex align-items-center gap-3'>
-                            <div className='menu'>
-                               <div><FontAwesomeIcon icon={faList} className='menu-icon'/></div>
-                                <div><p>Cataloging</p></div>
-                            </div>
+                    {/* Cataloging - Parent Menu */}
+                    <li className={basePath === '/catalog' ? 'selected' : ''}>
+                        <Link to='/catalog' className="submenu-item">
+                            <div className='menu' onClick={toggleCataloging} style={{ cursor: 'pointer' }}>
+                                    <div><FontAwesomeIcon icon={faBook} className='menu-icon'/></div>
+                                    <div><p>Cataloging</p></div>
+                            </div> 
                         </Link>
+                        
+                        {/* Cataloging Submenu */}
+                        {isCatalogingOpen && (
+                            <ul className="submenu">
+                                <li>
+                                    <Link to='/catalog/generate-barcode' className="submenu-item">
+                                        <div><FontAwesomeIcon icon={faBarcode} className='menu-icon'/></div>
+                                        <div><p>Generate Barcode</p></div>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to='/catalog/manage-catalog' className="submenu-item">
+                                        <div><FontAwesomeIcon icon={faPenToSquare} className='menu-icon'/></div>
+                                        <div><p>Manage Catalog</p></div>
+                                    </Link>
+                                </li>
+                            </ul>
+                        )}
                     </li>
-
-                    {/* generate barcode */}
-                    <li className={currentPathname=='/catalog'?'selected-sub':''}>
-                        <Link to='/catalog/generate-barcode'className='d-flex align-items-center gap-3 ps-4'>
-                            <div className='menu'>
-                               <div><FontAwesomeIcon icon={faBarcode} className='menu-icon'/></div>
-                                <div><p>Generate Barcode</p></div>
-                            </div>
-                        </Link>
-                    </li>
-
-                    {/* manage catalog */}
-                    <li className={currentPathname=='/catalog'?'selected-sub':''}>
-                        <Link to='/catalog/manage-catalog'className='d-flex align-items-center gap-3 ps-4'>
-                            <div className='menu'>
-                               <div><FontAwesomeIcon icon={faPenToSquare} className='menu-icon'/></div>
-                                <div><p>Manage Catalog</p></div>
-                            </div>
-                        </Link>
-                    </li>
-
-                    
 
                     {/* Conditionally Render Menu Items Based on Role */}
                     {role !== 'staff' && (
                         <>
-                            <li className={currentPathname=='/reports'?'selected':''}>
+                            <li className={basePath === '/reports' ? 'selected' : ''}>
                                 <Link to='/reports' className="menu">
                                     <div><FontAwesomeIcon icon={faFileExcel} className='menu-icon'/></div>
                                     <div><p>Reports</p></div>
                                 </Link>
                             </li>
 
-                            <li className={currentPathname=='/audit'?'selected':''}>
+                            <li className={basePath === '/audit' ? 'selected' : ''}>
                                 <Link to='/audit' className="menu">
                                     <div><FontAwesomeIcon icon={faFile} className='menu-icon'/></div>
                                     <div><p>Audit Logs</p></div>
                                 </Link>
                             </li>
 
-                            <li className={currentPathname=='/accounts'?'selected':''}>
+                            <li className={basePath === '/accounts' ? 'selected' : ''}>
                                 <Link to='/accounts' className="menu">
                                     <div><FontAwesomeIcon icon={faUsersGear} className='menu-icon'/></div>
                                     <div><p>Accounts</p></div>
