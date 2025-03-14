@@ -299,7 +299,7 @@ const insertResources = async (res, req, authors, username) => {
                     dept_id, 
                     type_id, 
                     avail_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             `;
 
             const resourceValues = [
