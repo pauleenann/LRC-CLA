@@ -63,9 +63,9 @@
 
 
 .skeleton {
-    background: linear-gradient(to right, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+    background: #E0E0E0 25%;
     background-size: 200% 100%;
-    animation: shimmer 1.5s infinite linear;
+    animation: pulse 1.5s infinite linear;
     height: 20px;
     width: 80%;
     border-radius: 4px;
@@ -76,12 +76,15 @@
     width: 60%;
   }
   
-  @keyframes shimmer {
+  @keyframes pulse {
     0% {
-      background-position: -200% 0;
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
     }
     100% {
-      background-position: 200% 0;
+        opacity: 0.6;
     }
-  }
+}
   

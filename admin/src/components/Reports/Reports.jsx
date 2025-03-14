@@ -5,182 +5,87 @@ import Loading from '../Loading/Loading';
 import * as XLSX from 'xlsx'; // Import xlsx for Excel export
 import dayjs from 'dayjs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowRight, faArrowUpWideShort, faDownload, faEye, faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
+import ReportsModal from '../ReportsModal/ReportsModal';
+import ReportView from '../ReportView/ReportView';
 
 const Reports = () => {
-  const reportType = ['Attendance Report', 'Circulation Report', 'Inventory Report'];
-  const subOptions = {
-    'Attendance Report': ['Daily Report', 'Monthly Report', 'Custom Date'],
-    'Circulation Report': ['Daily Report', 'Monthly Report', 'Custom Date'],
-    'Inventory Report': ['All Resources', 'Book', 'Journals', 'Thesis & Dissertations', 'Newsletters', 'Available Resources', 'Lost Resources', 'Damaged Resources'],
-  };
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [reports, setReports] = useState([]);
+  const [viewId, setViewId] = useState(null)
 
-  const [selectedType, setSelectedType] = useState({ type: '', kind: '' });
-  const [customDate, setCustomDate] = useState({ startDate: '', endDate: '' });
-  const [isNoData, setIsNoData] = useState(false)
-  const [generatedReport, setGeneratedReport] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  useEffect(()=>{
+    getReports();
+  },[])
 
-  useEffect(() => {
-    setSelectedType((prevSelected) => ({ ...prevSelected, kind: '' }));
-  }, [selectedType.type]);
-
-  const handleSelectedFilter = (e) => {
-    const { name, value } = e.target;
-    setSelectedType((prevSelected) => ({ ...prevSelected, [name]: value }));
-  };
-
-  const handleCustomDateChange = (e) => {
-    const { id, value } = e.target;
-    setCustomDate((prevCustomDate) => ({ ...prevCustomDate, [id]: value }));
-  };
-
-  const handleClear = () => {
-    setSelectedType({ type: '', kind: '' });
-    setCustomDate({ startDate: '', endDate: '' });
-    setSearchQuery('');
-    setGeneratedReport([])
-  };
-
-  const handleGenerate = async () => {
-    setLoading(true);
-    try {
-      const params = {
-        type: selectedType.type,
-        kind: selectedType.kind,
-        ...(selectedType.kind === 'Custom Date' && { startDate: customDate.startDate, endDate: customDate.endDate }),
-      };
-      const response = await axios.get('http://localhost:3001/api/reports', { params });
-      if(response.data.length!=0){
-        setIsNoData(false)
-        setGeneratedReport(response.data);
-      }else{
-        setIsNoData(true);
-        setGeneratedReport([])
+  const getReports = async() => {
+      try {
+          const response = await axios.get('http://localhost:3001/api/reports');
+          console.log(response);
+          setReports(response.data);
+      } catch (error) {
+          console.log('Cannot fetch details. ', error);
       }
-      
-    } catch (error) {
-      console.error('Error generating report:', error);
-    } finally {
-      setLoading(false);
-    }
   };
-
-  const exportToExcel = () => {
-    if (generatedReport.length === 0) {
-      console.error('No data to export');
-      return;
-    }
-    const headers = Object.keys(generatedReport[0]);
-    const data = generatedReport.map((item) => {
-      const formattedItem = {};
-      Object.keys(item).forEach((key) => {
-        formattedItem[key.replace(/_/g, ' ')] = item[key];
-      });
-      return formattedItem;
-    });
-    const worksheet = XLSX.utils.json_to_sheet(data, { header: headers });
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
-    XLSX.writeFile(workbook, `${selectedType.type}-${selectedType.kind}.xlsx`);
-  };
-
-  const filteredReport = generatedReport.filter((item) =>
-    Object.values(item).some((value) =>
-      value.toString().toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  );
-
-  const paginatedReport = filteredReport.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-  const totalPages = Math.ceil(filteredReport.length / itemsPerPage);
 
   return (
     <div className="reports-container">
       <h1>Reports</h1>
 
-      <div className="reports-summary">
-        <h4>Generate Reports</h4>
-
-        <div className='report-choices'>
-          <div className="report-type">
-            <label>Type of Report</label>
-            <select name="type" onChange={handleSelectedFilter} value={selectedType.type}>
-              <option value="" disabled>Select a type</option>
-              {reportType.map((item, index) => (
-                <option key={index} value={item}>{item}</option>
-              ))}
-            </select>
+      <div className='d-flex flex-column gap-3'>
+        {/* search bar, and sort and create */}
+        <div className='d-flex justify-content-between mt-4'>
+          {/* search bar */}
+          <div className='d-flex gap-2'>
+            <input type="text" className='search-bar rounded ps-2' placeholder='Search'/>
+            <button className='btn search-btn'>
+              <FontAwesomeIcon icon={faSearch} className='icon'/>
+            </button>
           </div>
-
-          {selectedType.type && subOptions[selectedType.type] && (
-            <div className="sub-options">
-              <label>Report Detail</label>
-              <select name="kind" onChange={handleSelectedFilter} value={selectedType.kind}>
-                <option value="" disabled>Select a detail</option>
-                {subOptions[selectedType.type].map((option, index) => (
-                  <option key={index} value={option}>{option}</option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {selectedType.kind === 'Custom Date' && (
-            <div className="custom">
-              <input type="date" id="startDate" value={customDate.startDate} onChange={handleCustomDateChange} />
-              <span>to</span>
-              <input type="date" id="endDate" value={customDate.endDate} onChange={handleCustomDateChange} />
-            </div>
-          )}
+          {/* sort and create report */}
+          <div className='d-flex gap-2'>
+            <button className='btn sort-btn'>
+              <FontAwesomeIcon icon={faArrowUpWideShort} className='icon'/>
+            </button>
+            <button className='btn create-btn d-flex gap-3 align-items-center' onClick={()=>setIsReportModalOpen(true)}>
+              <FontAwesomeIcon icon={faPlus} className='icon'/>
+              Create new report
+            </button>
+          </div>
         </div>
 
-
-        <div className="buttons">
-          <button className="btn clear-btn" disabled={!selectedType.type} onClick={handleClear}>Clear</button>
-          <button className="btn generate-report" onClick={handleGenerate} disabled={!selectedType.type || !selectedType.kind}>Generate Report</button>
+        {/* header */}
+        <div className='header m-0 p-0 row d-flex align-items-center text-center justify-content-center rounded text-light'>
+          <div className='col-3'>Report Name</div>
+          <div className='col-3'>Report Description</div>
+          <div className='col-3'>Created at</div>
+          <div className='col-3'>Actions</div>
         </div>
+
+        {/* data */}
+        {reports.map(report=>(
+          <div className='m-0 p-0 d-flex align-items-center text-center row rounded data'>
+            <div className='col-3'>{report.report_name}</div>
+            <div className='col-3'>{report.report_description}</div>
+            <div className='col-3'>{dayjs(report.created_at).format('YYYY-MM-DD')}</div>
+            <div className='col-3'>
+              {/* <button className="btn download-btn">
+                <FontAwesomeIcon icon={faDownload} className='icon'/>
+              </button> */}
+              <button className="btn eye-btn">
+                <FontAwesomeIcon icon={faEye} className='icon' onClick={()=>{
+                  setViewId(report.report_id);
+                  setIsViewModalOpen(true);
+                }}/>
+              </button>
+            </div>
+          </div>
+        ))}
         
-        {generatedReport.length > 0 && <input type="text" placeholder="Search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className='search mt-4'/>}
-
-        {generatedReport.length > 0 ? (
-          <div >
-            <table className="report">
-              <thead>
-                <tr>
-                  {Object.keys(generatedReport[0]).map((key, index) => (<td key={index}>{key}</td>))}
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedReport.map((item, index) => (
-                  <tr key={index}>
-                    {Object.keys(item).map((key, i) => (
-                      <td key={i}>{dayjs(item[key]).isValid() && isNaN(item[key]) ? dayjs(item[key]).format("DD/MM/YYYY") : item[key]}</td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            <div className="pagination">
-              <span>Page {currentPage} of {totalPages}</span>
-              <div className='buttons'>
-                <button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)} className='btn'>
-                  <FontAwesomeIcon icon={faArrowLeft} className='icon' />
-                </button>
-                <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)} className='btn'>
-                  <FontAwesomeIcon icon={faArrowRight} className='icon'/>
-                </button>
-              </div>
-            </div>
-          </div>
-        ):isNoData?"No data available":''}
-
-        {generatedReport.length > 0 && <button className='btn export-report' onClick={exportToExcel}>Export</button>}
       </div>
-
-      <Loading loading={loading} />
+      <ReportsModal open={isReportModalOpen} close={()=>setIsReportModalOpen(false)}/>
+      <ReportView open={isViewModalOpen} close={()=>setIsViewModalOpen(false)} id={viewId}/>
     </div>
   );
 };
