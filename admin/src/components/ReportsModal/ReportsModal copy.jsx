@@ -45,9 +45,8 @@ const ReportsModal = ({ open, close, onReportCreate }) => {
     // Reset date fields when detail changes
     if (reportData.detail) {
       const detailId = parseInt(reportData.detail);
-      const catID = parseInt(reportData.category)
       
-      if (detailId === 1 || detailId === 18 || catID === 3) {
+      if (detailId === 1 || detailId === 18) {
         // Today's date for both start and end
         setReportData(prevData => ({
           ...prevData,
@@ -188,78 +187,25 @@ const ReportsModal = ({ open, close, onReportCreate }) => {
     setLoading(true);
     
     try {
-      // First generate the report data if not already generated
-      if (generatedReport.length === 0) {
-        try {
-          const formattedStartDate = reportData.startDate ? dayjs(reportData.startDate).format('YYYY-MM-DD') : null;
-          const formattedEndDate = reportData.endDate ? dayjs(reportData.endDate).format('YYYY-MM-DD') : null;
-          
-          const params = {
-            ...reportData,
-            report_start_date: formattedStartDate,
-            report_end_date: formattedEndDate
-          };
-          
-          const response = await axios.get(`${API_BASE_URL}/api/reports/generate-report`, {
-            params: params,
-          });
-          
-          // Process report data (same as in your generateReport function)
-          const processedReportData = response.data.map(row => {
-            const processedRow = { ...row };
-            Object.keys(processedRow).forEach(key => {
-              if (typeof processedRow[key] === 'string' && 
-                  (processedRow[key].includes('T') && processedRow[key].includes('Z') || 
-                   processedRow[key].match(/^\d{4}-\d{2}-\d{2}$/))) {
-                processedRow[key] = dayjs.utc(processedRow[key]).local().format("YYYY-MM-DD HH:mm:ss");
-              }
-            });
-            return processedRow;
-          });
-          
-          // Store the generated report data temporarily
-          setGeneratedReport(processedReportData);
-        } catch (error) {
-          console.error('Cannot fetch generated report:', error);
-          alert('Failed to generate report data. Please try again later.');
-          setLoading(false);
-          return;
-        }
-      }
+      // Format dates for API request
+      const formattedStartDate = reportData.startDate ? dayjs(reportData.startDate).format('YYYY-MM-DD') : null;
+      const formattedEndDate = reportData.endDate ? dayjs(reportData.endDate).format('YYYY-MM-DD') : null;
       
-      // Generate Excel file
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(generatedReport);
-      XLSX.utils.book_append_sheet(wb, ws, reportData.name || 'Report');
+      // Prepare request payload
+      const payload = {
+        name: reportData.name,
+        description: reportData.description,
+        category_id: reportData.category,
+        detail_id: reportData.detail,
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        staff_id: staffId,
+        staff_uname: staffUname
+      };
       
-      // Convert the workbook to a binary string
-      const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-      
-      // Create a Blob from the buffer
-      const excelBlob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      
-      // Create form data to send both the report info and the Excel file
-      const formData = new FormData();
-      
-      // Add the file with a timestamp in the filename
-      const timestamp = dayjs().format('YYYY-MM-DD_HH-mm-ss');
-      const filename = `${reportData.name || 'Report'}_${timestamp}.xlsx`;
-      formData.append('report_file', excelBlob, filename);
-      
-      // Add other report details
-      formData.append('name', reportData.name);
-      formData.append('description', reportData.description);
-      formData.append('category_id', reportData.category);
-      formData.append('detail_id', reportData.detail);
-      formData.append('startDate', reportData.startDate ? dayjs(reportData.startDate).format('YYYY-MM-DD') : null);
-      formData.append('endDate', reportData.endDate ? dayjs(reportData.endDate).format('YYYY-MM-DD') : null);
-      formData.append('staff_id', staffId);
-      formData.append('staff_uname', staffUname);
-      
-      // Send the form data to the server
-      const response = await axios.post(`${API_BASE_URL}/api/reports`, formData, {
+      const response = await axios.post(`${API_BASE_URL}/api/reports`, payload, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'application/json'
         },
         withCredentials: true
       });
@@ -270,6 +216,7 @@ const ReportsModal = ({ open, close, onReportCreate }) => {
         if (onReportCreate && typeof onReportCreate === 'function') {
           onReportCreate(response.data);
         } else {
+          // If no callback is provided, reload the page as in the original code
           window.location.reload();
         }
       }
@@ -471,7 +418,7 @@ const ReportsModal = ({ open, close, onReportCreate }) => {
           </div>
 
           {/* Only show date fields for categories other than 3 and 4 */}
-         
+          {reportData.category !== '3' && reportData.category !== '4' && reportData.detail !=='7' && reportData.detail !== '8' && (
             <div className='d-flex gap-3'>
               {/* start date */}
               <div className='d-flex flex-column w-100'>
@@ -504,7 +451,7 @@ const ReportsModal = ({ open, close, onReportCreate }) => {
                   {errors.endDate && <span className="error-message">{errors.endDate}</span>}
               </div>
             </div>
-          
+          )}
 
           {/* buttons */}
           <div className='d-flex gap-2 justify-content-start buttons mt-3'>

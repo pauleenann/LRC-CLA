@@ -28,7 +28,7 @@ const ReportView = ({open, close, id}) => {
   
   useEffect(() => {
     if (report && Object.keys(report).length > 0) {
-      fetchExcel();
+      generateReport();
     }
   }, [report]);
   
@@ -58,44 +58,95 @@ const ReportView = ({open, close, id}) => {
     }
   };
 
-  const fetchExcel = async () => {
+  const generateReport = async () => {
+    console.log('generating report');
     try {
-        const response = await axios.get(`http://localhost:3001/api/reports/fetch-excel?filePath=${encodeURIComponent(report[0].filepath)}`, {
-            responseType: 'arraybuffer', // Retrieve as binary data
+      const reportParams = { ...report[0] };
+      
+      const response = await axios.get(`http://localhost:3001/api/reports/generate-report`, {
+        params: reportParams, // Sending report as query params
+      });
+      console.log(response);
+      
+      // Process any date fields in the response data
+      const processedReportData = response.data.map(row => {
+        const processedRow = { ...row };
+        
+        // Look for date fields and convert them
+        Object.keys(processedRow).forEach(key => {
+          // Check if the field contains a date string (simple check for ISO format)
+          if (typeof processedRow[key] === 'string' && 
+              (processedRow[key].includes('T') && processedRow[key].includes('Z') || 
+               processedRow[key].match(/^\d{4}-\d{2}-\d{2}$/))) {
+            // Convert UTC date to local timezone
+            processedRow[key] = dayjs.utc(processedRow[key]).local().format("YYYY-MM-DD HH:mm:ss");
+          }
         });
-
-        // Convert binary data to a readable format
-        const workbook = XLSX.read(new Uint8Array(response.data), { type: 'array' });
-        const sheetName = workbook.SheetNames[0]; // Get the first sheet
-        const sheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(sheet); // Convert sheet to JSON
-
-        setGeneratedReport(jsonData);
+        
+        return processedRow;
+      });
+      
+      setGeneratedReport(processedReportData);
     } catch (error) {
-        console.error('Error fetching Excel file:', error);
+      console.log('Cannot fetch generated report.', error);
     }
   };
 
+  // Function to export data as XLSX
   const exportToExcel = () => {
-      if (generatedReport.length === 0) return;
-      
-      // Create workbook and worksheet
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(generatedReport);
-      
-      // Add worksheet to workbook
-      XLSX.utils.book_append_sheet(wb, ws, report[0].report_name || 'Report');
-      
-      // Generate filename with timestamp
-      const timestamp = dayjs().format('YYYY-MM-DD_HH-mm-ss');
-      const filename = `${report[0].report_name || 'Report'}_${timestamp}.xlsx`;
-      
-      // Write and download
-      XLSX.writeFile(wb, filename);
-    };
-  
+    if (generatedReport.length === 0) {
+      console.log('No data to export');
+      return;
+    }
 
-  console.log(generatedReport)
+    try {
+      setExporting(true);
+      
+      // Get report name for the file
+      const reportName = report.length > 0 ? report[0].report_name : 'report';
+      const sanitizedReportName = reportName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      
+      // Prepare metadata for the report
+      const metadata = [];
+      if (report.length > 0) {
+        const reportData = report[0];
+        metadata.push(
+          ['Report Name', reportData.report_name],
+          ['Description', reportData.report_description],
+          ['Category', reportData.cat_name],
+          ['Detail', reportData.detail_name],
+          ['Start Date', reportData.report_start_date],
+          ['End Date', reportData.report_end_date],
+          ['Generated At', dayjs().format("YYYY-MM-DD HH:mm:ss")],
+          ['', ''], // Empty row as separator
+        );
+      }
+      
+      // Create a new workbook
+      const workbook = XLSX.utils.book_new();
+      
+      // Create metadata worksheet
+      const metadataSheet = XLSX.utils.aoa_to_sheet(metadata);
+      XLSX.utils.book_append_sheet(workbook, metadataSheet, 'Report Info');
+      
+      // Convert data to worksheet
+      const dataSheet = XLSX.utils.json_to_sheet(generatedReport);
+      
+      // Add the worksheet to the workbook
+      XLSX.utils.book_append_sheet(workbook, dataSheet, 'Data');
+      
+      // Generate Excel file and trigger download
+      XLSX.writeFile(workbook, `${sanitizedReportName}_${dayjs().format('YYYY-MM-DD')}.xlsx`);
+      
+      console.log('Export successful');
+    } catch (error) {
+      console.error('Error exporting to Excel:', error);
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  console.log(generatedReport);
 
   if(!open){
     return null
@@ -149,8 +200,8 @@ const ReportView = ({open, close, id}) => {
             
             <button 
               className="btn d-flex align-items-center gap-2 export-btn mt-3"
-              disabled={exporting || generatedReport.length === 0}
               onClick={exportToExcel}
+              disabled={exporting || generatedReport.length === 0}
             >
               <FontAwesomeIcon icon={faDownload} className='icon'/>
               <span className='m-0 '>{exporting ? 'Exporting...' : 'Export to Excel'}</span>
