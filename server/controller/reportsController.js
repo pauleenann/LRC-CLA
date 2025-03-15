@@ -148,11 +148,49 @@ export const generateReports = (req, res) => {
           generateCirculation(res, detail_name, report_start_date, report_end_date);
           break;
         case 'patron':
-          generateCirculation(res,detail_name);
+          generatePatron(res,detail_name);
           break;
         // Add cases for other report types as needed
       }
 };
+
+const generatePatron = (res, detail) => {
+    let selectCount = detail == 'top borrowers' ? 'COUNT(cout.patron_id) AS checkout_count,' : '';
+    let whereClause = detail == 'top borrowers' ? '' : "WHERE cout.status = 'overdue'";
+    let groupByClause = detail == 'top borrowers' ? `GROUP BY p.tup_id, p.patron_fname, p.patron_lname, p.patron_mobile, 
+        p.patron_email, p.category, col.college_name, cou.course_name` : '';
+
+    let q = `
+        SELECT 
+            p.tup_id,
+            p.patron_fname,
+            p.patron_lname,
+            p.patron_mobile,
+            p.patron_email,
+            p.category,
+            col.college_name,
+            cou.course_name,
+            ${selectCount}
+        FROM checkout cout
+        JOIN patron p ON p.patron_id = cout.patron_id
+        JOIN college col ON p.college_id = col.college_id
+        JOIN course cou ON p.course_id = cou.course_id
+        ${whereClause}
+        ${groupByClause};`;
+
+    // Ensure query does not have trailing commas in SELECT
+    q = q.replace(/,\s*FROM/, ' FROM');
+
+    db.query(q, (err, results) => {
+        if (err) {
+            console.error("Database Error:", err);
+            return res.status(500).send({ error: 'Database query failed' });
+        }
+
+        res.send(results);
+    });
+};
+
 
 const generateInventory = async (res, detail, startDate, endDate) => {
     let whereClause = ``;

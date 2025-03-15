@@ -6,11 +6,12 @@ import { faX, faDownload } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
 import dayjs from 'dayjs';
+import Swal from 'sweetalert2'
 
 // Use environment variables for API endpoints
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001';
 
-const ReportsModal = ({ open, close, onReportCreate }) => {
+const ReportsModal = ({ open, close}) => {
   const [generatedReport, setGeneratedReport] = useState([]);
   const [reportData, setReportData] = useState({
     name: '',
@@ -184,106 +185,109 @@ const ReportsModal = ({ open, close, onReportCreate }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-    
+
+    if (!validateForm()) return;
+
+    const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#54CB58",
+        cancelButtonColor: "#94152b",
+        confirmButtonText: "Yes, save report!"
+    });
+
+    if (!result.isConfirmed) return;
+
     setLoading(true);
-    
+
     try {
-      // First generate the report data if not already generated
-      if (generatedReport.length === 0) {
-        try {
-          const formattedStartDate = reportData.startDate ? dayjs(reportData.startDate).format('YYYY-MM-DD') : null;
-          const formattedEndDate = reportData.endDate ? dayjs(reportData.endDate).format('YYYY-MM-DD') : null;
-          
-          const params = {
-            ...reportData,
-            report_start_date: formattedStartDate,
-            report_end_date: formattedEndDate
-          };
-          
-          const response = await axios.get(`${API_BASE_URL}/api/reports/generate-report`, {
-            params: params,
-          });
-          
-          // Process report data (same as in your generateReport function)
-          const processedReportData = response.data.map(row => {
-            const processedRow = { ...row };
-            Object.keys(processedRow).forEach(key => {
-              if (typeof processedRow[key] === 'string' && 
-                  (processedRow[key].includes('T') && processedRow[key].includes('Z') || 
-                   processedRow[key].match(/^\d{4}-\d{2}-\d{2}$/))) {
-                processedRow[key] = dayjs.utc(processedRow[key]).local().format("YYYY-MM-DD HH:mm:ss");
-              }
+        let reportDataToSave = generatedReport;
+
+        // Fetch report data if it hasn't been generated
+        if (reportDataToSave.length === 0) {
+            const formattedStartDate = reportData.startDate ? dayjs(reportData.startDate).format('YYYY-MM-DD') : '';
+            const formattedEndDate = reportData.endDate ? dayjs(reportData.endDate).format('YYYY-MM-DD') : '';
+
+            const params = {
+                ...reportData,
+                report_start_date: formattedStartDate,
+                report_end_date: formattedEndDate
+            };
+
+            const response = await axios.get(`${API_BASE_URL}/api/reports/generate-report`, { params });
+
+            reportDataToSave = response.data.map(row => {
+                const processedRow = { ...row };
+                Object.keys(processedRow).forEach(key => {
+                    if (typeof processedRow[key] === 'string' &&
+                        (processedRow[key].includes('T') && processedRow[key].includes('Z') || 
+                        processedRow[key].match(/^\d{4}-\d{2}-\d{2}$/))) {
+                        processedRow[key] = dayjs.utc(processedRow[key]).local().format("YYYY-MM-DD HH:mm:ss");
+                    }
+                });
+                return processedRow;
             });
-            return processedRow;
-          });
-          
-          // Store the generated report data temporarily
-          setGeneratedReport(processedReportData);
-        } catch (error) {
-          console.error('Cannot fetch generated report:', error);
-          alert('Failed to generate report data. Please try again later.');
-          setLoading(false);
-          return;
+
+            setGeneratedReport(reportDataToSave);
         }
-      }
-      
-      // Generate Excel file
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(generatedReport);
-      XLSX.utils.book_append_sheet(wb, ws, reportData.name || 'Report');
-      
-      // Convert the workbook to a binary string
-      const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-      
-      // Create a Blob from the buffer
-      const excelBlob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      
-      // Create form data to send both the report info and the Excel file
-      const formData = new FormData();
-      
-      // Add the file with a timestamp in the filename
-      const timestamp = dayjs().format('YYYY-MM-DD_HH-mm-ss');
-      const filename = `${reportData.name || 'Report'}_${timestamp}.xlsx`;
-      formData.append('report_file', excelBlob, filename);
-      
-      // Add other report details
-      formData.append('name', reportData.name);
-      formData.append('description', reportData.description);
-      formData.append('category_id', reportData.category);
-      formData.append('detail_id', reportData.detail);
-      formData.append('startDate', reportData.startDate ? dayjs(reportData.startDate).format('YYYY-MM-DD') : null);
-      formData.append('endDate', reportData.endDate ? dayjs(reportData.endDate).format('YYYY-MM-DD') : null);
-      formData.append('staff_id', staffId);
-      formData.append('staff_uname', staffUname);
-      
-      // Send the form data to the server
-      const response = await axios.post(`${API_BASE_URL}/api/reports`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        withCredentials: true
+
+        // Generate Excel file
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.json_to_sheet(reportDataToSave);
+        XLSX.utils.book_append_sheet(wb, ws, reportData.name || 'Report');
+
+        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const excelBlob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+        // Create form data
+        const formData = new FormData();
+        const timestamp = dayjs().format('YYYY-MM-DD_HH-mm-ss');
+        const filename = `${reportData.name || 'Report'}_${timestamp}.xlsx`;
+
+        formData.append('report_file', excelBlob, filename);
+        formData.append('name', reportData.name);
+        formData.append('description', reportData.description);
+        formData.append('category_id', reportData.category);
+        formData.append('detail_id', reportData.detail);
+        formData.append('startDate', reportData.startDate ? dayjs(reportData.startDate).format('YYYY-MM-DD') : '');
+        formData.append('endDate', reportData.endDate ? dayjs(reportData.endDate).format('YYYY-MM-DD') : '');
+        formData.append('staff_id', staffId);
+        formData.append('staff_uname', staffUname);
+
+        // Send request
+        await axios.post(`${API_BASE_URL}/api/reports`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            withCredentials: true
+        });
+
+        await Swal.fire({
+            title: "Saved!",
+            text: "Report saved successfully.",
+            icon: "success"
+        }).then((result) => {
+          if (result.isConfirmed) {
+              window.location.reload();
+          }
       });
-      
-      if (response.data) {
-        resetForm();
-        close();
-        if (onReportCreate && typeof onReportCreate === 'function') {
-          onReportCreate(response.data);
-        } else {
-          window.location.reload();
-        }
-      }
+
     } catch (error) {
-      console.error('Error processing report:', error);
-      alert('Failed to process report. Please try again later.');
+        console.error('Error processing report:', error);
+        await Swal.fire({
+            title: "Error",
+            text: "Failed to process report. Please try again later.",
+            icon: "error"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.reload();
+            }
+        });
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
 
   const resetForm = () => {
     setReportData({
