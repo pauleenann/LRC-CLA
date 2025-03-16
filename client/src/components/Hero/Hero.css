@@ -7,11 +7,10 @@
     url('../../assets/OPAC/photos/cla-hall.JPG');
     background-size: cover;
     background-position: bottom;
-    border-bottom-right-radius: 150px;
-    border-bottom-left-radius: 150px;
+    border-bottom-right-radius: 100px;
+    border-bottom-left-radius: 100px;
 }
 
 .hero-box h1{
     font-family: var(--open-sans);
-    
 }

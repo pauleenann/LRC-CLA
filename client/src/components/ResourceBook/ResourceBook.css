@@ -2,28 +2,40 @@
 
 .resourcebook-box{
     width: 300px;
-    min-height: 350px;
+    height: 360px;
     background-color: var(--light-gray);
     padding: 20px;
     cursor: pointer;
+    position: relative;
 }
 
 .resourcebook-box .img-box{
+    padding: 30px;
     width: 100%;
     height: 250px;
     background-color: var(--white);
 }
 
 .resourcebook-box .img-box img{
-    width: 140px;
+    object-fit: cover;
+    width: 130px;
+    height: 100%;
+    box-shadow: 2px 2px 5px #00000036;
 }
 
 .resourcebook-box .title{
     color: var(--dark-gray);
-    font-size: 1.2rem;
+    font-size: 1rem;
+    text-transform: capitalize;
 }
 
 .resourcebook-box .author{
     color: var(--medium-gray);
-    font-size: 1rem;
+    font-size: 0.9rem;
+    text-transform: capitalize;
+}
+
+.resourcebook-box .availability{
+    box-shadow: 2px 2px 5px #00000036;
+    background-color: green;
 }
