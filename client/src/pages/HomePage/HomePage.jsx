@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion'; // Import Framer Motion
 import './HomePage.css';
 import Navbar from '../../components/Navbar/Navbar';
@@ -17,12 +17,36 @@ import { Navigation, Pagination, Mousewheel, Keyboard } from 'swiper/modules';
 import ResourceBook from '../../components/ResourceBook/ResourceBook';
 import Footer from '../../components/Footer/Footer';
 
+import axios from 'axios'
+
 const fadeIn = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
 };
 
 const HomePage = () => {
+  const [mostBorrowed, setMostBorrowed] = useState([]);
+  const [mostBorrowedLoading, setMostBorrowedLoading] = useState(false)
+
+  useEffect(()=>{
+    getMostBorrowed()
+  },[])
+
+  const getMostBorrowed = async ()=>{
+    setMostBorrowedLoading(true)
+    try {
+      const response = await axios.get('http://localhost:3001/api/online-catalog/most-borrowed');
+      setMostBorrowed(response.data)
+      console.log(response)
+    } catch (error) {
+      console.log('Cannot fetch most borrowed books: ', error)
+    } finally{
+      setTimeout(()=>{
+        setMostBorrowedLoading(false)
+      },3000)
+    }
+  }
+
   return (
     <motion.div 
       className='homepage-container'
@@ -67,13 +91,14 @@ const HomePage = () => {
           className="mySwiper"
         >
           <div className="most-borrowed-books">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => (
+            {Array.isArray(mostBorrowed)&&mostBorrowed.length>0
+            ?mostBorrowed.map((item, index) => (
               <SwiperSlide key={index}>
                 <motion.div whileHover={{ scale: 1.05 }}>
-                  <ResourceBook />
+                  <ResourceBook loading={mostBorrowedLoading} data={item}/>
                 </motion.div>
               </SwiperSlide>
-            ))}
+            )):''}
           </div>
         </Swiper>
       </motion.div>

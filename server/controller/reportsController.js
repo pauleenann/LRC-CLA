@@ -281,6 +281,7 @@ const generateCirculation = async (res, detail, startDate, endDate) => {
             return res.status(400).send({ error: 'Invalid report type' });
     }
 
+    
     if (detail == 'most borrowed books' || detail == 'least borrowed books') {
         console.log('most/least borrowed')
         // Shared query structure for both most and least borrowed books
