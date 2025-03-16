@@ -1,39 +1,44 @@
 import React from 'react'
 import './Footer.css'
-import tupLogo from '../../assets/OPAC/icons/tup-logo.png'
-import claLogo  from '../../assets/OPAC/icons/cla-logo.png'
-import { Link } from 'react-router-dom'
 
 const Footer = () => {
-  //display page from the top
-  const handleNavigate = () => {
-    window.scrollTo(0, 0);
-  };
-  
   return (
-    <div className='footer-container'>
-      {/* footer logo and college name */}
-      <div className='footer-text'>
-        <p>College of Liberal Arts</p>
-        <p>Learning Resource Center</p>
-      </div>
-      {/* connect with us */}
-      <div className="connect">
-        <p className='m-2'>Connect with us</p>
-        <div className="socials">
-          <i class="fa-brands fa-facebook"></i>
-          <i class="fa-brands fa-x-twitter"></i>
-          <i class="fa-brands fa-instagram"></i>
-          <i class="fa-regular fa-envelope"></i>
+    <footer>
+      <div className="container d-flex align-items-center justify-content-between h-100">
+        {/* logo, subtitle, social */}
+        <div className='w-25 text-light'>
+            <p className='m-0 logo fs-1'>Liberal<span>Search</span>.</p>
+            <p className='m-0 fs-sm sub'>An online catalog dedicated for College of Liberal Arts’ Learning Resources Center</p>
+            <i class="fa-brands fa-facebook fs-1 mt-2"></i>
+        </div>
+
+        {/* quick links and contact us */}
+        <div className='d-flex gap-5'>
+            {/* quick links */}
+            <div className="quick-links text-light">
+                <h2 className='fs-1 mb-3'>Quick Links</h2>
+                <ul className='list-unstyled d-flex flex-column gap-2'>
+                    <li>Home</li>
+                    <li>About Us</li>
+                    <li>Services</li>
+                    <li>Terms & Conditions</li>
+                </ul>
+            </div>
+            {/* contact us */}
+            <div className="contact-us text-light">
+                <h2 className='fs-1 mb-3'>Contact Us</h2>
+                <div className='d-flex align-items-center gap-2'>
+                    <i class="fa-solid fa-envelope"></i>
+                    <p className="m-0">learningresourcescenter@gmail.com</p>
+                </div>
+            </div>
         </div>
       </div>
       {/* copyright */}
-      <div className="tc-cpy">
-        <Link to='/terms-conditions' onClick={handleNavigate} className='tc'>Terms & Conditions</Link>
-       <p className='m-0 copyright'>Copyright©2024. All Rights Reserved TUP-CLA Learning Resource Center</p>
+      <div className="copyright text-center">
+        <p className="m-0 p-2 text-light fs-sm">Copyright © 2025. All Rights Reserved TUP-CLA Learning Resource Center</p>
       </div>
-        
-    </div>
+    </footer>
   )
 }
 

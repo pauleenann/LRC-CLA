@@ -6,7 +6,7 @@ import Footer from '../Footer/Footer'
 import { Link, useLocation } from 'react-router-dom'
 import ResourceModal from '../ResourceModal/ResourceModal'
 import axios from 'axios'
-import Navbar from '../Navbar/Navbar'
+import Navbar from '../Navbar2/Navbar'
 import { gsap } from "gsap";
 
 const Search = () => {

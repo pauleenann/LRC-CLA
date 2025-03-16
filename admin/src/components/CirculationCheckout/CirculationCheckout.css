@@ -253,4 +253,5 @@
 .circ-checkout-container .checkout-btn-box button{
     background-color: var(--tup-color);
     color: var(--white);
+    height: 50px;
 }

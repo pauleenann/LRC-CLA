@@ -151,7 +151,7 @@ const Circulation = () => {
         </select>
       </div>
 
-      <div>
+      <div className='table-box'>
         <h2>Recent transactions</h2>
         {/* Table */}
         <table className="circ-table">
@@ -198,10 +198,10 @@ const Circulation = () => {
             ) : filteredBorrowers.length === 0 && !loading ? (
               <tr>
                 <td colSpan="8" className='no-data-box text-center'>
-                  <div className='d-flex flex-column align-items-center gap-2 '>
+                  <div className='d-flex flex-column align-items-center gap-2 my-5'>
                     <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
                     <span>No {query} resources available.<br/>Please try a different filter.</span>
-                    <button className='btn clear-btn' onClick={clearFilter}>Clear Filter</button>
+                    <button className='btn btn-warning' onClick={clearFilter}>Clear Filter</button>
                   </div>
                 </td>
               </tr>

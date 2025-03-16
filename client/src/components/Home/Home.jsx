@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Home.css';
-import Navbar from '../Navbar/Navbar';
+import Navbar from '../Navbar2/Navbar';
 import book1 from '../../assets/OPAC/photos/book1.jpg';
 import book2 from '../../assets/OPAC/photos/book2.jpg';
 import Book from '../Book/Book';
@@ -17,15 +17,19 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 // import required modules
 import { Pagination } from 'swiper/modules';
-import Loading from '../Loading/Loading';
-
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Home = () => {
   const [featuredBooks, setFeaturedBooks] = useState([])
+  const [featuredBooksLoading, setFeaturedBooksLoading] = useState(false)
+
   const [featuredBook, setFeaturedBook] = useState({})
+  const [featuredBookLoading, setFeaturedBookLoading] = useState(false)
+
   const [journalNewsletter, setJournalNewsletter] = useState([])
+  const [journalNewsletterLoading, setJournalNewsletterLoading] = useState([])
+
   const [preview,setPreview] = useState()
   const [loading,setLoading] = useState(false)
   const [searchKeyword, setSearchKeyword] = useState('')
@@ -122,28 +126,30 @@ const Home = () => {
     }
   }, [loading]);
 
-  useEffect(()=>{
-    if(!featuredBook.book_cover) return;
+
+  useEffect(() => {
+    if(!featuredBook.filepath) return;
 
     let objectUrl;
+  
     try{
-        objectUrl = URL.createObjectURL(featuredBook.book_cover);
-        setPreview(objectUrl);
-       
-        
+      objectUrl = URL.createObjectURL(featuredBook.filepath);
+      setPreview(objectUrl);
     }catch{
-        const blob = new Blob([new Uint8Array(featuredBook.book_cover.data)], { type: 'image/jpeg' });
-        objectUrl = URL.createObjectURL(blob);
-        setPreview(objectUrl)  
+      if (featuredBook.filepath.includes("http://books.google.com")) {
+        setPreview(featuredBook.filepath);
+      } else {
+        setPreview(`https://api.tuplrc-cla.com/${featuredBook.filepath}`);
+      }
     }
 
-     // Cleanup function to revoke the Object URL
-     return () => {
-        if (objectUrl) {
-            URL.revokeObjectURL(objectUrl);
-        }
-      };
-  },[featuredBook])
+    // Cleanup function to revoke the Object URL
+    return () => {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
+}, [featuredBook]);
 
   const getData = async()=>{
     // setLoading(true)
@@ -153,36 +159,39 @@ const Home = () => {
     await getJournalNewsletter()
     // get featured book
     await getFeaturedBook()
-    setLoading(false)
   }
 
   const getFeaturedBooks = async () => {
-    console.log('getting featured books')
+    setFeaturedBooksLoading(true)
     try {
         const response = await axios.get('http://localhost:3001/api/online-catalog/featured-books');
-        console.log('Featured Books:', response);
         setFeaturedBooks(response.data);
     } catch (error) {
         console.error('Error retrieving featured books:', error.message);
+    } finally{
+      setTimeout(()=>{
+        setFeaturedBooksLoading(false)
+      },3000)
     }
   };
 
   const getJournalNewsletter = async () => {
-    console.log('getting journals/newsletter')
+    setJournalNewsletterLoading(true)
     try {
-        const response = await axios.get('http://localhost:3001/api/online-catalog/journals-newsletters');
-        console.log('Journal and newsletters:', response);
+        const response = await axios.get('http://localhost:3001/api/online-catalog/journal-newsletters');
         setJournalNewsletter(response.data);
     } catch (error) {
         console.error('Error retrieving journals and newsletters:', error.message);
+    } finally{
+      setTimeout(()=>{
+        setJournalNewsletterLoading(false)
+      },3000)
     }
   };
 
   const getFeaturedBook = async () => {
-    console.log('getting featured book')
     try {
         const response = await axios.get('http://localhost:3001/api/online-catalog/featured-book');
-        console.log('Featured book:', response);
         setFeaturedBook(response.data[0]);
     } catch (error) {
         console.error('Error retrieving featured book:', error.message);
@@ -212,7 +221,8 @@ const handleEnter = (e)=>{
     handleSearch()
   }
 }
-  console.log(journalNewsletter)
+
+console.log(featuredBook)
 
 
   return (
@@ -288,7 +298,7 @@ const handleEnter = (e)=>{
                <div className="books">
                {Array.isArray(featuredBooks) && featuredBooks.length > 0 ? (
                   featuredBooks.map(item => (
-                    <SwiperSlide><Link to={`/resource/?id=${item.resource_id}`} onClick={handleNavigate} className='home-resource'><Book item={item} /></Link></SwiperSlide>
+                    <SwiperSlide><Link to={`/resource/?id=${item.resource_id}`} onClick={handleNavigate} className='home-resource'><Book item={item} loading={journalNewsletterLoading}/></Link></SwiperSlide>
                   ))
                 ) : (
                   <p>No featured books available.</p>
@@ -338,7 +348,7 @@ const handleEnter = (e)=>{
                <div className="books">
                {Array.isArray(journalNewsletter) && journalNewsletter.length > 0 ? (
                   journalNewsletter.map(item => (
-                    <SwiperSlide><Link to={`/resource/?id=${item.resource_id}`} onClick={handleNavigate} className='home-resource'><Book item={item} /></Link></SwiperSlide>
+                    <SwiperSlide><Link to={`/resource/?id=${item.resource_id}`} onClick={handleNavigate} className='home-resource'><Book item={item} loading={journalNewsletterLoading}/></Link></SwiperSlide>
                   ))
                 ) : (
                   <p>No journals or newsletters available.</p>
@@ -377,7 +387,6 @@ const handleEnter = (e)=>{
       </section>
 
       <Footer />
-      <Loading loading={loading}/>
     </div>
   );
 };

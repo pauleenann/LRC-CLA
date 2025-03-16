@@ -12,7 +12,7 @@ import pci5 from '../../assets/OPAC/photos/pci5.jpg';
 import faculty from '../../assets/OPAC/photos/faculty-consultation.png';
 import eventspace from '../../assets/OPAC/photos/event-space.png';
 import research from '../../assets/OPAC/photos/research-support.png'; */
-import Navbar from '../Navbar/Navbar';
+import Navbar from '../Navbar2/Navbar';
 import Footer from '../Footer/Footer';
 
 gsap.registerPlugin(ScrollTrigger);

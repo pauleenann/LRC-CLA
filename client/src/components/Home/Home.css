@@ -190,7 +190,7 @@
 .client-home-container .featured-book{
     background-color: var(--tup-color);
     width: 100%;
-    height: 80vh;
+    height: auto;
 }
 
 
@@ -221,6 +221,7 @@
 .client-home-container .featured-book .content p{
     margin: 0;
     font-weight: 300;
+    font-size: 1.1rem;
 }
 
 .client-home-container .featured-book .content h3{
@@ -312,6 +313,9 @@
     text-decoration: none;
     color: var(--black);
   }
+
+
+
 
 
   /* Responsive Design */

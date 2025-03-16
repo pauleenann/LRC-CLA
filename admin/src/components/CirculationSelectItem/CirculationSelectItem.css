@@ -256,6 +256,7 @@
     display: flex;
     gap: 10px;
     align-items: center;
+    height: 50px;
 }
 
 .circ-select-item-container .checkout-btn:hover{
