@@ -21,15 +21,23 @@ import axios from 'axios'
 
 const fadeIn = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.2} },
 };
 
 const HomePage = () => {
   const [mostBorrowed, setMostBorrowed] = useState([]);
   const [mostBorrowedLoading, setMostBorrowedLoading] = useState(false)
 
+  const [featuredBooks, setFeaturedBooks] = useState([]);
+  const [featuredBooksLoading, setFeaturedBooksLoading] = useState(false);
+
+  const [featuredDepartment, setFeaturedDepartment] = useState([]);
+  const [featuredDepartmentLoading, setFeaturedDepartmentLoading] = useState(false)
+
   useEffect(()=>{
-    getMostBorrowed()
+    getMostBorrowed();
+    getFeaturedBooks();
+    getFeaturedDepartment();
   },[])
 
   const getMostBorrowed = async ()=>{
@@ -46,6 +54,34 @@ const HomePage = () => {
       },3000)
     }
   }
+
+  const getFeaturedBooks = async () => {
+    setFeaturedBooksLoading(true)
+    try {
+        const response = await axios.get('http://localhost:3001/api/online-catalog/featured-books');
+        setFeaturedBooks(response.data);
+    } catch (error) {
+        console.error('Error retrieving featured books:', error.message);
+    } finally{
+      setTimeout(()=>{
+        setFeaturedBooksLoading(false)
+      },3000)
+    }
+  };
+
+  const getFeaturedDepartment = async () => {
+    setFeaturedDepartmentLoading(true)
+    try {
+        const response = await axios.get('http://localhost:3001/api/online-catalog/featured-department');
+        setFeaturedDepartment(response.data);
+    } catch (error) {
+        console.error('Error retrieving featured books:', error.message);
+    } finally{
+      setTimeout(()=>{
+        setFeaturedDepartmentLoading(false)
+      },3000)
+    }
+  };
 
   return (
     <motion.div 
@@ -126,13 +162,14 @@ const HomePage = () => {
           className="mySwiper"
         >
           <div className="most-borrowed-books">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => (
+            {Array.isArray(featuredBooks)&&featuredBooks.length>0
+            ?featuredBooks.map((item, index) => (
               <SwiperSlide key={index}>
                 <motion.div whileHover={{ scale: 1.05 }}>
-                  <ResourceBook />
+                  <ResourceBook loading={featuredBooksLoading} data={item}/>
                 </motion.div>
               </SwiperSlide>
-            ))}
+            )):''}
           </div>
         </Swiper>
       </motion.div>
@@ -159,7 +196,7 @@ const HomePage = () => {
       {/* Books under Hospitality */}
       <motion.div className="container book-container" variants={fadeIn}>
         <div className='d-flex align-items-center justify-content-between mb-4'>
-          <h4 className='fw-semibold fs-2 '>Books Under Hospitality and Restaurant Management </h4>
+          <h4 className='fw-semibold fs-2 '>Resources Under Hospitality and Restaurant Management </h4>
           <button className="btn see-all fw-semibold">See all</button>
         </div>
         <Swiper
@@ -179,13 +216,14 @@ const HomePage = () => {
           className="mySwiper"
         >
           <div className="most-borrowed-books">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => (
+            {Array.isArray(featuredDepartment)&&featuredDepartment.length>0
+            ?featuredDepartment.map((item, index) => (
               <SwiperSlide key={index}>
                 <motion.div whileHover={{ scale: 1.05 }}>
-                  <ResourceBook />
+                  <ResourceBook loading={featuredDepartmentLoading} data={item}/>
                 </motion.div>
               </SwiperSlide>
-            ))}
+            )):''}
           </div>
         </Swiper>
       </motion.div>
