@@ -46,19 +46,22 @@ const ResourceBook = ({ loading, data }) => {
   };
 
   return (
-    <div className='resourcebook-box'>
-      {/* availability */}
-      <div className='availability text-light position-absolute start-0 p-2'>Available</div>
-      {/* image */}
-      <div className='img-box d-flex align-items-center justify-content-center mb-2'>
-        {preview
-        ?<img src={preview} alt="Book Cover" />:
-        ''}
-      </div>
-      <p className="m-0 title fw-semibold">
-        {truncateTitle(data.resource_title)}
-      </p>
-      <p className="m-0 author fw-semibold">By {truncateAuthor(data.authors)}</p>
+    <div className={`resourcebook-box ${loading&&'loading-animation'}`}>
+      {loading?'':<>
+        {/* availability */}
+        <div className='availability text-light position-absolute start-0 p-2'>Available</div>
+        {/* image */}
+        <div className='img-box d-flex align-items-center justify-content-center mb-2'>
+          {preview
+          ?<img src={preview} alt="Book Cover" />:
+          ''}
+        </div>
+        <p className="m-0 title fw-semibold">
+          {truncateTitle(data.resource_title)}
+        </p>
+        <p className="m-0 author fw-semibold">By {truncateAuthor(data.authors)}</p>
+      </>}
+      
     </div>
   );
 };

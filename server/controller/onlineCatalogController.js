@@ -6,8 +6,8 @@ export const featuredBooks = (req, res) => {
     SELECT 
         resources.resource_title, 
         resources.resource_id, 
-        book.filepath as resource_cover, 
-        GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS author_name
+        book.filepath, 
+        GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS authors
     FROM resourceauthors
     JOIN resources ON resourceauthors.resource_id = resources.resource_id
     JOIN author ON resourceauthors.author_id = author.author_id
@@ -61,6 +61,34 @@ export const mostBorrowed = (req,res)=>{
             console.log(results)
             return res.json(results); // Send the response as JSON
         });
+}
+
+export const featuredDepartment = (req,res)=>{
+    const q = `
+    SELECT 
+        resources.resource_title, 
+        resources.resource_id, 
+        book.filepath, 
+        GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS authors
+    FROM resourceauthors
+    JOIN resources ON resourceauthors.resource_id = resources.resource_id
+    JOIN author ON resourceauthors.author_id = author.author_id
+    JOIN book ON book.resource_id = resources.resource_id
+    WHERE resources.dept_id = '4'
+    GROUP BY resources.resource_id, resources.resource_title, book.filepath
+    ORDER BY RAND()
+    LIMIT 10
+    `;
+
+    db.query(q, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send({ error: 'Database query failed' });
+        }
+
+        console.log(results)
+        return res.json(results); // Send the response as JSON
+    });
 }
 
 export const resourcesView = (req, res) => {

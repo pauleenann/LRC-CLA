@@ -39,3 +39,19 @@
     box-shadow: 2px 2px 5px #00000036;
     background-color: green;
 }
+.resourcebook-box .loading-animation{
+    background: #cfcfcf 25% !important;    
+    animation: pulse 1.5s infinite linear;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.6;
+    }
+}
