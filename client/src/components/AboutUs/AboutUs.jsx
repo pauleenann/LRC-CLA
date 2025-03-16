@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Navbar from '../Navbar/Navbar';
+import Navbar from '../Navbar2/Navbar';
 import './AboutUs.css';
 import claDoor from '../../assets/OPAC/photos/cla-lrc-door.JPG';
 import claLrc from '../../assets/OPAC/photos/cla-lrc.JPG';

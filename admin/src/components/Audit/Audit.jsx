@@ -162,7 +162,7 @@ const Audit = () => {
         </div>
         <button className="btn export-btn" onClick={exportToCSV}>
           <FontAwesomeIcon icon={faFileExport} />
-          Export
+          Export to Excel
         </button>
       </div>
 

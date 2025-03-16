@@ -5,7 +5,7 @@ import { gsap } from 'gsap';
 import axios from 'axios';
 import { Link, useLocation } from 'react-router-dom';
 import Loading from '../Loading/Loading';
-import Navbar from '../Navbar/Navbar';
+import Navbar from '../Navbar2/Navbar';
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
 // Import Swiper styles
@@ -49,20 +49,21 @@ const ResourceModal = () => {
   }, [resource]);
 
   useEffect(() => {
+    if(!resource) return;
+
     let objectUrl;
     if (resource && resource.type_id !== 4) {
-      try {
-        if (resource.resource_cover instanceof Blob) {
-          objectUrl = URL.createObjectURL(resource.resource_cover);
-        } else if (resource.resource_cover?.data) {
-          const blob = new Blob([new Uint8Array(resource.resource_cover.data)], { type: 'image/jpeg' });
-          objectUrl = URL.createObjectURL(blob);
+      try{
+        objectUrl = URL.createObjectURL(resource.resource_cover);
+        setPreview(objectUrl);
+      }catch{
+        if (resource.resource_cover.includes("http://books.google.com")) {
+          setPreview(resource.resource_cover);
+        } else {
+          setPreview(`https://api.tuplrc-cla.com/${resource.resource_cover}`);
         }
-        //setPreview(objectUrl);
-        setPreview(`https://api.tuplrc-cla.com/${resource.resource_cover}`);
-      } catch (error) {
-        console.error('Error creating object URL:', error);
       }
+      
     }
     return () => {
       if (objectUrl) {

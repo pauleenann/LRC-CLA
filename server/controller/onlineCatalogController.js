@@ -58,20 +58,20 @@ export const journalNewsletter = (req, res) => {
 
 export const featuredBook = (req, res) => {
     const q = `
-    SELECT 
-        resources.resource_title,
-        resources.resource_description,
-        resources.resource_id, 
-        book.filepath, 
-        GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS author_name
-    FROM resourceauthors
-    JOIN resources ON resourceauthors.resource_id = resources.resource_id
-    JOIN author ON resourceauthors.author_id = author.author_id
-    JOIN book ON book.resource_id = resources.resource_id
-    WHERE resources.resource_description NOT LIKE '%n/a%' AND 
-    resources.type_id='1'
-    GROUP BY resources.resource_id, resources.resource_title, book.filepath
-    LIMIT 1`;
+       SELECT 
+            resources.resource_title,
+            resources.resource_description,
+            resources.resource_id, 
+            book.filepath, 
+            GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS author_name
+        FROM resourceauthors
+        JOIN resources ON resourceauthors.resource_id = resources.resource_id
+        JOIN author ON resourceauthors.author_id = author.author_id
+        JOIN book ON book.resource_id = resources.resource_id
+        WHERE LENGTH(resources.resource_description) > 10
+        GROUP BY resources.resource_id, resources.resource_title, book.filepath
+        ORDER BY RAND()
+        LIMIT 1`;
 
     db.query(q, (err, results) => {
         if (err) {

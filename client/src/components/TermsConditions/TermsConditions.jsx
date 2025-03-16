@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { gsap } from 'gsap';
 import './TermsConditions.css';
-import Navbar from '../Navbar/Navbar';
+import Navbar from '../Navbar2/Navbar';
 import { Link } from 'react-router-dom';
 
 const TermsConditions = () => {

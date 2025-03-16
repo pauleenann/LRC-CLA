@@ -83,7 +83,6 @@ const AddItem = () => {
     }, [bookData.mediaType]);
 
     useEffect(() => {
-
         if (isOnline == null) {
             return;
         }

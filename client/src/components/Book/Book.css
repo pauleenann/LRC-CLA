@@ -131,3 +131,39 @@
 .thesis-cover .title{
     font-size: 0.6rem !important;
 }
+
+.book-container .book-loading{
+    border-radius: 10px;
+    background: #E0E0E0 25%;
+    width: 230px;
+    height: 350px;
+    animation: pulse 1.5s infinite linear;
+}
+
+.book-container .title-loading{
+    border-radius: 10px;
+    background: #E0E0E0 25%;
+    width: 230px;
+    height: 30px;
+    animation: pulse 1.5s infinite linear;
+}
+
+.book-container .author-loading{
+    border-radius: 10px;
+    background: #E0E0E0 25%;
+    width: 230px;
+    height: 30px;
+    animation: pulse 1.5s infinite linear;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.6;
+    }
+}

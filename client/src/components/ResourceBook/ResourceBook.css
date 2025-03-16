@@ -1,0 +1,29 @@
+@import '../../assets/styles/global.css';
+
+.resourcebook-box{
+    width: 300px;
+    min-height: 350px;
+    background-color: var(--light-gray);
+    padding: 20px;
+    cursor: pointer;
+}
+
+.resourcebook-box .img-box{
+    width: 100%;
+    height: 250px;
+    background-color: var(--white);
+}
+
+.resourcebook-box .img-box img{
+    width: 140px;
+}
+
+.resourcebook-box .title{
+    color: var(--dark-gray);
+    font-size: 1.2rem;
+}
+
+.resourcebook-box .author{
+    color: var(--medium-gray);
+    font-size: 1rem;
+}
