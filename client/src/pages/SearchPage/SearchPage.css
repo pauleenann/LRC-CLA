@@ -7,3 +7,7 @@
 .search-container button{
     font-family: var(--open-sans);
 }
+
+.search-container .filter{
+    font-size: 0.85rem;
+}

@@ -3,11 +3,28 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 // Async Thunk for fetching resources with search query
 export const fetchResources = createAsyncThunk(
   "resource/fetchResources",
-  async (query = "") => {
-    console.log(query)
-    const response = await fetch(`http://localhost:3001/api/online-catalog/resources?search=${query}`);
-    if (!response.ok) throw new Error("Failed to fetch resources");
-    return response.json();
+  async ({ searchQuery, type, dept, topic }) => {
+    try {
+      // Construct query parameters dynamically
+      const queryParams = new URLSearchParams();
+      if (searchQuery) queryParams.append("search", searchQuery);
+      if (type) queryParams.append("type", type);
+      if (dept) queryParams.append("dept", dept);
+      if (topic) queryParams.append("topic", topic);
+
+      const url = `http://localhost:3001/api/online-catalog/resources?${queryParams.toString()}`;
+
+      console.log("Fetching from:", url);
+
+      const response = await fetch(url);
+
+      if (!response.ok) throw new Error("Failed to fetch resources");
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching resources:", error);
+      throw error;
+    }
   }
 );
 
