@@ -92,9 +92,19 @@ export const featuredDepartment = (req,res)=>{
 }
 
 export const getSearch = (req,res)=>{
-    const {search} = req.query;
+    const { search} = req.query;
 
-    console.log(search)
+    // Ensure dept, type, and topic are always arrays and split if comma-separated
+    const dept = req.query.dept ? req.query.dept.split(",") : [];
+    const type = req.query.type ? req.query.type.split(",") : [];
+    const topic = req.query.topic ? req.query.topic.split(",") : [];
+
+    console.log("Search Query:", search);
+    console.log("Type Array:", type);
+    console.log("Department Array:", dept);
+    console.log("Topic Array:", topic);
+
+
     const q = `
         SELECT 
             resources.resource_title,

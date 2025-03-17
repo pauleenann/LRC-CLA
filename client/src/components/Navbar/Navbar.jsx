@@ -1,15 +1,20 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Navbar.css'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchResources, setSearchQuery } from '../../features/resourceSlice';
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchKeyword, setSearchKeyword] = useState('');
-  
+  const {type} = useSelector(state=>state.type)
+  const {dept} = useSelector(state=>state.dept)
+  const {topic} = useSelector(state=>state.topic)
+
+  console.log(type)
+ 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
         getSearch();
@@ -18,8 +23,7 @@ const Navbar = () => {
 
   const getSearch = async()=>{
     dispatch(setSearchQuery(searchKeyword));
-    dispatch(fetchResources(searchKeyword)); // Pass query to the endpoint
-
+    dispatch(fetchResources({ searchQuery: searchKeyword, type, dept, topic })); // Pass as an object
     navigate('/search')
   }
 
@@ -35,10 +39,6 @@ const Navbar = () => {
         </Link>
         {/* search */}
         <div className='d-flex search'>
-            {/* dropdown */}
-            <select name="" id="" className='form-select dropdown'>
-                <option value="">All</option>
-            </select>
             {/* input */}
             <input type="text" placeholder='Search for resources' onChange={(e)=>setSearchKeyword(e.target.value)} onKeyDown={handleKeyDown}/>
             {/* search button */}

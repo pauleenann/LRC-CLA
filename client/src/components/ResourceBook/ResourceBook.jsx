@@ -35,7 +35,7 @@ const ResourceBook = ({ loading, data }) => {
   }
 
   // Function to truncate title to 30 characters
-  const truncateTitle = (title = "", maxLength = 55) =>
+  const truncateTitle = (title = "", maxLength = 45) =>
     title.length > maxLength ? title.substring(0, maxLength) + "..." : title;
 
   // Function to truncate authors to 30 characters
@@ -52,7 +52,12 @@ const ResourceBook = ({ loading, data }) => {
           </div>
           {/* image */}
           <div className="img-box d-flex align-items-center justify-content-center mb-2">
-            {preview ? <img src={preview} alt="Book Cover" /> : ""}
+            {preview 
+            ? <img src={preview} alt="Book Cover" /> 
+            : <div className="thesis-cover d-flex justify-content-between align-items-center text-center">
+                <p className="m-0 text-light w-100">{data.resource_title}</p>
+              </div>
+            }
           </div>
           <p className="m-0 title fw-semibold">{truncateTitle(data.resource_title)}</p>
           <p className="m-0 author fw-semibold">By {truncateAuthor(data.authors || "Unknown Author")}</p>
