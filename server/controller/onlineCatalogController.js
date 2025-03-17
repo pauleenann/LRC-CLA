@@ -108,7 +108,6 @@ export const getSearch = (req,res)=>{
     WHERE resources.resource_title LIKE '%${search}%'
     GROUP BY resources.resource_id, resources.resource_title, book.filepath
     ORDER BY RAND()
-    LIMIT 10
     `;
 
     db.query(q, (err, results) => {
