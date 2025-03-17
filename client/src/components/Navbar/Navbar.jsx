@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import './Navbar.css'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { fetchResources, setSearchQuery } from '../../features/resourceSlice';
 
 const Navbar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [searchKeyword, setSearchKeyword] = useState('');
   
   const handleKeyDown = (e) => {
@@ -18,6 +19,8 @@ const Navbar = () => {
   const getSearch = async()=>{
     dispatch(setSearchQuery(searchKeyword));
     dispatch(fetchResources(searchKeyword)); // Pass query to the endpoint
+
+    navigate('/search')
   }
 
   

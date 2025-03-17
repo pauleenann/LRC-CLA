@@ -33,14 +33,19 @@ const SearchPage = () => {
         <div className="container mt-5">
             {/* back */}
             <div>
-                <Link className='text-decoration-none text-dark'><p>Back to Home</p></Link>
+                <Link className='text-decoration-none text-dark' to='/'><p>Back to Home</p></Link>
             </div>
             {/* search header */}
             <div className='d-flex justify-content-between align-items-center mt-5'>
-                <div>
+                {searchQuery.length>0
+                ?<div>
                     <h1 className='m-0 fw-semibold'>Search results for: {searchQuery}</h1>
-                    <p className="m-0">A total of 4 resource/s found for art</p>
+                    <p className="m-0">A total of {resource.length} resource/s found for {searchQuery}</p>
                 </div>
+                :<div>
+                    <h1 className='m-0 fw-semibold'>Search results</h1>
+                </div>}
+                
                 <div className='d-flex align-items-center gap-2'>
                     <select name="" id="" className='form-select'>
                         <option value="">Recent Books</option>
