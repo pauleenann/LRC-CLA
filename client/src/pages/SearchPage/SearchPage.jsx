@@ -59,7 +59,7 @@ const SearchPage = () => {
         getType();
         getDept();
         getTopics();
-        dispatch(fetchResources({ searchQuery: '', type: [], dept: [], topic: [] }));
+        dispatch(fetchResources({ searchQuery: searchQuery, type: [], dept: [], topic: [] }));
     }, []);
 
     useEffect(() => {
@@ -317,7 +317,7 @@ const SearchPage = () => {
                         <div className='d-flex justify-content-between align-items-center'>
                             <div>
                                 <h1 className='m-0 fw-semibold'>
-                                    {searchQuery.length > 0 ? `Search results for: ${searchQuery}` : 'Search results'}
+                                    {searchQuery.length > 0 ? `Search results for: ${searchQuery}` : 'Find resources'}
                                 </h1>
                                 {searchQuery.length > 0 && (
                                     <p className="m-0">A total of {displayedResources.length} resource/s found for {searchQuery}</p>
@@ -362,7 +362,9 @@ const SearchPage = () => {
                             {currentItems.length > 0 ? (
                                 currentItems.map(item => (
                                     <div className='col-4 mb-4' key={item.resource_id}>
-                                        <ResourceBook loading={loading} data={item}/>
+                                        <Link to={`/view/${item.resource_id}`} className='text-decoration-none'>
+                                            <ResourceBook loading={loading} data={item}/>
+                                        </Link>               
                                     </div>
                                 ))
                             ) : (
