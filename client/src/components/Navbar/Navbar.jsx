@@ -8,7 +8,9 @@ const Navbar = () => {
     <nav className='navbar-box container py-3'>
       {/* logo and search bar */}
       <div className='d-flex align-items-center justify-content-between'>
-        <p className='m-0 logo'>Liberal<span>Search</span>.</p>
+        <Link className='text-decoration-none' to='/'>
+          <p className='m-0 logo'>Liberal<span>Search</span>.</p>
+        </Link>
         {/* search */}
         <div className='d-flex search'>
             {/* dropdown */}

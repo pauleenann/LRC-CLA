@@ -1,5 +1,7 @@
 import React from 'react'
 import './Footer.css'
+import { Link } from 'react-router-dom'
+
 
 const Footer = () => {
   return (
@@ -18,9 +20,8 @@ const Footer = () => {
             <div className="quick-links text-light">
                 <h2 className='fs-1 mb-3'>Quick Links</h2>
                 <ul className='list-unstyled d-flex flex-column gap-2'>
-                    <li>Home</li>
-                    <li>About Us</li>
-                    <li>Services</li>
+                    <li><Link to='/' className='text-decoration-none text-light'>Home</Link></li>
+                    <li><Link to='/about' className='text-decoration-none text-light'>About Us</Link></li>
                     <li>Terms & Conditions</li>
                 </ul>
             </div>

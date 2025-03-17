@@ -35,6 +35,8 @@ const HomePage = () => {
   const [featuredDepartmentLoading, setFeaturedDepartmentLoading] = useState(false)
 
   useEffect(()=>{
+    window.scrollTo(0, 0);
+    
     getMostBorrowed();
     getFeaturedBooks();
     getFeaturedDepartment();
@@ -194,7 +196,7 @@ const HomePage = () => {
       </motion.div>
 
       {/* Books under Hospitality */}
-      <motion.div className="container book-container" variants={fadeIn}>
+      <motion.div className="container book-container mb-5 pb-5" variants={fadeIn}>
         <div className='d-flex align-items-center justify-content-between mb-4'>
           <h4 className='fw-semibold fs-2 '>Resources Under Hospitality and Restaurant Management </h4>
           <button className="btn see-all fw-semibold">See all</button>
