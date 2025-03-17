@@ -344,15 +344,15 @@ const CatalogManage = () => {
                   onChange={(e) => setTopicRowNo(e.target.value)}
                 />
               </div>
-              
+              {/* style={{ backgroundColor: "#97170E", borderColor: "#97170E", color: "fff"}} */}
             </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               <button type="button" 
-                      class="btn"
-                      style={{ backgroundColor: "#97170E", borderColor: "#97170E", color: "fff"}}     
-                      onClick={handleSaveTopic}>Save changes</button>
+                      class="btn"     
+                      style={{backgroundColor: "#94152b", color:"#fff", borderColor:"#97170E"}}
+                      onClick={handleSaveTopic}>Save Changes</button>
             </div>
           </div>
         </div>
