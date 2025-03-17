@@ -10,7 +10,7 @@ footer{
 footer .logo, footer .logo span,
 footer .quick-links h2,
 footer .contact-us h2{
-    font-family: var(--playfair);
+    font-family: var(--playfair) !important;
 }
 
 footer .copyright{
