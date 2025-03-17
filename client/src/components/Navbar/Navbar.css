@@ -13,7 +13,7 @@
 
 .navbar-box .search{
     height: 50px;
-    border: 1px solid var(--dark-gray);
+    border: 1px solid var(--medium2-gray);
 }
 
 .navbar-box .search .dropdown, 
