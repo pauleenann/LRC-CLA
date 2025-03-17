@@ -96,19 +96,27 @@ export const getSearch = (req,res)=>{
 
     console.log(search)
     const q = `
-    SELECT 
-        resources.resource_title, 
-        resources.resource_id, 
-        book.filepath, 
-        GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS authors
-    FROM resourceauthors
-    JOIN resources ON resourceauthors.resource_id = resources.resource_id
-    JOIN author ON resourceauthors.author_id = author.author_id
-    JOIN book ON book.resource_id = resources.resource_id
-    WHERE resources.resource_title LIKE '%${search}%'
-    GROUP BY resources.resource_id, resources.resource_title, book.filepath
-    ORDER BY RAND()
-    `;
+        SELECT 
+            resources.resource_title,
+            resources.resource_id, 
+            resources.type_id,
+            CASE
+                WHEN resources.type_id = '1' THEN book.filepath
+                WHEN resources.type_id IN ('2', '3') THEN journalnewsletter.filepath
+                ELSE NULL
+            END AS filepath,
+            (SELECT CONCAT(author.author_fname, ' ', author.author_lname) 
+            FROM resourceauthors 
+            JOIN author ON resourceauthors.author_id = author.author_id
+            WHERE resourceauthors.resource_id = resources.resource_id
+            ORDER BY author.author_id ASC
+            LIMIT 1) AS authors 
+        FROM resources
+        LEFT JOIN book ON book.resource_id = resources.resource_id
+        LEFT JOIN journalnewsletter ON journalnewsletter.resource_id = resources.resource_id
+        WHERE resources.resource_title LIKE '%${search}%'
+        GROUP BY resources.resource_id, resources.resource_title, resources.type_id;
+        `;
 
     db.query(q, (err, results) => {
         if (err) {
