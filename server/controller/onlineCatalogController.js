@@ -91,8 +91,8 @@ export const featuredDepartment = (req,res)=>{
     });
 }
 
-export const getSearch = (req,res)=>{
-    const { search} = req.query;
+export const getSearch = (req, res) => {
+    const { search } = req.query;
 
     // Ensure dept, type, and topic are always arrays and split if comma-separated
     const dept = req.query.dept ? req.query.dept.split(",") : [];
@@ -104,12 +104,36 @@ export const getSearch = (req,res)=>{
     console.log("Department Array:", dept);
     console.log("Topic Array:", topic);
 
+    // Format search param with wildcards
+    const searchParam = search ? `%${search}%` : '%';
+
+    let whereClauses = [`(resources.resource_title LIKE ? OR author.author_fname LIKE ? OR author.author_lname LIKE ?)`];
+    let params = [searchParam, searchParam, searchParam];
+
+    if (type.length > 0) {
+        whereClauses.push(`resources.type_id IN (${type.map(() => '?').join(', ')})`);
+        params.push(...type);
+    }
+
+    if (dept.length > 0) {
+        whereClauses.push(`resources.dept_id IN (${dept.map(() => '?').join(', ')})`);
+        params.push(...dept);
+    }
+
+    // Only apply topic filter to book and journalnewsletter tables
+    if (topic.length > 0) {
+        whereClauses.push(`(book.topic_id IN (${topic.map(() => '?').join(', ')}) OR journalnewsletter.topic_id IN (${topic.map(() => '?').join(', ')}))`);
+        params.push(...topic, ...topic);  // Push the topic filter twice: once for book and once for journalnewsletter
+    }
+
+    const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
 
     const q = `
         SELECT 
             resources.resource_title,
             resources.resource_id, 
             resources.type_id,
+            resources.resource_published_date,
             CASE
                 WHEN resources.type_id = '1' THEN book.filepath
                 WHEN resources.type_id IN ('2', '3') THEN journalnewsletter.filepath
@@ -124,17 +148,23 @@ export const getSearch = (req,res)=>{
         FROM resources
         LEFT JOIN book ON book.resource_id = resources.resource_id
         LEFT JOIN journalnewsletter ON journalnewsletter.resource_id = resources.resource_id
-        WHERE resources.resource_title LIKE '%${search}%'
-        GROUP BY resources.resource_id, resources.resource_title, resources.type_id;
-        `;
+        LEFT JOIN resourceauthors ON resourceauthors.resource_id = resources.resource_id
+        LEFT JOIN author ON resourceauthors.author_id = author.author_id
+        ${whereClause}
+        GROUP BY resources.resource_id, resources.resource_title, resources.type_id
+    `;
+    
+    console.log(q)
+    console.log(whereClause)
+    console.log(params)
 
-    db.query(q, (err, results) => {
+    db.query(q, params, (err, results) => {
         if (err) {
             console.error(err);
-            return res.status(500).send({ error: 'Database query failed' });
+            return res.status(500).json({ error: 'Database query failed' });
         }
 
-        console.log(results)
+        console.log(results);
         return res.json(results); // Send the response as JSON
     });
-}
+};
