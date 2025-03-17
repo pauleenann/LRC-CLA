@@ -1,9 +1,28 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './Navbar.css'
 import { Link } from 'react-router-dom'
-
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { fetchResources, setSearchQuery } from '../../features/resourceSlice';
 
 const Navbar = () => {
+  const dispatch = useDispatch();
+  const [searchKeyword, setSearchKeyword] = useState('');
+  
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+        getSearch();
+    }
+  };
+
+  const getSearch = async()=>{
+    dispatch(setSearchQuery(searchKeyword));
+    dispatch(fetchResources(searchKeyword)); // Pass query to the endpoint
+  }
+
+  
+  console.log(searchKeyword)
+  
   return (
     <nav className='navbar-box container py-3'>
       {/* logo and search bar */}
@@ -18,9 +37,9 @@ const Navbar = () => {
                 <option value="">All</option>
             </select>
             {/* input */}
-            <input type="text" placeholder='Search for resources'/>
+            <input type="text" placeholder='Search for resources' onChange={(e)=>setSearchKeyword(e.target.value)} onKeyDown={handleKeyDown}/>
             {/* search button */}
-            <button className="">
+            <button className="" onClick={getSearch}>
                 <i class="fa-solid fa-magnifying-glass"></i>
             </button>
         </div>
