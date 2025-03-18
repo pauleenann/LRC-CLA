@@ -168,3 +168,91 @@ export const getSearch = (req, res) => {
         return res.json(results); // Send the response as JSON
     });
 };
+
+export const resourcesView = (req, res) => {
+    const {id} = req.params;
+    console.log('view id: ', id);
+
+    const q = `
+       SELECT 
+        resources.resource_title,
+        resources.resource_quantity,
+        resources.original_resource_quantity,
+        resources.resource_published_date,
+        resources.resource_id,
+        resources.resource_is_circulation,
+        resources.type_id,
+        department.dept_name,
+        department.dept_shelf_no,
+        CASE
+            WHEN resources.type_id IN ('1', '2', '3') THEN topic.topic_name
+            ELSE NULL
+        END AS topic_name,
+        CASE
+            WHEN resources.type_id = '1' THEN book.filepath
+            WHEN resources.type_id IN ('2', '3') THEN journalnewsletter.filepath
+            ELSE NULL
+        END AS filepath,
+        topic.topic_row_no,
+        GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS authors
+    FROM resources
+    LEFT JOIN book ON resources.resource_id = book.resource_id
+    LEFT JOIN journalnewsletter ON resources.resource_id = journalnewsletter.resource_id
+    JOIN department ON resources.dept_id = department.dept_id
+    LEFT JOIN topic 
+        ON book.topic_id = topic.topic_id 
+        OR journalnewsletter.topic_id = topic.topic_id
+    LEFT JOIN resourceauthors ON resources.resource_id = resourceauthors.resource_id
+    LEFT JOIN author ON resourceauthors.author_id = author.author_id
+    WHERE resources.resource_id = ?
+    GROUP BY 
+        resources.resource_id,
+        department.dept_name,
+        department.dept_shelf_no,
+        topic.topic_name,
+        topic.topic_row_no`;
+
+    db.query(q, [id], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send({ error: 'Database query failed' });
+        }
+
+        if (results.length > 0) {
+            console.log(results);
+            // You can also fetch related books here if needed
+            const relatedBooksQuery = `
+                SELECT 
+                    resources.resource_title,
+                    resources.resource_id, 
+                    resources.type_id,
+                    CASE
+                        WHEN resources.type_id = '1' THEN book.filepath
+                        WHEN resources.type_id IN ('2', '3') THEN journalnewsletter.filepath
+                        ELSE NULL
+                    END AS filepath,
+                    GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS authors
+                FROM resources
+                LEFT JOIN resourceauthors ON resourceauthors.resource_id = resources.resource_id
+                LEFT JOIN author ON resourceauthors.author_id = author.author_id
+                LEFT JOIN book ON book.resource_id = resources.resource_id
+                LEFT JOIN journalnewsletter ON journalnewsletter.resource_id = resources.resource_id
+                WHERE resources.type_id = ? AND resources.resource_id != ?
+                GROUP BY resources.resource_id, resources.resource_title, resources.resource_description, resources.type_id
+                ORDER BY RAND()
+                LIMIT 5`;
+
+            db.query(relatedBooksQuery, [results[0].type_id,results[0].resource_id], (err, relatedResults) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send({ error: 'Database query failed' });
+                }
+
+                // Send both results back to the client
+                res.send({ results, relatedBooks: relatedResults });
+            });
+        } else {
+            res.status(404).send({ error: 'Resource not found' });
+        }
+    });
+}

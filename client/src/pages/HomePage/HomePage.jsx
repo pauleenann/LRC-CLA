@@ -18,6 +18,7 @@ import ResourceBook from '../../components/ResourceBook/ResourceBook';
 import Footer from '../../components/Footer/Footer';
 
 import axios from 'axios'
+import { Link } from 'react-router-dom';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 30 },
@@ -132,9 +133,12 @@ const HomePage = () => {
             {Array.isArray(mostBorrowed)&&mostBorrowed.length>0
             ?mostBorrowed.map((item, index) => (
               <SwiperSlide key={index}>
-                <motion.div whileHover={{ scale: 1.05 }}>
-                  <ResourceBook loading={mostBorrowedLoading} data={item}/>
-                </motion.div>
+                <Link to={`/view/${item.resource_id}`} className='text-decoration-none'>
+                  <motion.div whileHover={{ scale: 1.05 }}>
+                    <ResourceBook loading={mostBorrowedLoading} data={item}/>
+                  </motion.div>
+                </Link>
+                
               </SwiperSlide>
             )):''}
           </div>
@@ -167,9 +171,12 @@ const HomePage = () => {
             {Array.isArray(featuredBooks)&&featuredBooks.length>0
             ?featuredBooks.map((item, index) => (
               <SwiperSlide key={index}>
-                <motion.div whileHover={{ scale: 1.05 }}>
-                  <ResourceBook loading={featuredBooksLoading} data={item}/>
-                </motion.div>
+                <Link to={`/view/${item.resource_id}`} className='text-decoration-none'>
+                  <motion.div whileHover={{ scale: 1.05 }}>
+                    <ResourceBook loading={featuredBooksLoading} data={item}/>
+                  </motion.div>
+                </Link>
+
               </SwiperSlide>
             )):''}
           </div>
@@ -221,9 +228,11 @@ const HomePage = () => {
             {Array.isArray(featuredDepartment)&&featuredDepartment.length>0
             ?featuredDepartment.map((item, index) => (
               <SwiperSlide key={index}>
-                <motion.div whileHover={{ scale: 1.05 }}>
-                  <ResourceBook loading={featuredDepartmentLoading} data={item}/>
-                </motion.div>
+                <Link to={`/view/${item.resource_id}`} className='text-decoration-none'>
+                  <motion.div whileHover={{ scale: 1.05 }}>
+                    <ResourceBook loading={featuredDepartmentLoading} data={item}/>
+                  </motion.div>
+                </Link>
               </SwiperSlide>
             )):''}
           </div>
