@@ -102,7 +102,14 @@ const ViewResourcePage = () => {
                 {/* book info */}
                 <div className="col-6 h-100 d-flex flex-column align-items-start gap-3">
                     {/* availability */}
-                    <div className="availability bg-success text-light d-flex align-items-center py-2 px-4 rounded-pill">Available</div>
+                    {resource && typeof resource.resource_quantity !== 'undefined' && (
+                        <div
+                            className={`availability text-light d-flex align-items-center py-2 px-4 rounded-pill 
+                                ${resource.resource_quantity === 0 ? 'bg-danger' : 'bg-success'}`}
+                        >
+                            {resource.resource_quantity === 0 ? 'Borrowed' : 'Available'}
+                        </div>
+                    )}
                     {/* title */}
                     <div>
                         {resource && resource.resource_title && (
