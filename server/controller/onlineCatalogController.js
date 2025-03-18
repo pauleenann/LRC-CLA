@@ -227,6 +227,7 @@ export const resourcesView = (req, res) => {
             // You can also fetch related books here if needed
             const relatedBooksQuery = `
                 SELECT 
+                    resources.resource_quantity,
                     resources.resource_title,
                     resources.resource_id, 
                     resources.type_id,
