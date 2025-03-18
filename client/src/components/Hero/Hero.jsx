@@ -1,8 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import './Hero.css';
+import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
+  const navigate = useNavigate()
   return (
     <motion.div 
       className='hero-box'
@@ -38,6 +40,8 @@ const Hero = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3, delay: 0.3 }}
           whileHover={{ scale: 1.05 }}
+          onClick={()=>navigate('/search')}
+
         >
           FIND RESOURCES
         </motion.button>
