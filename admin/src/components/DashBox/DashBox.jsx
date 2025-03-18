@@ -9,7 +9,7 @@ const DashBox = ({icon, title,total, loading}) => {
   const handleClick = ()=>{
     switch(title){
       case 'Total Visits': 
-        navigate('/logbook?filter=today');
+        navigate('/logbook');
         break;
       case 'Returned Resources':
         navigate('/circulation?filter=returned');

@@ -238,11 +238,11 @@ const Dashboard = () => {
     }
   }
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  const handleTodayEntriesClick = () => {
-      navigate('/logbook?filter=today'); // Navigate to logbook with filter
-  };
+  // const handleTodayEntriesClick = () => {
+  //     navigate('/logbook?filter=today'); // Navigate to logbook with filter
+  // };
 
   return (
     <div className='dashboard-container'>
