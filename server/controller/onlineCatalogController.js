@@ -4,6 +4,7 @@ import { db } from "../config/db.js";
 export const featuredBooks = (req, res) => {
     const q = `
     SELECT 
+        resources.resource_quantity,
         resources.resource_title, 
         resources.resource_id, 
         book.filepath, 
@@ -32,6 +33,7 @@ export const featuredBooks = (req, res) => {
 export const mostBorrowed = (req,res)=>{
     let q = `
     SELECT 
+            r.resource_quantity,
             r.resource_id,
             r.resource_title, 
             (SELECT CONCAT(a.author_fname, ' ', a.author_lname) 
@@ -66,6 +68,7 @@ export const mostBorrowed = (req,res)=>{
 export const featuredDepartment = (req,res)=>{
     const q = `
     SELECT 
+        resources.resource_quantity,
         resources.resource_title, 
         resources.resource_id, 
         book.filepath, 
@@ -130,6 +133,7 @@ export const getSearch = (req, res) => {
 
     const q = `
         SELECT 
+            resources.resource_quantity,
             resources.resource_title,
             resources.resource_id, 
             resources.type_id,

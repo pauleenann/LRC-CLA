@@ -47,9 +47,15 @@ const ResourceBook = ({ loading, data }) => {
       {!loading && (
         <>
           {/* availability */}
-          <div className="availability text-light position-absolute start-0 p-2">
-            Available
-          </div>
+          {data && typeof data.resource_quantity !== 'undefined' && (
+            <div
+              className={`availability text-light position-absolute start-0 p-2
+              ${data.resource_quantity === 0 ? 'bg-danger' : 'bg-success'}`}
+            >
+              {data.resource_quantity === 0 ? 'Borrowed' : 'Available'}
+            </div>
+          )}
+        
           {/* image */}
           <div className="img-box d-flex align-items-center justify-content-center mb-2">
             {preview 
