@@ -56,6 +56,8 @@ const SearchPage = () => {
     });
     
     useEffect(() => {
+        window.scrollTo(0, 0);
+        
         getType();
         getDept();
         getTopics();
