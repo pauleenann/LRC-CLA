@@ -58,6 +58,8 @@ const ViewResourcePage = () => {
     }, [resource]);
 
     useEffect(()=>{
+        window.scrollTo(0, 0);
+        
         getResource()
     },[id])
 
