@@ -393,31 +393,31 @@ const Accounts = () => {
 
       {/* Search and add */}
       <div className="search-add">
-  {/* Search */}
-  <div className="search">
-    <input
-      type="text"
-      placeholder="Search"
-      value={keyword}
-      onChange={handleSearch}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          userAccounts(true);
-        }
-      }}
-    />
-    <button className="btn" onClick={() => userAccounts(true)}>
-      <FontAwesomeIcon icon={faSearch} className="icon" />
-    </button>
-    <button
-      className="btn"
-      onClick={() =>
-        setSelectedFilters({ fname: 0, lname: 0, uname: 0, role: 0, status: '' })
-      }
-    >
-      Reset Filter
-    </button>
-  </div>
+        {/* Search */}
+      <div className="search">
+        <input
+          type="text"
+          placeholder="Search"
+          value={keyword}
+          onChange={handleSearch}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              userAccounts(true);
+            }
+          }}
+        />
+        <button className="btn" onClick={() => userAccounts(true)}>
+          <FontAwesomeIcon icon={faSearch} className="icon" />
+        </button>
+        <button
+          className="btn"
+          onClick={() =>
+            setSelectedFilters({ fname: 0, lname: 0, uname: 0, role: 0, status: '' })
+          }
+        >
+          Reset Filter
+        </button>
+      </div>
   {/* Add */}
   <button className="btn create-btn" onClick={() => setOpenCreateUser(true)}>
     <FontAwesomeIcon icon={faPlus} />
