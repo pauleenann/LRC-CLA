@@ -18,7 +18,12 @@ import ResourceBook from '../../components/ResourceBook/ResourceBook';
 import Footer from '../../components/Footer/Footer';
 
 import axios from 'axios'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setTypeArray } from '../../features/typeSlice';
+import { setTopicArray } from '../../features/topicSlice';
+import { setDeptArray } from '../../features/deptSlice';
+import { setSearchQuery } from '../../features/resourceSlice';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 30 },
@@ -26,6 +31,8 @@ const fadeIn = {
 };
 
 const HomePage = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   const [mostBorrowed, setMostBorrowed] = useState([]);
   const [mostBorrowedLoading, setMostBorrowedLoading] = useState(false)
 
@@ -41,6 +48,12 @@ const HomePage = () => {
     getMostBorrowed();
     getFeaturedBooks();
     getFeaturedDepartment();
+
+    // reset redux states
+    dispatch(setSearchQuery(''));
+    dispatch(setTypeArray([]));
+    dispatch(setDeptArray([]));
+    dispatch(setTopicArray([]));
   },[])
 
   const getMostBorrowed = async ()=>{
@@ -109,9 +122,9 @@ const HomePage = () => {
 
       {/* Most Borrowed Books */}
       <motion.div className="container book-container" variants={fadeIn}>
-        <div className='d-flex align-items-center justify-content-between mb-4'>
+        <div className='d-flex align-items-center justify-content-center mb-4'>
           <h4 className='fw-semibold fs-2 '>Most Borrowed Books</h4>
-          <button className="btn see-all fw-semibold">See all</button>
+          {/* <button className="btn see-all fw-semibold">SEE MORE</button> */}
         </div>
         <Swiper
           slidesPerView={4}
@@ -149,7 +162,14 @@ const HomePage = () => {
       <motion.div className="container book-container" variants={fadeIn}>
         <div className='d-flex align-items-center justify-content-between mb-4'>
           <h4 className='fw-semibold fs-2'>Featured Books</h4>
-          <button className="btn see-all fw-semibold">See all</button>
+          <button 
+            className="btn see-all fw-semibold"
+            onClick={()=>{
+              dispatch(setTypeArray([1]))
+              navigate(`/search?filter=Books`)
+            }}>
+            SEE MORE
+          </button>
         </div>
         <Swiper
           slidesPerView={4}
@@ -197,6 +217,10 @@ const HomePage = () => {
         <motion.button 
           className="btn btn-outline-light text-light p-3"
           whileHover={{ scale: 1.1 }}
+          onClick={()=>{
+            dispatch(setTypeArray([4]))
+            navigate(`/search?filter=Theses and Dissertations`)
+          }}
         >
           VIEW RESOURCES
         </motion.button>
@@ -206,7 +230,14 @@ const HomePage = () => {
       <motion.div className="container book-container mb-5 pb-5" variants={fadeIn}>
         <div className='d-flex align-items-center justify-content-between mb-4'>
           <h4 className='fw-semibold fs-2 '>Resources Under Hospitality and Restaurant Management </h4>
-          <button className="btn see-all fw-semibold">See all</button>
+          <button 
+            className="btn see-all fw-semibold"
+            onClick={()=>{
+              dispatch(setTopicArray([16]))
+              navigate(`/search?filter=Hospitality and Restaurant Management`)
+            }}>
+            SEE MORE
+          </button>
         </div>
         <Swiper
           slidesPerView={4}

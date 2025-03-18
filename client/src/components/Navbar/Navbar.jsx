@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchResources, setSearchQuery } from '../../features/resourceSlice';
+import { setTypeArray } from '../../features/typeSlice';
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -49,13 +50,41 @@ const Navbar = () => {
       </div>
       {/* menu */}
       <div className="menu d-flex gap-3 mt-2">
-        <button>Books</button>
+        <button
+          onClick={()=>{
+            dispatch(setTypeArray([1]))
+            navigate(`/search?filter=Books`)
+          }}
+        >
+          Books
+        </button>
         <span>|</span>
-        <button>Journals</button>
+        <button
+          onClick={()=>{
+            dispatch(setTypeArray([2]))
+            navigate(`/search?filter=Journals`)
+          }}
+        >
+          Journals
+        </button>
         <span>|</span>
-        <button>Newsletters</button>
+        <button
+          onClick={()=>{
+            dispatch(setTypeArray([3]))
+            navigate(`/search?filter=Newsletters`)
+          }}
+        >
+          Newsletters
+        </button>
         <span>|</span>
-        <button>Theses</button>
+        <button
+          onClick={()=>{
+            dispatch(setTypeArray([4]))
+            navigate(`/search?filter=Theses and Dissertations`)
+          }}
+        >
+          Theses & Dissertations
+        </button>
       </div>
     </nav>
   )
