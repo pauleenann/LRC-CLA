@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { motion } from 'framer-motion'; // Import Framer Motion
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
 import ResourceBook from '../../components/ResourceBook/ResourceBook';
 import './SearchPage.css'
@@ -19,6 +19,12 @@ const fadeIn = {
 
 const SearchPage = () => {
     const dispatch = useDispatch();
+    // get query from URL
+    const location = useLocation()
+    const queryParams = new URLSearchParams(location.search);
+    // Get the 'filter' query parameter
+    const filter = queryParams.get('filter');
+
     // array from letter A-Z
     const alphabet = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i));
     // resource
@@ -30,9 +36,9 @@ const SearchPage = () => {
     const [department, setDepartment] = useState([]);
     const [topics, setTopics] = useState([]);
     const [searchFilters, setSearchFilters] = useState({
-        type:[],
-        dept:[],
-        topic:[]
+        type: type,
+        dept: dept,
+        topic: topic
     });
     
     // Pagination state
@@ -54,17 +60,61 @@ const SearchPage = () => {
         dept: {},
         topic: {}
     });
+
+    useEffect(() => {
+        setSearchFilters({
+            type: type,
+            dept: dept,
+            topic: topic
+        });
+    }, [type, dept, topic]);
+
+    useEffect(() => {
+        if (resourceType.length && department.length && topics.length) {
+            // Uncheck all checkboxes first
+            Object.values(checkboxRefs.current.type).forEach(checkbox => checkbox.checked = false);
+            Object.values(checkboxRefs.current.dept).forEach(checkbox => checkbox.checked = false);
+            Object.values(checkboxRefs.current.topic).forEach(checkbox => checkbox.checked = false);
     
+            // Check only those that exist in searchFilters
+            searchFilters.type.forEach(typeId => {
+                if (checkboxRefs.current.type[typeId]) {
+                    checkboxRefs.current.type[typeId].checked = true;
+                }
+            });
+    
+            searchFilters.dept.forEach(deptId => {
+                if (checkboxRefs.current.dept[deptId]) {
+                    checkboxRefs.current.dept[deptId].checked = true;
+                }
+            });
+    
+            searchFilters.topic.forEach(topicId => {
+                if (checkboxRefs.current.topic[topicId]) {
+                    checkboxRefs.current.topic[topicId].checked = true;
+                }
+            });
+        }
+    }, [resourceType, department, topics, searchFilters, filter]);
+    
+
     useEffect(() => {
         window.scrollTo(0, 0);
-        
         getType();
         getDept();
         getTopics();
-        dispatch(fetchResources({ searchQuery: searchQuery, type: [], dept: [], topic: [] }));
+        dispatch(fetchResources({ searchQuery: searchQuery, type, dept, topic }));
     }, []);
 
+    useEffect(()=>{
+        if(!filter){
+            return
+        }
+        dispatch(fetchResources({ searchQuery: searchQuery, type, dept, topic })); //search
+    },[filter])
+
     useEffect(() => {
+
         dispatch(setTypeArray(searchFilters.type));
         dispatch(setDeptArray(searchFilters.dept));
         dispatch(setTopicArray(searchFilters.topic));
@@ -197,6 +247,8 @@ const SearchPage = () => {
     const currentItems = displayedResources.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(displayedResources.length / itemsPerPage);
     
+    
+    
     // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
     
@@ -241,6 +293,9 @@ const SearchPage = () => {
         
         return buttons;
     };
+
+    
+    console.log(searchFilters)
 
     return (
         <div className='search-container'>
@@ -319,7 +374,7 @@ const SearchPage = () => {
                         <div className='d-flex justify-content-between align-items-center'>
                             <div>
                                 <h1 className='m-0 fw-semibold'>
-                                    {searchQuery.length > 0 ? `Search results for: ${searchQuery}` : 'Find resources'}
+                                    {searchQuery.length > 0 ? `Search results for: ${searchQuery}` : !filter ? 'Find resources' : `Results for ${filter}`}
                                 </h1>
                                 {searchQuery.length > 0 && (
                                     <p className="m-0">A total of {displayedResources.length} resource/s found for {searchQuery}</p>
