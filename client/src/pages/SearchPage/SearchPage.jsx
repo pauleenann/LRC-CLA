@@ -56,6 +56,8 @@ const SearchPage = () => {
     });
     
     useEffect(() => {
+        window.scrollTo(0, 0);
+        
         getType();
         getDept();
         getTopics();
@@ -363,7 +365,9 @@ const SearchPage = () => {
                                 currentItems.map(item => (
                                     <div className='col-4 mb-4' key={item.resource_id}>
                                         <Link to={`/view/${item.resource_id}`} className='text-decoration-none'>
-                                            <ResourceBook loading={loading} data={item}/>
+                                            <motion.div whileHover={{ scale: 1.05 }}>
+                                              <ResourceBook loading={loading} data={item}/>  
+                                            </motion.div>
                                         </Link>               
                                     </div>
                                 ))
