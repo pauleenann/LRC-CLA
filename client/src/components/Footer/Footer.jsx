@@ -22,7 +22,7 @@ const Footer = () => {
                 <ul className='list-unstyled d-flex flex-column gap-2'>
                     <li><Link to='/' className='text-decoration-none text-light'>Home</Link></li>
                     <li><Link to='/about' className='text-decoration-none text-light'>About Us</Link></li>
-                    <li>Terms & Conditions</li>
+                    <li><Link to='/terms-conditions' className='text-decoration-none text-light'>Terms & Conditions</Link></li>
                 </ul>
             </div>
             {/* contact us */}
