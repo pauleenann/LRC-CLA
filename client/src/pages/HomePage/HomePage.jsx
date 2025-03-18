@@ -233,7 +233,7 @@ const HomePage = () => {
           <button 
             className="btn see-all fw-semibold"
             onClick={()=>{
-              dispatch(setTopicArray([16]))
+              dispatch(setDeptArray([4]))
               navigate(`/search?filter=Hospitality and Restaurant Management`)
             }}>
             SEE MORE
