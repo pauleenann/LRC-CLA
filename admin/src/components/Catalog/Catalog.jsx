@@ -612,13 +612,15 @@ const Catalog = () => {
                     ? item.topic_name 
                     : 'N/A'}
                 </td>
-                <td>{item.resource_quantity}/{item.original_resource_quantity}</td>
+                <td>
+                  {isOnline? `${item.resource_quantity}/${item.original_resource_quantity}`:`${item.resource_quantity}`}
+                </td>
               </tr>
             ))
           ) : (
             <tr>
               <td colSpan="6" style={{ textAlign: 'center' }}>
-                <FontAwesomeIcon icon={faExclamationCircle} />
+                <FontAwesomeIcon icon={faExclamationCircle} className='fs-2'/>
                 <p className="m-0">Resource not found<br/>Please try another search or filter.</p>
               </td>
             </tr>

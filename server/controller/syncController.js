@@ -14,13 +14,14 @@ export const resources = async (req, res) => {
 
     const q = `
     INSERT INTO 
-        resources (resource_title, resource_description, resource_published_date, resource_quantity, resource_is_circulation, dept_id, type_id, avail_id) 
-    VALUES (?,?,?,?,?,?,?,?)`;
+        resources (resource_title, resource_description, resource_published_date, original_resource_quantity, resource_quantity, resource_is_circulation, dept_id, type_id, avail_id) 
+    VALUES (?,?,?,?,?,?,?,?,?)`;
 
     const values = [
         resource.resource_title,
         resource.resource_description || '',
         resource.resource_published_date,
+        resource.resource_quantity,
         resource.resource_quantity,
         resource.resource_is_circulation,
         resource.dept_id,

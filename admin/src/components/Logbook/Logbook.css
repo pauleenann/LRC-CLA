@@ -100,7 +100,7 @@
 
 
 .logbook-container .logbook-table{
-    /* table-layout: fixed; */
+    table-layout: fixed;
     overflow: hidden;
     outline: 1px solid var(--tup-color) !important;
     width: 100%;
