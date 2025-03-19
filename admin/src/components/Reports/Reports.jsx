@@ -219,10 +219,7 @@ const Reports = () => {
           )}
         </div>
         </div>
-       
         
-        
-
       <ReportsModal 
         open={isReportModalOpen} 
         close={() => setIsReportModalOpen(false)}
