@@ -138,6 +138,7 @@
     outline: 1px solid var(--tup-color);
     font-size: 0.8rem !important;
     box-shadow: 0px 1px 2px var(--shadow);
+    table-layout: fixed;
 }
 
 .circulation-container .circ-table thead tr td{
