@@ -506,7 +506,7 @@ const Catalog = () => {
         </button>
         {isOnline ?
           <button
-            className="btn cat-button clear-btn fw-semibold"
+            className="btn btn-warning clear-btn"
             onClick={handleClear}>
             Clear filter
           </button> : ''}
@@ -612,7 +612,7 @@ const Catalog = () => {
                     ? item.topic_name 
                     : 'N/A'}
                 </td>
-                <td>{item.original_resource_quantity}/{item.resource_quantity}</td>
+                <td>{item.resource_quantity}/{item.original_resource_quantity}</td>
               </tr>
             ))
           ) : (
