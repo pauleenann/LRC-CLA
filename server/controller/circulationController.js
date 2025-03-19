@@ -78,7 +78,7 @@ export const checkinSearch = async (req, res) => {
                 r.resource_id = c.resource_id
             WHERE 
                 (b.book_isbn LIKE ? OR r.resource_title LIKE ?)
-                AND c.patron_id = ? AND c.status = "borrowed"
+                AND c.patron_id = ? AND (c.status = "borrowed" OR c.status = "overdue")
 
             LIMIT 10;
             `,
