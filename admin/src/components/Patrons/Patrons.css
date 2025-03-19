@@ -73,7 +73,7 @@
 }
 
 .patrons-container .patrons-search-bar:active,.patrons-container .patrons-search-bar:focus{
-    border: 3px solid var(--button);
+    /* border: 3px solid var(--button); */
     outline: none;
 }
 

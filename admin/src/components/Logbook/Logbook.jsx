@@ -124,7 +124,7 @@ const Logbook = () => {
                 <table className='logbook-table mt-2'>
                     <thead>
                         <tr>
-                            <td>No.</td>
+                            {/* <td>No.</td> */}
                             <td>TUP ID</td>
                             <td>First Name</td>
                             <td>Last Name</td>
@@ -140,9 +140,9 @@ const Logbook = () => {
                         {Array.isArray(patron) ? patron.length > 0 ? (
                             patron.map((item, index) => (
                                 <tr key={index}>
-                                    <td>{entriesPerPage === "All"
+                                    {/* <td>{entriesPerPage === "All"
                         ? index + 1 
-                        : index + 1 + (currentPage - 1) * entriesPerPage}</td>
+                        : index + 1 + (currentPage - 1) * entriesPerPage}</td> */}
                                     <td>{item.tup_id}</td>
                                     <td>{item.patron_fname}</td>
                                     <td>{item.patron_lname}</td>
