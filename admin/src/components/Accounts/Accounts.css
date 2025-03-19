@@ -56,10 +56,11 @@
 
 .accounts-container .search input{
     width: 500px;
-    height: 40px;
+    height: 50px;
     padding-left: 10px;
     border: 1px solid var(--shadow);
     border-radius: 5px;
+    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 .accounts-container .search{
@@ -68,10 +69,17 @@
     align-items: center;
 }
 
-.accounts-container .search button{
+.accounts-container .search-btn{
     background-color: var(--tup-color);
     color: var(--white);
     border-radius: 5px;
+    height: 50px;
+    box-shadow: 0px 1px 2px var(--shadow);
+}
+
+.accounts-container .clear-btn{
+    height: 50px;
+    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 .accounts-container .create-btn{
@@ -80,7 +88,8 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    height: 40px;
+    height: 50px;
+    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 
@@ -92,6 +101,7 @@
     width: 100%;
     outline: 1px solid var(--tup-color);
     font-size: 0.9rem;
+    table-layout: fixed;
 }
 
 .accounts-container table thead tr td{

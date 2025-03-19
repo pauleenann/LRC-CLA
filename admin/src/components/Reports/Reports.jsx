@@ -171,7 +171,7 @@ const Reports = () => {
             <div className="d-flex flex-column align-items-center text-center my-4 gap-2">
               <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
               <span>Report not found.<br/>Please try a different search.</span>
-              <button className='btn clear-btn' onClick={clearFilters}>Clear Filter</button>
+              <button className='btn btn-warning' onClick={clearFilters}>Clear Filter</button>
             </div>
           )
           : (
@@ -179,7 +179,7 @@ const Reports = () => {
               <div key={report.report_id} className='m-0 p-0 d-flex align-items-center text-center row rounded data'>
                 <div className='col-3'>{report.report_name}</div>
                 <div className='col-3'>{report.report_description}</div>
-                <div className='col-3'>{dayjs(report.created_at).format('YYYY-MM-DD')}</div>
+                <div className='col-3'>{dayjs(report.created_at).format("YYYY-MM-DD HH:mm:ss")}</div>
                 <div className='col-3'>
                   <button className="btn eye-btn" onClick={() => {
                     setViewId(report.report_id);

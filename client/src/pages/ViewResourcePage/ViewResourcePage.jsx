@@ -16,6 +16,7 @@ import 'swiper/css/navigation'; // Import navigation styles
 // Import required modules
 import { Navigation, Pagination, Mousewheel, Keyboard } from 'swiper/modules';
 import axios from 'axios';
+import Footer from '../../components/Footer/Footer'
 
 const fadeIn = {    
     hidden: { opacity: 0, y: 30 },
@@ -195,6 +196,9 @@ const ViewResourcePage = () => {
                 
             </div>
         </div>
+
+        {/* footer */}
+        <Footer/>
 
     </div>
   )
