@@ -101,7 +101,7 @@ export const checkinSearch = async (req, res) => {
 
 export const checkoutRecord = (req, res) => {
     const { resource_id, patron_id } = req.query;
-    const query = 'SELECT checkout_id FROM checkout WHERE resource_id = ? AND patron_id = ? AND status = "borrowed"';
+    const query = 'SELECT checkout_id FROM checkout WHERE resource_id = ? AND patron_id = ? AND (status = "borrowed" OR status= "overdue") ';
 
     db.query(query, [resource_id, patron_id], (err, results) => {
         if (err) {

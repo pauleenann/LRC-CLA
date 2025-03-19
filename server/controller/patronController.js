@@ -304,7 +304,7 @@ export const patron = (req, res) => {
                 p.patron_email,
                 p.category,
                 cr.course_name,
-                COUNT(CASE WHEN c.status = 'borrowed' THEN 1 END) AS total_checkouts
+                COUNT(CASE WHEN (c.status = 'borrowed' OR c.status = 'overdue') THEN 1 END) AS total_checkouts
             FROM 
                 patron p
             LEFT JOIN 
@@ -346,7 +346,7 @@ export const checkIn = (req, res) => {
                 LEFT JOIN 
                     checkout c 
                 ON 
-                    p.patron_id = c.patron_id AND c.status = 'borrowed'
+                    p.patron_id = c.patron_id AND (c.status = 'borrowed' OR c.status = 'overdue')
                 LEFT JOIN 
                     course cr
                 ON 
