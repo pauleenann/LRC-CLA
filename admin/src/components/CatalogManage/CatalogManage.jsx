@@ -128,7 +128,7 @@ const CatalogManage = () => {
           {/* Department Dropdown */}
           <div className='d-flex flex-column align-items-start'>
             <div>
-            <span className='fw-semibold'>Departments  &nbsp; <FontAwesomeIcon icon={faChevronDown} /></span>
+            <span className='fw-semibold fs-4'>Departments</span>
             </div>
             <span className='instructions mt-3'>* Choose the department you want to manage</span>
           </div>
@@ -206,7 +206,6 @@ const CatalogManage = () => {
                   data-bs-toggle="modal" data-bs-target="#AddDept"
                 >
                   <FontAwesomeIcon icon={faPen} className="icon" />
-                
                 </button>
                 
               </div>
@@ -261,7 +260,7 @@ const CatalogManage = () => {
               </div>
               
               {/* add new topic */}
-              <button className="btn add-topic d-flex align-items-center gap-3" data-bs-toggle="modal" data-bs-target="#AddTopic" onClick={()=>{setEditTopicId(null); setTopicName(""); setTopicRowNo("")}}>
+              <button className="btn add-topic d-flex align-items-center gap-3 mt-3" data-bs-toggle="modal" data-bs-target="#AddTopic" onClick={()=>{setEditTopicId(null); setTopicName(""); setTopicRowNo("")}}>
                 <FontAwesomeIcon icon={faPlus} className="icon" />
                 Add new topic
               </button>

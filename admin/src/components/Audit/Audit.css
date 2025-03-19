@@ -53,6 +53,8 @@
 
 .audit-container .form-select{
     width: 500px;
+    height: 50px;
+    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 .audit-container .filter-date-export{
@@ -69,41 +71,24 @@
 
 .audit-container .filter-date input{
     width: 200px;
-    height: 40px;
+    height: 50px;
     padding: 0 10px;
     border-radius: 5px;
     border:1px solid var(--table-border-bottom);
     outline: none !important;
     color: var(--black);
     cursor: pointer;
+    box-shadow: 0px 1px 2px var(--shadow);
 }
 
-.audit-container .filter-date button{
-    background-color: var(--tup-color);
-    color: var(--white);
-}
-
-.audit-container .filter-date button:hover,
-.audit-container .filter-date button:active,
-.audit-container .filter-date button:focus{
-    background-color: var(--button);
-    color: var(--white);
+.audit-container .clear-btn{
+    height: 50px;
+    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 .audit-container .export-btn{
-    background-color: var(--yellow);
-    color: var(--black);
-    font-weight: 500;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.audit-container .export-btn:hover,
-.audit-container .export-btn:active,
-.audit-container .export-btn:focus{
-    background-color: var(--yellow-hover);
-    color: var(--black);
+    height: 50px;
+    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 
@@ -113,6 +98,7 @@
     text-align: start;
     outline: 1px solid var(--tup-color);
     width: 100%;
+    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 .audit-container table thead tr td,

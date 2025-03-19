@@ -88,7 +88,7 @@ const GenerateBarcodePage = () => {
             <div>
                 <AdminTopNavbar />
                 <div className='cat-container'>
-                <h1>Catalog</h1>
+                <h1>Generate Barcode</h1>
                 <div className='barcode-path-box'>
                     {/* <Link to={'/catalog'}>
                         <button className='back'>
@@ -96,13 +96,13 @@ const GenerateBarcodePage = () => {
                             <p>Back</p>
                         </button>
                     </Link> */}
-                    <div className='barcode-path'>
-                        <p>Catalog / <span> Generate Barcode</span></p>
-                    </div>
+                    {/* <div className='barcode-path'>
+                        <p>Cataloging / <span> Generate Barcode</span></p>
+                    </div> */}
                 </div>
-                <div className="search-filter">
-                    <input type="search" placeholder="Search by title" onChange={(e)=>setSearchQuery(e.target.value)} onKeyDown={(e)=>e.key=='Enter'&&search()}/>
-                    <button className="btn cat-search-button">
+                <div className="search-filter d-flex gap-2">
+                    <input type="search" className='search-bar' placeholder="Search by title" onChange={(e)=>setSearchQuery(e.target.value)} onKeyDown={(e)=>e.key=='Enter'&&search()}/>
+                    <button className="btn search-btn">
                         <FontAwesomeIcon icon={faSearch} className='icon' />
                     </button>
                 </div>
@@ -122,7 +122,7 @@ const GenerateBarcodePage = () => {
                         )}
                     </PDFDownloadLink>
                 ) : (
-                    <button className='btn d-flex align-items-center gap-2 generate-btn' disabled>
+                    <button className='btn d-flex align-items-center gap-2 generate-btn btn-warning' disabled>
                         <FontAwesomeIcon icon={faBarcode} className='icon' />
                         Export as PDF
                     </button>

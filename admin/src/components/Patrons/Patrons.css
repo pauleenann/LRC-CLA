@@ -53,6 +53,11 @@
 .patrons-container .search-field-category-filter{
     display: flex;
     gap: 30px;
+    
+}
+
+.patrons-container .form-select{
+    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 .patrons-container .patrons-search-field,.patrons-container .patrons-category{
@@ -70,6 +75,7 @@
     border-radius: 5px;
     border-color: var(--shadow);
     font-size: 1rem;
+    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 .patrons-container .patrons-search-bar:active,.patrons-container .patrons-search-bar:focus{
@@ -79,6 +85,7 @@
 
 .patrons-container .patrons-search-button{
     width: 50px;
+    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 .patrons-container .patrons-search-button, .patrons-container .patrons-add-btn{
@@ -96,6 +103,7 @@
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.1s linear;
+    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 .patrons-container .patrons-search-button:hover{

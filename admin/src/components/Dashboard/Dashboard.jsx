@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import './Dashboard.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers ,faBook, faPlus, faBookBookmark, faTriangleExclamation} from '@fortawesome/free-solid-svg-icons';
+import { faUsers ,faBook, faPlus, faBookBookmark, faTriangleExclamation, faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
 import { VerticalBarChart } from '../VerticalBarChart';
 import DashboardTable from '../DashboardTable/DashboardTable';
 import DashboardTopChoices from '../DashboardTopChoices/DashboardTopChoices';
@@ -328,9 +328,13 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-            )):popularChoices ? popularChoices.map((item, index) => (
+            )):popularChoices&&popularChoices.length>0 ? popularChoices.map((item, index) => (
               <DashboardTopChoices key={index} data={item} number={index + 1} />
-            )) : ''}
+            )) : 
+            <div className='d-flex flex-column align-items-center gap-2 my-3 text-center'>
+              <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
+              <span>No popular choices yet.</span>
+            </div>}
           </div>
 
           {/* books issued list */}

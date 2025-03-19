@@ -88,8 +88,10 @@
 }
 
 .manage-catalog .add-dept-btn{
+    height: 50px;
     background-color: var(--tup-color);
     color: var(--white);
+    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 .manage-catalog .add-dept-btn:hover,
@@ -115,13 +117,13 @@
 
 .manage-catalog .add-topic{
     color: var(--tup-color);
+    
 }
 
 .manage-catalog .add-topic:hover,
 .manage-catalog .add-topic:active,
 .manage-catalog .add-topic:focus{
     color: var(--tup-color);
-    border: none;
 }
 
 .manage-catalog .trash-btn{

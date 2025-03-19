@@ -158,9 +158,9 @@ const Audit = () => {
           <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
           <span>to</span>
           <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-          <button className="btn" onClick={clearFilters}>Clear</button>
+          <button className="btn clear-btn btn-warning" onClick={clearFilters}>Clear filter</button>
         </div>
-        <button className="btn export-btn" onClick={exportToCSV}>
+        <button className="btn export-btn btn-warning d-flex align-items-center gap-2" onClick={exportToCSV}>
           <FontAwesomeIcon icon={faFileExport} />
           Export to Excel
         </button>

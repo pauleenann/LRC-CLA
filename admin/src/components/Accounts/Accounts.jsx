@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Accounts.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faUser, faPen, faUserSlash,faArrowLeft, faArrowRight, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faUser, faPen, faUserSlash, faArrowLeft, faArrowRight, faSearch, faSort, faSortUp, faSortDown, faArrowUp, faArrowDown, faArrowUpWideShort } from '@fortawesome/free-solid-svg-icons';
 import CreateUserModal from '../CreateUserModal/CreateUserModal';
 import EditUserModal from '../EditUserModal/EditUserModal';
 import DeactivateModal from '../DeactivateModal/DeactivateModal';
@@ -38,6 +38,13 @@ const Accounts = () => {
   const [totalPages, setTotalPages] = useState(0); // Total pages
   const [keyword, setKeyword] = useState('');
   const [selectedFilters, setSelectedFilters] = useState({ fname:0, lname:0, uname: 0, role: 0, status:''});
+  
+  // New state to track sort directions
+  const [sortStates, setSortStates] = useState({
+    fname: 0, // 0 = unsorted, 1 = ascending (A-Z), 2 = descending (Z-A)
+    lname: 0,
+    uname: 0
+  });
   
   useEffect(() => {
     userAccounts();
@@ -319,7 +326,45 @@ const Accounts = () => {
 
   const handleSearch = (e) => {
     setKeyword(e.target.value);
-
+  };
+  
+  // New function to handle sort icon clicks
+  const handleSortClick = (column) => {
+    // Update sort state for the clicked column
+    const currentState = sortStates[column];
+    const newState = currentState === 2 ? 0 : currentState + 1;
+    
+    // Reset all other column states
+    const newSortStates = { 
+      fname: 0, 
+      lname: 0, 
+      uname: 0 
+    };
+    
+    // Set the new state for the clicked column
+    newSortStates[column] = newState;
+    setSortStates(newSortStates);
+    
+    // Map the state to the sort value (0 = no sort, 1 = A-Z, 2 = Z-A)
+    // Update the selectedFilters state
+    setSelectedFilters(prevFilters => ({
+      ...prevFilters,
+      fname: newSortStates.fname,
+      lname: newSortStates.lname,
+      uname: newSortStates.uname
+    }));
+  };
+  
+  // Helper to get the right icon based on sort state
+  const getSortIcon = (column) => {
+    switch (sortStates[column]) {
+      case 1:
+        return <FontAwesomeIcon icon={faArrowUp} className='ms-2'/>;
+      case 2:
+        return <FontAwesomeIcon icon={faArrowDown} className='ms-2'/>;
+      default:
+        return <FontAwesomeIcon icon={faArrowUpWideShort} className='ms-2'/>;
+    }
   };
 
   const handleSelectedFilter = (filterCategory, value)=>{
@@ -406,16 +451,17 @@ const Accounts = () => {
             }
           }}
         />
-        <button className="btn" onClick={() => userAccounts(true)}>
+        <button className="btn search-btn px-3" onClick={() => userAccounts(true)}>
           <FontAwesomeIcon icon={faSearch} className="icon" />
         </button>
         <button
-          className="btn"
-          onClick={() =>
-            setSelectedFilters({ fname: 0, lname: 0, uname: 0, role: 0, status: '' })
-          }
+          className="btn btn-warning clear-btn"
+          onClick={() => {
+            setSelectedFilters({ fname: 0, lname: 0, uname: 0, role: 0, status: '' });
+            setSortStates({ fname: 0, lname: 0, uname: 0 });
+          }}
         >
-          Reset Filter
+          Clear filter
         </button>
       </div>
   {/* Add */}
@@ -425,34 +471,27 @@ const Accounts = () => {
   </button>
 </div>
 
-
       {/* Accounts Table */}
       <table>
         <thead>
           <tr>
             <td>
               First Name
-              <select name="" id="" className='sort' onChange={(e)=>handleSelectedFilter('fname', e.target.value)}>
-                  <option value="" disabled selected></option>
-                  <option value="1" >Sort by First Name (A-Z)</option>
-                  <option value="2">Sort by First Name (Z-A)</option>
-              </select>
+              <span className="sort-icon" onClick={() => handleSortClick('fname')}>
+                {getSortIcon('fname')}
+              </span>
             </td>
             <td>
               Last Name
-              <select name="" id="" className='sort' onChange={(e)=>handleSelectedFilter('lname', e.target.value)}>
-                <option value="" disabled selected></option>
-                  <option value="1">Sort by Last Name (A-Z)</option>
-                  <option value="2">Sort by Last Name (Z-A)</option>
-              </select>
+              <span className="sort-icon" onClick={() => handleSortClick('lname')}>
+                {getSortIcon('lname')}
+              </span>
             </td>
             <td>
               Username
-              <select name="" id="" className='sort' onChange={(e)=>handleSelectedFilter('uname', e.target.value)}>
-                  <option value="" disabled selected></option>
-                  <option value="1">Sort by Username (A-Z)</option>
-                  <option value="2">Sort by Username (Z-A)</option>
-              </select>
+              <span className="sort-icon" onClick={() => handleSortClick('uname')}>
+                {getSortIcon('uname')}
+              </span>
             </td>
             <td>
               Role
