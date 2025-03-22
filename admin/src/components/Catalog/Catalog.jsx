@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight, faSearch, faPlus, faBarcode, faArrowsRotate, faArrowDown, faArrowUp, faArrowUpWideShort, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux'
+import CatalogFilterModal from '../CatalogFilterModal/CatalogFilterModal'
 
 
 const Catalog = () => {
@@ -34,6 +35,8 @@ const Catalog = () => {
     author: 0
   });
   const [displayedCatalog, setDisplayedCatalog] = useState([]);
+  // for catalog modal
+  const [openFilter, setOpenFilter] = useState(false);
 
   const toggleSort = (column) => {
     setSortOrder((prev) => {
@@ -498,7 +501,12 @@ const Catalog = () => {
 
       {/* search-filter */}
       <div className="search-filter d-flex gap-2">
-        <input type="search" className='search-bar' placeholder="Search by title or author" value={keyword === '%%' ? '' : keyword} onChange={(e) => setKeyword(e.target.value)} onKeyDown={(e) => e.key == 'Enter' && (isOnline ? getCatalogOnline() : getCatalogOffline())} />
+        {/* search */}
+        <div>
+          <input type="search" className='search-bar mb-1' placeholder="Search by title or author" value={keyword === '%%' ? '' : keyword} onChange={(e) => setKeyword(e.target.value)} onKeyDown={(e) => e.key == 'Enter' && (isOnline ? getCatalogOnline() : getCatalogOffline())} />
+          <button href="" className='m-0 advanced-search fw-semibold' onClick={()=>setOpenFilter(true)}>Advanced Search</button>
+        </div>
+        
         <button
           className="btn cat-button px-3"
           onClick={() => { isOnline ? getCatalogOnline() : getCatalogOffline() }}>
@@ -655,9 +663,8 @@ const Catalog = () => {
           </div>
         </nav>
 
-      {/* <Loading loading={loading}/> */}
       <ResourceStatusModal open={statusModal} close={() => setStatusModal(false)} content={statusModalContent} isOnline={isOnline} />
-      {/* <CatalogFilterModal open={openFilter} close={()=>setOpenFilter(false)}/> */}
+      <CatalogFilterModal open={openFilter} close={()=>setOpenFilter(false)}/>
     </div>
   )
 }

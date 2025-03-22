@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Audit.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileExport,faArrowRight, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faFileExport,faArrowRight, faArrowLeft, faDownload } from "@fortawesome/free-solid-svg-icons";
 
 const Audit = () => {
   const [audit, setAudit] = useState([]); // Stores all audit data
@@ -158,10 +158,10 @@ const Audit = () => {
           <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
           <span>to</span>
           <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-          <button className="btn clear-btn btn-warning" onClick={clearFilters}>Clear filter</button>
+          <button className="btn clear-btn" onClick={clearFilters}>Clear filter</button>
         </div>
         <button className="btn export-btn btn-warning d-flex align-items-center gap-2" onClick={exportToCSV}>
-          <FontAwesomeIcon icon={faFileExport} />
+          <FontAwesomeIcon icon={faDownload} className='icon'/>
           Export to Excel
         </button>
       </div>

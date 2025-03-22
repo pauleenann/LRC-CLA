@@ -1,28 +1,4 @@
-@font-face {
-    font-family: 'Inter';
-    font-weight: 400;
-    src: url('../../assets/Fonts/Inter_24pt-Regular.ttf') format('ttf');
-}
-
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter';
-    text-decoration: none;
-}
-
-:root{
-    --black:#000;
-    --tup-color: #94152B;
-    --white: #fff;
-    --button:  #97170E;
-    --button-hover:  #75110a;
-    --shadow: #0000003b;
-    --dark:#444444;
-    --yellow: #EDDF13;
-    --yellow-filter: brightness(0) saturate(10%) invert(90%) sepia(41%) saturate(1000%) hue-rotate(332deg) brightness(103%) contrast(103%);
-}
+@import '../../assets/styles/globals.css';
 
 .top-navbar{
  

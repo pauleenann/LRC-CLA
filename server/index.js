@@ -19,6 +19,7 @@ import isbnRoutes from './routes/isbnRoutes.js';
 import validateTupId from './routes/validateTupId.js';
 import onlineCatalogRoutes from './routes/onlineCatalogRoutes.js';
 import attendanceRoutes from './routes/attendanceRoutes.js';
+import advancedSearchRoutes from './routes/advancedSearchRoutes.js'
 import { db } from './config/db.js';
 import nodemailer from 'nodemailer';
 import { createServer } from "http";
@@ -79,6 +80,7 @@ app.use('/api/isbn', isbnRoutes);
 app.use('/api/validate-tup-id', validateTupId);
 app.use('/api/online-catalog', onlineCatalogRoutes);
 app.use('/api/attendance', attendanceRoutes);
+app.use('/api/advanced-search', advancedSearchRoutes);
 
 /*--------------check overdue resources using cron-------- */
 const sendEmail = (email, name, tupid, borrowDate, borrowDue, resourceTitle, resourceId) => {

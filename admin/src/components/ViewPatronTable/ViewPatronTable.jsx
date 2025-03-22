@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './ViewPatronTable.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faArrowLeft, faArrowRight, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import {faArrowLeft, faArrowRight, faDownload, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import ViewPatronFilter from '../ViewPatronFilter/ViewPatronFilter';
 
 const ViewPatronTable = ({header, title, data, exportXLSX}) => {
@@ -150,9 +150,12 @@ const ViewPatronTable = ({header, title, data, exportXLSX}) => {
             <span className='m-0'>to</span>
             <input type="date" name="end_date" id="" onChange={handleChange}/>
             <button className='btn search' onClick={search}>Search</button> */}
-            <button className='btn search fw-semibold' onClick={reset}>Clear filter </button>
+            <button className='btn search' onClick={reset}>Clear filter </button>
           </div>
-          <button className="btn export fw-semibold" onClick={exportXLSX}>Export</button>
+          <button className="btn export d-flex align-items-center gap-2 btn-warning" onClick={exportXLSX}>
+            <FontAwesomeIcon icon={faDownload} className='icon'/>
+            Export
+          </button>
         </div>
         {/* table */}
         <table>
