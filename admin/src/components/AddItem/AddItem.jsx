@@ -412,7 +412,7 @@ const AddItem = () => {
                  setBookData({
                     mediaType: 'book',
                     authors: [],
-                    isCirculation: false,
+                    isCirculation: true,
                     publisher_id: 0,
                     publisher: ''
                 });

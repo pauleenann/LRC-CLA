@@ -411,8 +411,6 @@ export const updateResource = async (req, res) => {
     try{
         if(req.file){
             filePath = req.file.path; // Get the file path 
-        }else{
-            filePath = 'public/images/not_found.png'
         }
 
          // initialize variables based on media type
@@ -621,9 +619,9 @@ const editResource = async (res, req, authors, resourceId, username) => {
                     resource_id = ?
             `;
 
-            
-
             console.log("new values1: ", updatedValues)
+
+            console.log(updatedValues)
 
             db.query(updateQuery, updatedValues, (err, results) => {
                 if (err) {
