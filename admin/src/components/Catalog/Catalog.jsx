@@ -21,7 +21,7 @@ const Catalog = () => {
   const [currentPage, setCurrentPage] = useState(1); // Current page
   const [totalPages, setTotalPages] = useState(0); // Total pages
   const [loading, setLoading] = useState(false)
-  const [keyword, setKeyword] = useState('%%')
+  const [keyword, setKeyword] = useState('') // Changed from '%%' to empty string for clearer handling
   const [statusModal, setStatusModal] = useState(false)
   const [statusModalContent, setStatusModalContent] = useState({
     status: '',
@@ -82,9 +82,16 @@ const Catalog = () => {
     dispatch(setAdvancedSearch([]))
   },[])
 
+  // This useEffect triggers search when keyword changes, including empty string
   useEffect(() => {
-    if (keyword == '') {
-      getCatalogOnline(true)
+    // Skip the initial render
+    const isInitialRender = keyword == '';
+    if (!isInitialRender) {
+      if (isOnline) {
+        getCatalogOnline();
+      } else {
+        getCatalogOffline();
+      }
     }
   }, [keyword]);
 
@@ -137,25 +144,42 @@ const Catalog = () => {
         setSortOrder({ title: 0, author: 0 });
       }
       setLoading(true); // Show loading spinner
-
-      if(advancedSearch.length==0&&!isSearch){
+      
+      if(advancedSearch.length == 0 && !isSearch) {
+        // Use keyword as is, or convert empty string to '%%' for backend wildcard search
+        const searchKeyword = keyword === '' ? '%%' : keyword;
+           
         const response = await axios.get(`http://localhost:3001/api/catalog`, {
           params: {
-            keyword,
+            keyword: searchKeyword,
             type: selectedFilters.type,
             dept: selectedFilters.department,
             topic: selectedFilters.topic,
             sort: selectedFilters.title ? { column: 'title', order: selectedFilters.title } :
-              selectedFilters.author ? { column: 'author', order: selectedFilters.author } : null
+                  selectedFilters.author ? { column: 'author', order: selectedFilters.author } : null
           }
         });
         console.log(response);
-
+        
         setCatalog(response.data);
-      }else{
-        setCatalog(advancedSearch)
+      } else {
+        // Filter advancedSearch results by title and author if they're set
+        let filteredResults = [...advancedSearch];
+
+        if (keyword?.trim()) {
+          const lowerKeyword = keyword.toLowerCase().trim();
+          
+          filteredResults = filteredResults.filter(item => {
+            const titleMatch = item.resource_title?.toLowerCase().includes(lowerKeyword) ?? false;
+            const authorMatch = item.author_names?.toLowerCase().includes(lowerKeyword) ?? false;
+            
+            return titleMatch || authorMatch;
+          });
+        }
+
+        setCatalog(filteredResults);
       }
-      
+         
     } catch (err) {
       console.error('Error fetching catalog data:', err.message);
     } finally {
@@ -177,7 +201,7 @@ const Catalog = () => {
 
       // Check if the keyword is empty, if so display all data
       let filteredData = data;
-      if (keyword !== '' && keyword !== '%%') {
+      if (keyword !== '') {
         // Filter the data based on the keyword
         filteredData = data.filter(item => {
           // Check if the title includes the keyword (case-insensitive)
@@ -273,6 +297,27 @@ const Catalog = () => {
     setKeyword('');
     setSortOrder({ title: 0, author: 0 });
     setCurrentPage(1);
+    
+    // Trigger a search after clearing
+    if(isOnline) {
+      getCatalogOnline(true);
+    } else {
+      getCatalogOffline(true);
+    }
+  }
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setKeyword(e.target.value);
+  }
+
+  // Handle search submission
+  const handleSearch = () => {
+    if(isOnline) {
+      getCatalogOnline();
+    } else {
+      getCatalogOffline();
+    }
   }
 
   /*------------------------SYNC DATA------------------------------ */
@@ -484,6 +529,8 @@ const Catalog = () => {
     setCurrentPage(1); // Reset to first page when changing items per page
   };
 
+  console.log(keyword)
+
   return (
     <div className='cat-container'>
       <h1>Catalog</h1>
@@ -518,21 +565,31 @@ const Catalog = () => {
       <div className="search-filter d-flex gap-2">
         {/* search */}
         <div>
-          <input type="search" className='search-bar mb-1' placeholder="Search by title or author" value={keyword === '%%' ? '' : keyword} onChange={(e) => setKeyword(e.target.value)} onKeyDown={(e) => e.key == 'Enter' && (isOnline ? getCatalogOnline() : getCatalogOffline())} />
+          <input 
+            type="search" 
+            className='search-bar mb-1' 
+            placeholder="Search by title or author" 
+            value={keyword} 
+            onChange={handleSearchChange} 
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSearch();
+              }
+            }} 
+          />
           <button href="" className='m-0 advanced-search fw-semibold' onClick={()=>setOpenFilter(true)}>Advanced Search</button>
         </div>
         
         <button
           className="btn cat-button px-3"
-          onClick={() => { isOnline ? getCatalogOnline() : getCatalogOffline() }}>
+          onClick={handleSearch}>
           <FontAwesomeIcon icon={faSearch} className='icon' />
         </button>
-        {isOnline ?
-          <button
-            className="btn btn-warning clear-btn"
-            onClick={handleClear}>
-            Clear filter
-          </button> : ''}
+        <button
+          className="btn btn-warning clear-btn"
+          onClick={handleClear}>
+          Clear filter
+        </button>
       </div>
 
       {/*items per page  */}
@@ -685,4 +742,3 @@ const Catalog = () => {
 }
 
 export default Catalog
-
