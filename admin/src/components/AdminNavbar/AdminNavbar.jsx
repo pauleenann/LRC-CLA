@@ -89,7 +89,7 @@ const AdminNavbar = () => {
                     <li className={basePath === '/circulation' ? 'selected' : ''}>
                         <Link to='/circulation' className="menu">
                             <div><FontAwesomeIcon icon={faCartShopping} className='menu-icon'/></div>
-                            <div><p>Circulation</p></div>
+                            <div><p>Book Circulation</p></div>
                         </Link>
                     </li>
 

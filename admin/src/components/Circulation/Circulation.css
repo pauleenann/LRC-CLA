@@ -18,6 +18,8 @@
 }
 
 .circulation-container .checkin-btn{
+    width: 150px;
+    height: 150px;
     display: flex;
     padding: 30px;
     align-items: center;
