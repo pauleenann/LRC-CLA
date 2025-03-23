@@ -7,12 +7,15 @@ import ResourceStatusModal from '../ResourceStatusModal/ResourceStatusModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight, faSearch, faPlus, faBarcode, faArrowsRotate, faArrowDown, faArrowUp, faArrowUpWideShort, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import CatalogFilterModal from '../CatalogFilterModal/CatalogFilterModal'
+import { setAdvancedSearch, setIsSearch } from '../../features/advancedSearchSlice'
 
 
 const Catalog = () => {
+  const dispatch = useDispatch();
   const [catalog, setCatalog] = useState([])
+  const {advancedSearch, isSearch} = useSelector(state=>state.advancedSearch)
   // Pagination state
   const [pagination, setPagination] = useState(5); // Items per page
   const [currentPage, setCurrentPage] = useState(1); // Current page
@@ -72,7 +75,7 @@ const Catalog = () => {
     };
 
     fetchData();
-  }, [isOnline, selectedFilters]);
+  }, [isOnline, selectedFilters, advancedSearch, isSearch]);
 
   useEffect(() => {
     if (keyword == '') {
@@ -130,19 +133,24 @@ const Catalog = () => {
       }
       setLoading(true); // Show loading spinner
 
-      const response = await axios.get(`http://localhost:3001/api/catalog`, {
-        params: {
-          keyword,
-          type: selectedFilters.type,
-          dept: selectedFilters.department,
-          topic: selectedFilters.topic,
-          sort: selectedFilters.title ? { column: 'title', order: selectedFilters.title } :
-            selectedFilters.author ? { column: 'author', order: selectedFilters.author } : null
-        }
-      });
-      console.log(response);
+      if(advancedSearch.length==0&&!isSearch){
+        const response = await axios.get(`http://localhost:3001/api/catalog`, {
+          params: {
+            keyword,
+            type: selectedFilters.type,
+            dept: selectedFilters.department,
+            topic: selectedFilters.topic,
+            sort: selectedFilters.title ? { column: 'title', order: selectedFilters.title } :
+              selectedFilters.author ? { column: 'author', order: selectedFilters.author } : null
+          }
+        });
+        console.log(response);
 
-      setCatalog(response.data);
+        setCatalog(response.data);
+      }else{
+        setCatalog(advancedSearch)
+      }
+      
     } catch (err) {
       console.error('Error fetching catalog data:', err.message);
     } finally {
@@ -254,6 +262,8 @@ const Catalog = () => {
   }
 
   const handleClear = () => {
+    dispatch(setIsSearch(false));
+    dispatch(setAdvancedSearch([]))
     setSelectedFilters({ title: '', author: '', type: '', department: '', topic: '' });
     setKeyword('');
     setSortOrder({ title: 0, author: 0 });

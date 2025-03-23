@@ -17,8 +17,8 @@ export const getAdvancedSearch = (req, res) => {
     const handleFilter = (filterName) => {
         const columnMap = {
             'title': 'resources.resource_title',
-            'ISBN': 'book.isbn',
-            'publisher': 'resources.publisher',
+            'ISBN': 'book.book_isbn',
+            'publisher': 'publisher.pub_name',
             'publication year': 'YEAR(resources.resource_published_date)',
             'author': 'CONCAT(author.author_fname, " ", author.author_lname)',
             'department': 'department.dept_name',
@@ -89,11 +89,13 @@ export const getAdvancedSearch = (req, res) => {
                 WHEN resources.type_id IN (2, 3) THEN journalnewsletter.filepath
                 ELSE NULL
             END AS filepath,
-            GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS author_names 
+            GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS author_names,
+            publisher.pub_name
         FROM resources
         JOIN resourcetype ON resourcetype.type_id = resources.type_id
         JOIN department ON department.dept_id = resources.dept_id
         LEFT JOIN book ON book.resource_id = resources.resource_id
+        LEFT JOIN publisher ON publisher.pub_id = book.pub_id
         LEFT JOIN journalnewsletter ON journalnewsletter.resource_id = resources.resource_id
         LEFT JOIN topic ON COALESCE(book.topic_id, journalnewsletter.topic_id) = topic.topic_id
         LEFT JOIN resourceauthors ON resourceauthors.resource_id = resources.resource_id
