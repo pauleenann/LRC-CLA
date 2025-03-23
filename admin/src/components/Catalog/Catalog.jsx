@@ -77,6 +77,11 @@ const Catalog = () => {
     fetchData();
   }, [isOnline, selectedFilters, advancedSearch, isSearch]);
 
+  useEffect(()=>{
+    dispatch(setIsSearch(false));
+    dispatch(setAdvancedSearch([]))
+  },[])
+
   useEffect(() => {
     if (keyword == '') {
       getCatalogOnline(true)
