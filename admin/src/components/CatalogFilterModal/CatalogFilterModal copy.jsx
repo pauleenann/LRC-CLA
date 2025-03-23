@@ -5,7 +5,7 @@ import AddedFilter from '../AddedFilter/AddedFilter'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAdvancedSearchResources, setAdvancedSearch, setIsSearch } from '../../features/advancedSearchSlice';
+import { fetchAdvancedSearchResources, setAdvancedSearch } from '../../features/advancedSearchSlice';
 import { useNavigate } from 'react-router-dom';
 
 const CatalogFilterModal = ({open, close}) => {
@@ -83,7 +83,6 @@ const CatalogFilterModal = ({open, close}) => {
     // fetch search
     const handleSearch = ()=>{
         setSearchPerformed(true)
-        dispatch(setIsSearch(true))
         dispatch(fetchAdvancedSearchResources({initialFilter,addedFilters, selectedType}))
     }
      
@@ -108,7 +107,8 @@ const CatalogFilterModal = ({open, close}) => {
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h1>Advanced Search</h1>
                     <button className="btn-close" onClick={()=>{
-                        dispatch(setIsSearch(false))
+                        setSearchPerformed(false)
+                        dispatch(setAdvancedSearch([]))
                         close();
                     }}>
                     </button>
@@ -185,21 +185,19 @@ const CatalogFilterModal = ({open, close}) => {
                 {/* Action buttons */}
                 <div className="d-flex justify-content-end mt-4 pt-3 border-top">
                     <button className="btn btn-secondary me-2" onClick={()=>{
-                        dispatch(setIsSearch(false))
+                        setSearchPerformed(false)
+                        dispatch(setAdvancedSearch([]))
                         close();
                     }}>
                         Cancel
                     </button>
-                    <button className="btn btn-primary" onClick={()=>{
-                        handleSearch();
-                        close();
-                    }}>
+                    <button className="btn btn-primary" onClick={handleSearch}>
                         Apply Filters
                     </button>
                 </div>
 
                 {/* table */}
-                {/* {advancedSearch.length>0?(
+                {advancedSearch.length>0?(
                     <table className='mt-3'>
                         <thead>
                             <tr>
@@ -237,7 +235,7 @@ const CatalogFilterModal = ({open, close}) => {
                     <div className='text-center'>
                         <FontAwesomeIcon icon={faExclamationCircle} className='fs-2'/>
                         <p className="m-0">Resource not found<br/>Please try another filter.</p>
-                    </div>)} */}
+                    </div>)}
             </div>      
         </div>,
         document.getElementById('portal')

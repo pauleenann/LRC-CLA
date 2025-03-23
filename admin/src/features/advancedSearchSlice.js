@@ -37,12 +37,16 @@ const advancedSearchSlice = createSlice({
     name: "advancedSearch",
     initialState:{
         advancedSearch:[],
+        isSearch: false,
         loading: false,
         error: null
     },
     reducers:{
         setAdvancedSearch: (state, action)=>{
             state.advancedSearch = action.payload
+        },
+        setIsSearch:(state, action)=>{
+            state.isSearch = action.payload;
         }
     },
     extraReducers: (builder)=>{
@@ -61,5 +65,5 @@ const advancedSearchSlice = createSlice({
     }
 })
 
-export const {setAdvancedSearch} = advancedSearchSlice.actions;
+export const {setAdvancedSearch, setIsSearch} = advancedSearchSlice.actions;
 export default advancedSearchSlice.reducer;
