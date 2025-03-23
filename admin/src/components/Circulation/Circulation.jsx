@@ -114,7 +114,7 @@ const Circulation = () => {
             onClick={() => handleActionClick('Check Out')}
           >
             <FontAwesomeIcon icon={faCartShopping} className='icon' />
-            <span>Check out</span>
+            <span>Borrow</span>
           </button>
         </Link>
         <Link to='/circulation/patron'>
@@ -123,7 +123,7 @@ const Circulation = () => {
             onClick={() => handleActionClick('Check In')}
           >
             <FontAwesomeIcon icon={faCartPlus} className='icon' />
-            <span>Check in</span>
+            <span>Return</span>
           </button>
         </Link>
       </div>
