@@ -108,13 +108,19 @@ const CatalogFilterModal = ({open, close}) => {
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h1>Advanced Search</h1>
                     <button className="btn-close" onClick={()=>{
+                        setInitialFilter({
+                            filter:'title',
+                            condition:'contains',
+                            input:''
+                        })
+                        setAddedFilters([])
                         dispatch(setIsSearch(false))
                         close();
                     }}>
                     </button>
                 </div>
                 
-                <div className='row'>
+                <div className='row search-filters'>
                     <div className="col-9">
                         <h6 className="mb-3">Search Filter</h6>
                         {/* default filter */}
@@ -145,7 +151,6 @@ const CatalogFilterModal = ({open, close}) => {
                                 onChange={handleInitialFilter}
                             />
                         </div>
-                        
                         {/* added filters */}
                         {addedFilters.length>0&&addedFilters.map((filter,index)=>(
                             <AddedFilter 
@@ -185,12 +190,24 @@ const CatalogFilterModal = ({open, close}) => {
                 {/* Action buttons */}
                 <div className="d-flex justify-content-end mt-4 pt-3 border-top">
                     <button className="btn btn-secondary me-2" onClick={()=>{
+                        setInitialFilter({
+                            filter:'title',
+                            condition:'contains',
+                            input:''
+                        })
+                        setAddedFilters([])
                         dispatch(setIsSearch(false))
                         close();
                     }}>
                         Cancel
                     </button>
                     <button className="btn btn-primary" onClick={()=>{
+                        setInitialFilter({
+                            filter:'title',
+                            condition:'contains',
+                            input:''
+                        })
+                        setAddedFilters([])
                         handleSearch();
                         close();
                     }}>
