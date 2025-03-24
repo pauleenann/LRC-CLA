@@ -94,12 +94,12 @@ const CirculationSelectPatron = () => {
 
   return (
     <div className='circ-select-patron-container'>
-      <h1>Circulation</h1>
+      <h1>Book Circulation</h1>
 
       {/* path and back */}
       <div className="back-path">
         <button onClick={() => navigate(-1)} className="btn">Back</button>
-        <p>Circulation / <span>Select patron</span></p>
+        <p>Book Circulation / <span>Select patron</span></p>
       </div>
 
       {/* search */}

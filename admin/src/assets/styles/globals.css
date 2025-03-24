@@ -26,6 +26,7 @@
     --yellow-filter: brightness(0) saturate(10%) invert(90%) sepia(41%) saturate(1000%) hue-rotate(332deg) brightness(103%) contrast(103%);
     --white-filter:  brightness(100%) saturate(0) invert(100%) sepia(0) saturate(0) hue-rotate(0) brightness(1000%) contrast(100%);
     --green: #54CB58;
+    --light-green: #54cb5893;
     --light-gray: #F7F7F7;
     --blue: #5499CB;
     --table-header: #6F6A6A;

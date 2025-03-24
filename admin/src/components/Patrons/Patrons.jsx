@@ -3,8 +3,9 @@ import axios from 'axios';
 import './Patrons.css';
 import edit from '../../assets/Management System/patrons/edit-patron.svg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass, faPlus, faPen, faFile, faArrowRight, faArrowLeft, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass, faPlus, faPen, faFile, faArrowRight, faArrowLeft, faExclamationCircle, faUpload, faEye } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import * as XLSX from 'xlsx'; // Import xlsx library
 
 const Patrons = () => {
     const [patrons, setPatrons] = useState([]);
@@ -107,6 +108,34 @@ const Patrons = () => {
         setFilteredPatrons(patrons);
         setCurrentPage(1);
     };
+
+    // Handle file upload and parse Excel file
+    const handleFileUpload = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.readAsBinaryString(file);
+
+        reader.onload = async (e) => {
+            const data = e.target.result;
+            const workbook = XLSX.read(data, { type: 'binary' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+
+            const jsonData = XLSX.utils.sheet_to_json(sheet); // Convert Excel to JSON
+            console.log("Parsed Excel Data:", jsonData);
+
+            console.log(jsonData)
+            try {
+                await axios.post('http://localhost:3001/api/patron/import', jsonData);
+                alert('Patron data imported successfully!');
+                getPatron(); // Refresh data
+            } catch (error) {
+                console.error('Error uploading data:', error);
+            }
+        };
+    };
     
 
     return (
@@ -129,11 +158,20 @@ const Patrons = () => {
                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                     </button>
                 </div>
-                <Link to="/patron/add">
-                    <button className="patrons-add-btn">
-                        <FontAwesomeIcon icon={faPlus} /> Add Patron
-                    </button>
-                </Link>
+                <div className='d-flex gap-2'>
+                    <Link to="/patron/add">
+                        <button className="patrons-add-btn">
+                            <FontAwesomeIcon icon={faPlus} /> 
+                            Add Patron
+                        </button>
+                    </Link>
+                    <input type="file" accept=".xlsx, .xls" name="" id="patronData" className='d-none' onChange={handleFileUpload}/>
+                    <label htmlFor="patronData" className='btn btn-warning d-flex align-items-center justify-content-center gap-2'>
+                        <FontAwesomeIcon icon={faUpload} /> 
+                        Import from Excel
+                    </label>
+                </div>
+                
             </div>
             <table className="patrons-table">
                 <thead>
@@ -164,7 +202,7 @@ const Patrons = () => {
                                         </Link>
                                         <Link to={`/patron/view/${patron.patron_id}`}>
                                             <button className="btn patron-view-button">
-                                                <FontAwesomeIcon icon={faFile} />
+                                                <FontAwesomeIcon icon={faEye} />
                                             </button>
                                         </Link>
                                     </td>

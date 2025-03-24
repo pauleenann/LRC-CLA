@@ -1,6 +1,7 @@
 import { db } from "../config/db.js";
 import { dbPromise } from "../config/db.js";
 import { logAuditAction } from "./auditController.js";
+import * as XLSX from 'xlsx';
 
 /* export const patronSort = (req, res) => {
         const { search, startDate, endDate, limit, page } = req.query;
@@ -623,4 +624,11 @@ export const patronCirculation = (req,res)=>{
         if(err) return res.send(err)
             return res.json(results)
     })
+}
+
+export const importPatron = async (req,res)=>{
+    const patronData = req.body;
+
+    
+    
 }
