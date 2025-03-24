@@ -112,12 +112,12 @@ const CirculationSelectItem = () => {
 
   return (
     <div className='circ-select-item-container'>
-      <h1>Circulation</h1>
+      <h1>Book Circulation</h1>
 
       {/* Path and back */}
       <div className="back-path">
         <button onClick={() => navigate(-1)} className="btn">Back</button>
-        <p>Circulation / Select patron / <span>Select item</span></p>
+        <p>Book Circulation / Select patron / <span>Select item</span></p>
       </div>
 
       <div className="row add-items">
