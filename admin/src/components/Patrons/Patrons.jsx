@@ -144,7 +144,7 @@ const Patrons = () => {
             <div className="search-field-category-filter">
                 <div className="patrons-category">
                     <label>Category</label>
-                    <select className="form-select" value={categoryFilter} onChange={handleCategoryChange}>
+                    <select className="form-select shadow-sm" value={categoryFilter} onChange={handleCategoryChange}>
                         <option value="">Any</option>
                         <option value="Student">Student</option>
                         <option value="Faculty">Faculty</option>
@@ -153,27 +153,27 @@ const Patrons = () => {
             </div>
             <div className="search-bar-box">
                 <div className='d-flex gap-2'>
-                    <input type="text" className="patrons-search-bar" placeholder="Search by TUP ID, email, or name" value={searchTerm} onChange={handleSearchChange} onKeyDown={(e)=>e.key=='Enter'&&handleSearch()}/>
+                    <input type="text" className="patrons-search-bar shadow-sm" placeholder="Search by TUP ID, email, or name" value={searchTerm} onChange={handleSearchChange} onKeyDown={(e)=>e.key=='Enter'&&handleSearch()}/>
                     <button className="patrons-search-button" onClick={handleSearch} >
                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                     </button>
                 </div>
                 <div className='d-flex gap-2'>
                     <Link to="/patron/add">
-                        <button className="patrons-add-btn">
+                        <button className="patrons-add-btn shadow-sm">
                             <FontAwesomeIcon icon={faPlus} /> 
                             Add Patron
                         </button>
                     </Link>
                     <input type="file" accept=".xlsx, .xls" name="" id="patronData" className='d-none' onChange={handleFileUpload}/>
-                    <label htmlFor="patronData" className='btn btn-warning d-flex align-items-center justify-content-center gap-2'>
+                    <label htmlFor="patronData" className='btn btn-primary d-flex align-items-center justify-content-center gap-2 shadow-sm'>
                         <FontAwesomeIcon icon={faUpload} /> 
                         Import from Excel
                     </label>
                 </div>
                 
             </div>
-            <table className="patrons-table">
+            <table className="patrons-table shadow-sm">
                 <thead>
                     <tr>
                         <td>TUP ID</td>
@@ -181,7 +181,8 @@ const Patrons = () => {
                         <td>Email</td>
                         <td>Category</td>
                         <td>Checkouts</td>
-                        <td></td>
+                        <td>Status</td>
+                        <td>Actions</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -189,10 +190,15 @@ const Patrons = () => {
                         paginatedPatrons.map((patron, index) => (
                             <tr key={index}>
                                 <td className='tup-id'>{patron.tup_id}</td>
-                                <td>{patron.patron_fname} {patron.patron_lname}</td>
+                                <td className='text-capitalize'>{patron.patron_fname} {patron.patron_lname}</td>
                                 <td className='email'>{patron.patron_email}</td>
                                 <td className='category'>{patron.category}</td>
                                 <td>{patron.total_checkouts}</td>
+                                <td className='text-capitalize'>
+                                    {patron.status=='active'?
+                                    <span className='bg-success py-2 px-3 text-white rounded-pill'>Active</span>:
+                                    <span className='bg-danger py-2 px-3 text-white rounded-pill'>Inactive</span>}
+                                </td>
                                 {userRole === 'admin' ? (
                                     <td className="patron-edit-checkout">
                                         <Link to={`/patron/edit/${patron.patron_id}`}>

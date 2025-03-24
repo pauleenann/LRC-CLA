@@ -152,9 +152,9 @@ const ViewPatronTable = ({header, title, data, exportXLSX}) => {
             <button className='btn search' onClick={search}>Search</button> */}
             <button className='btn search' onClick={reset}>Clear filter </button>
           </div>
-          <button className="btn export d-flex align-items-center gap-2 btn-warning" onClick={exportXLSX}>
+          <button className="btn export d-flex align-items-center gap-2 btn-success" onClick={exportXLSX}>
             <FontAwesomeIcon icon={faDownload} className='icon'/>
-            Export
+            Export to Excel
           </button>
         </div>
         {/* table */}

@@ -304,6 +304,7 @@ export const patron = (req, res) => {
                 p.patron_lname,
                 p.patron_email,
                 p.category,
+                p.status,
                 cr.course_name,
                 COUNT(CASE WHEN (c.status = 'borrowed' OR c.status = 'overdue') THEN 1 END) AS total_checkouts
             FROM 
@@ -423,6 +424,7 @@ export const viewPatronToUpdate = async (req, res) => {
             p.patron_mobile, 
             p.patron_email, 
             p.category, 
+            p.status,
             p.college_id, 
             p.course_id, 
             col.college_name, 
@@ -460,6 +462,7 @@ export const addPatron = (req, res) => {
         patron_mobile,
         patron_email,
         category,
+        patron_status,
         college,  // college_id
         program,  // course_id
         tup_id,
@@ -473,6 +476,7 @@ export const addPatron = (req, res) => {
         patron_mobile,
         patron_email,
         category,
+        patron_status,
         college,
         program,
         tup_id,
@@ -481,7 +485,7 @@ export const addPatron = (req, res) => {
     console.log(values)
   
   // SQL query to insert new patron into the database
-  const query = 'INSERT INTO patron (patron_fname, patron_lname, patron_sex, patron_mobile, patron_email, category, college_id, course_id, tup_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)';
+  const query = 'INSERT INTO patron (patron_fname, patron_lname, patron_sex, patron_mobile, patron_email, category, college_id, course_id, tup_id, status) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?,?)';
 
   // Execute the query with the data from the request body
   db.query(query, values, (err, result) => {
@@ -509,6 +513,7 @@ export const updatePatron = async (req, res) => {
         patron_mobile,
         patron_email,
         category,
+        patron_status,
         college,  // college_id
         program,  // course_id
         tup_id,
@@ -524,6 +529,7 @@ export const updatePatron = async (req, res) => {
             patron_mobile = ?, 
             patron_email = ?, 
             category = ?, 
+            status = ?,
             college_id = ?, 
             course_id = ?, 
             tup_id = ?
@@ -538,6 +544,7 @@ export const updatePatron = async (req, res) => {
             patron_mobile,
             patron_email,
             category,
+            patron_status,
             college,
             program,
             tup_id,
@@ -589,6 +596,7 @@ export const viewPatron = (req,res)=>{
             p.patron_mobile,
             p.patron_email,
             p.category,
+            p.status,
             col.college_name,
             cou.course_name
         FROM 
@@ -629,6 +637,6 @@ export const patronCirculation = (req,res)=>{
 export const importPatron = async (req,res)=>{
     const patronData = req.body;
 
-    
+
     
 }
