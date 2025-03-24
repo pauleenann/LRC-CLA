@@ -25,10 +25,6 @@
     
 }
 
-.patrons-container .form-select{
-    box-shadow: 0px 1px 2px var(--shadow);
-}
-
 .patrons-container .patrons-search-field,.patrons-container .patrons-category{
     display: flex;
     align-items: center;
@@ -42,9 +38,9 @@
     padding-left: 15px;
     width: 400px;
     border-radius: 5px;
-    border-color: var(--shadow);
+    outline: none;
+    border-color: rgba(235, 235, 235, 0.658);
     font-size: 1rem;
-    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 .patrons-container .patrons-search-bar:active,.patrons-container .patrons-search-bar:focus{
@@ -54,7 +50,6 @@
 
 .patrons-container .patrons-search-button{
     width: 50px;
-    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 .patrons-container .patrons-search-button, .patrons-container .patrons-add-btn{
@@ -66,13 +61,12 @@
     /* width: 110px; */
     font-size: 1rem !important;
     display: flex;
-    gap: 10px;
+    gap: 5px;
     align-items: center;
     justify-content: center;
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.1s linear;
-    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 .patrons-container .patrons-search-button:hover{
@@ -92,7 +86,7 @@
 }
 
 .patrons-container .patrons-table {
-    table-layout: fixed !important;
+    /* table-layout: fixed !important; */
     outline: 1px solid var(--tup-color);
     border-radius: 10px;
     overflow: hidden;
