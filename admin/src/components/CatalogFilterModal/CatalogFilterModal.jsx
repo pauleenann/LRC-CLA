@@ -41,14 +41,6 @@ const CatalogFilterModal = ({open, close}) => {
         'newsletter',
         'thesis'
     ]
-    const tableHeader = [
-        'title',
-        'type',
-        'authors',
-        'department',
-        'topic',
-        'copies'
-    ]
     const dispatch = useDispatch();
 
     // handle changes
@@ -98,7 +90,7 @@ const CatalogFilterModal = ({open, close}) => {
     }
 
     return ReactDom.createPortal(
-        <div className='catfil-modal-container'>
+        <div className='catfil-modal-container z-3'>
             {/* overlay */}
             <div className="catfil-modal-overlay overlay" onClick={close}></div>
 
@@ -168,7 +160,7 @@ const CatalogFilterModal = ({open, close}) => {
                             className='btn mt-2 d-flex align-items-center gap-2 add-filter'
                             onClick={handleAddFilter}
                         >
-                            <FontAwesomeIcon icon={faPlus} className='icon' />
+                            <FontAwesomeIcon icon={faPlus}/>
                             Add a new line
                         </button>
                     </div>
@@ -214,47 +206,6 @@ const CatalogFilterModal = ({open, close}) => {
                         Apply Filters
                     </button>
                 </div>
-
-                {/* table */}
-                {/* {advancedSearch.length>0?(
-                    <table className='mt-3'>
-                        <thead>
-                            <tr>
-                                {tableHeader.map(item=>(
-                                    <td className='text-capitalize'>
-                                        {item}
-                                    </td>  
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {advancedSearch&&advancedSearch.map((item,key)=>(
-                                <tr key={key} onClick={() => navigate(`/catalog/view/${item.resource_id}`)}>
-                                    <td>{item.resource_title}</td>
-                                    <td>{item.type_name}</td>
-                                    <td>
-                                    {Array.isArray(item.author_names) && item.author_names.length > 0 
-                                    ? item.author_names.join(', ') 
-                                    : (item.author_names || 'N/A')}
-                                    </td>
-                                    <td>{item.dept_name}</td>
-                                    <td>
-                                    {item.topic_name
-                                        ? item.topic_name 
-                                        : 'N/A'}
-                                    </td>
-                                    <td>
-                                    {isOnline? `${item.resource_quantity}/${item.original_resource_quantity}`:`${item.resource_quantity}`}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                ):searchPerformed && advancedSearch.length === 0 && (
-                    <div className='text-center'>
-                        <FontAwesomeIcon icon={faExclamationCircle} className='fs-2'/>
-                        <p className="m-0">Resource not found<br/>Please try another filter.</p>
-                    </div>)} */}
             </div>      
         </div>,
         document.getElementById('portal')

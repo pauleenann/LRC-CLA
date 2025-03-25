@@ -6,9 +6,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchResources, setSearchQuery } from '../../features/resourceSlice';
 import { setTypeArray } from '../../features/typeSlice';
 
-const Navbar = () => {
+const Navbar = ({query}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  // get query from URL
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search);
+  const searchType = queryParams.get('type');
   const [searchKeyword, setSearchKeyword] = useState('');
   const {type} = useSelector(state=>state.type)
   const {dept} = useSelector(state=>state.dept)
@@ -17,15 +21,17 @@ const Navbar = () => {
   console.log(type)
  
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && searchKeyword.length!='') {
         getSearch();
     }
   };
 
   const getSearch = async()=>{
-    dispatch(setSearchQuery(searchKeyword));
-    dispatch(fetchResources({ searchQuery: searchKeyword, type, dept, topic })); // Pass as an object
-    navigate('/search')
+    if(searchKeyword!=''){
+      dispatch(setSearchQuery(searchKeyword));
+      dispatch(fetchResources({ searchQuery: searchKeyword, type, dept, topic })); // Pass as an object
+      navigate('/search')
+    }
   }
 
   
@@ -39,14 +45,14 @@ const Navbar = () => {
           <p className='m-0 logo'>Liberal<span>Search</span>.</p>
         </Link>
         {/* search */}
-        <div className='d-flex search'>
+        {!searchType&&<div className='d-flex search'>
             {/* input */}
             <input type="text" placeholder='Search for resources' onChange={(e)=>setSearchKeyword(e.target.value)} onKeyDown={handleKeyDown}/>
             {/* search button */}
             <button className="" onClick={getSearch}>
                 <i class="fa-solid fa-magnifying-glass"></i>
             </button>
-        </div>
+        </div>}
       </div>
       {/* menu */}
       <div className="menu d-flex gap-3 mt-2">
