@@ -104,7 +104,7 @@ const Circulation = () => {
 
   return (
     <div className="circulation-container bg-light">
-      <h1>Circulation</h1>
+      <h1>Book Circulation</h1>
 
       {/* Check-in buttons */}
       <div className="buttons">
