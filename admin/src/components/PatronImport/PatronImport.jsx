@@ -135,7 +135,7 @@ const PatronImport = ({open, close}) => {
                         />
                         {error && (
                             <p className='error fst-italic text-danger mt-2'>
-                                <span className='text-capitalize fw-semibold'> {error}</span>
+                                <span className=' fw-semibold'> {error}</span>
                             </p>
                         )}
                         {importData.length > 0 && (

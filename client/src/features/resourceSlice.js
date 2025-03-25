@@ -39,7 +39,10 @@ const resourceSlice = createSlice({
   reducers:{
     setSearchQuery: (state, action) => {
         state.searchQuery = action.payload;
-    }
+    },
+    setResource: (state, action) => {
+      state.resource = action.payload;
+  },
   },
   extraReducers: (builder) => {
     builder
@@ -57,5 +60,5 @@ const resourceSlice = createSlice({
   }
 });
 
-export const { setSearchQuery } = resourceSlice.actions;
+export const { setSearchQuery, setResource } = resourceSlice.actions;
 export default resourceSlice.reducer;

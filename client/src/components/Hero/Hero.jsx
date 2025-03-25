@@ -35,15 +35,15 @@ const Hero = () => {
 
         {/* Button with quick pop effect */}
         <motion.button 
-          className="btn btn-dark mt-2 p-3"
+          className="btn btn-light fw-medium mt-2 p-3"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3, delay: 0.3 }}
           whileHover={{ scale: 1.05 }}
-          onClick={()=>navigate('/search')}
+          onClick={()=>navigate(`/search?type=advanced search`)}
 
         >
-          FIND RESOURCES
+          ADVANCED SEARCH
         </motion.button>
       </div>
     </motion.div>

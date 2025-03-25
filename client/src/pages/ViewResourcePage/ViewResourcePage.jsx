@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'; // Import Framer Motion
 import Navbar from '../../components/Navbar/Navbar';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import './ViewResourcePage.css'
 import sample from '../../assets/OPAC/photos/samplebook.jpg'
 import ResourceBook from '../../components/ResourceBook/ResourceBook';
@@ -24,6 +24,11 @@ const fadeIn = {
 };
 
 const ViewResourcePage = () => {
+    // get query from URL
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const searchType = queryParams.get('type');
+
     const [resource, setResource] =useState([])
     const [resourceLoading, setResourceLoading] =useState([])
     const [relatedBooks, setRelatedBooks] = useState([])
@@ -96,7 +101,7 @@ const ViewResourcePage = () => {
         <div className="container my-5">
             {/* path */}
             <div className='mb-5'>
-                <Link className='text-decoration-none text-dark' to='/search'><p>Go to Search</p></Link>
+                <Link className='text-decoration-none text-dark' to={searchType?'/search?type=advanced search':'/search'}><p>Go to Search</p></Link>
             </div>
 
             <div className="container book-info m-auto w-75 row">

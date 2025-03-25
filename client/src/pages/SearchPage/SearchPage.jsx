@@ -10,7 +10,9 @@ import Footer from '../../components/Footer/Footer'
 import { setTypeArray } from '../../features/typeSlice';
 import { setDeptArray } from '../../features/deptSlice';
 import { setTopicArray } from '../../features/topicSlice';
-import { fetchResources, setSearchQuery } from '../../features/resourceSlice';
+import { fetchResources, setResource, setSearchQuery } from '../../features/resourceSlice';
+import AdvancedSearch from '../../components/AdvancedSearch/AdvancedSearch';
+import { setAdvancedSearch } from '../../features/advancedSearchSlice';
 
 const fadeIn = {    
     hidden: { opacity: 0, y: 30 },
@@ -24,6 +26,7 @@ const SearchPage = () => {
     const queryParams = new URLSearchParams(location.search);
     // Get the 'filter' query parameter
     const filter = queryParams.get('filter');
+    const searchType = queryParams.get('type');
 
     // array from letter A-Z
     const alphabet = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i));
@@ -61,6 +64,19 @@ const SearchPage = () => {
         topic: {}
     });
 
+    // advanced search results
+    const {advancedSearch} = useSelector(state=>state.advancedSearch)
+
+    console.log(advancedSearch)
+
+    // handle advanced search
+    useEffect(()=>{
+        if(advancedSearch.length>0){
+            dispatch(setResource(advancedSearch))
+        }
+    },[advancedSearch,resource])
+
+    
     useEffect(() => {
         setSearchFilters({
             type: type,
@@ -114,10 +130,10 @@ const SearchPage = () => {
     },[filter])
 
     useEffect(() => {
-
         dispatch(setTypeArray(searchFilters.type));
         dispatch(setDeptArray(searchFilters.dept));
         dispatch(setTopicArray(searchFilters.topic));
+        dispatch(fetchResources({ searchQuery: searchQuery, type, dept, topic })); //search
     }, [searchFilters, dispatch]);
     
     // Apply filters and sorting to resources
@@ -205,6 +221,7 @@ const SearchPage = () => {
         dispatch(setDeptArray([]));
         dispatch(setTopicArray([]));
         dispatch(setSearchQuery(''));
+        dispatch(setAdvancedSearch([]))
         
         // Reset sorting and A-Z filter
         setSortOption('recent');
@@ -304,9 +321,12 @@ const SearchPage = () => {
             </motion.div>
 
             <div className='border border-bottom-1'>
-                <Navbar/> 
+                <Navbar query={searchQuery}/> 
             </div>
-            
+
+            {/* advanced search */}
+            {searchType&&<AdvancedSearch/>}
+
             <div className="container my-5">
                 {/* back */}
                 <div className='mb-5'>
@@ -419,7 +439,7 @@ const SearchPage = () => {
                             {currentItems.length > 0 ? (
                                 currentItems.map(item => (
                                     <div className='col-4 mb-4' key={item.resource_id}>
-                                        <Link to={`/view/${item.resource_id}`} className='text-decoration-none'>
+                                        <Link to={searchType?`/view/${item.resource_id}?type=advanced search`:`/view/${item.resource_id}`} className='text-decoration-none'>
                                             <motion.div whileHover={{ scale: 1.05 }}>
                                               <ResourceBook loading={loading} data={item}/>  
                                             </motion.div>
