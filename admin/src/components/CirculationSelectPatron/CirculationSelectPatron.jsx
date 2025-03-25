@@ -93,7 +93,7 @@ const CirculationSelectPatron = () => {
 
 
   return (
-    <div className='circ-select-patron-container'>
+    <div className='circ-select-patron-container bg-light'>
       <h1>Book Circulation</h1>
 
       {/* path and back */}
@@ -117,7 +117,7 @@ const CirculationSelectPatron = () => {
           placeholder="Search by name, ID, category, or course, or simply scan the student ID."
         />
         <button className="btn" onClick={handleSearch}>
-          <FontAwesomeIcon icon={faSearch} className='icon'/>
+          <FontAwesomeIcon icon={faSearch}/>
         </button>
       </div>
 
@@ -174,9 +174,9 @@ const CirculationSelectPatron = () => {
         {filteredPatrons.length > 0 && (
           <div className="pagination">
             <div className="buttons">
-              <button className="btn" onClick={goToPreviousPage} disabled={currentPage === 1}><FontAwesomeIcon icon={faArrowLeft} className='icon'/></button>
+              <button className="btn" onClick={goToPreviousPage} disabled={currentPage === 1}><FontAwesomeIcon icon={faArrowLeft}/></button>
               <span>Page {currentPage} of {totalPages}</span>   
-              <button className="btn" onClick={goToNextPage} disabled={currentPage === totalPages}><FontAwesomeIcon icon={faArrowRight} className='icon'/></button>
+              <button className="btn" onClick={goToNextPage} disabled={currentPage === totalPages}><FontAwesomeIcon icon={faArrowRight}/></button>
             </div>
           </div>
         )}

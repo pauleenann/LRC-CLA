@@ -58,7 +58,7 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation,
     }
 
   return (
-    <div className='cataloging-box'>
+    <div className='cataloging-box shadow-sm'>
         <div className="row">
             {/* header */}
             <div className="col-12 cataloging-info-header">Cataloging</div>

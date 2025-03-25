@@ -122,7 +122,7 @@ const ViewPatron = () => {
   };
   
   return (
-    <div className='viewpatron-container container'>
+    <div className='viewpatron-container  bg-light'>
       <div className='d-flex justify-content-between align-items-center mb-4'>
         <Link to={'/patron'}>
           <button className='view-patron-back-button btn '>

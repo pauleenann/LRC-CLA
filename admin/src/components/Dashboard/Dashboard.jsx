@@ -245,7 +245,7 @@ const Dashboard = () => {
   // };
 
   return (
-    <div className='dashboard-container'>
+    <div className='dashboard-container bg-light'>
        {/* dashboard heading */}
        <div className="dashboard-heading">
           {/* Goodmorning,admin */}
@@ -270,13 +270,13 @@ const Dashboard = () => {
           <DashBox icon={<FontAwesomeIcon icon={faTriangleExclamation} className='icon'/>} title={"Overdue Resources"} total={totalOverdue} loading={totalOverdueLoading}/>
 
           {/* bar chart */}
-          <div className="bar-chart col-12">
+          <div className="bar-chart col-12 shadow-sm">
             <h5>Visitors and Borrowers Statistics</h5>
             <VerticalBarChart/>
           </div>
 
           {/* overdue book list */}
-          <div className="overdue-table py-4">
+          <div className="overdue-table bg-light py-4">
             <div className='d-flex align-items-center justify-content-start gap-5 py-3'>
               <h5 className='m-0'>Overdue Book List</h5>
               {/* <button className='see-all btn'>See all</button> */}
@@ -285,7 +285,7 @@ const Dashboard = () => {
           </div>
 
           {/* book list */}
-          <div className="book-table py-4">
+          <div className="book-table bg-light py-4">
             <div className='d-flex justify-content-between'>
               <div className='d-flex align-items-center justify-content-start gap-5 py-3'>
                 <h5 className='m-0'>Book List</h5>
@@ -295,8 +295,8 @@ const Dashboard = () => {
                 
               </div>
               <Link to="/catalog/add">
-                <button className="btn add-btn d-flex align-items-center justify-content-center gap-3">
-                  <FontAwesomeIcon icon={faPlus} className='icon'/>
+                <button className="btn btn-outline-dark d-flex align-items-center gap-2">
+                  <FontAwesomeIcon icon={faPlus}/>
                   Add new
                 </button>
               </Link>

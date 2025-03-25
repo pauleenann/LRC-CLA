@@ -71,15 +71,15 @@ const Logbook = () => {
 
     console.log(patron);
     return (
-        <div className='logbook-container'>
+        <div className='logbook-container bg-light'>
             <h1>Logbook</h1>
 
             <div className='d-flex justify-content-between align-items-center'> 
                 {/* search bar and export button */}
                 <div className="search-export">
-                    <div className="d-flex" role="search">
+                    <div className="input-group" role="search">
                         <input
-                            className="log-search-bar"
+                            className="log-search-bar form-control shadow-sm"
                             type="search"
                             placeholder="Enter Student ID or Student Name"
                             aria-label="Search"
@@ -92,7 +92,7 @@ const Logbook = () => {
                             }}
                         />
                         <button className="btn log-search-button" onClick={fetchTodayEntries}>
-                            <FontAwesomeIcon icon={faSearch} className='icon'/> 
+                            <FontAwesomeIcon icon={faSearch}/> 
                         </button>
                     </div>
                     
@@ -156,7 +156,7 @@ const Logbook = () => {
                             ))
                         ) : patron.length === 0 && !loading ? (
                             <tr>
-                                <td colSpan="10" className='no-data-box text-center'>
+                                <td colSpan="9" className='no-data-box text-center'>
                                     <div className='d-flex flex-column align-items-center gap-2 '>
                                         <FontAwesomeIcon icon={faSmile} className="fs-2 no-data" />
                                         <span>No logbook data available<br/>for today.</span>
@@ -165,7 +165,7 @@ const Logbook = () => {
                             </tr>
                         ) : (
                             <tr>
-                                <td colSpan="10" style={{ textAlign: 'center', padding: '20px' }}>
+                                <td colSpan="9" style={{ textAlign: 'center', padding: '20px' }}>
                                 <div className="spinner-box">
                                     <div className="spinner-grow text-danger" role="status">
                                     <span className="sr-only">Loading...</span>
@@ -187,10 +187,10 @@ const Logbook = () => {
                         </div>
                         <div>
                             <button onClick={() => handlePageChange(currentPage - 1)} className="btn ">
-                                <FontAwesomeIcon icon={faArrowLeft} className='icon'/>
+                                <FontAwesomeIcon icon={faArrowLeft}/>
                             </button>
                             <button onClick={() => handlePageChange(currentPage + 1)} className="btn ">
-                                <FontAwesomeIcon icon={faArrowRight} className='icon'/>
+                                <FontAwesomeIcon icon={faArrowRight}/>
                             </button>
                         </div>
                         

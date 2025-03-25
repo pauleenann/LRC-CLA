@@ -187,7 +187,7 @@ const ViewPatronTable = ({header, title, data, exportXLSX}) => {
                 <td colSpan="2" className='no-data-box text-center'>
                   <div className='d-flex flex-column align-items-center gap-2 my-3'>
                     <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
-                    <span>No resources available.<br/>Please try a different filter.</span>
+                    <span>No resources available.</span>
                     {/* <button className='btn btn-secondary' onClick={reset}>Clear Filter</button> */}
                   </div>
                 </td>

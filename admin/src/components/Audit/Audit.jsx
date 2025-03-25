@@ -127,13 +127,13 @@ const Audit = () => {
   };
 
   return (
-    <div className="audit-container">
+    <div className="audit-container bg-light">
       <h1>User Activity Log</h1>
 
       {/* Filter Section */}
       <div className="filter-dropdown">
         <select
-          className="form-select"
+          className="form-select shadow-sm"
           value={selectedActivity}
           onChange={(e) => setSelectedActivity(e.target.value)}
         >
@@ -155,13 +155,13 @@ const Audit = () => {
       {/* Date Filters & Export */}
       <div className="filter-date-export">
         <div className="filter-date">
-          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+          <input type="date" className="shadow-sm" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
           <span>to</span>
-          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-          <button className="btn clear-btn" onClick={clearFilters}>Clear filter</button>
+          <input type="date" className="shadow-sm" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+          <button className="btn clear-btn btn-warning" onClick={clearFilters}>Clear filter</button>
         </div>
-        <button className="btn export-btn btn-warning d-flex align-items-center gap-2" onClick={exportToCSV}>
-          <FontAwesomeIcon icon={faDownload} className='icon'/>
+        <button className="btn export-btn btn-success d-flex align-items-center gap-2" onClick={exportToCSV}>
+          <FontAwesomeIcon icon={faDownload}/>
           Export to Excel
         </button>
       </div>
@@ -201,10 +201,10 @@ const Audit = () => {
         <span> Page {currentPage} of {totalPages} </span>
         <div>
           <button className="btn" disabled={currentPage === 1} onClick={prevPage}>
-            <FontAwesomeIcon icon={faArrowLeft} className="icon" />
+            <FontAwesomeIcon icon={faArrowLeft}/>
           </button>
           <button className="btn" disabled={currentPage === totalPages} onClick={nextPage}>
-            <FontAwesomeIcon icon={faArrowRight} className="icon" />
+            <FontAwesomeIcon icon={faArrowRight}/>
           </button>
         </div>
       </div>

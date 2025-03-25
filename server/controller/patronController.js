@@ -634,9 +634,87 @@ export const patronCirculation = (req,res)=>{
     })
 }
 
-export const importPatron = async (req,res)=>{
-    const patronData = req.body;
+export const importPatron = async (req, res) => {
+    try {
+        const { patrons } = req.body;
 
+        if (!patrons || patrons.length === 0) {
+            return res.status(400).json({ message: 'No patron data provided.' });
+        }
 
-    
-}
+        await Promise.all(patrons.map(async (item) => {
+            const tupId = item['TUP ID'];
+
+            // Check if patron already exists
+            const checkPatronQuery = `SELECT * FROM patron WHERE tup_id = ?`;
+            const existingPatron = await new Promise((resolve, reject) => {
+                db.query(checkPatronQuery, [tupId], (err, results) => {
+                    if (err) reject(err);
+                    resolve(results);
+                });
+            });
+
+            // If patron already exists, skip
+            if (existingPatron.length > 0) return;
+
+            // If College and Program exist, get their IDs
+            if (item.College && item.Program) {
+                const getCollegeIdQuery = `SELECT college_id FROM college WHERE college_name = ?`;
+                const getCourseIdQuery = `SELECT course_id FROM course WHERE course_name = ?`;
+
+                // Get College ID
+                const collegeResult = await new Promise((resolve, reject) => {
+                    db.query(getCollegeIdQuery, [item.College], (err, results) => {
+                        if (err) reject(err);
+                        resolve(results);
+                    });
+                });
+
+                // Get Course ID
+                const courseResult = await new Promise((resolve, reject) => {
+                    db.query(getCourseIdQuery, [item.Program], (err, results) => {
+                        if (err) reject(err);
+                        resolve(results);
+                    });
+                });
+
+                // If college or course is not found, skip the patron insertion
+                if (collegeResult.length === 0 || courseResult.length === 0) return;
+
+                const collegeId = collegeResult[0].college_id;
+                const courseId = courseResult[0].course_id;
+
+                // Insert the new patron into the database
+                const insertPatronQuery = `
+                    INSERT INTO patron (tup_id, patron_fname, patron_lname, patron_sex, patron_mobile, patron_email, category, college_id, course_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                `;
+
+                const values = [
+                    tupId,
+                    item['First name'],
+                    item['Last name'],
+                    item['Sex'],
+                    item['Phone number'],
+                    item['TUP email address'],
+                    item['Category'],
+                    collegeId,
+                    courseId
+                ];
+
+                await new Promise((resolve, reject) => {
+                    db.query(insertPatronQuery, values, (err, result) => {
+                        if (err) reject(err);
+                        resolve(result);
+                    });
+                });
+            }
+        }));
+
+        return res.status(200).json({ message: 'Patrons imported successfully.' });
+
+    } catch (error) {
+        console.error('Server error:', error);
+        res.status(500).json({ error: 'Server error while importing patrons' });
+    }
+};

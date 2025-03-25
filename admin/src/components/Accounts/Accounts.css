@@ -21,32 +21,16 @@
     margin-bottom: 20px;
 }
 
-.accounts-container .search input{
-    width: 500px;
-    height: 50px;
-    padding-left: 10px;
-    border: 1px solid var(--shadow);
-    border-radius: 5px;
-    box-shadow: 0px 1px 2px var(--shadow);
-}
-
-.accounts-container .search{
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
 
 .accounts-container .search-btn{
     background-color: var(--tup-color);
     color: var(--white);
     border-radius: 5px;
     height: 50px;
-    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 .accounts-container .clear-btn{
     height: 50px;
-    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 .accounts-container .create-btn{
@@ -56,7 +40,6 @@
     align-items: center;
     gap: 10px;
     height: 50px;
-    box-shadow: 0px 1px 2px var(--shadow);
 }
 
 

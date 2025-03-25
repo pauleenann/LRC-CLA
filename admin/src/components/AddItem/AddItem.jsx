@@ -601,7 +601,7 @@ const AddItem = () => {
     };
 
     return (
-        <div className='add-item-container'>
+        <div className='add-item-container bg-light'>
             <h1 className='m-0'>Cataloging</h1>
 
             <div className='add-item-path-button'>
@@ -678,7 +678,7 @@ const AddItem = () => {
                         
                     }
                 }} disabled={Object.values(error).length>=1&&!editMode}>
-                    <FontAwesomeIcon icon={faFloppyDisk} className='icon'/>
+                    <FontAwesomeIcon icon={faFloppyDisk}/>
                     <span>Save</span>
                 </button>
             </div>}

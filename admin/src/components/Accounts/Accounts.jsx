@@ -433,14 +433,15 @@ const Accounts = () => {
   console.log(toEditAccount)
 
   return (
-    <div className="accounts-container">
+    <div className="accounts-container bg-light">
       <h1>User accounts</h1>
 
       {/* Search and add */}
       <div className="search-add">
         {/* Search */}
-      <div className="search">
+      <div className="input-group w-50">
         <input
+          className='form-select shadow-sm'
           type="text"
           placeholder="Search"
           value={keyword}
@@ -451,11 +452,11 @@ const Accounts = () => {
             }
           }}
         />
-        <button className="btn search-btn px-3" onClick={() => userAccounts(true)}>
-          <FontAwesomeIcon icon={faSearch} className="icon" />
+        <button className="btn search-btn px-3 shadow-sm" onClick={() => userAccounts(true)}>
+          <FontAwesomeIcon icon={faSearch} />
         </button>
         <button
-          className="btn btn-warning clear-btn"
+          className="btn btn-warning clear-btn ms-2 shadow-sm"
           onClick={() => {
             setSelectedFilters({ fname: 0, lname: 0, uname: 0, role: 0, status: '' });
             setSortStates({ fname: 0, lname: 0, uname: 0 });
@@ -465,7 +466,7 @@ const Accounts = () => {
         </button>
       </div>
   {/* Add */}
-  <button className="btn create-btn" onClick={() => setOpenCreateUser(true)}>
+  <button className="btn create-btn shadow-sm" onClick={() => setOpenCreateUser(true)}>
     <FontAwesomeIcon icon={faPlus} />
     Create account
   </button>
@@ -572,10 +573,10 @@ const Accounts = () => {
         {/* Buttons */}
         <div className="buttons">
           <button className="btn prev-btn" onClick={handlePrevPage} disabled={currentPage === 1}>
-            <FontAwesomeIcon icon={faArrowLeft} className='icon'/>
+            <FontAwesomeIcon icon={faArrowLeft}/>
           </button>
           <button className="btn next-btn" onClick={handleNextPage} disabled={currentPage === totalPages}>
-            <FontAwesomeIcon icon={faArrowRight} className='icon'/>
+            <FontAwesomeIcon icon={faArrowRight}/>
           </button>
         </div>
       </div>

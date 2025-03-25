@@ -81,7 +81,7 @@ const GenerateBarcodePage = () => {
     const totalPages = Math.ceil(dataToGenerate.length / itemsPerPage);
 
     return (
-        <div className='barcodepage'>
+        <div className='barcodepage bg-light'>
             <div>
                <AdminNavbar /> 
             </div>
@@ -100,10 +100,10 @@ const GenerateBarcodePage = () => {
                         <p>Cataloging / <span> Generate Barcode</span></p>
                     </div> */}
                 </div>
-                <div className="search-filter d-flex gap-2">
-                    <input type="search" className='search-bar' placeholder="Search by title" onChange={(e)=>setSearchQuery(e.target.value)} onKeyDown={(e)=>e.key=='Enter'&&search()}/>
+                <div className="search-filter input-group w-50 shadow-sm">
+                    <input type="search" className='form-control' placeholder="Search by title" onChange={(e)=>setSearchQuery(e.target.value)} onKeyDown={(e)=>e.key=='Enter'&&search()}/>
                     <button className="btn search-btn">
-                        <FontAwesomeIcon icon={faSearch} className='icon' />
+                        <FontAwesomeIcon icon={faSearch}/>
                     </button>
                 </div>
                 <div className='d-flex align-items-end justify-content-between barcode-instruct m-auto'>
@@ -116,14 +116,14 @@ const GenerateBarcodePage = () => {
                     >
                         {({ loading }) => (
                             <button className='btn d-flex align-items-center gap-2 generate-btn' disabled={loading}>
-                                <FontAwesomeIcon icon={faBarcode} className='icon' />
+                                <FontAwesomeIcon icon={faBarcode} />
                                 {loading ? "Generating PDF..." : "Export as PDF"}
                             </button>
                         )}
                     </PDFDownloadLink>
                 ) : (
                     <button className='btn d-flex align-items-center gap-2 generate-btn btn-warning' disabled>
-                        <FontAwesomeIcon icon={faBarcode} className='icon' />
+                        <FontAwesomeIcon icon={faBarcode}/>
                         Export as PDF
                     </button>
                 )}

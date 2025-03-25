@@ -369,9 +369,9 @@ const EditPatron = () => {
     };
 
     return (
-        <div className='edit-patron-container container pb-5'>
+        <div className='edit-patron-container bg-light'>
             {/* Header with breadcrumb */}
-            <div className='card mb-4'>
+            <div className=' mb-4'>
                 <div className=''>
                     <div className='d-flex justify-content-between align-items-center'>
                         <div>
