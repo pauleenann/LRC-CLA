@@ -1,19 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import './AdminTopNavbar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
+import { faCircleUser, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate hook for navigation
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { checkIfOnline } from '../../features/isOnlineSlice';
-
 
 const AdminTopNavbar = () => {
     const [dateTime, setDateTime] = useState(new Date());
     const dispatch = useDispatch();
     const isOnline = useSelector((state) => state.isOnline.isOnline);
     const [uname, setUname] = useState(null);
-    const navigate = useNavigate(); // Hook to navigate programmatically
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Update time every second
+        const timerId = setInterval(() => {
+            setDateTime(new Date());
+        }, 1000);
+
+        // Cleanup interval on component unmount
+        return () => clearInterval(timerId);
+    }, []);
 
     useEffect(() => {
         const getUsername = async () => {
@@ -47,18 +56,15 @@ const AdminTopNavbar = () => {
             }
         };
 
-        // Initially set "Loading..." until first check
         dispatch(checkIfOnline(null));
         checkOnlineStatus();
 
-        // Add event listeners for online/offline events
         const handleOnline = () => dispatch(checkIfOnline(true));
         const handleOffline = () => dispatch(checkIfOnline(false));
 
         window.addEventListener('online', handleOnline);
         window.addEventListener('offline', handleOffline);
 
-        // Check internet status every 5 seconds
         const intervalId = setInterval(checkOnlineStatus, 5000);
 
         return () => {
@@ -68,7 +74,7 @@ const AdminTopNavbar = () => {
         };
     }, [dispatch]);
 
-    // Logout function
+    // Logout function remains the same
     const logout = async () => {
         try {
             await axios.post('http://localhost:3001/api/user/logout', { username: uname }, { withCredentials: true });
@@ -81,33 +87,41 @@ const AdminTopNavbar = () => {
     };
 
     return (
-        <div className="top-navbar">
+        <div className="top-navbar bg-light">
             {/* Online/Offline Indicator */}
-            <div className="indicator">
+            <div className="indicator p-2 rounded">
                 {isOnline === null ? 'Loading...' : isOnline ? 'Online' : 'Offline'}
             </div>
             <div className="info">
                 {/* Date and Time */}
                 <div className="top-navbar-datetime">
                     <span>{dateTime.toLocaleTimeString()}</span>
-                    <span>|</span>
+                    <span className="separator">|</span>
                     <span>{currentDay}</span>
-                    <span>|</span>
+                    <span className="separator">|</span>
                     <span>{dateTime.toLocaleDateString()}</span>
                 </div>
 
                 {/* Admin Account Dropdown */}
                 <div className="user-box">
                     <div className="dropdown">
-                        <button className="btn cat-dropdown dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button 
+                            className="btn cat-dropdown dropdown-toggle" 
+                            type="button" 
+                            data-bs-toggle="dropdown" 
+                            aria-expanded="false"
+                        >
                             <FontAwesomeIcon icon={faCircleUser} className="icon" />
-                            <span>
+                            <span className="user-greeting">
                                 Hello, <span className="user-welcome-uname">{uname}</span>
                             </span>
                         </button>
                         <ul className="dropdown-menu">
                             <li>
-                                <button className="dropdown-item" onClick={logout}>Logout</button>
+                                <button className="dropdown-item" onClick={logout}>
+                                    <FontAwesomeIcon icon={faSignOutAlt} className="dropdown-icon" />
+                                    Logout
+                                </button>
                             </li>
                         </ul>
                     </div>

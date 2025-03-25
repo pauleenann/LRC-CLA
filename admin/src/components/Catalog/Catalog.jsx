@@ -532,7 +532,7 @@ const Catalog = () => {
   console.log(keyword)
 
   return (
-    <div className='cat-container'>
+    <div className='cat-container bg-light'>
       <h1>Catalog</h1>
       {/* <img src="https://barcodeapi.org/api/128/9789719654025" /> */}
       {/* add and scan item buttons */}
@@ -541,7 +541,7 @@ const Catalog = () => {
           {/* add item  */}
           <Link to='/catalog/add'>
             <button type="button" className="btn cat-button d-flex align-items-center justify-content-center gap-2 ">
-              <FontAwesomeIcon icon={faPlus} className='icon' />
+              <FontAwesomeIcon icon={faPlus}/>
               Add item
             </button>
           </Link>
@@ -562,34 +562,37 @@ const Catalog = () => {
       </div>
 
       {/* search-filter */}
-      <div className="search-filter d-flex gap-2">
+      <div className="search-filter d-flex">
         {/* search */}
-        <div>
-          <input 
-            type="search" 
-            className='search-bar mb-1' 
-            placeholder="Search by title or author" 
-            value={keyword} 
-            onChange={handleSearchChange} 
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleSearch();
-              }
-            }} 
-          />
-          <button href="" className='m-0 advanced-search fw-semibold' onClick={()=>setOpenFilter(true)}>Advanced Search</button>
+        <div className='input-group'>
+          <div>
+            <input 
+              type="search" 
+              className='search-bar form-control shadow-sm mb-1' 
+              placeholder="Search by title or author" 
+              value={keyword} 
+              onChange={handleSearchChange} 
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }} 
+            />
+            <button href="" className='m-0 advanced-search fw-semibold' onClick={()=>setOpenFilter(true)}>Advanced Search</button>
+          </div>
+          <button
+            className="btn cat-button shadow-sm px-3"
+            onClick={handleSearch}>
+            <FontAwesomeIcon icon={faSearch}/>
+          </button>
+          <button
+            className="btn btn-warning clear-btn shadow-sm ms-2"
+            onClick={handleClear}>
+            Clear filter
+          </button>
         </div>
         
-        <button
-          className="btn cat-button px-3"
-          onClick={handleSearch}>
-          <FontAwesomeIcon icon={faSearch} className='icon' />
-        </button>
-        <button
-          className="btn btn-warning clear-btn"
-          onClick={handleClear}>
-          Clear filter
-        </button>
+        
       </div>
 
       {/*items per page  */}
@@ -721,7 +724,7 @@ const Catalog = () => {
                 disabled={currentPage === 1 || totalPages === 0}
                 aria-label="Go to previous page"
               >
-                <FontAwesomeIcon icon={faArrowLeft} className='icon' />
+                <FontAwesomeIcon icon={faArrowLeft}/>
               </button>
               <button
                 className='btn'
@@ -729,7 +732,7 @@ const Catalog = () => {
                 disabled={currentPage === totalPages || totalPages === 0}
                 aria-label="Go to next page"
               >
-                <FontAwesomeIcon icon={faArrowRight} className='icon' />
+                <FontAwesomeIcon icon={faArrowRight}/>
               </button>
             </div>
           </div>

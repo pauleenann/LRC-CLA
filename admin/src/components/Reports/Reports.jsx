@@ -102,29 +102,29 @@ const Reports = () => {
   };
 
   return (
-    <div className="reports-container">
+    <div className="reports-container bg-light">
       <h1>Reports</h1>
 
       <div className='d-flex flex-column gap-3'>
         {/* search bar, and sort and create */}
         <div className='d-flex justify-content-between mt-4'>
           {/* search bar */}
-          <div className='d-flex gap-2'>
+          <div className='input-group w-50 shadow-sm'>
             <input 
               type="text" 
-              className='search-bar rounded ps-2' 
+              className='form-control' 
               placeholder='Search' 
               value={searchTerm}
               onChange={handleSearch}
             />
             <button className='btn search-btn'>
-              <FontAwesomeIcon icon={faSearch} className='icon'/>
+              <FontAwesomeIcon icon={faSearch}/>
             </button>
           </div>
           {/* sort and create report */}
           <div className='d-flex gap-2'>
-            <button className='btn create-btn d-flex gap-3 align-items-center' onClick={() => setIsReportModalOpen(true)}>
-              <FontAwesomeIcon icon={faPlus} className='icon'/>
+            <button className='btn create-btn d-flex gap-2 align-items-center' onClick={() => setIsReportModalOpen(true)}>
+              <FontAwesomeIcon icon={faPlus}/>
               Create new report
             </button>
           </div>
@@ -137,21 +137,21 @@ const Reports = () => {
               Report Name
               <FontAwesomeIcon 
                 icon={getSortIcon('report_name')} 
-                className='ms-2 icon'
+                className='ms-2'
               />
             </div>
             <div className='col-3 cursor-pointer' onClick={() => handleSort('report_description')}>
               Report Description
               <FontAwesomeIcon 
                 icon={getSortIcon('report_description')} 
-                className='ms-2 icon'
+                className='ms-2'
               />
             </div>
             <div className='col-3 cursor-pointer' onClick={() => handleSort('created_at')}>
               Created at
               <FontAwesomeIcon 
                 icon={getSortIcon('created_at')} 
-                className='ms-2 icon'
+                className='ms-2'
               />
             </div>
             <div className='col-3'>Actions</div>
@@ -185,7 +185,7 @@ const Reports = () => {
                     setViewId(report.report_id);
                     setIsViewModalOpen(true);
                   }}>
-                    <FontAwesomeIcon icon={faEye} className='icon'/>
+                    <FontAwesomeIcon icon={faEye}/>
                   </button>
                 </div>
               </div>

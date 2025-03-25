@@ -103,7 +103,7 @@ const Circulation = () => {
   
 
   return (
-    <div className="circulation-container">
+    <div className="circulation-container bg-light">
       <h1>Circulation</h1>
 
       {/* Check-in buttons */}
@@ -113,7 +113,7 @@ const Circulation = () => {
             className='btn checkin-btn'
             onClick={() => handleActionClick('Check Out')}
           >
-            <FontAwesomeIcon icon={faCartShopping} className='icon' />
+            <FontAwesomeIcon icon={faCartShopping} className='fs-1'/>
             <span>Borrow</span>
           </button>
         </Link>
@@ -122,7 +122,7 @@ const Circulation = () => {
             className='btn checkin-btn'
             onClick={() => handleActionClick('Check In')}
           >
-            <FontAwesomeIcon icon={faCartPlus} className='icon' />
+            <FontAwesomeIcon icon={faCartPlus} className='fs-1'/>
             <span>Return</span>
           </button>
         </Link>
@@ -130,17 +130,17 @@ const Circulation = () => {
 
       {/* Search */}
       <div className="search-container d-flex justify-content-between">
-        <div className='d-flex gap-2'>
+        <div className='input-group w-50'>
           <input
             type="text"
-            className="search-bar"
+            className="search-bar form-control shadow-sm"
             placeholder="Search"
             value={searchTerm}
             onChange={handleSearch}
             onKeyDown={(e)=>e.key=='Enter'&&search()}
           />
           <button className="btn search-btn" onClick={search}>
-            <FontAwesomeIcon icon={faSearch} className='icon'/> 
+            <FontAwesomeIcon icon={faSearch}/> 
           </button>
         </div>
         <select className="form-select dropdown" onChange={(e)=>setQuery(e.target.value)}>
@@ -229,14 +229,14 @@ const Circulation = () => {
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
           >
-            <FontAwesomeIcon icon={faArrowLeft} className="icon" />
+            <FontAwesomeIcon icon={faArrowLeft}/>
           </button>
           <button
             className="btn"
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
-            <FontAwesomeIcon icon={faArrowRight} className="icon" />
+            <FontAwesomeIcon icon={faArrowRight}/>
           </button>
         </div>
       </div>

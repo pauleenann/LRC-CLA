@@ -28,14 +28,14 @@ const DashBox = ({icon, title,total, loading}) => {
   return (
     <>
     {loading
-    ?<div className="dash-box2 col">
+    ?<div className="dash-box2 col shadow-sm">
         <div className="total-box">
             <span className='total'></span>
             <span className='label'></span>
         </div>
         <div className="icon"></div>
     </div>
-    :<div className="dash-box col" onClick={handleClick}>
+    :<div className="dash-box col shadow-sm" onClick={handleClick}>
         <div className="total-box">
             <span className='total'>{total}</span>
             <span className='label'>{title}</span>

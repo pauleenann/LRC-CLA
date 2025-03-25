@@ -197,7 +197,7 @@ const CirculationCheckout = () => {
   const patronName = patron.length > 0 ? `${patron[0].patron_fname} ${patron[0].patron_lname}` : '';
 
   return (
-    <div className='circ-checkout-container'>
+    <div className='circ-checkout-container bg-light'>
       <h1>Circulation</h1>
 
       {/* path and back */}
@@ -207,7 +207,7 @@ const CirculationCheckout = () => {
       </div>
 
       {/* info */}
-      <div className="checkout-details row">
+      <div className="checkout-details row shadow-sm">
         {/* items to be issued */}
         <div className="items col-5">
           <div>
@@ -242,7 +242,7 @@ const CirculationCheckout = () => {
         </div>
 
         {/* checkout summary */}
-        <div className="checkout-sum col">
+        <div className="checkout-sum col shadow-sm">
           {/* header */}
           <div className="header">
             {clickedAction === 'Check In' ? 'Return summary' : 'Check out summary'}

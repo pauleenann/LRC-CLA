@@ -2,7 +2,7 @@ import React from 'react'
 
 const BarcodeData = ({data,handleSelectResource,isSelected,barcodeQuantities,handleQuantityChange}) => {
   return (
-    <div className='row text-center data rounded '>
+    <div className='row text-center data rounded bg-light'>
         <div className="col-2 d-flex gap-2 justify-content-center ">
             <input type="checkbox" checked={isSelected} name="" id="" onChange={()=>handleSelectResource(data.resource_id)}/>
         </div>

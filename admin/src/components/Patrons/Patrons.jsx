@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Patrons.css';
-import edit from '../../assets/Management System/patrons/edit-patron.svg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faPlus, faPen, faFile, faArrowRight, faArrowLeft, faExclamationCircle, faUpload, faEye } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-import * as XLSX from 'xlsx'; // Import xlsx library
+import PatronImport from '../PatronImport/PatronImport';
 
 const Patrons = () => {
     const [patrons, setPatrons] = useState([]);
@@ -18,6 +17,8 @@ const Patrons = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
     const totalPages = Math.ceil(filteredPatrons.length / itemsPerPage);
+
+    const [isOpen, setIsOpen] = useState(false)
 
     useEffect(() => {
         const fetchUserRole = async () => {
@@ -108,38 +109,10 @@ const Patrons = () => {
         setFilteredPatrons(patrons);
         setCurrentPage(1);
     };
-
-    // Handle file upload and parse Excel file
-    const handleFileUpload = async (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.readAsBinaryString(file);
-
-        reader.onload = async (e) => {
-            const data = e.target.result;
-            const workbook = XLSX.read(data, { type: 'binary' });
-            const sheetName = workbook.SheetNames[0];
-            const sheet = workbook.Sheets[sheetName];
-
-            const jsonData = XLSX.utils.sheet_to_json(sheet); // Convert Excel to JSON
-            console.log("Parsed Excel Data:", jsonData);
-
-            console.log(jsonData)
-            try {
-                await axios.post('http://localhost:3001/api/patron/import', jsonData);
-                alert('Patron data imported successfully!');
-                getPatron(); // Refresh data
-            } catch (error) {
-                console.error('Error uploading data:', error);
-            }
-        };
-    };
     
 
     return (
-        <div className="patrons-container">
+        <div className="patrons-container bg-light">
             <h1>Patrons</h1>
             <div className="search-field-category-filter">
                 <div className="patrons-category">
@@ -153,51 +126,65 @@ const Patrons = () => {
             </div>
             <div className="search-bar-box">
                 <div className='d-flex gap-2'>
-                    <input type="text" className="patrons-search-bar shadow-sm" placeholder="Search by TUP ID, email, or name" value={searchTerm} onChange={handleSearchChange} onKeyDown={(e)=>e.key=='Enter'&&handleSearch()}/>
-                    <button className="patrons-search-button" onClick={handleSearch} >
-                        <FontAwesomeIcon icon={faMagnifyingGlass} />
-                    </button>
+                    <div className="input-group">
+                        <input 
+                            type="text" 
+                            className="patrons-search-bar form-control shadow-sm" 
+                            placeholder="Search by TUP ID, email, or name" 
+                            value={searchTerm} 
+                            onChange={handleSearchChange} 
+                            onKeyDown={(e)=>e.key=='Enter'&&handleSearch()}
+                        />
+                        <button 
+                            className="patrons-search-button btn btn-primary" 
+                            onClick={handleSearch}
+                        >
+                            <FontAwesomeIcon icon={faMagnifyingGlass} />
+                        </button>
+                    </div>
                 </div>
                 <div className='d-flex gap-2'>
                     <Link to="/patron/add">
-                        <button className="patrons-add-btn shadow-sm">
-                            <FontAwesomeIcon icon={faPlus} /> 
+                        <button className="patrons-add-btn btn btn-success shadow-sm">
+                            <FontAwesomeIcon icon={faPlus} className="me-2"/> 
                             Add Patron
                         </button>
                     </Link>
-                    <input type="file" accept=".xlsx, .xls" name="" id="patronData" className='d-none' onChange={handleFileUpload}/>
-                    <label htmlFor="patronData" className='btn btn-primary d-flex align-items-center justify-content-center gap-2 shadow-sm'>
+                    <button 
+                        className='btn btn-primary d-flex align-items-center justify-content-center gap-2 shadow-sm' 
+                        onClick={()=>setIsOpen(true)}
+                    >
                         <FontAwesomeIcon icon={faUpload} /> 
-                        Import from Excel
-                    </label>
+                        Import
+                    </button>
                 </div>
-                
             </div>
-            <table className="patrons-table shadow-sm">
-                <thead>
-                    <tr>
-                        <td>TUP ID</td>
-                        <td>Name</td>
-                        <td>Email</td>
-                        <td>Category</td>
-                        <td>Checkouts</td>
-                        <td>Status</td>
-                        <td>Actions</td>
-                    </tr>
-                </thead>
-                <tbody>
+            <div className="">
+                <table className=" table-hover shadow-sm">
+                    <thead className="">
+                        <tr>
+                            <td>TUP ID</td>
+                            <td>Name</td>
+                            <td>Email</td>
+                            <td>Category</td>
+                            <td>Checkouts</td>
+                            <td>Status</td>
+                            <td>Actions</td>
+                        </tr>
+                    </thead>
+                    <tbody>
                     {paginatedPatrons.length > 0 ? (
                         paginatedPatrons.map((patron, index) => (
                             <tr key={index}>
                                 <td className='tup-id'>{patron.tup_id}</td>
-                                <td className='text-capitalize'>{patron.patron_fname} {patron.patron_lname}</td>
+                                <td className='name'>{patron.patron_fname} {patron.patron_lname}</td>
                                 <td className='email'>{patron.patron_email}</td>
                                 <td className='category'>{patron.category}</td>
                                 <td>{patron.total_checkouts}</td>
-                                <td className='text-capitalize'>
+                                <td className=''>
                                     {patron.status=='active'?
-                                    <span className='bg-success py-2 px-3 text-white rounded-pill'>Active</span>:
-                                    <span className='bg-danger py-2 px-3 text-white rounded-pill'>Inactive</span>}
+                                    <span className='bg-success p-2 fw-semibold text-white rounded'>active</span>:
+                                    <span className='bg-danger p-2 fw-semibold text-white rounded'>inactive</span>}
                                 </td>
                                 {userRole === 'admin' ? (
                                     <td className="patron-edit-checkout">
@@ -231,20 +218,22 @@ const Patrons = () => {
                         </tr>
                     )}
                 </tbody>
-            </table>
+                </table>
+            </div>
             {filteredPatrons.length > 0 && (
                 <div className="pagination">
                     <span>Page {currentPage} of {totalPages}</span>
                     <div className="buttons">
                         <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-                            <FontAwesomeIcon icon={faArrowLeft} className="icon" />
+                            <FontAwesomeIcon icon={faArrowLeft}/>
                         </button>
                         <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages}>
-                            <FontAwesomeIcon icon={faArrowRight} className="icon" />
+                            <FontAwesomeIcon icon={faArrowRight}/>
                         </button>
                     </div>
                 </div>
             )}
+            <PatronImport open={isOpen} close={()=>setIsOpen(false)}/>
         </div>
     );
 };

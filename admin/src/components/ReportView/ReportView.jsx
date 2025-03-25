@@ -111,7 +111,7 @@ const ReportView = ({open, close, id}) => {
         <div className="header w-100 d-flex justify-content-between align-items-center p-0">
           <span className='fw-semibold'>Generated Report</span>
           <button className="btn" onClick={close}>
-            <FontAwesomeIcon icon={faX} className='icon' />
+            <FontAwesomeIcon icon={faX}/>
           </button>
         </div>
         {generatedReport.length > 0 ? (
@@ -152,7 +152,7 @@ const ReportView = ({open, close, id}) => {
               disabled={exporting || generatedReport.length === 0}
               onClick={exportToExcel}
             >
-              <FontAwesomeIcon icon={faDownload} className='icon'/>
+              <FontAwesomeIcon icon={faDownload}/>
               <span className='m-0 '>{exporting ? 'Exporting...' : 'Export to Excel'}</span>
             </button>
             

@@ -113,7 +113,7 @@ const CatalogManage = () => {
   };
 
   return (
-    <div className="manage-catalog">
+    <div className="manage-catalog bg-light">
       <h1>Cataloging</h1>
 
       {/* Path and back */}
@@ -143,7 +143,7 @@ const CatalogManage = () => {
                   className="d-flex gap-4 align-items-center px-4 dept-btn border-0 bg-transparent text-capitalize"
                   onClick={() => {handleSelectedDepartment(item.dept_id); setDeptName(item.dept_name); setShelfNo(item.dept_shelf_no); setEditDeptId(item.dept_id)}}
                 >
-                  <FontAwesomeIcon icon={faBookOpenReader} className="icon" />
+                  <FontAwesomeIcon icon={faBookOpenReader}/>
                   {item.dept_name}
                 </button>
               </div>
@@ -162,14 +162,14 @@ const CatalogManage = () => {
 
           {/* Add Department */}
           <button className="btn d-flex gap-3 align-items-center add-dept-btn mt-5" data-bs-toggle="modal" data-bs-target="#AddDept" onClick={()=>{setEditDeptId(null); setDeptName(""); setShelfNo("")}}> 
-            <FontAwesomeIcon icon={faPlus} className="icon" />
+            <FontAwesomeIcon icon={faPlus}/>
             Add new department
           </button>
         </div>
 
         {/* Selected Department Section */}
         {selectedDepartment?
-        <div className="col d-flex flex-column justify-content-between selected rounded p-4 ">
+        <div className="col d-flex flex-column justify-content-between selected rounded p-4 shadow-sm ">
         
           <div className='d-flex flex-column gap-3'>
             
@@ -205,7 +205,7 @@ const CatalogManage = () => {
                   onClick={()=>setIsEdit(!isEdit) }
                   data-bs-toggle="modal" data-bs-target="#AddDept"
                 >
-                  <FontAwesomeIcon icon={faPen} className="icon" />
+                  <FontAwesomeIcon icon={faPen}/>
                 </button>
                 
               </div>
@@ -249,7 +249,7 @@ const CatalogManage = () => {
                         onClick={()=>{setIsEdit(!isEdit); setTopicName(topic.topic_name); setTopicRowNo(topic.topic_row_no); setEditTopicId(topic.topic_id)}}
                         data-bs-toggle="modal" data-bs-target="#AddTopic"
                       >
-                        <FontAwesomeIcon icon={faPen} className="icon" />
+                        <FontAwesomeIcon icon={faPen}/>
                         
                       </button>
 
@@ -261,7 +261,7 @@ const CatalogManage = () => {
               
               {/* add new topic */}
               <button className="btn add-topic d-flex align-items-center gap-3 mt-3" data-bs-toggle="modal" data-bs-target="#AddTopic" onClick={()=>{setEditTopicId(null); setTopicName(""); setTopicRowNo("")}}>
-                <FontAwesomeIcon icon={faPlus} className="icon" />
+                <FontAwesomeIcon icon={faPlus}/>
                 Add new topic
               </button>
             </div>

@@ -145,13 +145,6 @@
     border: none;
 }
 
-.circ-select-patron-container .patron-list .pagination button:hover,
-.circ-select-patron-container .patron-list .pagination button:active,
-.circ-select-patron-container .patron-list .pagination button:focus{
-    background-color: var(--tup-color);
-    color: var(--white);
-}
-
 .patron.disabled {
     pointer-events: none; /* Disable interaction */
     opacity: 0.6; /* Slightly fade the row */

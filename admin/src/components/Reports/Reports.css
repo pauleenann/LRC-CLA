@@ -61,12 +61,6 @@
     color: var(--tup-color);
 }
 
-.reports-container .search-bar{
-    height: 50px;
-    width: 400px;
-    border: 1px solid var(--shadow);
-    box-shadow: 1px 1px 5px var(--shadow);
-}
 
 .reports-container .search-bar:hover,
 .reports-container .search-bar:active,

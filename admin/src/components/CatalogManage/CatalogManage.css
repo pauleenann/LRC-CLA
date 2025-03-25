@@ -64,7 +64,7 @@
 }
 
 .manage-catalog .selected{
-    background-color: var(--table-border-bottom);
+    background-color: var(--white);
 }
 
 .manage-catalog .edit-btn{

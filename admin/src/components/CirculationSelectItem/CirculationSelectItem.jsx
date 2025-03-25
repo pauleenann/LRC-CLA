@@ -111,7 +111,7 @@ const CirculationSelectItem = () => {
   };
 
   return (
-    <div className='circ-select-item-container'>
+    <div className='circ-select-item-container bg-light'>
       <h1>Book Circulation</h1>
 
       {/* Path and back */}
@@ -122,9 +122,9 @@ const CirculationSelectItem = () => {
 
       <div className="row add-items">
         {/* Scan or manual */}
-        <div className="col scan-manual">
+        <div className="col scan-manual shadow-sm">
           <div className="barcode">
-            <FontAwesomeIcon icon={faBarcode} className='icon' />
+            <FontAwesomeIcon icon={faBarcode} className='barcode-icon' />
             <p>Scan items in the scanner <br />to be {actionLabel.toLowerCase()}.</p>
           </div>
           <p>No barcode available? Input manually instead</p>
@@ -166,7 +166,7 @@ const CirculationSelectItem = () => {
         </div>
 
         {/* Items added */}
-        <div className="col summary">
+        <div className="col summary shadow-sm">
           <div className='selected-items'>
             <div className="header">
               <h5>Items added (<span>{selectedItems.length}</span>)</h5>

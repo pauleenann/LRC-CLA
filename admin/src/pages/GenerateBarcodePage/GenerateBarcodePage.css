@@ -146,13 +146,9 @@
 }
 
 .barcodepage .search-bar{
-    width: 500px;
+    width: 500px !important;
     height: 50px;
-    box-shadow: 0px 1px 2px var(--shadow);
-    padding: 0 10px;
-    border-radius: 5px;
-    border: 1px solid var(--shadow);
-    margin-right: 5px;
+
 }
 
 .barcodepage .search-bar:hover,

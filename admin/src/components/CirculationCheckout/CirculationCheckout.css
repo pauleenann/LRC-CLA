@@ -50,7 +50,7 @@
 
 
 .circ-checkout-container .checkout-details .items{
-    background-color: var(--light-gray);
+    background-color: var(--white);
     padding: 50px;
     height: 80vh;
     border-radius: 10px;
@@ -129,7 +129,7 @@
 }
 
 .circ-checkout-container .checkout-details .checkout-sum{
-    background-color: var(--light-gray);
+    background-color: var(--white);
     padding: 0 !important;
     border-radius: 10px;
     overflow: hidden;

@@ -68,7 +68,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBoo
       console.log(preview)
    
   return (
-    <div className='cat-info'>
+    <div className='cat-info shadow-sm'>
         <div className="row">
             {/* header */}
             <div className="col-12 cat-info-header">Information</div>
