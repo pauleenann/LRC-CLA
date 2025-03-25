@@ -5,7 +5,7 @@
 }
 
 .top-choices-container .top-number{
-    background-color: var(--gray);
+    background-color: gray;
     width: 40px !important;
     height: 40px !important;
     border-radius: 50%;
