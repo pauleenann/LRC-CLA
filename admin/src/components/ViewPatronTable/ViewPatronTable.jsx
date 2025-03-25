@@ -153,7 +153,7 @@ const ViewPatronTable = ({header, title, data, exportXLSX}) => {
             <button className='btn search' onClick={reset}>Clear filter </button>
           </div>
           <button className="btn export d-flex align-items-center gap-2 btn-success" onClick={exportXLSX}>
-            <FontAwesomeIcon icon={faDownload} className='icon'/>
+            <FontAwesomeIcon icon={faDownload}/>
             Export to Excel
           </button>
         </div>
@@ -222,8 +222,8 @@ const ViewPatronTable = ({header, title, data, exportXLSX}) => {
           <span>Page {currentPage} of {totalPages}</span>
           {/* buttons */}
           <div className='d-flex gap-1'>
-            <button className="btn" onClick={prevPage} disabled={currentPage==1}><FontAwesomeIcon icon={faArrowLeft} className='icon'/></button>
-            <button className="btn" onClick={nextPage}disabled={currentPage==totalPages}><FontAwesomeIcon icon={faArrowRight} className='icon'/></button>
+            <button className="btn" onClick={prevPage} disabled={currentPage==1}><FontAwesomeIcon icon={faArrowLeft}/></button>
+            <button className="btn" onClick={nextPage}disabled={currentPage==totalPages}><FontAwesomeIcon icon={faArrowRight}/></button>
           </div>
         </div>
     </div>
