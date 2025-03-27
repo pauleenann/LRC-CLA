@@ -9,7 +9,7 @@
 }
 
 .create-u-modal-container .create-u-modal-overlay{
-    background-color: var(--overlay);
+    background-color: var(--shadow);
     position: absolute;
     width: 100%;
     height: 100%;
@@ -56,22 +56,6 @@
     flex-direction: column;
     height: 70px;
     padding: 0 10px;
-}
-
-.create-u-modal-container .input-box input,
-.create-u-modal-container .input-box select{
-    height: 40px;
-    /* border-color: var(--black); */
-    outline: none;
-    border-radius: 5px;
-    padding: 10px;
-}
-
-.create-u-modal-container .buttons{
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 30px;
 }
 
 .create-u-modal-container .cancel-btn{

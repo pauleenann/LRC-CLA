@@ -178,10 +178,79 @@ export const viewAccount = (req,res)=>{
     })
 }
 
-export const ediAccount = (req, res) => {
+// export const editAccount = (req, res) => {
+//     console.log(req.body);
+//     const password = req.body.password;
+//     const username = req.body.username;
+//     const selectQuery = `
+//         SELECT staff_uname, staff_fname, staff_lname, role_id, staff_password 
+//         FROM staffaccount 
+//         WHERE staff_id = ?`;
+
+//     db.query(selectQuery, [req.body.id], (err, results) => {
+//         if (err || results.length === 0) {
+//             return res.status(404).json({ error: 'Account not found' });
+//         }
+
+//         const oldValue = JSON.stringify(results[0]);
+
+//         // Hash the new password
+//         bcrypt.hash(password, saltRounds, (err, hash) => {
+//             if (err) {
+//                 console.error(err);
+//                 return res.status(500).json({ error: 'Password hashing failed' });
+//             }
+
+//             const updateQuery = `
+//                 UPDATE  
+//                     staffaccount 
+//                 SET 
+//                     staff_uname = ?,
+//                     staff_fname = ?,
+//                     staff_lname = ?,
+//                     role_id = ?,
+//                     staff_password = ?
+//                 WHERE 
+//                     staff_id = ?`;
+
+//             const values = [
+//                 req.body.uname,
+//                 req.body.fname,
+//                 req.body.lname,
+//                 req.body.role,
+//                 hash,
+//                 req.body.id
+//             ];
+
+//             db.query(updateQuery, values, (err, results) => {
+//                 if (err) {
+//                     console.error(err);
+//                     return res.status(500).json({ error: 'Database query failed' });
+//                 }
+
+//                 const newValue = JSON.stringify({
+//                     staff_uname: req.body.uname,
+//                     staff_fname: req.body.fname,
+//                     staff_lname: req.body.lname,
+//                     role_id: req.body.role,
+//                     staff_password: hash,
+//                 });
+
+//                 // Log the audit action
+//                 logAuditAction(username, 'UPDATE', 'staffaccount', req.body.id, oldValue, JSON.stringify("Edited a user: " + req.body.uname + " with ID: " + req.body.id));
+                
+//                 res.send({status: 201, message:'User Edited Successfully'});
+//                 // res.status(200).json({ message: 'User edited successfully' });
+//             });
+//         });
+//     });
+// }
+
+export const editAccount = (req, res) => {
     console.log(req.body);
     const password = req.body.password;
     const username = req.body.username;
+
     const selectQuery = `
         SELECT staff_uname, staff_fname, staff_lname, role_id, staff_password 
         FROM staffaccount 
@@ -194,57 +263,79 @@ export const ediAccount = (req, res) => {
 
         const oldValue = JSON.stringify(results[0]);
 
-        // Hash the new password
-        bcrypt.hash(password, saltRounds, (err, hash) => {
+        // Fix: Removed trailing comma before WHERE
+        const updateQuery = `
+            UPDATE staffaccount 
+            SET 
+                staff_uname = ?,
+                staff_fname = ?,
+                staff_lname = ?,
+                role_id = ?
+            WHERE 
+                staff_id = ?`;
+
+        const values = [
+            req.body.uname,
+            req.body.fname,
+            req.body.lname,
+            req.body.role,
+            req.body.id
+        ];
+
+        db.query(updateQuery, values, (err) => {
             if (err) {
                 console.error(err);
-                return res.status(500).json({ error: 'Password hashing failed' });
+                return res.status(500).json({ error: 'Database query failed' });
             }
 
-            const updateQuery = `
-                UPDATE  
-                    staffaccount 
-                SET 
-                    staff_uname = ?,
-                    staff_fname = ?,
-                    staff_lname = ?,
-                    role_id = ?,
-                    staff_password = ?
-                WHERE 
-                    staff_id = ?`;
-
-            const values = [
-                req.body.uname,
-                req.body.fname,
-                req.body.lname,
-                req.body.role,
-                hash,
-                req.body.id
-            ];
-
-            db.query(updateQuery, values, (err, results) => {
-                if (err) {
-                    console.error(err);
-                    return res.status(500).json({ error: 'Database query failed' });
-                }
-
-                const newValue = JSON.stringify({
-                    staff_uname: req.body.uname,
-                    staff_fname: req.body.fname,
-                    staff_lname: req.body.lname,
-                    role_id: req.body.role,
-                    staff_password: hash,
-                });
-
-                // Log the audit action
-                logAuditAction(username, 'UPDATE', 'staffaccount', req.body.id, oldValue, JSON.stringify("Edited a user: " + req.body.uname + " with ID: " + req.body.id));
-                
-                res.send({status: 201, message:'User Edited Successfully'});
-                // res.status(200).json({ message: 'User edited successfully' });
+            // Correct newValue logging
+            const newValue = JSON.stringify({
+                staff_uname: req.body.uname,
+                staff_fname: req.body.fname,
+                staff_lname: req.body.lname,
+                role_id: req.body.role,
             });
+
+            logAuditAction(
+                username, 'UPDATE', 'staffaccount', req.body.id, oldValue,
+                JSON.stringify(`Edited a user: ${req.body.uname} with ID: ${req.body.id}`)
+            );
+
+            // If password is changed
+            if (password.length > 0) {
+                bcrypt.hash(password, saltRounds, (err, hash) => {
+                    if (err) {
+                        console.error(err);
+                        return res.status(500).json({ error: 'Password hashing failed' });
+                    }
+
+                    const updatePassword = `
+                        UPDATE staffaccount 
+                        SET staff_password = ? 
+                        WHERE staff_id = ?`;
+
+                    db.query(updatePassword, [hash, req.body.id], (err) => {  // Pass req.body.id
+                        if (err) {
+                            console.error(err);
+                            return res.status(500).json({ error: 'Database query failed' });
+                        }
+
+                        const newPassword = JSON.stringify({ staff_password: hash });
+
+                        logAuditAction(
+                            username, 'UPDATE', 'staffaccount', req.body.id, oldValue,
+                            JSON.stringify(`Edited a user: ${req.body.uname} with ID: ${req.body.id}`)
+                        );
+
+                        return res.status(201).json({ message: 'User Edited Successfully' }); // Return response here
+                    });
+                });
+            } else {
+                return res.status(201).json({ message: 'User Edited Successfully' }); // Response for no password change
+            }
         });
     });
-}
+};
 
 export const activateAccount = (req, res) => {
     const id = req.params.id;

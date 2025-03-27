@@ -123,7 +123,7 @@ const Reports = () => {
           </div>
           {/* sort and create report */}
           <div className='d-flex gap-2'>
-            <button className='btn create-btn d-flex gap-2 align-items-center' onClick={() => setIsReportModalOpen(true)}>
+            <button className='btn create-btn d-flex gap-2 align-items-center shadow-sm' onClick={() => setIsReportModalOpen(true)}>
               <FontAwesomeIcon icon={faPlus}/>
               Create new report
             </button>
@@ -132,7 +132,7 @@ const Reports = () => {
 
         <div className='d-flex flex-column gap-3 data-box'>
           {/* header */}
-          <div className='header m-0 p-0 row d-flex align-items-center text-center justify-content-center rounded text-light'>
+          <div className='header m-0 p-0 row d-flex align-items-center text-center justify-content-center rounded text-light shadow-sm'>
             <div className='col-3 cursor-pointer' onClick={() => handleSort('report_name')}>
               Report Name
               <FontAwesomeIcon 
@@ -176,7 +176,7 @@ const Reports = () => {
           )
           : (
             currentReports.map(report => (
-              <div key={report.report_id} className='m-0 p-0 d-flex align-items-center text-center row rounded data'>
+              <div key={report.report_id} className='m-0 p-0 d-flex align-items-center text-center row rounded data shadow-sm'>
                 <div className='col-3'>{report.report_name}</div>
                 <div className='col-3'>{report.report_description}</div>
                 <div className='col-3'>{dayjs(report.created_at).format("YYYY-MM-DD HH:mm:ss")}</div>
