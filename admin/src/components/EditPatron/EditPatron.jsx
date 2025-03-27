@@ -460,7 +460,7 @@ const EditPatron = () => {
                                             type="text"
                                             className={`form-control ${errors.patron_fname ? 'is-invalid' : ''}`}
                                             id="patron_fname"
-                                            placeholder='Enter first name'
+                                            placeholder=''
                                             name='patron_fname'
                                             value={patronData.patron_fname}
                                             onChange={handleChange}
@@ -480,7 +480,7 @@ const EditPatron = () => {
                                             type="text"
                                             className={`form-control ${errors.patron_lname ? 'is-invalid' : ''}`}
                                             id="patron_lname"
-                                            placeholder='Enter last name'
+                                            placeholder=''
                                             name='patron_lname'
                                             value={patronData.patron_lname}
                                             onChange={handleChange}
@@ -526,7 +526,7 @@ const EditPatron = () => {
                                             type="text"
                                             className={`form-control ${errors.patron_mobile ? 'is-invalid' : ''}`}
                                             id="patron_mobile"
-                                            placeholder='09XXXXXXXXX'
+                                            placeholder=''
                                             name='patron_mobile'
                                             value={patronData.patron_mobile}
                                             onChange={handleChange}
@@ -549,7 +549,7 @@ const EditPatron = () => {
                                             type="email"
                                             className={`form-control ${errors.patron_email ? 'is-invalid' : ''}`}
                                             id="patron_email"
-                                            placeholder='Enter email'
+                                            placeholder=''
                                             name='patron_email'
                                             value={patronData.patron_email}
                                             onChange={handleChange}

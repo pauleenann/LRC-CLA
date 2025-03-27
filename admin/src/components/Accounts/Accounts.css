@@ -87,15 +87,6 @@
     color: var(--tup-color);
 }
 
-.accounts-container .action .edit-btn:hover,
-.accounts-container .action .edit-btn:hover,
-.accounts-container .action .edit-btn:hover,
-.accounts-container .deac-acc-btn:hover,
-.accounts-container .deac-acc-btn:focus,
-.accounts-container .deac-acc-btn:active{
-    background-color: var(--tup-color);
-    color: var(--white);
-}
 .accounts-container .pagination{
     display: flex;
     align-items: center;
@@ -110,11 +101,6 @@
 .accounts-container .pagination button{
     background-color: transparent !important;
     color: var(--tup-color);
-}
-
-.accounts-container .pagination button:hover{
-    background-color: var(--tup-color) !important;
-    color: var(--white);
 }
 
 .accounts-container .pagination .btn:disabled{

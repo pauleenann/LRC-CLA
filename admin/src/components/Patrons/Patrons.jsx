@@ -15,7 +15,7 @@ const Patrons = () => {
     const [userRole, setUserRole] = useState(null);
     
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5;
+    const itemsPerPage = 10;
     const totalPages = Math.ceil(filteredPatrons.length / itemsPerPage);
 
     const [isOpen, setIsOpen] = useState(false)

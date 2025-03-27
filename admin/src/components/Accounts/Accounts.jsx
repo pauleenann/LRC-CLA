@@ -25,14 +25,12 @@ const Accounts = () => {
     password: '',
     confirmPassword: '',
   });
-  const [toEditAccount, setToEditAccount] = useState({});
+  const [originalAccount, setOriginalAccount] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({});
-  const [errorEdit, setErrorEdit] = useState({});
   const [statusModal, setStatusModal] = useState(false);
   const [statusModalContent, setStatusModalContent] = useState({ status: '', message: '' });
   const [selectedUname, setSelectedUname] = useState('');
-  const [selectedId, setSelectedId] = useState('');
   const [pagination, setPagination] = useState(5); // Items per page
   const [currentPage, setCurrentPage] = useState(1); // Current page
   const [totalPages, setTotalPages] = useState(0); // Total pages
@@ -59,14 +57,6 @@ const Accounts = () => {
       console.log(account)
   };
 
-  const appendToEditAccount = (key, value) => {
-    setToEditAccount((prevToEditAccount) => ({
-        ...prevToEditAccount,
-        [key]: value, // Dynamically add or update the key-value pair
-    }));
-    console.log(toEditAccount)
-};
-
   useEffect(()=>{
     if(keyword==''){
       userAccounts(true)
@@ -92,7 +82,6 @@ const Accounts = () => {
       setStaffUname(null); // Set null if there's an error
     }
   }
-
 
   // Fetch user accounts
   const userAccounts = async (resetPage = false) => {
@@ -133,37 +122,76 @@ const Accounts = () => {
     }
   };
 
+
+
   // Create user account
-  const createUserAccount = async () => {
-    formValidation();
-    if (Object.keys(error).length === 0) {
-      setLoading(true);
-      try {
+  const createUserAccount = async (isChangePassword) => {
+    const isValid = await formValidation() == await passwordValidation(); // Store return value
+
+    if (!isValid) { // Correct check
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: "Are you sure",
+      text: "You want to create this user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#54CB58",
+      cancelButtonColor: "#94152b",
+      confirmButtonText: "Yes, create!"
+    });
+
+    if (!result.isConfirmed) return; // Exit if user cancels
+
+    setLoading(true);
+    try {
         const response = await axios.post('http://localhost:3001/api/account', account);
-        console.log(account)
+        console.log(account);
         setLoading(false);
 
         if (response.data.status === 409) {
-          setOpenCreateUser(false);
-          setStatusModal(true);
-          setStatusModalContent({ status: 'duplicated', message: response.data.message });
+          Swal.fire({
+            title: "User already exists!",
+            text: "User with the same username already exist. Please try again.",
+            icon: "warning",
+            confirmButtonColor: "#54CB58",
+          });
         } else if (response.data.status === 201) {
-          setOpenCreateUser(false);
-          setStatusModal(true);
-          setStatusModalContent({ status: 'success', message: response.data.message });
+          const result2 = await Swal.fire({
+            title: "User created!",
+            text: "You successfully created an account.",
+            icon: "success",
+            confirmButtonColor: "#54CB58",
+          });
+          
+          // Reset form after success
+          setAccount({
+            fname: '',
+            lname: '',
+            uname: '',
+            role: '',
+            password: '',
+            confirmPassword: ''
+          });
+
+          if(result2.isConfirmed){
+            window.location.reload()
+          }
         }
-      } catch (err) {
-        console.log('Cannot create account. An error occurred: ', err.message);
-        setLoading(false); // Ensure loading is reset on error
-      }
+    } catch (err) {
+        console.log('Cannot create account. An error occurred:', err.message);
+    } finally {
+        setLoading(false); //  Ensure loading is reset even on error
     }
   };
+
 
   // Get account to be edited
   const getToEdit = async (id) => {
     try {
       const response = await axios.get(`http://localhost:3001/api/account/${id}`);
-      setToEditAccount({
+      const result = {
         id: response.data[0].staff_id,
         fname: response.data[0].staff_fname,
         lname: response.data[0].staff_lname,
@@ -172,14 +200,106 @@ const Accounts = () => {
         password: '',
         confirmPassword: '',
         username: staffUname,
-      });
+      };
+      setAccount(result);
+      setOriginalAccount(result)
     } catch (err) {
       console.log('Cannot get account to be edited. An error occurred: ', err.message);
     }
   };
 
-  // Edit user account
-  const editUserAccount = async (id) => {
+  // // Edit user account
+  // const editUserAccount = async (id) => {
+  //   // Get the original account data before editing
+  //   const originalAccount = toEditAccountOriginal;
+
+  //   // Check if any changes were made
+  //   const hasChanges = 
+  //     toEditAccount.fname !== originalAccount.fname ||
+  //     toEditAccount.lname !== originalAccount.lname ||
+  //     toEditAccount.uname !== originalAccount.uname ||
+  //     toEditAccount.role !== originalAccount.role ||
+  //     toEditAccount.password !== '' || toEditAccount.confirmPassword !== '';
+
+  //   // If no changes, show a message and return
+  //   if (!hasChanges) {
+  //     await Swal.fire({
+  //       title: "No Changes",
+  //       text: "No changes were made to the user account.",
+  //       icon: "info"
+  //     });
+  //     return;
+  //   }
+
+  //   if(!formValidation()){
+  //     return
+  //   }
+
+  //   const result = await Swal.fire({
+  //     title: "Are you sure",
+  //     text: `You want to edit this user?`,
+  //     icon: "question",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#54CB58",
+  //     cancelButtonColor: "#94152b",
+  //     confirmButtonText: "Yes, edit!"
+  //   });
+
+  //   if (!result.isConfirmed) return; // Exit if user cancels
+
+  //   if (Object.keys(errorEdit).length === 0) {
+  //     setLoading(true);
+  //     try {
+  //       console.log('Editing account with id: ', id);
+  //       appendToEditAccount('username', staffUname);
+  //       const response = await axios.put(`http://localhost:3001/api/account/${id}`, toEditAccount);
+  //       const result2 = await Swal.fire({
+  //         title: "Edited!",
+  //         text: `You edited the user successfully.`,
+  //         icon: "success"
+  //       });
+
+  //       if(result2.isConfirmed){
+  //         window.location.reload()
+  //       }
+  //     } catch (err) {
+  //       console.log('Cannot edit account. An error occurred: ', err.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  // };
+
+  const editUserAccount = async(isChangePassword)=>{
+    const isValid = await formValidation();
+    let isPasswordValid = true;
+
+    if(isChangePassword){
+      isPasswordValid = await passwordValidation();
+    }
+
+    if (!isValid || !isPasswordValid) { // Correct check
+      return;
+    }
+
+
+    const hasChanges = 
+      account.fname !== originalAccount.fname ||
+      account.lname !== originalAccount.lname ||
+      account.uname !== originalAccount.uname ||
+      account.role !== originalAccount.role ||
+      account.password !== '' || originalAccount.confirmPassword !== '';
+
+    // If no changes, show a message and return
+    if (!hasChanges) {
+      await Swal.fire({
+        title: "No Changes",
+        text: "No changes were made to the user account.",
+        icon: "info"
+      });
+      return;
+    }
+
     const result = await Swal.fire({
       title: "Are you sure",
       text: `You want to edit this user?`,
@@ -192,29 +312,28 @@ const Accounts = () => {
 
     if (!result.isConfirmed) return; // Exit if user cancels
 
-    formValidationEdit();
-    if (Object.keys(errorEdit).length === 0) {
-      setLoading(true);
-      try {
-        console.log('Editing account with id: ', id);
-        appendToEditAccount('username', staffUname);
-        const response = await axios.put(`http://localhost:3001/api/account/${id}`, toEditAccount);
-        const result2 = await Swal.fire({
-          title: "Edited!",
-          text: `You edited the user successfully.`,
-          icon: "success"
-        });
-
-        if(result2.isConfirmed){
-          window.location.reload()
+    if (Object.keys(error).length === 0) {
+          setLoading(true);
+          try {
+            console.log('Editing account with id: ', account.id);
+            const response = await axios.put(`http://localhost:3001/api/account/${account.id}`, account);
+            const result2 = await Swal.fire({
+              title: "Edited!",
+              text: `You edited the user successfully.`,
+              icon: "success",
+              confirmButtonColor: "#54CB58",
+            });
+    
+            if(result2.isConfirmed){
+              window.location.reload()
+            }
+          } catch (err) {
+            console.log('Cannot edit account. An error occurred: ', err.message);
+          } finally {
+            setLoading(false);
+          }
         }
-      } catch (err) {
-        console.log('Cannot edit account. An error occurred: ', err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
+}
 
   // Deactivate user
   const deactivateUser = async (uname, id) => {
@@ -295,20 +414,10 @@ const Accounts = () => {
     }));
   };
 
-  // Handle input changes for account editing
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setToEditAccount((prevData) => ({
-      ...prevData,
-      [name]: value
-    }));
-  };
-
   const handleEdit = (id) => {
     setEditUser(true);
     getToEdit(id);
   };
-
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
@@ -397,12 +506,24 @@ const Accounts = () => {
   // Form validation for creating user account
   const formValidation = () => {
     const err = {};
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
 
     if (account.fname === '') err.fname = 'Enter first name';
     if (account.lname === '') err.lname = 'Enter last name';
     if (account.uname === '') err.uname = 'Enter username';
     if (account.role === '') err.role = 'Choose a role';
+    
+    setError(err);
+    if(Object.keys(err).length==0){
+      return true
+    }else{
+      return false
+    }
+  };
+
+  const passwordValidation = ()=>{
+    const err = {};
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+
     if (account.password === '') err.password = 'Enter a password';
     else if (!passwordRegex.test(account.password))
       err.password = 'Password must at least have one character, digit, lowercase, and uppercase letter';
@@ -410,27 +531,18 @@ const Accounts = () => {
     else if (account.password !== account.confirmPassword) err.confirmPassword = 'Passwords do not match';
 
     setError(err);
-  };
+    if(Object.keys(err).length==0){
+      return true
+    }else{
+      return false
+    }
 
-  // Form validation for editing user account
-  const formValidationEdit = () => {
-    const err = {};
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+  }
 
-    if (toEditAccount.fname === '') err.fname = 'Enter first name';
-    if (toEditAccount.lname === '') err.lname = 'Enter last name';
-    if (toEditAccount.uname === '') err.uname = 'Enter username';
-    if (toEditAccount.role === '') err.role = 'Choose a role';
-    if (toEditAccount.password === '') err.password = 'Enter a password';
-    else if (!passwordRegex.test(toEditAccount.password))
-      err.password = 'Password must at least have one character, digit, lowercase, and uppercase letter';
-    if (toEditAccount.confirmPassword === '') err.confirmPassword = 'Confirm your password';
-    else if (toEditAccount.password !== toEditAccount.confirmPassword) err.confirmPassword = 'Passwords do not match';
+  
 
-    setErrorEdit(err);
-  };
-
-  console.log(toEditAccount)
+  console.log('account',account)
+  console.log('account',account)
 
   return (
     <div className="accounts-container bg-light">
@@ -439,7 +551,7 @@ const Accounts = () => {
       {/* Search and add */}
       <div className="search-add">
         {/* Search */}
-      <div className="input-group w-50">
+      <div className="input-group w-50 z-0">
         <input
           className='form-select shadow-sm'
           type="text"
@@ -465,12 +577,24 @@ const Accounts = () => {
           Clear filter
         </button>
       </div>
-  {/* Add */}
-  <button className="btn create-btn shadow-sm" onClick={() => setOpenCreateUser(true)}>
-    <FontAwesomeIcon icon={faPlus} />
-    Create account
-  </button>
-</div>
+      {/* Add */}
+      <button 
+        className="btn create-btn shadow-sm" 
+        onClick={() =>{ 
+          setAccount({
+            fname: '',
+            lname: '',
+            uname: '',
+            role: '',
+            password: '',
+            confirmPassword: ''
+          });
+          setOpenCreateUser(true);
+      }}>
+        <FontAwesomeIcon icon={faPlus} />
+        Create account
+      </button>
+    </div>
 
       {/* Accounts Table */}
       <table>
@@ -522,7 +646,7 @@ const Accounts = () => {
               <td>{item.staff_uname}</td>
               <td>{item.role_name}</td>
               <td>
-                <span className={item.staff_status=='active'?'active':'inactive'}>{item.staff_status}</span>
+                <span className={item.staff_status=='active'?'bg-success text-light p-2 rounded fw-semibold':'bg-danger text-light p-2 rounded fw-semibold'}>{item.staff_status}</span>
               </td>
               <td className="action">
                 {/* Edit user */}
@@ -582,7 +706,7 @@ const Accounts = () => {
       </div>
 
       {/* Modals */}
-      <CreateUserModal
+      {/* <CreateUserModal
         open={openCreateUser}
         close={() => {
           setOpenCreateUser(false);
@@ -600,14 +724,35 @@ const Accounts = () => {
         createUserAccount={createUserAccount}
         error={error}
         formValidation={formValidation}
+      /> */}
+      <EditUserModal
+        open={openCreateUser}
+        close={() => {
+          setOpenCreateUser(false);
+          setAccount({
+            fname: '',
+            lname: '',
+            uname: '',
+            role: '',
+            password: '',
+            confirmPassword: ''
+          });
+          setError({});
+        }}
+        title={'Create User Account'}
+        account={account}
+        handleChange={handleChange}
+        error={error}
+        save={(isChangePassword)=>createUserAccount(isChangePassword)}
       />
       <EditUserModal
         open={openEditUser}
         close={() => setEditUser(false)}
-        account={toEditAccount}
-        handleEditChange={handleEditChange}
-        error={errorEdit}
-        editUserAccount={editUserAccount}
+        title={'Edit User Account'}
+        account={account}
+        handleChange={handleChange}
+        error={error}
+        save={(isChangePassword)=>editUserAccount(isChangePassword)}
       />
       <DeactivateModal open={openDeactivate} close={() => setOpenDeactivate(false)} uname={selectedUname} deactivateUser={deactivateUser} />
       <ActivateModal open={openActivate} close={() => setOpenActivate(false)} uname={selectedUname} activateUser={activateUser} />

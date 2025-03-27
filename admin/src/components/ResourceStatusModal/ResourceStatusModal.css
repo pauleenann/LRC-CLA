@@ -9,7 +9,7 @@
 }
 
 .res-status-overlay{
-    background-color: var(--overlay);
+    background-color: var(--shadow);
     position: absolute;
     width: 100%;
     height: 100%;
@@ -23,7 +23,7 @@
     left: 50%;
     transform: translate(-50%,-50%);
     padding: 70px;
-    background-color: var(--catalog-info-bg);
+    background-color: var(--white);
     border-radius: 15px;
     overflow: hidden;
     align-items: center;
