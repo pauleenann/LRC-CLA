@@ -186,7 +186,7 @@ const Patrons = () => {
                                     <span className='bg-success p-2 fw-semibold text-white rounded'>active</span>:
                                     <span className='bg-danger p-2 fw-semibold text-white rounded'>inactive</span>}
                                 </td>
-                                {userRole === 'admin' ? (
+                                {userRole === 'admin' || userRole === 'staff' ? (
                                     <td className="patron-edit-checkout">
                                         <Link to={`/patron/edit/${patron.patron_id}`}>
                                             <button className="btn patron-edit-button">
