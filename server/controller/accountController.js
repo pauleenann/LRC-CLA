@@ -102,7 +102,6 @@ export const getAccounts = (req,res)=>{
 }
 
 export const createAccount = (req,res)=>{
-    
     console.log(req.body)
     const username = req.body.username;
     const password = req.body.password;

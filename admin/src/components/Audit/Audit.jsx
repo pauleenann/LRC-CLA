@@ -131,7 +131,7 @@ const Audit = () => {
       <h1>User Activity Log</h1>
 
       {/* Filter Section */}
-      <div className="filter-dropdown">
+      <div className="w-25">
         <select
           className="form-select shadow-sm"
           value={selectedActivity}
@@ -153,12 +153,12 @@ const Audit = () => {
       </div>
 
       {/* Date Filters & Export */}
-      <div className="filter-date-export">
-        <div className="filter-date">
-          <input type="date" className="shadow-sm" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+      <div className="d-flex justify-content-between">
+        <div className="d-flex align-items-center gap-1">
+          <input type="date" className="shadow-sm form-control" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
           <span>to</span>
-          <input type="date" className="shadow-sm" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-          <button className="btn clear-btn btn-warning" onClick={clearFilters}>Clear filter</button>
+          <input type="date" className="shadow-sm form-control" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+          <button className="btn btn-warning w-100" onClick={clearFilters}>Clear filter</button>
         </div>
         <button className="btn export-btn btn-success d-flex align-items-center gap-2" onClick={exportToCSV}>
           <FontAwesomeIcon icon={faDownload}/>
