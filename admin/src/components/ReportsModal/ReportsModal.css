@@ -80,6 +80,7 @@
 
  /* Table Styles */
  .reports-modal-container table {
+    outline: 1px solid var(--tup-color);
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;

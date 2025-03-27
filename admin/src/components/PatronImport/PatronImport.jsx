@@ -89,6 +89,7 @@ const PatronImport = ({open, close}) => {
                 setImportData([])
                 close();
                 setImportSuccess(false);
+                window.location.reload()
             }, 2000);
         } catch (err) {
             console.error('Error importing patrons:', err);

@@ -559,7 +559,7 @@ const ReportsModal = ({ open, close}) => {
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <h5 className="m-0">Report Results</h5>
                 <button 
-                  className="btn btn-sm export-btn"
+                  className="btn btn-sm btn-success"
                   onClick={exportToExcel}
                 >
                   <FontAwesomeIcon icon={faDownload} className="me-1" />

@@ -148,7 +148,7 @@ const ReportView = ({open, close, id}) => {
             ))}
             
             <button 
-              className="btn d-flex align-items-center gap-2 export-btn mt-3"
+              className="btn d-flex align-items-center gap-2 btn-success mt-3"
               disabled={exporting || generatedReport.length === 0}
               onClick={exportToExcel}
             >

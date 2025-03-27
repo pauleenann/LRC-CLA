@@ -115,14 +115,14 @@ const GenerateBarcodePage = () => {
                         fileName="Generated_Barcodes.pdf"
                     >
                         {({ loading }) => (
-                            <button className='btn d-flex align-items-center gap-2 generate-btn' disabled={loading}>
+                            <button className='btn d-flex align-items-center gap-2 btn-success' disabled={loading}>
                                 <FontAwesomeIcon icon={faBarcode} />
                                 {loading ? "Generating PDF..." : "Export as PDF"}
                             </button>
                         )}
                     </PDFDownloadLink>
                 ) : (
-                    <button className='btn d-flex align-items-center gap-2 generate-btn btn-warning' disabled>
+                    <button className='btn d-flex align-items-center gap-2 btn-success' disabled>
                         <FontAwesomeIcon icon={faBarcode}/>
                         Export as PDF
                     </button>
