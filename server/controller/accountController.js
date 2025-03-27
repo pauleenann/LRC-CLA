@@ -4,62 +4,102 @@ import bcrypt from 'bcrypt';
 
 const saltRounds = 10;
 
+// export const getAccounts = (req,res)=>{
+//     const keyword = req.query.keyword || '';
+//     const searchKeyword = `%${keyword}%`;
+//     const offset = parseInt(req.query.offset, 10)
+//     const params = [searchKeyword, searchKeyword, searchKeyword]
+//     const fname = parseInt(req.query.fname)
+//     const lname = parseInt(req.query.lname)
+//     const uname = parseInt(req.query.uname)
+//     const role = parseInt(req.query.role)
+//     const status = req.query.status
 
+//     console.log('status', status)
+//     console.log('role', role)
+
+//     let orderClauses = "";
+    
+//     // Handle sorting by fname
+//     if (fname) {
+//         if (fname == '1') {
+//             orderClauses='ORDER BY staffaccount.staff_fname ASC';
+//         } else if (fname == '2') {
+//             orderClauses='ORDER BY staffaccount.staff_fname DESC';
+//         }
+//     }
+    
+//     // Handle sorting by lname
+//     if (lname) {
+//         if (lname == '1') {
+//             orderClauses='ORDER BY staffaccount.staff_lname ASC';
+//         } else if (lname == '2') {
+//             orderClauses='ORDER BY staffaccount.staff_lname DESC';
+//         }
+//     }
+
+//     // Handle sorting by lname
+//     if (uname) {
+//         if (uname == '1') {
+//             orderClauses='ORDER BY staffaccount.staff_uname ASC';
+//         } else if (uname == '2') {
+//             orderClauses='ORDER BY staffaccount.staff_uname DESC';
+//         }
+//     }
+
+
+//     const whereClauses = [`(staff_fname LIKE ? OR staff_uname LIKE ? OR staff_lname LIKE ?)`]
+
+//     if(role){
+//         whereClauses.push(`staffaccount.role_id = '${role}'`)
+//     }
+//     if(status){
+//         whereClauses.push(`staffaccount.staff_status = '${status}'`)
+//     }
+
+//     const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
+//     const q = `
+//         SELECT 
+//             staffaccount.staff_id, 
+//             staffaccount.staff_uname, 
+//             staffaccount.staff_lname, 
+//             staffaccount.staff_fname,
+//             staffaccount.staff_status,
+//             roles.role_name
+//         FROM staffaccount
+//         JOIN roles ON staffaccount.role_id = roles.role_id
+//         ${whereClause}
+//         ${orderClauses}
+//         LIMIT 5 OFFSET ?`
+    
+//     const countQ = `
+//         SELECT COUNT(DISTINCT staff_id) as total
+//         FROM staffaccount
+//         ${whereClause}`
+
+//     console.log(q)
+    
+//     db.query(countQ, params, (err,countResult)=>{
+//         if (err) {
+//             console.error(err);
+//             return res.status(500).send({ error: 'Database query failed' });
+//         }
+
+//         const totalUsers = countResult[0]?.total || 0;
+
+//         db.query(q, [...params, offset], (err,results)=>{
+//             if (err) {
+//                 console.error(err);
+//                 return res.status(500).send({ error: 'Database query failed' });
+//             }
+
+//             res.send({results,totalUsers});
+        
+//         })
+//     })
+// }
 
 export const getAccounts = (req,res)=>{
-    const keyword = req.query.keyword || '';
-    const searchKeyword = `%${keyword}%`;
-    const offset = parseInt(req.query.offset, 10)
-    const params = [searchKeyword, searchKeyword, searchKeyword]
-    const fname = parseInt(req.query.fname)
-    const lname = parseInt(req.query.lname)
-    const uname = parseInt(req.query.uname)
-    const role = parseInt(req.query.role)
-    const status = req.query.status
-
-    console.log('status', status)
-    console.log('role', role)
-
-    let orderClauses = "";
-    
-    // Handle sorting by fname
-    if (fname) {
-        if (fname == '1') {
-            orderClauses='ORDER BY staffaccount.staff_fname ASC';
-        } else if (fname == '2') {
-            orderClauses='ORDER BY staffaccount.staff_fname DESC';
-        }
-    }
-    
-    // Handle sorting by lname
-    if (lname) {
-        if (lname == '1') {
-            orderClauses='ORDER BY staffaccount.staff_lname ASC';
-        } else if (lname == '2') {
-            orderClauses='ORDER BY staffaccount.staff_lname DESC';
-        }
-    }
-
-    // Handle sorting by lname
-    if (uname) {
-        if (uname == '1') {
-            orderClauses='ORDER BY staffaccount.staff_uname ASC';
-        } else if (uname == '2') {
-            orderClauses='ORDER BY staffaccount.staff_uname DESC';
-        }
-    }
-
-
-    const whereClauses = [`(staff_fname LIKE ? OR staff_uname LIKE ? OR staff_lname LIKE ?)`]
-
-    if(role){
-        whereClauses.push(`staffaccount.role_id = '${role}'`)
-    }
-    if(status){
-        whereClauses.push(`staffaccount.staff_status = '${status}'`)
-    }
-
-    const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
     const q = `
         SELECT 
             staffaccount.staff_id, 
@@ -69,35 +109,16 @@ export const getAccounts = (req,res)=>{
             staffaccount.staff_status,
             roles.role_name
         FROM staffaccount
-        JOIN roles ON staffaccount.role_id = roles.role_id
-        ${whereClause}
-        ${orderClauses}
-        LIMIT 5 OFFSET ?`
-    
-    const countQ = `
-        SELECT COUNT(DISTINCT staff_id) as total
-        FROM staffaccount
-        ${whereClause}`
+        JOIN roles ON staffaccount.role_id = roles.role_id`
 
-    console.log(q)
     
-    db.query(countQ, params, (err,countResult)=>{
+    db.query(q, (err,results)=>{
         if (err) {
             console.error(err);
             return res.status(500).send({ error: 'Database query failed' });
         }
 
-        const totalUsers = countResult[0]?.total || 0;
-
-        db.query(q, [...params, offset], (err,results)=>{
-            if (err) {
-                console.error(err);
-                return res.status(500).send({ error: 'Database query failed' });
-            }
-
-            res.send({results,totalUsers});
-        
-        })
+        res.send(results);
     })
 }
 

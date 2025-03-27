@@ -18,7 +18,6 @@ const Accounts = () => {
   const [openDeactivate, setOpenDeactivate] = useState(false);
   const [openActivate, setOpenActivate] = useState(false);
   const [accounts, setAccounts] = useState([]);
-  const [filteredAccounts, setFilteredAccounts] = useState([]);
   const [account, setAccount] = useState({
     fname: '',
     lname: '',
@@ -30,52 +29,26 @@ const Accounts = () => {
   const [originalAccount, setOriginalAccount] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({});
+  const [statusModal, setStatusModal] = useState(false);
+  const [statusModalContent, setStatusModalContent] = useState({ status: '', message: '' });
   const [selectedUname, setSelectedUname] = useState('');
+  const [pagination, setPagination] = useState(5); // Items per page
+  const [currentPage, setCurrentPage] = useState(1); // Current page
+  const [totalPages, setTotalPages] = useState(0); // Total pages
   const [keyword, setKeyword] = useState('');
+  const [selectedFilters, setSelectedFilters] = useState({ fname:0, lname:0, uname: 0, role: 0, status:''});
   
   // New state to track sort directions
   const [sortStates, setSortStates] = useState({
-    staff_fname: 0, // 0 = unsorted, 1 = ascending (A-Z), 2 = descending (Z-A)
-    staff_lname: 0,
-    staff_uname: 0,
-    role_name:0,
-    role_status:0
+    fname: 0, // 0 = unsorted, 1 = ascending (A-Z), 2 = descending (Z-A)
+    lname: 0,
+    uname: 0
   });
-
-  // New state for pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10); // Number of items to display per page
-
-  // Paginate accounts
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentAccounts = filteredAccounts.slice(indexOfFirstItem, indexOfLastItem);
-
-  // Calculate total pages
-  const totalPages = Math.ceil(filteredAccounts.length / itemsPerPage);
-
-  // Change page
-  const nextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const prevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  // Reset current page when filtered accounts change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filteredAccounts]);
   
   useEffect(() => {
     userAccounts();
     getUsername(); 
-  }, []);
+  }, [currentPage, selectedFilters]);
 
   const appendToAccount = (key, value) => {
       setAccount((prevAccount) => ({
@@ -87,7 +60,7 @@ const Accounts = () => {
 
   useEffect(()=>{
     if(keyword==''){
-      userAccounts();
+      userAccounts(true)
     }
   },[keyword])
 
@@ -109,13 +82,36 @@ const Accounts = () => {
   }
 
   // Fetch user accounts
-  const userAccounts = async () => {
+  const userAccounts = async (resetPage = false) => {
+    if (resetPage) {
+      setCurrentPage(1);
+      setSelectedFilters({ fname:0, lname:0, uname: 0, role: 0, status:''})
+    }
+
+    setLoading(true);
+
+    const offset = (currentPage - 1) * pagination;
+
+
     try {
-      const response = await axios.get('http://localhost:3001/api/account');
+      const response = await axios.get('http://localhost:3001/api/account', {
+        params: {
+          limit: pagination,
+          offset,
+          keyword,
+          fname: selectedFilters.fname,
+          lname: selectedFilters.lname,
+          uname: selectedFilters.uname,
+          role: selectedFilters.role,
+          status: selectedFilters.status,
+        }
+      });
+
       if (response.data) {
-        setAccounts(response.data);
-        setFilteredAccounts(response.data)
+        setAccounts(response.data.results);
+        setTotalPages(Math.ceil(response.data.totalUsers / pagination)); // Calculate total pages
       }
+
       console.log(response);
     } catch (err) {
       console.log('Cannot get accounts. An error occurred: ', err.message);
@@ -124,8 +120,8 @@ const Accounts = () => {
     }
   };
 
-  // Get account to be edited
-  const getToEdit = async (id) => {
+    // Get account to be edited
+    const getToEdit = async (id) => {
       try {
         const response = await axios.get(`http://localhost:3001/api/account/${id}`);
         const result = {
@@ -143,7 +139,7 @@ const Accounts = () => {
       } catch (err) {
         console.log('Cannot get account to be edited. An error occurred: ', err.message);
       }
-  };
+    };
 
   // Create user account
   const createUserAccount = async (isChangePassword) => {
@@ -273,10 +269,10 @@ const Accounts = () => {
             setLoading(false);
           }
         }
-  }
+    }
 
-  // Form validation for creating user account
-  const formValidation = () => {
+    // Form validation for creating user account
+    const formValidation = () => {
       const err = {}; // Fresh object to collect errors
   
       if (!account.fname) err.fname = 'Enter first name';
@@ -306,6 +302,8 @@ const Accounts = () => {
 
     return Object.keys(err).length === 0; // Return true if no errors exist
 };
+
+
 
   // Deactivate user
   const deactivateUser = async (uname, id) => {
@@ -391,52 +389,50 @@ const Accounts = () => {
     getToEdit(id);
   };
 
-  const handleSearch = () => {
-    if (!keyword.trim()) {
-      setFilteredAccounts(accounts);
-      return;
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+      userAccounts();
     }
-  
-    const filtered = accounts.filter(account =>
-      account.staff_fname.toLowerCase().includes(keyword.toLowerCase()) ||
-      account.staff_lname.toLowerCase().includes(keyword.toLowerCase()) ||
-      account.staff_uname.toLowerCase().includes(keyword.toLowerCase()) ||
-      account.role_name.toLowerCase().includes(keyword.toLowerCase()) ||
-      account.staff_status.toLowerCase().includes(keyword.toLowerCase())
-    );
-  
-    setFilteredAccounts(filtered);
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+      userAccounts();
+    }
+  };
+
+  const handleSearch = (e) => {
+    setKeyword(e.target.value);
   };
   
   // New function to handle sort icon clicks
   const handleSortClick = (column) => {
-    // Determine the new sort state (0 = unsorted, 1 = ascending, 2 = descending)
+    // Update sort state for the clicked column
     const currentState = sortStates[column];
     const newState = currentState === 2 ? 0 : currentState + 1;
     
-    // Reset other sort states
-    const newSortStates = { staff_fname: 0, staff_lname: 0, staff_uname: 0, staff_status: 0, role_name: 0 };
+    // Reset all other column states
+    const newSortStates = { 
+      fname: 0, 
+      lname: 0, 
+      uname: 0 
+    };
+    
+    // Set the new state for the clicked column
     newSortStates[column] = newState;
     setSortStates(newSortStates);
-  
-    // Sort the accounts
-    let sortedAccounts = [...accounts];
-  
-    if (newState === 1) {
-      // Sort ascending (A-Z)
-      sortedAccounts.sort((a, b) => a[column].localeCompare(b[column]));
-    } else if (newState === 2) {
-      // Sort descending (Z-A)
-      sortedAccounts.sort((a, b) => b[column].localeCompare(a[column]));
-    } else {
-      // Reset to original order by refetching data
-      userAccounts();
-      return;
-    }
-  
-    setFilteredAccounts(sortedAccounts);
+    
+    // Map the state to the sort value (0 = no sort, 1 = A-Z, 2 = Z-A)
+    // Update the selectedFilters state
+    setSelectedFilters(prevFilters => ({
+      ...prevFilters,
+      fname: newSortStates.fname,
+      lname: newSortStates.lname,
+      uname: newSortStates.uname
+    }));
   };
-  
   
   // Helper to get the right icon based on sort state
   const getSortIcon = (column) => {
@@ -450,53 +446,43 @@ const Accounts = () => {
     }
   };
 
-  useEffect(() => {
-    let filteredResults = accounts;
-
-    // Apply role filter if selected
-    if (sortStates.role_name) {
-      filteredResults = filteredResults.filter(
-        item => item.role_name.toLowerCase() === sortStates.role_name.toLowerCase()
-      );
-    }
-
-    // Apply status filter if selected
-    if (sortStates.staff_status) {
-      filteredResults = filteredResults.filter(
-        item => item.staff_status.toLowerCase() === sortStates.staff_status.toLowerCase()
-      );
-    }
-
-    // Set filtered accounts
-    setFilteredAccounts(filteredResults);
-  }, [sortStates.role_name, sortStates.staff_status, accounts]);
-
-  const handleFilterDropdown = (e)=>{
-    const {name, value} = e.target;
-
-    setSortStates((prev)=>({
-      ...prev,
-      [name]:value
+  const handleSelectedFilter = (filterCategory, value)=>{
+    setSelectedFilters((prevFilters)=>({
+      ...prevFilters,
+      [filterCategory]:value
     }))
+
+    if(filterCategory=='fname'){
+      setSelectedFilters((prevFilters)=>({
+        ...prevFilters,
+          lname:0,
+          uname:0
+      }))
+    }else if(filterCategory=='lname'){
+      setSelectedFilters((prevFilters)=>({
+        ...prevFilters,
+          fname:0,
+          uname:0
+      }))
+    }else if(filterCategory=='uname'){
+      setSelectedFilters((prevFilters)=>({
+        ...prevFilters,
+          lname:0,
+          fname:0
+      }))
+    }
   }
 
-  // Modify the clearFilter method
-  const clearFilter = () => {
-    // Reset sortStates
-    setSortStates({
-      staff_fname: 0, 
-      staff_lname: 0, 
-      staff_uname: 0, 
-      role_name: '',
-      staff_status: ''
-    });
+  const clearFilter = ()=>{
+    setSelectedFilters({ fname: 0, lname: 0, uname: 0, role: 0, status: '' });
+    setSortStates({ fname: 0, lname: 0, uname: 0 });
+    setKeyword('')
+  }
 
-    // Reset other filtering
-    setKeyword('');
-    setFilteredAccounts(accounts);
-  };
+  
 
-  console.log(sortStates)
+  console.log('account',account)
+  console.log('account',account)
 
   return (
     <div className="accounts-container bg-light">
@@ -511,14 +497,14 @@ const Accounts = () => {
           className='form-control shadow-sm' 
           value={keyword}
           placeholder='Search'
-          onChange={(e)=>setKeyword(e.target.value)}
+          onChange={handleSearch}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              handleSearch()
+              userAccounts(true);
             }
           }}
         />
-        <button className="btn search-btn px-3 shadow-sm" onClick={handleSearch} >
+        <button className="btn search-btn px-3 shadow-sm" onClick={() => userAccounts(true)}>
           <FontAwesomeIcon icon={faSearch} />
         </button>
         <button
@@ -553,34 +539,34 @@ const Accounts = () => {
           <tr>
             <td>
               First Name
-              <span className="sort-icon" onClick={() => handleSortClick('staff_fname')}>
-                {getSortIcon('staff_fname')}
+              <span className="sort-icon" onClick={() => handleSortClick('fname')}>
+                {getSortIcon('fname')}
               </span>
             </td>
             <td>
               Last Name
-              <span className="sort-icon" onClick={() => handleSortClick('staff_lname')}>
-                {getSortIcon('staff_lname')}
+              <span className="sort-icon" onClick={() => handleSortClick('lname')}>
+                {getSortIcon('lname')}
               </span>
             </td>
             <td>
               Username
-              <span className="sort-icon" onClick={() => handleSortClick('staff_uname')}>
-                {getSortIcon('staff_uname')}
+              <span className="sort-icon" onClick={() => handleSortClick('uname')}>
+                {getSortIcon('uname')}
               </span>
             </td>
             <td>
               Role
-              <select name="role_name" id="" className='sort' onChange={handleFilterDropdown}>
+              <select name="role" id="" className='sort' onChange={(e)=>handleSelectedFilter('role', e.target.value)}>
                   <option value="" disabled selected></option>
-                  <option value="admin">Admin</option>
-                  <option value="staff">Staff</option>
+                  <option value="1">Admin</option>
+                  <option value="2">Staff</option>
               </select>
             </td>
             <td>
               Status
-              <select name="staff_status" id="" className='sort' onChange={handleFilterDropdown}>
-                  <option value="" disabled selected ></option>
+              <select name="" id="" className='sort' onChange={(e)=>handleSelectedFilter('status', e.target.value)}>
+                  <option value="" disabled selected></option>
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
               </select>
@@ -589,8 +575,8 @@ const Accounts = () => {
           </tr>
         </thead>
         <tbody>
-        {currentAccounts? currentAccounts.length > 0 ? (
-          currentAccounts.map((item) => (
+        {accounts.length > 0 ? (
+          accounts.map((item) => (
             <tr key={item.staff_id}>
               <td>{item.staff_fname}</td>
               <td>{item.staff_lname}</td>
@@ -617,7 +603,7 @@ const Accounts = () => {
               </td>
             </tr>
           ))
-        ) : !loading && currentAccounts.length === 0 ? (
+        ) : !loading && accounts.length === 0 ? (
           <tr>
             <td colSpan="6" className='no-data-box text-center'>
               <div className='d-flex flex-column align-items-center gap-2 my-5'>
@@ -637,10 +623,9 @@ const Accounts = () => {
               </div>
             </td>
           </tr>
-        ):''}
+        )}
         </tbody>
       </table>
-
 
       {/* Pagination */}
       <div className="pagination">
@@ -652,18 +637,10 @@ const Accounts = () => {
         </div>
         {/* Buttons */}
         <div className="buttons">
-          <button 
-            className="btn prev-btn" 
-            onClick={prevPage} 
-            disabled={currentPage === 1}
-          >
+          <button className="btn prev-btn" onClick={handlePrevPage} disabled={currentPage === 1}>
             <FontAwesomeIcon icon={faArrowLeft}/>
           </button>
-          <button 
-            className="btn next-btn" 
-            onClick={nextPage} 
-            disabled={currentPage === totalPages}
-          >
+          <button className="btn next-btn" onClick={handleNextPage} disabled={currentPage === totalPages}>
             <FontAwesomeIcon icon={faArrowRight}/>
           </button>
         </div>
@@ -701,6 +678,8 @@ const Accounts = () => {
       />
       <DeactivateModal open={openDeactivate} close={() => setOpenDeactivate(false)} uname={selectedUname} deactivateUser={deactivateUser} />
       <ActivateModal open={openActivate} close={() => setOpenActivate(false)} uname={selectedUname} activateUser={activateUser} />
+      {/* <Loading loading={loading} /> */}
+      <ResourceStatusModal open={statusModal} close={() => setStatusModal(false)} content={statusModalContent} path={'/accounts'} />
     </div>
   );
 };
