@@ -14,49 +14,6 @@
     color: var(--black);
 }
 
-.audit-container .filter-dropdown{
-    display: flex;
-    justify-content: start;
-    gap: 10px;
-}
-
-.audit-container .form-select{
-    width: 500px;
-    height: 50px;
-}
-
-.audit-container .filter-date-export{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.audit-container .filter-date{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.audit-container .filter-date input{
-    width: 200px;
-    height: 50px;
-    padding: 0 10px;
-    border-radius: 5px;
-    border:1px solid var(--table-border-bottom);
-    outline: none !important;
-    color: var(--black);
-    cursor: pointer;
-}
-
-.audit-container .clear-btn{
-    height: 50px;
-}
-
-.audit-container .export-btn{
-    height: 50px;
-    box-shadow: 0px 1px 2px var(--shadow);
-}
-
 
 .audit-container table {
     border-radius: 10px;
@@ -113,4 +70,8 @@
 .audit-container .pagination div button{
     border: none;
     color: var(--tup-color);
+}
+
+.audit-container input, .audit-container select, .audit-container button{
+    height: 50px;
 }
