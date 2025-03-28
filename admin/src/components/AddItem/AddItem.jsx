@@ -13,8 +13,10 @@ import { editResourceOffline } from '../../indexedDb/editResourcesOffline';
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
+import { useRef } from 'react';
 
 const AddItem = () => {
+    const hasMounted = useRef(false)
     //pag may id, nagiging view ung purpose ng add item component
     const {id} = useParams()
     const [uname, setUname] = useState(null);
@@ -228,11 +230,28 @@ const AddItem = () => {
     console.log(bookData)
 
 /*-------------------HANDLE CHANGES---------------------- */
+console.log(bookData)
+    //validate everytimr bookData changes
+    useEffect(()=>{
+        if(hasMounted.current){
+            formValidation();
+        }else{
+            hasMounted.current = true
+        }
+        
+    },[bookData]) 
+
+    useEffect(()=>{
+        setBookData((prevData)=>({
+            ...prevData,
+            topic:''
+        }))
+    },[bookData.department])
+    
     // Handle input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setBookData({ ...bookData, [name]: value });
-        formValidation();
     };
     // Add author
     const addAuthor = (author) => {

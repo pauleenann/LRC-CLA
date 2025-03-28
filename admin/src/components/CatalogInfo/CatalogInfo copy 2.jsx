@@ -93,22 +93,16 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBoo
                             <input 
                                 type="number" 
                                 placeholder='Enter Quantity' 
-                                min='0' disabled={disabled} name='quantity'
+                                min='0' disabled={disabled} name='quantity' 
                                 onChange={handleChange} 
                                 value={bookData.quantity?bookData.quantity:''} 
-                                onBlur={formValidation}
-                            />
+                                onBlur={formValidation}/>
                             <p className='resource-error'>{error.quantity}</p>
                         </div>
                         {/* status */}
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Status *</label>
-                            <select 
-                                name="status" id="" className='form-select' 
-                                disabled={disabled} 
-                                onChange={handleChange}
-                                onBlur={formValidation}
-                            >   
+                            <select name="status" id="" className='form-select' disabled={disabled} onChange={handleChange} onBlur={formValidation}>   
                                 <option selected disabled>Select item status</option>
                                 {resourceStatus?resourceStatus.map(item=>(
                                      <option value={item.avail_id} selected={disabled?item.avail_id==bookData.status:''}>{item.avail_name}</option>
@@ -119,64 +113,14 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBoo
                         {/* title */}
                         <div className="col-12 info-input-box my-3">
                             <label htmlFor="">Title *</label>
-                            <input 
-                                type="text" 
-                                placeholder='Enter Title' 
-                                disabled={disabled} 
-                                name='title' 
-                                onChange={handleChange} 
-                                value={bookData.title?bookData.title:''} 
-                                onBlur={formValidation}/>
+                            <input type="text" placeholder='Enter Title' disabled={disabled} name='title' onChange={handleChange} value={bookData.title?bookData.title:''} onBlur={formValidation}/>
                             <p className='resource-error'>{error.title}</p>
                         </div>
                         {/* input field changes depending on type */}
                         <div className="col-12">
-                            {bookData.mediaType==='2'||bookData.mediaType==='3'
-                            ?<JournalInput 
-                                disabled={disabled} 
-                                handleChange={handleChange} 
-                                bookData={bookData} 
-                                addAuthor={addAuthor} 
-                                setBookData={setBookData} 
-                                formValidation={formValidation} 
-                                error={error} 
-                                publishers={publishers} 
-                                authorOptions={authorOptions} 
-                                handleAddAuthor={handleAddAuthor}
-                                selectedOptions={selectedOptions} 
-                                deleteAuthor={deleteAuthor} 
-                                authorList={authorList}/>
-                            :bookData.mediaType==='4'?
-                            <ThesisInput 
-                                disabled={disabled} 
-                                handleChange={handleChange} 
-                                bookData={bookData} 
-                                addAuthor={addAuthor} 
-                                authorOptions={authorOptions} 
-                                setBookData={setBookData} 
-                                handleAddAuthor={handleAddAuthor} 
-                                selectedOptions={selectedOptions} 
-                                deleteAuthor={deleteAuthor} 
-                                authorList={authorList} 
-                                addAdviser={addAdviser} 
-                                adviserList={adviserList} 
-                                deleteAdviser={deleteAdviser} 
-                                formValidation={formValidation} 
-                                error={error}/>
-                            :<BookInput 
-                                disabled={disabled} 
-                                handleChange={handleChange} 
-                                bookData={bookData} 
-                                addAuthor={addAuthor} 
-                                setBookData={setBookData} 
-                                formValidation={formValidation} 
-                                error={error} 
-                                publishers={publishers} 
-                                authorOptions={authorOptions} 
-                                handleAddAuthor={handleAddAuthor}
-                                selectedOptions={selectedOptions} 
-                                deleteAuthor={deleteAuthor} 
-                                authorList={authorList}/>}
+                            {bookData.mediaType==='2'||bookData.mediaType==='3'?<JournalInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setBookData={setBookData} formValidation={formValidation} error={error} publishers={publishers} authorOptions={authorOptions} handleAddAuthor={handleAddAuthor}
+                            selectedOptions={selectedOptions} deleteAuthor={deleteAuthor} authorList={authorList}/>:bookData.mediaType==='4'?<ThesisInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} authorOptions={authorOptions} setBookData={setBookData} handleAddAuthor={handleAddAuthor} selectedOptions={selectedOptions} deleteAuthor={deleteAuthor} authorList={authorList} addAdviser={addAdviser} adviserList={adviserList} deleteAdviser={deleteAdviser} formValidation={formValidation} error={error}/>:<BookInput disabled={disabled} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor} setBookData={setBookData} formValidation={formValidation} error={error} publishers={publishers} authorOptions={authorOptions} handleAddAuthor={handleAddAuthor}
+                            selectedOptions={selectedOptions} deleteAuthor={deleteAuthor} authorList={authorList}/>}
                         </div>
                         {/* genre */}
                         {/* {bookData.mediaType==='1'?
@@ -209,13 +153,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBoo
                     {/* cover */}
                     <div className="col-12 info-input-box mb-3">
                         <label htmlFor="">Cover</label>
-                        <input 
-                            type="file" 
-                            src="" 
-                            alt="" 
-                            className='cover-upload' id='cover' disabled={disabled} 
-                            onChange={handleFileChange} 
-                            onBlur={formValidation}/>
+                        <input type="file" src="" alt="" className='cover-upload' id='cover' disabled={disabled} onChange={handleFileChange} onBlur={formValidation}/>
                         <div className="cover-upload-box">
                             {(bookData.file || bookData.url)?'':<label htmlFor="cover">Add cover</label>}
                             {(bookData.file || bookData.url) && ( // Display the selected image if it exists
@@ -243,8 +181,12 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBoo
                         <p className='resource-error'>{error.description}</p>
                     </div>
                 </div>
+
             </div>
+
+
         </div>
+        
     </div>
   )
 }
