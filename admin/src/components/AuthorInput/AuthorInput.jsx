@@ -27,7 +27,14 @@ const AuthorInput = ({disabled,authors,handleChange,bookData, addAuthor,formVali
             <i class="fa-solid fa-plus"></i>
             <span>Add new author</span>
         </button>
-        <AuthorModal authorList={authorList} open={open} close={()=>setOpen(!open)} handleChange={handleChange} bookData={bookData} addAuthor={addAuthor}/>
+        <AuthorModal 
+            authorList={authorList} 
+            open={open} 
+            close={()=>setOpen(!open)} 
+            handleChange={handleChange} 
+            bookData={bookData} 
+            addAuthor={addAuthor}
+        />
     </div>
   )
 }

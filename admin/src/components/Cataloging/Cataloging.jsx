@@ -9,6 +9,7 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation,
     const [department, setDepartment] = useState([])
     const [catalog, setCatalog] = useState([])
     const [topic,setTopic] = useState([])
+    const [filteredTopic, setFilteredTopic] = useState([])
     const isOnline = useSelector(state=>state.isOnline.isOnline)
     
 
@@ -21,9 +22,13 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation,
             getDeptOffline()
             getTopicsOffline()
         }
-        
-       
     }, []);
+
+    useEffect(()=>{
+        const filtered = topic.filter(item=>item.dept_id==bookData.department)
+        setFilteredTopic(filtered)
+    },[bookData.department])
+
 
     //get existing department offline
     const getDeptOffline = async ()=>{
@@ -84,9 +89,9 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation,
                         {/* topic */}
                         {bookData.mediaType=='4'?'':<div className="col-6 info-input-box">
                             <label htmlFor="">Topics *</label>
-                            <select className="form-select" name='topic' disabled={disabled} onChange={handleChange} onBlur={formValidation}>
-                                <option selected disabled>Select Topic</option>
-                                {topic.length>0?topic.map((item,key)=>(
+                            <select className="form-select" name='topic' disabled={disabled} onChange={handleChange} onBlur={formValidation} value={bookData.topic}>
+                                <option value='' selected disabled>Select Topic</option>
+                                {filteredTopic.length>0?filteredTopic.map((item,key)=>(
                                     <option value={item.topic_id} selected={disabled||editMode?item.topic_id==bookData.topic:''}>{item.topic_name}</option>
                                 )):''}
                             </select>
