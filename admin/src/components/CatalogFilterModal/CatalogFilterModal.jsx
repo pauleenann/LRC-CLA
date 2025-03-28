@@ -147,6 +147,7 @@ const CatalogFilterModal = ({open, close}) => {
                         {addedFilters.length>0&&addedFilters.map((filter,index)=>(
                             <AddedFilter 
                                 index={index}
+                                addedFilter={filter}
                                 filters={filters} 
                                 filterCondition={filterCondition}
                                 handleAddFilterChange={(data)=>handleAddFilterChange(data,index)}
