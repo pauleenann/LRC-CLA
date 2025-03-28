@@ -80,7 +80,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBoo
                         {/* media type */}
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Media Type *</label>
-                            <select name="mediaType" id="" className='form-select' disabled={disabled} onChange={handleChange}>
+                            <select name="mediaType" id="" className='form-select' disabled={disabled} onChange={handleChange} value={bookData.mediaType}>
                                  {resourceType.length>0?resourceType.map(item=>(
                                     <option value={item.type_id} selected={disabled||editMode?item.type_id==bookData.mediaType:''}>{item.type_name}</option>
                                 )):''}                                 
@@ -96,7 +96,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBoo
                                 min='0' disabled={disabled} name='quantity'
                                 onChange={handleChange} 
                                 value={bookData.quantity?bookData.quantity:''} 
-                                onBlur={formValidation}
+                                // onBlur={formValidation}
                             />
                             <p className='resource-error'>{error.quantity}</p>
                         </div>
@@ -107,9 +107,10 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBoo
                                 name="status" id="" className='form-select' 
                                 disabled={disabled} 
                                 onChange={handleChange}
-                                onBlur={formValidation}
+                                value={bookData.status}
+                                // onBlur={formValidation}
                             >   
-                                <option selected disabled>Select item status</option>
+                                <option selected disabled value=''>Select item status</option>
                                 {resourceStatus?resourceStatus.map(item=>(
                                      <option value={item.avail_id} selected={disabled?item.avail_id==bookData.status:''}>{item.avail_name}</option>
                                 )):''}
@@ -126,12 +127,13 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBoo
                                 name='title' 
                                 onChange={handleChange} 
                                 value={bookData.title?bookData.title:''} 
-                                onBlur={formValidation}/>
+                                // onBlur={formValidation}
+                            />
                             <p className='resource-error'>{error.title}</p>
                         </div>
                         {/* input field changes depending on type */}
                         <div className="col-12">
-                            {bookData.mediaType==='2'||bookData.mediaType==='3'
+                            {bookData.mediaType==2||bookData.mediaType==3
                             ?<JournalInput 
                                 disabled={disabled} 
                                 handleChange={handleChange} 
@@ -146,7 +148,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBoo
                                 selectedOptions={selectedOptions} 
                                 deleteAuthor={deleteAuthor} 
                                 authorList={authorList}/>
-                            :bookData.mediaType==='4'?
+                            :bookData.mediaType==4?
                             <ThesisInput 
                                 disabled={disabled} 
                                 handleChange={handleChange} 

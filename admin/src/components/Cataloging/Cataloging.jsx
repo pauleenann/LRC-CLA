@@ -75,9 +75,13 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation,
                         {/* department */}
                         <div className="col-6 info-input-box">
                             <label htmlFor="">Department *</label>
-                            <select className="form-select"
-                            name='department'
-                            disabled={disabled} onChange={handleChange} onBlur={formValidation}>
+                            <select 
+                                className="form-select"
+                                name='department'
+                                disabled={disabled} 
+                                onChange={handleChange} 
+                                // onBlur={formValidation}
+                                >
                                 <option selected disabled className=''>Select department</option>
                                 {department.length>0?department.map((item,key)=>(
                                     <option value={item.dept_id} className='dept_name' selected={disabled||editMode?item.dept_id==bookData.department:''}>{item.dept_name}</option>
@@ -89,7 +93,14 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation,
                         {/* topic */}
                         {bookData.mediaType=='4'?'':<div className="col-6 info-input-box">
                             <label htmlFor="">Topics *</label>
-                            <select className="form-select" name='topic' disabled={disabled} onChange={handleChange} onBlur={formValidation} value={bookData.topic}>
+                            <select 
+                                className="form-select" 
+                                name='topic' 
+                                disabled={disabled} 
+                                onChange={handleChange} 
+                                // onBlur={formValidation} 
+                                value={bookData.topic}
+                            >
                                 <option value='' selected disabled>Select Topic</option>
                                 {filteredTopic.length>0?filteredTopic.map((item,key)=>(
                                     <option value={item.topic_id} selected={disabled||editMode?item.topic_id==bookData.topic:''}>{item.topic_name}</option>

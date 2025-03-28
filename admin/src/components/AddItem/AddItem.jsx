@@ -16,7 +16,6 @@ import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 import { useRef } from 'react';
 
 const AddItem = () => {
-    const hasMounted = useRef(false)
     //pag may id, nagiging view ung purpose ng add item component
     const {id} = useParams()
     const [uname, setUname] = useState(null);
@@ -31,6 +30,7 @@ const AddItem = () => {
         isCirculation: true,
         publisher_id: 0,
         publisher: '',
+        status:''
     });
     const [error, setError] = useState({});
     const [publishers, setPublishers] = useState([]);
@@ -63,7 +63,9 @@ const AddItem = () => {
         }
       }
 
+
     useEffect(() => {
+        setError({});
         getUsername();
         if(!disabled){
             if (bookData.mediaType== 1) {
@@ -73,12 +75,14 @@ const AddItem = () => {
                     isCirculation: true,
                     publisher_id: 0,
                     publisher: '',
+                    status:''
                 });
             } else {
                 setBookData({
                     mediaType: bookData.mediaType, // keep the changed mediaType
                     authors: [],
                     isCirculation: false,
+                    status:''
                 });
             }
         }
@@ -228,18 +232,14 @@ const AddItem = () => {
     }
 
     console.log(bookData)
+    console.log('error',error)
 
 /*-------------------HANDLE CHANGES---------------------- */
-console.log(bookData)
-    //validate everytimr bookData changes
     useEffect(()=>{
-        if(hasMounted.current){
+        if(Object.keys(error).length>0){
             formValidation();
-        }else{
-            hasMounted.current = true
         }
-        
-    },[bookData]) 
+    },[error])
 
     useEffect(()=>{
         setBookData((prevData)=>({
@@ -247,7 +247,7 @@ console.log(bookData)
             topic:''
         }))
     },[bookData.department])
-    
+
     // Handle input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -281,7 +281,6 @@ console.log(bookData)
     }
     // delete adviser 
     const deleteAdviser = ()=>{
-       
         setBookData(prevData => ({
             ...prevData,
             adviser: ''
@@ -345,54 +344,22 @@ console.log(bookData)
             err.department = 'Please select department';
         }
 
-        if (bookData.mediaType === '1') {
-            // if (!bookData.file&&!bookData.url) {
-            //     err.file = 'Please select cover';
-            // }
-            if (!bookData.authors || bookData.authors.length === 0) {
-                err.authors = 'Please specify author/s';
-            }
-            // if (!bookData.isbn) {
-            //     err.isbn = 'Please enter ISBN';
-            // } 
-            // if (bookData.publisher_id === 0 && bookData.publisher === '') {
-            //     err.publisher = 'Please enter publisher';
-            // }
-            if (!bookData.publishedDate) {
-                err.publishedDate = 'Please enter publish date';
-            }
+        if (!bookData.authors || bookData.authors.length == 0) {
+            err.authors = 'Please specify author/s';
+        }
+
+        if (!bookData.publishedDate) {
+            err.publishedDate = 'Please enter publish date';
+        }
+
+        if (bookData.mediaType === '1'|| bookData.mediaType==='2'||bookData.mediaType==='3') {
             if (!bookData.topic) {
                 err.topic = 'Please select topic';
             }
-        }else if(bookData.mediaType==='2'||bookData.mediaType==='3'){
-            // if (!bookData.file&&!bookData.url) {
-            //     err.file = 'Please select cover';
-            // }
-            if (!bookData.authors || bookData.authors.length === 0) {
-                err.authors = 'Please specify author/s';
-            }
-            // if(!bookData.volume){
-            //     err.volume = 'Please enter volume'
-            // }
-            // if(!bookData.issue){
-            //     err.issue = 'Please enter issue'
-            // }
-            if (!bookData.publishedDate) {
-                err.publishedDate = 'Please enter publish date';
-            }
-            if (!bookData.topic) {
-                err.topic = 'Please select topic';
-            }
-        }else if(bookData.mediaType==='4'){
-            if (!bookData.authors || bookData.authors.length === 0) {
-                err.authors = 'Please specify author/s';
-            }
+        }else {
             if(!bookData.adviser){
                 err.adviser = 'Please specify adviser';
 
-            }
-            if (!bookData.publishedDate) {
-                err.publishedDate = 'Please enter publish date';
             }
         }
 
@@ -400,6 +367,8 @@ console.log(bookData)
 
         return Object.keys(err).length === 0;
     };
+
+    console.log(error)
 
 /*----------------SAVE RESOURCE-------------------- */
     // save resource online

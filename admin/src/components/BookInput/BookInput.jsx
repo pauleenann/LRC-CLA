@@ -109,7 +109,15 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formVal
                 {/* isbn */}
                 <div className="col-12 info-input-box mb-3">
                     <label htmlFor="">ISBN</label>
-                    <input type="number" placeholder='Enter ISBN' disabled={disabled} onChange={handleChange} name='isbn' value={bookData.isbn?bookData.isbn:''} onBlur={formValidation} ref={searchInputRef}/>
+                    <input 
+                        type="number" 
+                        placeholder='Enter ISBN' 
+                        disabled={disabled}
+                        onChange={handleChange} 
+                        name='isbn' 
+                        value={bookData.isbn?bookData.isbn:''} 
+                        // onBlur={formValidation} 
+                        ref={searchInputRef}/>
                     <p className="resource-error">{error.isbn?error.isbn:''}</p>
                 </div>
                 {/* publisher */}
@@ -117,7 +125,13 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formVal
                     <label htmlFor="">Publisher</label>
                     {bookData.publisher&&bookData.publisher.length >=1?
                        <div>
-                        <input type="text" value={bookData.publisher} name='publisher' onChange={resetPublisher} onBlur={formValidation} disabled={disabled}/> 
+                        <input 
+                            type="text" 
+                            value={bookData.publisher} 
+                            name='publisher' 
+                            onChange={resetPublisher} 
+                            // onBlur={formValidation} 
+                            disabled={disabled}/> 
                        </div> 
                          
                    :<Select  
@@ -126,7 +140,7 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formVal
                     classNamePrefix="select"
                     isClearable
                     onChange={handleSelectedPublisher}
-                    onBlur={formValidation}
+                    // onBlur={formValidation}
                     isDisabled={disabled}
                     />}
 
@@ -138,7 +152,17 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formVal
                 <div className="col-12 info-input-box mb-3">
                     <label htmlFor="">Publish Date *</label>
                     {/* <input type="date" name="" id="" placeholder='Select date' disabled={disabled?true:false}/> */}
-                    <input type="text" name="publishedDate" id="" placeholder='Enter Date' disabled={disabled?true:false} onChange={handleChange} value={bookData.publishedDate?bookData.publishedDate:''} onBlur={formValidation} maxLength={4}/>
+                    <input 
+                        type="text" 
+                        name="publishedDate" 
+                        id="" 
+                        placeholder='Enter Date' 
+                        disabled={disabled?true:false} 
+                        onChange={handleChange} 
+                        value={bookData.publishedDate?bookData.publishedDate:''} 
+                        // onBlur={formValidation} 
+                        maxLength={4}
+                    />
                     <p className="resource-error">{error.publishedDate?error.publishedDate:''}</p>
                 </div>
             </div>
