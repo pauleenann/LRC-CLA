@@ -72,6 +72,7 @@ const AdvancedSearch = () => {
     }
 
     const handleRemoveFilter = (indexToRemove)=>{
+        console.log('index to remove: ', indexToRemove)
         setAddedFilters(addedFilters.filter((_,index)=>index!==indexToRemove))
     }
 
@@ -105,6 +106,7 @@ const AdvancedSearch = () => {
         dispatch(setAdvancedSearch([]))
     }
     
+    console.log(addedFilters)
     return (
         <div>
             <div className='container-fluid advanced-search-box py-5'>
@@ -154,7 +156,8 @@ const AdvancedSearch = () => {
                                 <AddedFilter 
                                     key={index}
                                     index={index}
-                                    filters={filters} 
+                                    addedFilter={filter} // this is the added filter
+                                    filters={filters} //this is the option
                                     filterCondition={filterCondition}
                                     handleAddFilterChange={(data)=>handleAddFilterChange(data,index)}
                                     handleRemoveFilter={()=>handleRemoveFilter(index)}
