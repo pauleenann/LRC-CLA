@@ -105,7 +105,14 @@ const AdvancedSearch = () => {
         dispatch(setSearchQuery(''));
         dispatch(setAdvancedSearch([]))
     }
-    
+
+    //enter trigger
+    const handleClickEnter = (event) => {
+        if (event.key === "Enter"){
+            handleSearch();
+        }
+    }
+
     console.log(addedFilters)
     return (
         <div>
@@ -148,6 +155,7 @@ const AdvancedSearch = () => {
                                     placeholder="Enter search value..."
                                     name='input'
                                     onChange={handleInitialFilter}
+                                    onKeyDown={handleClickEnter}
                                     value={initialFilter.input}
                                 />
                             </div>
@@ -197,7 +205,7 @@ const AdvancedSearch = () => {
                         </button>
                         <button 
                             className="btn btn-dark" 
-                            onClick={handleSearch}
+                            onClick={handleSearch}   
                         >
                             Apply Filters
                         </button>
