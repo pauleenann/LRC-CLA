@@ -12,11 +12,10 @@ const AuthorInput = ({disabled,authors,handleChange,bookData, addAuthor,formVali
         <div className="authors">
             {/* author name */}
                 <div className="author">
-                    {bookData.authors?bookData.authors.map((item,key)=>{
-                        console.log(key)
-                        return <span>{item} 
+                    {bookData.authors?bookData.authors.map((item,key)=>(
+                        <span>{item} 
                         {disabled?'':<button className='delete-author' onClick={()=>deleteAuthor(key)}>x</button>}</span>
-                    }):''}
+                    )):''}
                     <button>
                         {/* <i class="fa-solid fa-xmark"></i> */}
                     </button>

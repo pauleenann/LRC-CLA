@@ -19,7 +19,7 @@
 } */
 
 .author span{
-    background-color: var(--catalog-info-bg);
+    background-color: var(--light-red);
     display: inline-block;
     align-items: center;
     padding: 5px 15px;  
