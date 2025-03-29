@@ -55,7 +55,7 @@
     outline: 1px solid var(--tup-color);
     font-size: 0.8rem;
     min-height: 500px;
-    table-layout: fixed;
+    /* table-layout: fixed; */
 }
 
 .cat-container .cat-table thead tr td{
@@ -75,10 +75,10 @@
     text-transform: capitalize;
 }
 
-.cat-container .cat-table tbody tr:hover{
+/* .cat-container .cat-table tbody tr:hover{
     cursor: pointer;
     background-color: var(--table-border-bottom) !important;
-}
+} */
 
 .cat-container .cat-table tbody tr:nth-child(odd){
     background-color: var(--white);
@@ -147,4 +147,9 @@
     border: none;
     background-color: var(--white);
     text-decoration: underline;
+}
+
+.cat-container .archive-btn{
+    color: var(--tup-color);
+    font-size: 1rem;
 }
