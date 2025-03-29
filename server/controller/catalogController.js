@@ -126,7 +126,7 @@ import { db } from "../config/db.js";
 // };
 
 export const catalog = (req, res) => {
-    const { keyword, type, dept, topic } = req.query;
+    const { keyword, type, dept, topic, isArchived } = req.query;
     console.log("Search Query:", keyword);
     console.log("Type Array:", type);
     console.log("Department Array:", dept);
@@ -157,6 +157,12 @@ export const catalog = (req, res) => {
         params.push(topic, topic);
     }
 
+    // Handle archive/unarchive
+    if (isArchived) {
+        whereClauses.push(`resources.resource_is_archived = ?`);
+        params.push(isArchived);
+    }
+
     // Combine WHERE clause
     const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
 
@@ -165,6 +171,7 @@ export const catalog = (req, res) => {
         SELECT 
             resources.resource_quantity,
             resources.resource_title,
+            resources.resource_is_archived,
             resources.resource_id, 
             resources.original_resource_quantity,
             resources.resource_quantity,
@@ -229,4 +236,19 @@ export const barcodeData = (req,res)=>{
             if(err) return res.send(err)
                return res.json(results)
         })
+}
+
+export const archive = (req,res)=>{
+    console.log(req.body)
+    const {id,resourceState} = req.body;
+
+    const q = `
+    UPDATE resources
+    SET resource_is_archived = ?
+    WHERE resource_id = ?`
+
+    db.query(q,[resourceState,id],(err,results)=>{
+        if(err) return res.send(err)
+        return res.json(results)
+    })
 }

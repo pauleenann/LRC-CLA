@@ -5,12 +5,12 @@ import { getAllFromStore, getAllUnsyncedFromStore, getBook, getBookPub, getCatal
 import { clearObjectStore, deleteResourceFromIndexedDB, markAsSynced } from '../../indexedDb/syncData'
 import ResourceStatusModal from '../ResourceStatusModal/ResourceStatusModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight, faSearch, faPlus, faBarcode, faArrowsRotate, faArrowDown, faArrowUp, faArrowUpWideShort, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowRight, faSearch, faPlus, faBarcode, faArrowsRotate, faArrowDown, faArrowUp, faArrowUpWideShort, faExclamationCircle, faArchive, faEye } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
 import CatalogFilterModal from '../CatalogFilterModal/CatalogFilterModal'
 import { setAdvancedSearch, setIsSearch } from '../../features/advancedSearchSlice'
-
+import Swal from 'sweetalert2'
 
 const Catalog = () => {
   const dispatch = useDispatch();
@@ -31,7 +31,7 @@ const Catalog = () => {
   const [type, setType] = useState([]);
   const [department, setDepartment] = useState([])
   const [topic, setTopic] = useState([])
-  const [selectedFilters, setSelectedFilters] = useState({ title: '', author: '', type: '', department: '', topic: '' });
+  const [selectedFilters, setSelectedFilters] = useState({ title: '', author: '', type: '', department: '', topic: '', isArchived:0 });
   const navigate = useNavigate()
   const [sortOrder, setSortOrder] = useState({
     title: 0,  // 0: no sort, 1: ascending, 2: descending
@@ -140,7 +140,7 @@ const Catalog = () => {
     try {
       if (resetPage) {
         setCurrentPage(1);
-        setSelectedFilters({ title: '', author: '', type: '', department: '', topic: '' });
+        setSelectedFilters({ title: '', author: '', type: '', department: '', topic: '', isArchived:0 });
         setSortOrder({ title: 0, author: 0 });
       }
       setLoading(true); // Show loading spinner
@@ -155,6 +155,7 @@ const Catalog = () => {
             type: selectedFilters.type,
             dept: selectedFilters.department,
             topic: selectedFilters.topic,
+            isArchived:selectedFilters.isArchived,
             sort: selectedFilters.title ? { column: 'title', order: selectedFilters.title } :
                   selectedFilters.author ? { column: 'author', order: selectedFilters.author } : null
           }
@@ -194,7 +195,7 @@ const Catalog = () => {
       const data = await getCatalogDetailsOffline();
       if (resetPage) {
         setCurrentPage(1);
-        setSelectedFilters({ title: '', author: '', type: '', department: '', topic: '' });
+        setSelectedFilters({ title: '', author: '', type: '', department: '', topic: '', isArchived:0 });
         setSortOrder({ title: 0, author: 0 });
       }
       console.log(data);
@@ -293,7 +294,7 @@ const Catalog = () => {
   const handleClear = () => {
     dispatch(setIsSearch(false));
     dispatch(setAdvancedSearch([]))
-    setSelectedFilters({ title: '', author: '', type: '', department: '', topic: '' });
+    setSelectedFilters({ title: '', author: '', type: '', department: '', topic: '', isArchived:0 });
     setKeyword('');
     setSortOrder({ title: 0, author: 0 });
     setCurrentPage(1);
@@ -529,6 +530,53 @@ const Catalog = () => {
     setCurrentPage(1); // Reset to first page when changing items per page
   };
 
+  // handle archive
+  const handleArchive = async (id, status)=>{
+    const resourceState = status==0?1:0; //if status is 0, set to 1 to indicate that it's about to be archived keme
+    let result;
+
+    if(resourceState==1){
+      result = await Swal.fire({
+        title: "Are you sure",
+        text: `You want to archive this resource?`,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#54CB58",
+        cancelButtonColor: "#94152b",
+        confirmButtonText: "Yes, archive!"
+      });
+    }else{
+      result = await Swal.fire({
+        title: "Are you sure",
+        text: `You want to unarchive this resource?`,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#54CB58",
+        cancelButtonColor: "#94152b",
+        confirmButtonText: "Yes, unarchive!"
+      });
+    }
+    
+    
+    if (!result.isConfirmed) return; // Exit if user cancels
+
+    try {
+      await axios.post(`http://localhost:3001/api/catalog`,{id,resourceState});
+      // Show toast first
+      window.toast.fire({ 
+        icon: "success", 
+        title: `Resource ${resourceState == 1 ? 'Archived' : 'Unarchived'}` 
+      });
+      
+      // Delay reload to allow toast visibility
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000); // Adjust delay as needed
+    } catch (error) {
+      console.log('Cannot archive resource. An error occurred:', error)
+    }
+  }
+
   console.log(keyword)
 
   return (
@@ -596,7 +644,8 @@ const Catalog = () => {
       </div>
 
       {/*items per page  */}
-      <div className="items-per-page">
+      <div className='d-flex gap-3'>
+        <div className="items-per-page">
           <label htmlFor="itemsPerPage">Items per page: </label>
           <select
             id="itemsPerPage"
@@ -610,7 +659,25 @@ const Catalog = () => {
             <option value="20">20</option>
             <option value="50">50</option>
           </select>
+        </div>
+
+        {/*archived/unarchived  */}
+        <div className="">
+            <label htmlFor="">Category: </label>
+            <select
+              id=""
+              name='isArchived'
+              onChange={(e) => handleSelectedFilter('isArchived', e.target.value)}
+              className="form-select form-select-sm"
+              value={selectedFilters.isArchived}
+              style={{ width: 'auto', display: 'inline-block', marginLeft: '5px' }}
+            >
+              <option value="0" selected>Unarchived</option>
+              <option value="1" >Archived</option>
+            </select>
+        </div>
       </div>
+      
 
       <table className="cat-table">
         <thead>
@@ -672,6 +739,8 @@ const Catalog = () => {
                 </select> : ''}
             </td>
             <td>Copies</td>
+            <td>Status</td>
+            <td>Actions</td>
           </tr>
         </thead>
         <tbody>
@@ -681,7 +750,7 @@ const Catalog = () => {
             </tr>
           ) : displayedCatalog.length > 0 ? (
             displayedCatalog.map((item, key) => (
-              <tr key={key} onClick={() => navigate(`/catalog/view/${item.resource_id}`)}>
+              <tr key={key}>
                 <td>{item.resource_title}</td>
                 <td>{item.type_name}</td>
                 <td>
@@ -697,6 +766,19 @@ const Catalog = () => {
                 </td>
                 <td>
                   {isOnline? `${item.resource_quantity}/${item.original_resource_quantity}`:`${item.resource_quantity}`}
+                </td>
+                <td>
+                  <span className={`text-light p-2 rounded fw-semibold ${item.resource_is_archived==0?'bg-success':'bg-danger'}`}>
+                    {item.resource_is_archived==0?'unarchived':'archived'}
+                  </span>
+                </td>
+                <td className=''>
+                  <button type="button" class="bg-transparent border-0" data-toggle="tooltip" data-placement="top" title="View Resource" onClick={() => navigate(`/catalog/view/${item.resource_id}`)}>
+                    <FontAwesomeIcon icon={faEye} className='archive-btn'/>
+                  </button>
+                  <button type="button" class="ms-2 bg-transparent border-0" data-toggle="tooltip" data-placement="top" title={`${item.resource_is_archived==0?'Archive':'Unarchive'} Resource`} onClick={()=>handleArchive(item.resource_id,item.resource_is_archived)}>
+                    <FontAwesomeIcon icon={faArchive} className='archive-btn'/>
+                  </button>
                 </td>
               </tr>
             ))
