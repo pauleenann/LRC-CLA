@@ -27,7 +27,7 @@ const AddItem = () => {
         mediaType: '1',
         authors: [],
         genre: [],
-        isCirculation: true,
+        isCirculation: 1,
         publisher_id: 0,
         publisher: '',
         status:''
@@ -72,7 +72,7 @@ const AddItem = () => {
                 setBookData({
                     mediaType: bookData.mediaType, // keep the changed mediaType
                     authors: [],
-                    isCirculation: true,
+                    isCirculation: 1,
                     publisher_id: 0,
                     publisher: '',
                     status:''
@@ -81,7 +81,7 @@ const AddItem = () => {
                 setBookData({
                     mediaType: bookData.mediaType, // keep the changed mediaType
                     authors: [],
-                    isCirculation: false,
+                    isCirculation: 0,
                     status:''
                 });
             }
@@ -177,7 +177,7 @@ const AddItem = () => {
                         publishedDate:data.resource_published_date.toString(),
                         department: data.dept_id.toString(),
                         topic:data.topic_id.toString(),
-                        isCirculation:data.resource_is_circulation==0?false:true,
+                        isCirculation:data.resource_is_circulation,
                     }))
                     break;
                     
@@ -197,7 +197,7 @@ const AddItem = () => {
                         topic:data.topic_id.toString(),
                         volume: data.jn_volume.toString(),
                         issue: data.jn_issue.toString(),
-                        isCirculation:data.resource_is_circulation==0?false:true,
+                        isCirculation:data.resource_is_circulation,
                     }))
                     break;
 
@@ -213,7 +213,7 @@ const AddItem = () => {
                         status:data.avail_id.toString(),
                         publishedDate:data.resource_published_date.toString(),
                         department: data.dept_id.toString(),
-                        isCirculation:data.resource_is_circulation==0?false:true,
+                        isCirculation:data.resource_is_circulation,
                     }))
                     break;
 
@@ -400,7 +400,7 @@ const AddItem = () => {
                  setBookData({
                     mediaType: 'book',
                     authors: [],
-                    isCirculation: true,
+                    isCirculation: 1,
                     publisher_id: 0,
                     publisher: ''
                 });
