@@ -6,6 +6,7 @@ import axios from 'axios'
 /*-------------SAVE RESOURCE----------------- */
 export const saveResource = async (req, res) => {
     console.log('Saving resource...');
+    console.log(req.body)
     
     const mediaType = req.body.mediaType;
     const username = req.body.username;
