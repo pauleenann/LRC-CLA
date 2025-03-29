@@ -241,6 +241,8 @@ export const barcodeData = (req,res)=>{
 export const archive = (req,res)=>{
     console.log(req.body)
     const {id,resourceState} = req.body;
+    // updated avail_id
+    const availId = resourceState==1?4:1
 
     const q = `
     UPDATE resources
@@ -249,6 +251,15 @@ export const archive = (req,res)=>{
 
     db.query(q,[resourceState,id],(err,results)=>{
         if(err) return res.send(err)
-        return res.json(results)
+        
+        const availQ = `
+        UPDATE resources
+        SET avail_id = ?
+        WHERE resource_id = ?`
+
+        db.query(availQ,[availId,id],(err,results)=>{
+            if(err) return res.send(err)
+            return res.json(results)
+        })
     })
 }

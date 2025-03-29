@@ -784,7 +784,7 @@ const Catalog = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="6" style={{ textAlign: 'center' }}>
+              <td colSpan="8" style={{ textAlign: 'center' }}>
                 <FontAwesomeIcon icon={faExclamationCircle} className='fs-2'/>
                 <p className="m-0">Resource not found<br/>Please try another search or filter.</p>
               </td>
