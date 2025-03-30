@@ -22,7 +22,7 @@ import attendanceRoutes from './routes/attendanceRoutes.js';
 import advancedSearchRoutes from './routes/advancedSearchRoutes.js'
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { checkOverdue } from './controller/overdueController.js';
+import { approachingOverdue, checkOverdue } from './controller/overdueController.js';
 
 dotenv.config();
 
@@ -82,7 +82,6 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api/advanced-search', advancedSearchRoutes);
 
 /*--------------check overdue resources using cron-------- */
-
 // check 
 // change mo lang refresh token sa .env pag ayaw masend
 //1. go to OAuth 2.0 Playground
@@ -92,9 +91,16 @@ app.use('/api/advanced-search', advancedSearchRoutes);
 //5. click exchange authorization code for tokens
 //6. copy and paste new refresh token sa .env
 cron.schedule('0 0 * * *', () => {
-  console.log('Cron running')
+  console.log('Cron running to check overdue resources')
   checkOverdue();
 });
+
+/*--------------send email if overdue is approaching-------- */
+cron.schedule('0 0 * * *', () => {
+  console.log('Cron running to check approaching overdue')
+  approachingOverdue();
+});
+
 
 // Start the server
 httpServer.listen(PORT, () => {
