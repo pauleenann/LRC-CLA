@@ -5,7 +5,7 @@
     display: flex;
     flex-direction: column;
     gap: 25px;
-    overflow-x: hidden;   
+    overflow-x: hidden;    
 }
 
 .patrons-container h1{
