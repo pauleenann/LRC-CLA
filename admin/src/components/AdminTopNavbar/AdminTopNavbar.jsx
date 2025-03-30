@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { checkIfOnline } from '../../features/isOnlineSlice';
+import { setUsername } from '../../features/userSlice';
 
 const AdminTopNavbar = () => {
     const [dateTime, setDateTime] = useState(new Date());
@@ -31,6 +32,7 @@ const AdminTopNavbar = () => {
                 console.log(response.data);
                 if (response.data.loggedIn) {
                     setUname(response.data.username);
+                    dispatch(setUsername(response.data.username))
                 } else {
                     setUname(null);
                 }
@@ -89,7 +91,7 @@ const AdminTopNavbar = () => {
     return (
         <div className="top-navbar bg-light">
             {/* Online/Offline Indicator */}
-            <div className="indicator p-2 rounded">
+            <div className="border text-secondary p-2 rounded">
                 {isOnline === null ? 'Loading...' : isOnline ? 'Online' : 'Offline'}
             </div>
             <div className="info">

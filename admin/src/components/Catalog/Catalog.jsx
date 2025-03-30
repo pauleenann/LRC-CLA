@@ -5,15 +5,19 @@ import { getAllFromStore, getAllUnsyncedFromStore, getBook, getBookPub, getCatal
 import { clearObjectStore, deleteResourceFromIndexedDB, markAsSynced } from '../../indexedDb/syncData'
 import ResourceStatusModal from '../ResourceStatusModal/ResourceStatusModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight, faSearch, faPlus, faBarcode, faArrowsRotate, faArrowDown, faArrowUp, faArrowUpWideShort, faExclamationCircle, faArchive, faEye } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowRight, faSearch, faPlus, faBarcode, faArrowsRotate, faArrowDown, faArrowUp, faArrowUpWideShort, faExclamationCircle, faArchive, faEye, faFileImport, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
 import CatalogFilterModal from '../CatalogFilterModal/CatalogFilterModal'
 import { setAdvancedSearch, setIsSearch } from '../../features/advancedSearchSlice'
 import Swal from 'sweetalert2'
+import CatalogImport from '../CatalogImport/CatalogImport'
 
 const Catalog = () => {
   const dispatch = useDispatch();
+  const {username} = useSelector(state=>state.username)
+  // state for catalog import modal
+  const [isOpen, setIsOpen] = useState(false);
   const [catalog, setCatalog] = useState([])
   const {advancedSearch, isSearch} = useSelector(state=>state.advancedSearch)
   // Pagination state
@@ -561,7 +565,7 @@ const Catalog = () => {
     if (!result.isConfirmed) return; // Exit if user cancels
 
     try {
-      await axios.post(`http://localhost:3001/api/catalog`,{id,resourceState});
+      await axios.post(`http://localhost:3001/api/catalog`,{id,resourceState,username});
       // Show toast first
       window.toast.fire({ 
         icon: "success", 
@@ -643,42 +647,49 @@ const Catalog = () => {
         
       </div>
 
-      {/*items per page  */}
-      <div className='d-flex gap-3'>
-        <div className="items-per-page">
-          <label htmlFor="itemsPerPage">Items per page: </label>
-          <select
-            id="itemsPerPage"
-            value={pagination}
-            onChange={handleItemsPerPageChange}
-            className="form-select form-select-sm"
-            style={{ width: 'auto', display: 'inline-block', marginLeft: '5px' }}
-          >
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-          </select>
-        </div>
-
-        {/*archived/unarchived  */}
-        <div className="">
-            <label htmlFor="">Category: </label>
+      {/*filters and import  */}
+      <div className='d-flex justify-content-between mt-4'>
+        <div className="filters d-flex gap-3">
+          <div className="items-per-page">
+            <label htmlFor="itemsPerPage">Items per page: </label>
             <select
-              id=""
-              name='isArchived'
-              onChange={(e) => handleSelectedFilter('isArchived', e.target.value)}
+              id="itemsPerPage"
+              value={pagination}
+              onChange={handleItemsPerPageChange}
               className="form-select form-select-sm"
-              value={selectedFilters.isArchived}
               style={{ width: 'auto', display: 'inline-block', marginLeft: '5px' }}
             >
-              <option value="0" selected>Unarchived</option>
-              <option value="1" >Archived</option>
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
             </select>
+          </div>
+
+          {/*archived/unarchived  */}
+          <div className="">
+              <label htmlFor="">Category: </label>
+              <select
+                id=""
+                name='isArchived'
+                onChange={(e) => handleSelectedFilter('isArchived', e.target.value)}
+                className="form-select form-select-sm"
+                value={selectedFilters.isArchived}
+                style={{ width: 'auto', display: 'inline-block', marginLeft: '5px' }}
+              >
+                <option value="0" selected>Unarchived</option>
+                <option value="1" >Archived</option>
+              </select>
+          </div>
         </div>
+
+        <button className='btn btn-primary d-flex gap-2 align-items-center' onClick={()=>setIsOpen(true)}>
+          <FontAwesomeIcon icon={faUpload}/>
+          Import
+        </button>
       </div>
       
-
+              
       <table className="cat-table">
         <thead>
           <tr>
@@ -739,7 +750,7 @@ const Catalog = () => {
                 </select> : ''}
             </td>
             <td>Copies</td>
-            <td>Status</td>
+            {/* <td>Status</td> */}
             <td>Actions</td>
           </tr>
         </thead>
@@ -767,16 +778,16 @@ const Catalog = () => {
                 <td>
                   {isOnline? `${item.resource_quantity}/${item.original_resource_quantity}`:`${item.resource_quantity}`}
                 </td>
-                <td>
+                {/* <td>
                   <span className={`text-light p-2 rounded fw-semibold ${item.resource_is_archived==0?'bg-success':'bg-danger'}`}>
                     {item.resource_is_archived==0?'unarchived':'archived'}
                   </span>
-                </td>
+                </td> */}
                 <td className=''>
-                  <button type="button" class="bg-transparent border-0" data-toggle="tooltip" data-placement="top" title="View Resource" onClick={() => navigate(`/catalog/view/${item.resource_id}`)}>
+                  <button type="button" class="btn btn-transparent border-0" data-toggle="tooltip" data-placement="top" title="View Resource" onClick={() => navigate(`/catalog/view/${item.resource_id}`)}>
                     <FontAwesomeIcon icon={faEye} className='archive-btn'/>
                   </button>
-                  <button type="button" class="ms-2 bg-transparent border-0" data-toggle="tooltip" data-placement="top" title={`${item.resource_is_archived==0?'Archive':'Unarchive'} Resource`} onClick={()=>handleArchive(item.resource_id,item.resource_is_archived)}>
+                  <button type="button" class="btn btn-transparent border-0" data-toggle="tooltip" data-placement="top" title={`${item.resource_is_archived==0?'Archive':'Unarchive'} Resource`} onClick={()=>handleArchive(item.resource_id,item.resource_is_archived)}>
                     <FontAwesomeIcon icon={faArchive} className='archive-btn'/>
                   </button>
                 </td>
@@ -784,7 +795,7 @@ const Catalog = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="8" style={{ textAlign: 'center' }}>
+              <td colSpan="7" style={{ textAlign: 'center' }}>
                 <FontAwesomeIcon icon={faExclamationCircle} className='fs-2'/>
                 <p className="m-0">Resource not found<br/>Please try another search or filter.</p>
               </td>
@@ -822,6 +833,7 @@ const Catalog = () => {
 
       <ResourceStatusModal open={statusModal} close={() => setStatusModal(false)} content={statusModalContent} isOnline={isOnline} />
       <CatalogFilterModal open={openFilter} close={()=>setOpenFilter(false)}/>
+      <CatalogImport open={isOpen} close={()=>setIsOpen(false)}/>
     </div>
   )
 }

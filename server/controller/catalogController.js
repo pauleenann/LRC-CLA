@@ -1,4 +1,5 @@
 import { db } from "../config/db.js";
+import { logAuditAction } from "./auditController.js";
 
 
 // export const catalog = (req, res) => {
@@ -240,9 +241,11 @@ export const barcodeData = (req,res)=>{
 
 export const archive = (req,res)=>{
     console.log(req.body)
-    const {id,resourceState} = req.body;
+    const {id,resourceState,username} = req.body;
     // updated avail_id
-    const availId = resourceState==1?4:1
+    const availId = resourceState==1?4:1;
+    const oldValue = resourceState==1?'Unarchived':'Archived';
+    const newValue = resourceState==1?'Archived':'Unarchived';
 
     const q = `
     UPDATE resources
@@ -259,6 +262,8 @@ export const archive = (req,res)=>{
 
         db.query(availQ,[availId,id],(err,results)=>{
             if(err) return res.send(err)
+            
+            logAuditAction(username, 'UPDATE', 'resources', id, oldValue, JSON.stringify("Changed archive status to: " + newValue));
             return res.json(results)
         })
     })
