@@ -157,10 +157,21 @@ const AdminNavbar = () => {
                         )}
                     </li>
 
+                    <li className={`menu-item ${basePath === '/reports' ? 'selected' : ''}`}>
+                        <Link to='/reports' className="menu">
+                            <div className="menu-icon-container">
+                                <FontAwesomeIcon icon={faFileExcel} className='menu-icon'/>
+                            </div>
+                            <div className="menu-text">
+                                <p>Reports</p>
+                            </div>
+                        </Link>
+                    </li>
+
                     {/* Conditionally Render Menu Items Based on Role */}
                     {role !== 'staff' && (
                         <>
-                            <li className={`menu-item ${basePath === '/reports' ? 'selected' : ''}`}>
+                            {/* <li className={`menu-item ${basePath === '/reports' ? 'selected' : ''}`}>
                                 <Link to='/reports' className="menu">
                                     <div className="menu-icon-container">
                                         <FontAwesomeIcon icon={faFileExcel} className='menu-icon'/>
@@ -169,7 +180,7 @@ const AdminNavbar = () => {
                                         <p>Reports</p>
                                     </div>
                                 </Link>
-                            </li>
+                            </li> */}
 
                             <li className={`menu-item ${basePath === '/audit' ? 'selected' : ''}`}>
                                 <Link to='/audit' className="menu">

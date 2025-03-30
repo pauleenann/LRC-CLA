@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         backgroundColor: "white"
     },
     tableHeader: { 
-        backgroundColor: COLORS, 
+        backgroundColor: COLORS.primary, 
         color: "white",
         fontWeight: "bold"
     },

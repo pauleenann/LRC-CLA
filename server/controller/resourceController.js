@@ -945,10 +945,12 @@ export const importCatalog = async (req, res) => {
             insertedResources.push({ title: data['Title'], id: resourceId });
 
             // 7. Insert Books if selected type is 1 (Book)
-            if (selectedType == 1) {
+            if (selectedType == '1') {
                 const pubId = await checkIfPubExist(pub);
                 console.log('Publisher ID:', pubId);
                 await importBook(data['ISBN'].replace(/\s+/g, ''), resourceId, pubId, topicId, imageFile);
+            }else if(['2', '3'].includes(selectedType)){
+
             }
         }
 
@@ -1060,3 +1062,15 @@ const importBook = async (isbn, resourceId, pubId, topicId, imageFile) => {
         });
     });
 };
+
+const importJournalNewsletter = async(jn,res)=>{
+    const q = 'INSERT INTO journalnewsletter (jn_volume, jn_issue, filepath, resource_id, topic_id) VALUES (?, ?, ?, ?,?)';
+            
+    db.query(q, jn, (err, result) => {
+        if (err) {
+            return res.status(500).send(err); 
+        }
+        
+        return res.send({status: 201, message:'Journal/Newsletter inserted successfully.'});
+    });
+}
