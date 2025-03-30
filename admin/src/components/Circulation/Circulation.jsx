@@ -17,6 +17,9 @@ const Circulation = () => {
   const itemsPerPage = 5;
   const navigate = useNavigate()
   const [query, setQuery] = useState(null);
+
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState ("");
   
   useEffect(() => {
     const params = new URLSearchParams(location.search).get('filter');
@@ -97,6 +100,10 @@ const Circulation = () => {
     setCurrentPage(1); // Reset pagination to first page
   
     getBorrowers(); // Refetch the borrower data
+
+    setStartDate ("");
+    setEndDate ("");
+
   };
   
   console.log(query)
@@ -151,6 +158,28 @@ const Circulation = () => {
         </select>
       </div>
 
+      {/* date filter */}
+      <div className="d-flex justify-content-between">
+      <div className="d-flex align-items-center gap-1">
+        <input 
+          type="date" 
+          className="shadow-sm form-control" 
+          value={startDate} 
+          onChange={(e) => setStartDate(e.target.value)} 
+        />
+        <span>to</span>
+        <input 
+          type="date" 
+          className="shadow-sm form-control" 
+          value={endDate} 
+          onChange={(e) => setEndDate(e.target.value)} 
+        />
+        <button className="btn btn-warning w-100" onClick={clearFilter}>
+          Clear filter
+        </button>
+      </div>
+    </div>
+      
       <div className='table-box'>
         <h2>Recent transactions</h2>
         {/* Table */}
