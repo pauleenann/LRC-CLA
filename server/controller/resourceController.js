@@ -264,7 +264,6 @@ const checkResourceIfExist = (title) => {
             if (err) {
                 return reject(err); // Reject with error
             }
-
             if (results.length > 0) {
                 // Resolve with `true` if resource exists
                 resolve(true);
@@ -875,4 +874,189 @@ const getThesisResource = (id,res)=>{
         console.log(result[0])
         return res.json(result)
     })
+};
+
+/*------------IMPORT CATALOG--------------*/
+export const importCatalog = async (req, res) => {
+    try {
+        const { importData, selectedType, username } = req.body;
+        let imageFile = 'public/images/not_found.png';
+        console.log(importData);
+        console.log(selectedType);
+
+        let insertedResources = []; // Array to store successfully inserted resources
+
+        // 1. Iterate through each element
+        for (const data of importData) {
+            // 2. Get department ID
+            const deptQ = 'SELECT dept_id FROM department WHERE dept_name = ?';
+            const deptId = await new Promise((resolve, reject) => {
+                db.query(deptQ, [data['Department'].toLowerCase()], (err, result) => {
+                    if (err) reject(err);
+                    else resolve(result.length ? result[0].dept_id : null);
+                });
+            });
+
+            // 3. Get topic ID if selected type is book/journal/newsletter
+            let topicId = null;
+            if (selectedType !== 4) {
+                const topicQ = 'SELECT topic_id FROM topic WHERE topic_name = ?';
+                topicId = await new Promise((resolve, reject) => {
+                    db.query(topicQ, [data['Topic'].toLowerCase()], (err, result) => {
+                        if (err) reject(err);
+                        else resolve(result.length ? result[0].topic_id : null);
+                    });
+                });
+            }
+
+            // 4. Organize authors
+            const authors = data['Authors']
+                ? data['Authors'].includes(',')
+                    ? data['Authors'].split(',')
+                    : [data['Authors']]
+                : [];
+            console.log(authors);
+
+            // 5. Organize advisers and publishers
+            let pub;
+            let adviserFname, adviserLname;
+            if (selectedType == 1) {
+                pub = {
+                    pub_id: 0,
+                    pub_name: data['Publisher Name'],
+                    pub_add: data['Publisher Address'],
+                    pub_email: data['Publisher Email'],
+                    pub_phone: data['Publisher Number'],
+                    pub_web: data['Publisher Website']
+                };
+            } else if (selectedType == 4) {
+                const adviser = req.body.adviser.split(' ');
+                adviserFname = adviser[0];
+                adviserLname = adviser[1];
+            }
+
+            // 6. Insert Resources
+            const resourceId = await importResources(res, deptId, data, authors, username, selectedType);
+            if (!resourceId) {
+                console.log(`Skipping resource: ${data['Title']}`);
+                continue;
+            }
+
+            insertedResources.push({ title: data['Title'], id: resourceId });
+
+            // 7. Insert Books if selected type is 1 (Book)
+            if (selectedType == 1) {
+                const pubId = await checkIfPubExist(pub);
+                console.log('Publisher ID:', pubId);
+                await importBook(data['ISBN'].replace(/\s+/g, ''), resourceId, pubId, topicId, imageFile);
+            }
+        }
+
+        // **Send a response after processing all items**
+        res.status(200).json({
+            message: 'Import completed successfully.',
+            insertedRecords: insertedResources
+        });
+    } catch (error) {
+        console.error('Error in importCatalog:', error);
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+};
+
+
+//insert resource
+const importResources = async (res, deptId, data, authors, username, selectedType) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Check if the resource exists
+            const resourceExists = await checkResourceIfExist(data['Title']);
+
+            if (resourceExists) {
+                console.log('Resource already exists.');
+                return resolve(null);
+            }
+            console.log("username: ",username)
+            // Insert the resource
+            const insertQuery = `
+                INSERT INTO resources (
+                    resource_title, 
+                    resource_description, 
+                    resource_published_date, 
+                    original_resource_quantity, 
+                    resource_quantity, 
+                    resource_is_circulation, 
+                    dept_id, 
+                    type_id, 
+                    avail_id
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `;
+
+            const resourceValues = [
+                data['Title'],
+                data['Description'] || '',
+                data['Published Date'],
+                data['Quantity'],
+                data['Quantity'],
+                selectedType==1?1:0,
+                deptId,
+                selectedType,
+                1,
+            ];
+
+            db.query(insertQuery, resourceValues, async (err, results) => {
+                if (err) {
+                    return reject(err); // Reject with error
+                }
+
+                // Get the `resource_id` of the newly inserted row
+                const resourceId = results.insertId;
+                // logAuditAction(username, 'INSERT', 'resources', null, null, JSON.stringify("Added a new resource: '" + data['Title'] + "'"));
+                try {
+                    // Insert authors for the resource
+                    await insertAuthors(res, authors, resourceId);
+                    resolve(resourceId); // Resolve with the `resourceId`
+                } catch (authorError) {
+                    reject(authorError); // Reject if there's an error inserting authors
+                }
+            });
+        } catch (error) {
+            reject(error); // Reject with any error that occurs
+        }
+    });
+};
+
+// Remove 'res' from parameters
+const importBook = async (isbn, resourceId, pubId, topicId, imageFile) => {
+
+    // Return a new Promise
+    return new Promise((resolve, reject) => {
+        const q = `
+            INSERT INTO book (book_isbn, resource_id, pub_id, topic_id, filepath)
+            VALUES (?, ?, ?, ?, ?)`;
+        
+            const cleanedIsbn = typeof isbn === 'string' ? isbn.replace(/\s+/g, '') : null;
+
+        const values = [
+            cleanedIsbn,
+            resourceId || null, // Ensure correct types or handle potential NaN
+            pubId || null,
+            topicId || null,   // Renamed param from 'topic' for clarity
+            imageFile || null
+        ];
+        console.log(values)
+
+        db.query(q, values, (err, results) => {
+            if (err) {
+                // Log the error internally if needed
+                console.error(`Error inserting book (ISBN: ${isbn}, ResourceID: ${resourceId}):`, err);
+                // Reject the promise with the error
+                reject(err);
+            } else {
+                // Log success internally if needed
+                // console.log(`Book inserted successfully (ISBN: ${isbn}, ResourceID: ${resourceId})`);
+                // Resolve the promise (optionally with results) on success
+                resolve(results);
+            }
+        });
+    });
 };
