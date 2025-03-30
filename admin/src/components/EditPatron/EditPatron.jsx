@@ -2,8 +2,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import './EditPatron.css';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const EditPatron = () => {
+    const {username} = useSelector(state=>state.username)
     const [patronData, setPatronData] = useState({
         patron_fname: '',
         patron_lname: '',
@@ -36,25 +38,16 @@ const EditPatron = () => {
         setEditMode(true);
         getPatronEdit();
        }
-       getUsername();
        getColleges();
        getCourses();  
     }, []);
 
-    const getUsername = async() => {
-        try {
-          const response = await axios.get(`http://localhost:3001/api/user/check-session`, { withCredentials: true });
-          if (response.data.loggedIn) {
-            setUserName(response.data.username);
-            setPatronData(prevData => ({
-                ...prevData, 
-                username: response.data.username
-            }));
-          } 
-        } catch (error) {
-          console.error('Error verifying session:', error);
-        }
-    }
+    useEffect(()=>{
+        setPatronData(prevData => ({
+            ...prevData, 
+            username: username
+        }));
+    },[username])
 
     const getColleges = async() => {
         try {
@@ -227,6 +220,8 @@ const EditPatron = () => {
     
         return error;
     };
+
+    console.log(patronData)
 
     const handleTupIdChange = async (e) => {
         const { value, selectionStart } = e.target;
