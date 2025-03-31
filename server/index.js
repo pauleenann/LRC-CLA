@@ -101,6 +101,14 @@ cron.schedule('0 0 * * *', () => {
   approachingOverdue();
 });
 
+/*------------automatically set patrons to inactive after 4 years---------------- */
+//runs at midnight, on the 30th month of august, every year
+cron.schedule('0 0 30 8 *', () => {
+  console.log('Cron running to set patrons to inactive');
+  approachingOverdue();
+});
+
+
 
 // Start the server
 httpServer.listen(PORT, () => {
