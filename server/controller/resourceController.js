@@ -88,7 +88,7 @@ export const saveResource = async (req, res) => {
 }
 
 //check if adviser exist
-const checkAdviserIfExist = async (adviser) => {
+export const checkAdviserIfExist = async (adviser) => {
     const q = "SELECT * FROM adviser WHERE adviser_fname = ? AND adviser_lname = ?";
 
     return new Promise((resolve, reject) => {
@@ -112,7 +112,7 @@ const checkAdviserIfExist = async (adviser) => {
 };
 
 //insert adviser
-const insertAdviser = async (adviser) => {
+export const insertAdviser = async (adviser) => {
     const q = `INSERT INTO adviser (adviser_fname, adviser_lname) VALUES (?, ?)`;
 
     return new Promise((resolve, reject) => {
@@ -127,7 +127,7 @@ const insertAdviser = async (adviser) => {
 };
 
 //insert thesis 
-const insertThesis = async (resourceId, adviserId,res)=>{
+export const insertThesis = async (resourceId, adviserId,res)=>{
     const q = "INSERT INTO thesis (resource_id, adviser_id) VALUES (?,?)"
 
     db.query(q,[resourceId,adviserId],(err,results)=>{
@@ -139,7 +139,7 @@ const insertThesis = async (resourceId, adviserId,res)=>{
 }
 
 //insert journal and newsletter
-const insertJournalNewsletter = async(jn,res)=>{
+export const insertJournalNewsletter = async(jn,res)=>{
     const q = 'INSERT INTO journalnewsletter (jn_volume, jn_issue, filepath, resource_id, topic_id) VALUES (?, ?, ?, ?,?)';
             
     db.query(q, jn, (err, result) => {
@@ -152,7 +152,7 @@ const insertJournalNewsletter = async(jn,res)=>{
 }
 
 //check if publisher exist 
-const checkIfPubExist = async (pub) => {
+export const checkIfPubExist = async (pub) => {
     if (pub.pub_id == 0 && pub.pub_name == '') {
         return null;
     } else if (pub.pub_id == 0 && pub.pub_name) {
@@ -165,7 +165,7 @@ const checkIfPubExist = async (pub) => {
 };
 
 // Updated insertPublisher to return a Promise
-const insertPublisher = async (pub) => {
+export const insertPublisher = async (pub) => {
     // First, check if the publisher already exists
     const existingPubId = await new Promise((resolve, reject) => {
         const q = `
@@ -233,7 +233,7 @@ const insertPublisher = async (pub) => {
 };
 
 //insert book
-const insertBook = async(isbn, resourceId, pubId, topic, res, imageFile)=>{
+export const insertBook = async(isbn, resourceId, pubId, topic, res, imageFile)=>{
     const q = `
     INSERT INTO book (book_isbn, resource_id, pub_id, topic_id, filepath) VALUES (?,?,?,?,?)`
 
@@ -256,7 +256,7 @@ const insertBook = async(isbn, resourceId, pubId, topic, res, imageFile)=>{
 }
 
 //check resource if exist
-const checkResourceIfExist = (title) => {
+export const checkResourceIfExist = (title) => {
     return new Promise((resolve, reject) => {
         const query = `SELECT * FROM resources WHERE resource_title = ?`;
 
@@ -276,7 +276,7 @@ const checkResourceIfExist = (title) => {
 };
 
 //insert resource
-const insertResources = async (res, req, authors, username) => {
+export const insertResources = async (res, req, authors, username) => {
     return new Promise(async (resolve, reject) => {
         try {
             // Check if the resource exists
@@ -337,7 +337,7 @@ const insertResources = async (res, req, authors, username) => {
 };
 
 //insert authors 
-const insertAuthors = async (res,authors,resourceId)=>{
+export const insertAuthors = async (res,authors,resourceId)=>{
     return new Promise((resolve,reject)=>{
             //insert authors
             const authorQ = 'INSERT INTO author (author_fname, author_lname) VALUES (?, ?)' 
