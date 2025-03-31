@@ -127,7 +127,7 @@ const BarcodePDF = ({ selectedResources }) => {
                                     style={styles.image}
                                     src={item.isbn 
                                         ? `https://barcodeapi.org/api/128/${item.isbn}` 
-                                        : `https://barcodeapi.org/api/128/${item.resource_title}`
+                                        : `https://barcodeapi.org/api/128/${item.resource_id}`
                                     }
                                 />
                             </View>
