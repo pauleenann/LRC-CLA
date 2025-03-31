@@ -4,12 +4,15 @@ import BookInput from '../BookInput/BookInput'
 import JournalInput from '../JournalInput/JournalInput'
 import ThesisInput from '../ThesisInput/ThesisInput'
 import {useParams} from 'react-router-dom';
+import { useSelector } from 'react-redux'
 
 
-const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBookData,handleFileChange,error,formValidation,publishers,authorOptions,handleAddAuthor,selectedOptions,deleteAuthor,authorList,resourceType,adviserList,deleteAdviser,resourceStatus,editMode}) => {
+const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBookData,handleFileChange,error,formValidation,handleAddAuthor,selectedOptions,deleteAuthor,deleteAdviser,editMode}) => {
     // disabled is passed by the viewItem component. This disables the input fields so users can only access the page in view mode 
     const [preview,setPreview] =useState() //for preview kapag pumili ng photo or may naretrieve na photo
     const {id} = useParams();
+    const {status} = useSelector(state=>state.status)
+    const {type} = useSelector(state=>state.type)
 
     //for displaying preview photo/hindi pa nasasave
     useEffect(() => {
@@ -81,7 +84,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBoo
                         <div className="col-4 info-input-box">
                             <label htmlFor="">Media Type *</label>
                             <select name="mediaType" id="" className='form-select' disabled={disabled} onChange={handleChange} value={bookData.mediaType}>
-                                 {resourceType.length>0?resourceType.map(item=>(
+                                 {type.length>0?type.map(item=>(
                                     <option value={item.type_id} selected={disabled||editMode?item.type_id==bookData.mediaType:''}>{item.type_name}</option>
                                 )):''}                                 
                             </select>
@@ -111,7 +114,7 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBoo
                                 // onBlur={formValidation}
                             >   
                                 <option selected disabled value=''>Select item status</option>
-                                {resourceStatus?resourceStatus.map(item=>(
+                                {status?status.map(item=>(
                                      <option value={item.avail_id} selected={disabled?item.avail_id==bookData.status:''}>{item.avail_name}</option>
                                 )):''}
                             </select>
@@ -141,27 +144,21 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBoo
                                 addAuthor={addAuthor} 
                                 setBookData={setBookData} 
                                 formValidation={formValidation} 
-                                error={error} 
-                                publishers={publishers} 
-                                authorOptions={authorOptions} 
+                                error={error}
                                 handleAddAuthor={handleAddAuthor}
                                 selectedOptions={selectedOptions} 
-                                deleteAuthor={deleteAuthor} 
-                                authorList={authorList}/>
+                                deleteAuthor={deleteAuthor}/>
                             :bookData.mediaType==4?
                             <ThesisInput 
                                 disabled={disabled} 
                                 handleChange={handleChange} 
                                 bookData={bookData} 
-                                addAuthor={addAuthor} 
-                                authorOptions={authorOptions} 
+                                addAuthor={addAuthor}
                                 setBookData={setBookData} 
                                 handleAddAuthor={handleAddAuthor} 
                                 selectedOptions={selectedOptions} 
                                 deleteAuthor={deleteAuthor} 
-                                authorList={authorList} 
                                 addAdviser={addAdviser} 
-                                adviserList={adviserList} 
                                 deleteAdviser={deleteAdviser} 
                                 formValidation={formValidation} 
                                 error={error}/>
@@ -172,36 +169,12 @@ const CatalogInfo = ({disabled,handleChange,bookData,addAuthor,addAdviser,setBoo
                                 addAuthor={addAuthor} 
                                 setBookData={setBookData} 
                                 formValidation={formValidation} 
-                                error={error} 
-                                publishers={publishers} 
-                                authorOptions={authorOptions} 
+                                error={error}
                                 handleAddAuthor={handleAddAuthor}
                                 selectedOptions={selectedOptions} 
                                 deleteAuthor={deleteAuthor} 
-                                authorList={authorList}/>}
-                        </div>
-                        {/* genre */}
-                        {/* {bookData.mediaType==='1'?
-                        <div className="col-12 info-input-box mb-3">
-                            <label htmlFor="">Genre</label>
-                            <Select
-                                isMulti
-                                name="genre"
-                                options={genreList}
-                                className="basic-multi-select"
-                                classNamePrefix="select"
-                                placeholder="Enter to add genre/s"
-                                isDisabled={disabled}
-                                onChange={(selected)=>{
-                                    addGenre(selected);
-                                    handleGenre(selected)
-                                }}
-                                onBlur={formValidation}
-                                value={disabled?viewSelectedGenre:selectedGenre}
-                            />
-                            <p className='resource-error'>{error.genre}</p>
-                        </div> 
-                        :''} */}           
+                            />}
+                        </div>      
                     </div>
 
                 </div>

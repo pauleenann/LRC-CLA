@@ -12,14 +12,10 @@ import CatalogFilterModal from '../CatalogFilterModal/CatalogFilterModal'
 import { setAdvancedSearch, setIsSearch } from '../../features/advancedSearchSlice'
 import Swal from 'sweetalert2'
 import CatalogImport from '../CatalogImport/CatalogImport'
-import { fetchTopicOffline, fetchTopicOnline } from '../../features/topicSlice'
-import { fetchTypeOffline, fetchTypeOnline } from '../../features/typeSlice'
-import { fetchDepartmentOffline, fetchDepartmentOnline } from '../../features/departmentSlice'
 
 const Catalog = () => {
   const dispatch = useDispatch();
   const {username} = useSelector(state=>state.username)
-
   // state for catalog import modal
   const [isOpen, setIsOpen] = useState(false);
   const [catalog, setCatalog] = useState([])
@@ -36,9 +32,9 @@ const Catalog = () => {
     message: ''
   })
   const isOnline = useSelector(state => state.isOnline.isOnline)
-  const {department} = useSelector(state=>state.department)
-  const {topic} = useSelector(state=>state.topic)
-  const {type} = useSelector(state=>state.type)
+  const [type, setType] = useState([]);
+  const [department, setDepartment] = useState([])
+  const [topic, setTopic] = useState([])
   const [selectedFilters, setSelectedFilters] = useState({ title: '', author: '', type: '', department: '', topic: '', isArchived:0 });
   const navigate = useNavigate()
   const [sortOrder, setSortOrder] = useState({
@@ -63,17 +59,25 @@ const Catalog = () => {
     }
     const fetchData = async () => {
       if (isOnline) {
-        dispatch(fetchTypeOnline());
-        dispatch(fetchDepartmentOnline());
-        dispatch(fetchTopicOnline());
+        getType();
+        getDept()
+        getTopics()
         await getCatalogOnline();
       } else {
-        dispatch(fetchTypeOffline());
-        dispatch(fetchDepartmentOffline());
-        dispatch(fetchTopicOffline());
+        //get offline type 
+        const types = await getAllFromStore('resourcetype');
+        setType(types);
+        //get offline department
+        const depts = await getAllFromStore('department')
+        setDepartment(depts)
+        //get offline topics
+        const tps = await getAllFromStore('topic');
+        setTopic(tps)
+
         await getCatalogOffline();
       }
     };
+
     fetchData();
   }, [isOnline, selectedFilters, advancedSearch, isSearch]);
 
@@ -192,7 +196,43 @@ const Catalog = () => {
     try {
       setLoading(true);
       const data = await getCatalogDetailsOffline();
-      setCatalog(data);
+      if (resetPage) {
+        setCurrentPage(1);
+        setSelectedFilters({ title: '', author: '', type: '', department: '', topic: '', isArchived:0 });
+        setSortOrder({ title: 0, author: 0 });
+      }
+      console.log(data);
+
+      // Check if the keyword is empty, if so display all data
+      let filteredData = data;
+      if (keyword !== '') {
+        // Filter the data based on the keyword
+        filteredData = data.filter(item => {
+          // Check if the title includes the keyword (case-insensitive)
+          const titleMatch = item.resource_title.toLowerCase().includes(keyword.toLowerCase());
+
+          // Check if any author name in the array matches the keyword (case-insensitive)
+          const authorMatch = Array.isArray(item.author_names) && item.author_names.some(author =>
+            author.toLowerCase().includes(keyword.toLowerCase())
+          );
+
+          // Return true if either the title or any author name matches the keyword
+          return titleMatch || authorMatch;
+        });
+      }
+
+      // Apply filters for type, department, topic
+      if (selectedFilters.type) {
+        filteredData = filteredData.filter(item => item.type_id === selectedFilters.type);
+      }
+      if (selectedFilters.department) {
+        filteredData = filteredData.filter(item => item.dept_id === selectedFilters.department);
+      }
+      if (selectedFilters.topic) {
+        filteredData = filteredData.filter(item => item.topic_id === selectedFilters.topic);
+      }
+
+      setCatalog(filteredData);
     } catch (error) {
       console.error('Error fetching offline catalog data:', error);
     } finally {
@@ -200,7 +240,37 @@ const Catalog = () => {
     }
   };
 
-  console.log(catalog)
+  // fetch resourceType ( book, journal, newsletter, thesis)
+  const getType = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/api/data/type').then(res => res.data);
+      //console.log(response)
+      setType(response)
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  //get existing department online
+  const getDept = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/api/data/departments').then(res => res.data)
+      setDepartment(response)
+    } catch (err) {
+      console.log("Couldn't retrieve department online. An error occurred: ", err.message)
+    }
+  }
+
+  //get existing topics online
+  const getTopics = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/api/data/topic').then(res => res.data)
+      setTopic(response)
+    } catch (err) {
+      console.log("Couldn't retrieve topics online. An error occurred: ", err.message)
+    }
+  }
+
   /*------------HANDLE CHANGES------------------------------------*/
   const handleSelectedFilter = (filterCategory, value) => {
     setSelectedFilters((prevFilters) => ({
@@ -257,33 +327,192 @@ const Catalog = () => {
   /*------------------------SYNC DATA------------------------------ */
   const syncData2DB = async () => {
     setLoading(true)
-    const resources = await getAllFromStore('resources');
-    for(const resource of resources){
-      const formData = new FormData();
-      formData.append('username', username);
-      Object.entries(resource).forEach(([key, value]) => {
-        formData.append(key, value);
-      })
-      const response = await axios.post('http://localhost:3001/api/resources', formData);
-      if (response.data.status === 409) {
-        alert(response.data.message);
-        continue; // Skip the resource if there's a conflict
-      }
-      // delete if synced
-      deleteResourceFromIndexedDB('resources', resource.resource_id);
-      console.log(`Synced resource: ${resource.resource_id}`, response.data);
-    }
-
+    await syncResourcesOnline()
     setLoading(false)
-
-    setStatusModal(true);
-    setStatusModalContent({
-      status: 'success',
-      message: 'All resources processed.',
-    });
-    console.log('All resources processed.')
+    // await syncAuthorsOnline()
+    // await syncResourceAuthorsOnline()
   };
 
+  // Sync resources
+  const syncResourcesOnline = async () => {
+    try {
+      setLoading(true)
+      // Get all resources in IndexedDB
+      const resources = await getAllFromStore('resources');
+      console.log('Preparing resources for syncing: ', resources);
+
+      for (const resource of resources) {
+        try {
+          // Sync the resource
+          const response = await axios.post('http://localhost:3001/api/sync/resources', resource);
+          if (response.data.status === 409) {
+            alert(response.data.message);
+            continue; // Skip the resource if there's a conflict
+          }
+          console.log(`Synced resource: ${resource.resource_id}`, response.data);
+
+          // Retrieve resource_id from the server response
+          const { resource_id: serverResourceId } = response.data;
+
+          // Sync related data
+          const authors = await getResourceAuthors(resource.resource_id);
+          console.log('offline authors', authors);
+          await syncAuthorsOnline(authors, serverResourceId);
+
+          const resourceType = resource.type_id;
+          switch (resourceType) {
+            case '1': // Book
+              const publisher = await getPub(resource.resource_id);
+              const book = await getResource('book', resource.resource_id);
+              const pubId = await syncPublisherOnline(publisher);
+              await syncBookOnline(book, serverResourceId, pubId);
+              break;
+            case '2': // Journal
+            case '3': // Newsletter
+              const jn = await getResource('journalnewsletter', resource.resource_id);
+              await syncJournalNewsletterOnline(jn, serverResourceId);
+              break;
+            case '4': // Thesis
+              const adviser = await getResourceAdviser(resource.resource_id);
+              await syncAdviserOnline(adviser, serverResourceId);
+              break;
+            default:
+              console.warn(`Unhandled resource type: ${resourceType}`);
+          }
+
+          // Delete resource from IndexedDB after successful sync
+          await Promise.all([
+            deleteResourceFromIndexedDB('resources', resource.resource_id),
+            deleteResourceFromIndexedDB('book', resource.resource_id),
+            deleteResourceFromIndexedDB('thesis', resource.resource_id),
+            deleteResourceFromIndexedDB('journalnewsletter', resource.resource_id),
+          ]);
+          console.log(`Resource ${resource.resource_id} deleted from IndexedDB.`);
+        } catch (error) {
+          setStatusModal(true);
+          setStatusModalContent({
+            status: 'error',
+            message: `Failed to sync resource with title "${resource.resource_title}".`,
+          });
+          console.error(`Failed to sync resource: ${resource.resource_id}`, error.message);
+        }
+      }
+
+      // Clear object stores used in cataloging
+      await Promise.all([
+        clearObjectStore('author'),
+        clearObjectStore('resourceauthors'),
+        clearObjectStore('publisher'),
+        clearObjectStore('adviser'),
+      ]);
+
+      setLoading(false)
+
+      setStatusModal(true);
+      setStatusModalContent({
+        status: 'success',
+        message: 'All resources processed.',
+      });
+      console.log('All resources processed.');
+    } catch (error) {
+      setLoading(false)
+      setStatusModal(true);
+      setStatusModalContent({
+        status: 'error',
+        message: 'Error during data syncing. Please try again.',
+      });
+      console.error('Error during data syncing:', error.message);
+    }
+  };
+
+  //sync advisers
+  const syncAdviserOnline = async (adviser, resourceId) => {
+    try {
+      console.log('syncing advisers')
+      const response = await axios.post('http://localhost:3001/api/sync/adviser', { adviser, resourceId });
+      console.log(`Synced adviser: ${adviser.adviser_id}`, response.data);
+
+    } catch (error) {
+      console.error('Error during advisers syncing:', error.message);
+    }
+  }
+
+  // Sync authors
+  const syncAuthorsOnline = async (authors, resourceId) => {
+    try {
+      for (const author of authors) {
+        try {
+          const response = await axios.post('http://localhost:3001/api/sync/authors', { author, resourceId });
+          console.log(`Synced author: ${author.author_id}`, response.data);
+        } catch (error) {
+          console.error(`Failed to sync author: ${author.author_id}`, error.message);
+        }
+      }
+      console.log('All authors processed.');
+    } catch (error) {
+      console.error('Error during authors syncing:', error.message);
+    }
+  };
+
+  // Sync publisher
+  const syncPublisherOnline = async (publisher) => {
+    try {
+      const response = await axios.post('http://localhost:3001/api/sync/publisher', publisher);
+      const { pub_id } = response.data;
+      console.log('Publisher synced successfully with ID:', pub_id);
+      return pub_id
+    } catch (error) {
+      console.error('Failed to sync publisher:', error.message);
+    }
+  };
+
+  // Sync book
+  const syncBookOnline = async (book, resourceId, pubId) => {
+    try {
+      const formData = new FormData();
+
+      // Append book fields to FormData
+      Object.entries(book).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      // Append resourceId and pubId to FormData
+      formData.append('resourceId', resourceId);
+      formData.append('pubId', pubId);
+
+      // Send the FormData to the backend
+      const response = await axios.post('http://localhost:3001/api/sync/book', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      console.log('Book synced successfully:', response.data);
+    } catch (error) {
+      console.error('Failed to sync book:', error.message);
+    }
+  };
+
+  //sync journal and newsltter
+  const syncJournalNewsletterOnline = async (jn, resourceId) => {
+    try {
+      const formData = new FormData();
+      // Append book fields to FormData
+      Object.entries(jn).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      // Append resourceId to FormData
+      formData.append('resourceId', resourceId);
+
+      // Send the FormData to the backend
+      const response = await axios.post('http://localhost:3001/api/sync/journalnewsletter', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      console.log('Journal/Newsletter synced successfully:', response.data);
+    } catch (error) {
+      console.error('Failed to sync Journal/Newsletter:', error.message);
+    }
+  };
 
   /*------------HANDLE PAGINATION---------------- */
   const handlePreviousButton = () => {
@@ -400,9 +629,7 @@ const Catalog = () => {
                 }
               }} 
             />
-            {isOnline&&(
-              <button href="" className='m-0 advanced-search fw-semibold' onClick={()=>setOpenFilter(true)}>Advanced Search</button>
-            )}   
+            <button href="" className='m-0 advanced-search fw-semibold' onClick={()=>setOpenFilter(true)}>Advanced Search</button>
           </div>
           <button
             className="btn cat-button shadow-sm px-3"
@@ -439,8 +666,7 @@ const Catalog = () => {
           </div>
 
           {/*archived/unarchived  */}
-          {isOnline&&(
-            <div className="">
+          <div className="">
               <label htmlFor="">Category: </label>
               <select
                 id=""
@@ -453,17 +679,13 @@ const Catalog = () => {
                 <option value="0" selected>Unarchived</option>
                 <option value="1" >Archived</option>
               </select>
-            </div>
-          )}
+          </div>
         </div>
 
-        {isOnline&&(
-          <button className='btn btn-primary d-flex gap-2 align-items-center' onClick={()=>setIsOpen(true)}>
-            <FontAwesomeIcon icon={faUpload}/>
-            Import
-          </button>
-        )}
-        
+        <button className='btn btn-primary d-flex gap-2 align-items-center' onClick={()=>setIsOpen(true)}>
+          <FontAwesomeIcon icon={faUpload}/>
+          Import
+        </button>
       </div>
       
               
@@ -553,7 +775,7 @@ const Catalog = () => {
                     : 'N/A'}
                 </td>
                 <td>
-                  {`${item.resource_quantity}/${item.original_resource_quantity}`}
+                  {isOnline? `${item.resource_quantity}/${item.original_resource_quantity}`:`${item.resource_quantity}`}
                 </td>
                 {/* <td>
                   <span className={`text-light p-2 rounded fw-semibold ${item.resource_is_archived==0?'bg-success':'bg-danger'}`}>
@@ -564,12 +786,9 @@ const Catalog = () => {
                   <button type="button" class="btn btn-transparent border-0" data-toggle="tooltip" data-placement="top" title="View Resource" onClick={() => navigate(`/catalog/view/${item.resource_id}`)}>
                     <FontAwesomeIcon icon={faEye} className='archive-btn'/>
                   </button>
-                  {isOnline&&(
-                    <button type="button" class="btn btn-transparent border-0" data-toggle="tooltip" data-placement="top" title={`${item.resource_is_archived==0?'Archive':'Unarchive'} Resource`} onClick={()=>handleArchive(item.resource_id,item.resource_is_archived)}>
-                      <FontAwesomeIcon icon={faArchive} className='archive-btn'/>
-                    </button>
-                  )}
-                  
+                  <button type="button" class="btn btn-transparent border-0" data-toggle="tooltip" data-placement="top" title={`${item.resource_is_archived==0?'Archive':'Unarchive'} Resource`} onClick={()=>handleArchive(item.resource_id,item.resource_is_archived)}>
+                    <FontAwesomeIcon icon={faArchive} className='archive-btn'/>
+                  </button>
                 </td>
               </tr>
             ))

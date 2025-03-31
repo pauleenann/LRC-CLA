@@ -11,6 +11,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import { setBorrowedStats, setVisitorStats } from '../../features/chartSlice.js';
 import { io } from 'socket.io-client';
+import { setTypeArr } from '../../features/typeSlice.js';
+import { fetchDepartmentOnline, setDepartmentArr } from '../../features/departmentSlice.js';
+import { setTopicArr } from '../../features/topicSlice.js';
+import { fetchPublisherOnline, setPublisherArr } from '../../features/publisherSlice.js';
+import { setStatusArr } from '../../features/statusSlice.js';
 
 const Dashboard = () => {
   const [dateTime,setDateTime] = useState(new Date());
@@ -51,7 +56,6 @@ const Dashboard = () => {
     const newSocket = io('http://localhost:3001');
     setSocket(newSocket);
 
-
     getTotalVisitors();
     getTotalBorrowed();
     getTotalReturned();
@@ -68,6 +72,7 @@ const Dashboard = () => {
       newSocket.disconnect();
     };
   }, []);
+
 
   useEffect(() => {
     if (socket) {
@@ -271,11 +276,6 @@ const Dashboard = () => {
     }
   }
 
-  // const navigate = useNavigate();
-
-  // const handleTodayEntriesClick = () => {
-  //     navigate('/logbook?filter=today'); // Navigate to logbook with filter
-  // };
 
   return (
     <div className='dashboard-container bg-light'>

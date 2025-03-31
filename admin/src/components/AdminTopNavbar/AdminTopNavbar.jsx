@@ -7,13 +7,29 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { checkIfOnline } from '../../features/isOnlineSlice';
 import { setUsername } from '../../features/userSlice';
+import { fetchStatusOffline, fetchStatusOnline } from '../../features/statusSlice';
+import { fetchPublisherOffline, fetchPublisherOnline } from '../../features/publisherSlice';
+import { fetchAuthorOffline, fetchAuthorOnline } from '../../features/authorSlice';
+import { fetchAdviserOffline, fetchAdviserOnline } from '../../features/adviserSlice';
+import { fetchDepartmentOffline, fetchDepartmentOnline } from '../../features/departmentSlice';
+import { fetchTopicOffline, fetchTopicOnline } from '../../features/topicSlice';
+import { initDB } from '../../indexedDb/initializeIndexedDb';
+import { fetchPublisherInfo } from '../../features/publisherInfoSlice';
 
 const AdminTopNavbar = () => {
-    const [dateTime, setDateTime] = useState(new Date());
+    const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [dateTime, setDateTime] = useState(new Date());
     const isOnline = useSelector((state) => state.isOnline.isOnline);
     const [uname, setUname] = useState(null);
-    const navigate = useNavigate();
+    const {status} = useSelector(state=>state.status)
+    const {publisher} = useSelector(state=>state.publisher)
+    const {author} = useSelector(state=>state.author)
+    const {adviser} = useSelector(state=>state.adviser)
+    const {department} = useSelector(state=>state.department)
+    const {topic} = useSelector(state=>state.topic)
+    const {type} = useSelector(state=>state.type)
+    const {publisherInfo} = useSelector(state=>state.publisherInfo)
 
     useEffect(() => {
         // Update time every second
@@ -53,8 +69,10 @@ const AdminTopNavbar = () => {
             try {
                 await fetch("https://jsonplaceholder.typicode.com/todos/1", { cache: "no-store" });
                 dispatch(checkIfOnline(true));
+                getOnlineData();
             } catch (error) {
                 dispatch(checkIfOnline(false));
+                getOfflineData();
             }
         };
 
@@ -87,6 +105,31 @@ const AdminTopNavbar = () => {
             console.error('Logout error:', err);
         }
     };
+
+    const getOnlineData = ()=>{
+        dispatch(fetchStatusOnline());
+        dispatch(fetchPublisherOnline());
+        dispatch(fetchAuthorOnline());
+        dispatch(fetchAdviserOnline());
+        dispatch(fetchDepartmentOnline());
+        dispatch(fetchTopicOnline());
+        dispatch(fetchPublisherInfo())
+    }
+
+    const getOfflineData = ()=>{
+        dispatch(fetchStatusOffline());
+        dispatch(fetchPublisherOffline());
+        dispatch(fetchAuthorOffline());
+        dispatch(fetchAdviserOffline());
+        dispatch(fetchDepartmentOffline());
+        dispatch(fetchTopicOffline());
+    }
+
+    useEffect(()=>{
+        if(status.length>0&&type.length>0&&publisher.length>0&&publisherInfo.length>0&&author.length>0&&adviser.length>0&&department.length>0&&topic.length>0&&isOnline){
+            initDB(status,type,publisher,publisherInfo,author,adviser,department,topic)
+        }
+    },[status, type, publisher, publisherInfo, author, adviser, department, topic,isOnline])
 
     return (
         <div className="top-navbar bg-light">

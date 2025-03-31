@@ -3,12 +3,14 @@ import './BookInput.css'
 import AuthorInput from '../AuthorInput/AuthorInput'
 import PublisherModal from '../PublisherModal/PublisherModal'
 import Select from 'react-select'
+import { useSelector } from 'react-redux'
 
-const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formValidation,error,publishers,authorOptions,handleAddAuthor,selectedOptions,deleteAuthor,authorList}) => {
+const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formValidation,error,handleAddAuthor,selectedOptions,deleteAuthor}) => {
     const [open, setOpen] = useState(false)
     // dito ko muna isstore ung publisher details then kapag clinick ung save, tsaka lang sya masstore sa bookdata
     const [publisherDetails, setPublisherDetails] = useState({})
     const searchInputRef = useRef(null); // Create a ref for the input
+    const {publisher} = useSelector(state=>state.publisher)
     
       useEffect(() => {
         searchInputRef.current?.focus(); // Automatically focus on mount
@@ -93,12 +95,10 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formVal
                 handleChange={handleChange} 
                 bookData={bookData} 
                 addAuthor={addAuthor} 
-                authorOptions={authorOptions} 
                 setBookData={setBookData} 
                 handleAddAuthor={handleAddAuthor} 
                 selectedOptions={selectedOptions} 
                 deleteAuthor={deleteAuthor} 
-                authorList={authorList}
                 formValidation={formValidation}
             />
             <p className="resource-error">{error.authors?error.authors:''}</p>
@@ -135,7 +135,7 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formVal
                        </div> 
                          
                    :<Select  
-                    options={publishers}
+                    options={publisher}
                     placeholder="Search publisher"
                     classNamePrefix="select"
                     isClearable
@@ -167,7 +167,7 @@ const BookInput = ({disabled,handleChange,bookData,addAuthor,setBookData,formVal
                 </div>
             </div>
         </div>
-        <PublisherModal open={open} close={()=>setOpen(!open)} handleChange={handleChange} bookData={bookData} setBookData={setBookData} publishers={publishers} publisherDetails={publisherDetails} handlePublisher={handlePublisher}/>
+        <PublisherModal open={open} close={()=>setOpen(!open)} handleChange={handleChange} bookData={bookData} setBookData={setBookData} publisherDetails={publisherDetails} handlePublisher={handlePublisher}/>
     </div>
   )
 }

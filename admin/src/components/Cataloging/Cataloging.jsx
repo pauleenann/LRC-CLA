@@ -3,26 +3,30 @@ import React, { useEffect, useState } from 'react'
 import './Cataloging.css'
 import axios from 'axios'
 import { getAllFromStore } from '../../indexedDb/getDataOffline'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchDepartmentOffline, fetchDepartmentOnline, setDepartmentArr } from '../../features/departmentSlice'
+import { fetchTopicOffline, fetchTopicOnline, setTopicArr } from '../../features/topicSlice'
 
 const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation, error,editMode}) => {
-    const [department, setDepartment] = useState([])
-    const [catalog, setCatalog] = useState([])
-    const [topic,setTopic] = useState([])
+    const dispatch = useDispatch();
+    const {department} = useSelector(state=>state.department)
+    const {topic} = useSelector(state=>state.topic)
     const [filteredTopic, setFilteredTopic] = useState([])
     const isOnline = useSelector(state=>state.isOnline.isOnline)
     
-
     useEffect(() => {
-        if(isOnline){
-            console.log('getting cataloging info online')
-            getDept()
-            getTopics()
-        }else{
-            getDeptOffline()
-            getTopicsOffline()
+        if (isOnline !== null) { 
+            if (isOnline) {
+                console.log('getting cataloging info online');
+                dispatch(fetchDepartmentOnline());
+                dispatch(fetchTopicOnline());
+            } else {
+                dispatch(fetchDepartmentOffline());
+                dispatch(fetchTopicOffline());
+            }
         }
-    }, []);
+    }, [isOnline, dispatch]); 
+    
 
     useEffect(()=>{
         const filtered = topic.filter(item=>item.dept_id==bookData.department)
@@ -30,37 +34,8 @@ const Cataloging = ({disabled,handleChange,bookData,handleToggle,formValidation,
     },[bookData.department])
 
 
-    //get existing department offline
-    const getDeptOffline = async ()=>{
-        const depts = await getAllFromStore('department')
-        setDepartment(depts)
-    }
-
-    //get existing topics offline
-    const getTopicsOffline = async()=>{
-        const tps = await getAllFromStore('topic');
-        setTopic(tps)
-    }
-    
-    //get existing department online
-    const getDept = async()=>{
-        try{
-            const response = await axios.get('http://localhost:3001/api/data/departments').then(res=>res.data)
-            setDepartment(response)
-        }catch(err){
-            console.log("Couldn't retrieve department online. An error occurred: ", err.message)
-        }
-    }
-
-    //get existing topics online
-    const getTopics =async ()=>{
-        try{
-            const response = await axios.get('http://localhost:3001/api/data/topic').then(res=>res.data)
-            setTopic(response)
-        }catch(err){
-            console.log("Couldn't retrieve topics online. An error occurred: ", err.message)
-        }
-    }
+    console.log(filteredTopic)
+    console.log(topic)
 
   return (
     <div className='cataloging-box shadow-sm'>
