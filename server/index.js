@@ -23,6 +23,7 @@ import advancedSearchRoutes from './routes/advancedSearchRoutes.js'
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { approachingOverdue, checkOverdue } from './controller/overdueController.js';
+import { inactivePatron } from './routes/patronInactiveController.js';
 
 dotenv.config();
 
@@ -105,8 +106,15 @@ cron.schedule('0 0 * * *', () => {
 //runs at midnight, on the 30th month of august, every year
 cron.schedule('0 0 30 8 *', () => {
   console.log('Cron running to set patrons to inactive');
-  approachingOverdue();
+  inactivePatron();
 });
+
+// run every minute for testing purposes
+// cron.schedule('* * * * *', () => {
+//   console.log('Cron running to set patrons to inactive');
+//   inactivePatron();
+// });
+
 
 
 
