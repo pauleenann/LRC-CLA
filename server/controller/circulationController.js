@@ -107,7 +107,7 @@ export const checkoutRecord = (req, res) => {
         if (err) {
         return res.status(500).json({ error: err.message });
         }
-        if (results.lesngth === 0) {
+        if (results.length === 0) {
         return res.status(404).json({ message: 'Checkout record not found.' });
         }
         res.json(results[0]);
@@ -179,6 +179,9 @@ export const checkIn = async (req, res) => {
             null,
             JSON.stringify("Patron: " + patron_name + " returned a book: '" + resource_title + "'")
         );
+
+        // Use the io instance from the request object
+        req.io.emit('checkinUpdated');
 
         res.status(201).json({
             message: 'Item successfully checked in and removed from checkout.',
@@ -266,6 +269,9 @@ export const checkOut =  async (req, res) => {
 
         // Commit the transaction
         await db.query('COMMIT');
+
+        // Use the io instance from the request object
+        req.io.emit('checkoutUpdated');
 
         res.status(200).json({
             message: 'Checkout successful!',
