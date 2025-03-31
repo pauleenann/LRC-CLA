@@ -1,6 +1,8 @@
 import { dbPromise } from "../config/db.js";
 import { db } from "../config/db.js";
 import { logAuditAction } from "./auditController.js";
+import { bookList } from "./dashboardController.js";
+import { authors } from "./dataController.js";
 
 /*----------SEARCH BOOK FROM CIRCULATION SELECT ITEM--------- */
 export const checkoutSearch = async (req, res) => {
@@ -17,17 +19,23 @@ export const checkoutSearch = async (req, res) => {
             b.filepath,
             r.resource_title AS title, 
             r.resource_quantity AS quantity, 
-            r.resource_id
+            r.resource_id,
+            GROUP_CONCAT(DISTINCT CONCAT(a.author_fname, ' ', a.author_lname) ORDER BY a.author_lname SEPARATOR ', ') AS authors
         FROM 
             book b
         INNER JOIN 
-            resources r 
-        ON 
-            b.resource_id = r.resource_id
+            resources r ON b.resource_id = r.resource_id
+        INNER JOIN 
+            resourceauthors ra ON ra.resource_id = r.resource_id
+        INNER JOIN 
+            author a ON a.author_id = ra.author_id
         WHERE 
-            (b.book_isbn LIKE ? OR r.resource_title LIKE ?)
+            (b.book_isbn LIKE ? OR r.resource_title LIKE ?  )
             AND r.resource_quantity > 0
+        GROUP BY 
+            b.book_isbn, b.filepath, r.resource_id
         LIMIT 10;
+
         `,
         [`%${query}%`, `%${query}%`]
       );
@@ -37,7 +45,8 @@ export const checkoutSearch = async (req, res) => {
         resource_id: (book.resource_id),
         resource_title: (book.title),
         resource_quantity: (book.quantity),
-        book_isbn: (book.book_isbn)
+        book_isbn: (book.book_isbn),
+        authors: book.authors,
 
     }));
 
@@ -65,21 +74,23 @@ export const checkinSearch = async (req, res) => {
                 b.book_isbn, 
                 b.filepath,
                 r.resource_title AS title, 
-                r.resource_id
+                r.resource_id,
+                GROUP_CONCAT(DISTINCT CONCAT(a.author_fname, ' ', a.author_lname) ORDER BY a.author_lname SEPARATOR ', ') AS authors
             FROM 
                 book b
             INNER JOIN 
-                resources r 
-            ON 
-                b.resource_id = r.resource_id
+                resources r ON b.resource_id = r.resource_id
             INNER JOIN 
-                checkout c 
-            ON 
-                r.resource_id = c.resource_id
+                resourceauthors ra ON ra.resource_id = r.resource_id
+            INNER JOIN 
+                author a ON a.author_id = ra.author_id
+            INNER JOIN 
+                checkout c ON r.resource_id = c.resource_id
             WHERE 
                 (b.book_isbn LIKE ? OR r.resource_title LIKE ?)
                 AND c.patron_id = ? AND (c.status = "borrowed" OR c.status = "overdue")
-
+            GROUP BY 
+                b.book_isbn, b.filepath, r.resource_id
             LIMIT 10;
             `,
             [`%${query}%`, `%${query}%`, patron_id]
@@ -90,6 +101,7 @@ export const checkinSearch = async (req, res) => {
             resource_id: book.resource_id,
             resource_title: book.title,
             book_isbn: book.book_isbn,
+            authors: book.authors,  
         }));
 
         res.json(covers);

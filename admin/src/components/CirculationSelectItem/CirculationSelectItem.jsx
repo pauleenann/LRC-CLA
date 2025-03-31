@@ -19,7 +19,7 @@ const CirculationSelectItem = () => {
   
   const actionSelected = localStorage.getItem('clickedAction') || 'Check Out';
   const actionLabel = actionSelected === 'Check In' ? 'Check In' : 'Check Out';
-  const isDisabled = selectedItems.length === 0;
+  const isDisabled = selectedItems.length === 0 || selectedItems.length > 1;
   const searchInputRef = useRef(null);
 
   // Save selected items to localStorage whenever they change
@@ -197,6 +197,8 @@ const CirculationSelectItem = () => {
                     </div>
                     <div className="col-8 info">
                       <p className='ttle'>{item.resource_title}</p>
+                      <p className='text-start'>ISBN: {item.book_isbn || "Unknown"}</p>
+                      <p className='qnty'>Author/s: {item.authors || "Unknown"}</p>
                       <p className='qnty'>Quantity: <span>1</span></p>
                     </div>
                     <div className="col-1 remove" onClick={() => handleRemoveItem(item.resource_id)}>

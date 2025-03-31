@@ -223,6 +223,8 @@ const CirculationCheckout = () => {
                   {/* Item info */}
                   <div className="col-9 info">
                     <p className='title'>{item.resource_title}</p>
+                    <p className='text-start'>ISBN: {item.book_isbn || "Unknown"}</p>
+                    <p className='qnty'>Author/s: {item.authors || "Unknown"}</p>
                     <p className='qnty'>Quantity: <span>1</span></p>
                   </div>
                 </div>
