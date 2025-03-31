@@ -8,13 +8,13 @@ import DashboardTable from '../DashboardTable/DashboardTable';
 import DashboardTopChoices from '../DashboardTopChoices/DashboardTopChoices';
 import DashBox from '../DashBox/DashBox';
 import { Link, useNavigate } from 'react-router-dom';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import { setBorrowedStats, setVisitorStats } from '../../features/chartSlice.js';
-import { io } from 'socket.io-client';
+
 
 const Dashboard = () => {
   const [dateTime,setDateTime] = useState(new Date());
-  const {username} = useSelector(state=>state.username)
+  const [uname, setUname] = useState(null)
 
   const [totalVisitors, setTotalVisitors] = useState("");
   const [totalVisitorsLoading, setTotalVisitorsLoading] = useState(false);
@@ -44,14 +44,9 @@ const Dashboard = () => {
   const bookListHeader = ["Book ID","Title","Author","Copies Available"];
   const bookIssuedHeader = ["Tup ID","Title","Return Date"];
   const dispatch = useDispatch()
-  const [socket, setSocket] = useState(null);
   
   useEffect(() => {
-    // Initialize socket connection
-    const newSocket = io('http://localhost:3001');
-    setSocket(newSocket);
-
-
+    getUsername()
     getTotalVisitors();
     getTotalBorrowed();
     getTotalReturned();
@@ -62,48 +57,24 @@ const Dashboard = () => {
     getPopularChoices();
     getBookTrends();
     getVisitorStats();
-
-    // Clean up socket connection on unmount
-    return () => {
-      newSocket.disconnect();
-    };
   }, []);
 
-  useEffect(() => {
-    if (socket) {
-      // Listen for attendance updates
-      socket.on('attendanceUpdated', () => {
-        console.log('Attendance updated, refreshing data...');
-        getTotalVisitors();
-      });
-
-      // Listen for checkin updates
-      socket.on('checkinUpdated', () => {
-        console.log('checkin updated, refreshing data...');
-        getTotalReturned();
-      });
-
-      // Listen for checkout updates
-      socket.on('checkoutUpdated', () => {
-        console.log('checkout updated, refreshing data...');
-        getTotalBorrowed();
-      });
-
-      // Listen for checkout updates
-      socket.on('overdueUpdated', () => {
-        console.log('overdue updated, refreshing data...');
-        getTotalOverdue();
-      });
-
-      // Clean up event listener
-      return () => {
-        socket.off('attendanceUpdated');
-        socket.off('checkinUpdated');
-        socket.off('checkoutUpdated');
-        socket.off('overdueUpdated');
-      };
+  const getUsername = async()=>{
+    try {
+      // Request server to verify the JWT token
+      const response = await axios.get('http://localhost:3001/api/user/check-session', { withCredentials: true });
+      console.log(response.data)
+      // If session is valid, set the role
+      if (response.data.loggedIn) {
+        setUname(response.data.username);
+      } else {
+        setUname(null); // If not logged in, clear the role
+      }
+    } catch (error) {
+      console.error('Error verifying session:', error);
+      setUname(null); // Set null if there's an error
     }
-    }, [socket]);
+  }
 
   //total visitors
   const getTotalVisitors = async () => {
@@ -115,10 +86,9 @@ const Dashboard = () => {
     } catch (err) {
       console.error("Error fetching total visitors:", err.message);
     } finally{
-      // setTimeout(()=>{
-      //   setTotalVisitorsLoading(false)
-      // },3000)
-      setTotalVisitorsLoading(false)
+      setTimeout(()=>{
+        setTotalVisitorsLoading(false)
+      },3000)
     }
   };
 
@@ -132,10 +102,9 @@ const Dashboard = () => {
     } catch (err) {
       console.error("Error fetching total borrowed books:", err.message);
     } finally{
-      // setTimeout(()=>{
-      //   setTotalBorrowedLoading(false)
-      // },3000)
-      setTotalBorrowedLoading(false)
+      setTimeout(()=>{
+        setTotalBorrowedLoading(false)
+      },3000)
     }
   };
 
@@ -149,10 +118,9 @@ const Dashboard = () => {
     } catch (err) {
       console.error("Error fetching total returned books:", err.message);
     } finally{
-      // setTimeout(()=>{
-      //   setTotalReturnedLoading(false)
-      // },3000)
-      setTotalReturnedLoading(false)
+      setTimeout(()=>{
+        setTotalReturnedLoading(false)
+      },3000)
     }
   };
 
@@ -166,10 +134,9 @@ const Dashboard = () => {
     } catch (err) {
       console.error("Error fetching total overdue books:", err.message);
     } finally{
-      // setTimeout(()=>{
-      //   setTotalOverdueLoading(false)
-      // },3000)
-      setTotalOverdueLoading(false)
+      setTimeout(()=>{
+        setTotalOverdueLoading(false)
+      },3000)
     }
   };
 
@@ -282,7 +249,7 @@ const Dashboard = () => {
        {/* dashboard heading */}
        <div className="dashboard-heading">
           {/* Goodmorning,admin */}
-          <p className='dashboard-heading-text'>{dateTime.getHours()>=1 && dateTime.getHours()<12?'Good morning, ':dateTime.getHours()>=12&&dateTime.getHours()<17?'Good afternoon, ':'Good evening,'} <span>{username}</span></p>
+          <p className='dashboard-heading-text'>{dateTime.getHours()>=1 && dateTime.getHours()<12?'Good morning, ':dateTime.getHours()>=12&&dateTime.getHours()<17?'Good afternoon, ':'Good evening,'} <span>{uname}</span></p>
       </div>
       
 
