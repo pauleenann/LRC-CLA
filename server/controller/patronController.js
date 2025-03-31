@@ -255,7 +255,8 @@ export const borrowers = (req, res) => {
             r.resource_title AS borrowed_book,
             course.course_name AS course, 
             ci.checkin_date,
-           CASE 
+            GROUP_CONCAT(DISTINCT CONCAT(a.author_fname, ' ', a.author_lname) ORDER BY a.author_lname SEPARATOR ', ') AS authors,
+            CASE 
                 WHEN c.status = 'borrowed' THEN 'Currently Borrowed'
                 WHEN c.status = 'returned' THEN 'Returned'
                 ELSE 'Other'
@@ -268,13 +269,20 @@ export const borrowers = (req, res) => {
             resources r ON c.resource_id = r.resource_id
         INNER JOIN 
             course ON p.course_id = course.course_id
+        INNER JOIN 
+            resourceauthors ra ON ra.resource_id = r.resource_id
+        INNER JOIN 
+            author a ON a.author_id = ra.author_id
         LEFT JOIN 
             checkin ci ON c.checkout_id = ci.checkout_id
         ${whereQuery}
+        GROUP BY 
+            c.checkout_id, r.resource_id, p.tup_id
         ORDER BY 
             status_category, 
             c.checkout_date DESC
-        LIMIT ? OFFSET ?
+        LIMIT ? OFFSET ?;
+
     `;
 
     db.query(countQuery, (err, countResult) => {

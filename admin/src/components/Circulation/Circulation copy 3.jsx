@@ -185,44 +185,40 @@ const Circulation = () => {
         {/* Table */}
         <table className="circ-table">
           <thead>
-            <tr className=" text-center">
-              <td className="col">TUP ID</td>
-              <td className="col">Name</td>
+            <tr>
+              <td>TUP ID</td>
+              <td>Name</td>
               {/* <td>No. of book/s issued</td> */}
-              <td className="col">Book/s issued</td>
-              <td className="col">Author/s</td>
+              <td>Book/s issued</td>
               
-              <td className="col">Borrow Date</td>
-              <td className="col">Due Date</td>
-              <td className="col">Return Date</td>
-              <td className="col">Status</td>
+              <td>Borrow Date</td>
+              <td>Due Date</td>
+              <td>Return Date</td>
+              <td>Status</td>
             </tr>
           </thead>
           <tbody>
           {filteredBorrowers.length > 0 ? (
               filteredBorrowers.map((borrower, index) => (
-                <tr key={index} >
-                  <td >{borrower.tup_id}</td>
-                  <td >
+                <tr key={index} style={{ borderBottom: '1px solid #ddd' }}>
+                  <td style={{ padding: '10px' }}>{borrower.tup_id}</td>
+                  <td style={{ padding: '10px' }}>
                     {borrower.patron_fname} {borrower.patron_lname}
                   </td>
-                  <td onClick={()=>navigate(`/catalog/view/${borrower.resource_id}`)} className='resource'> {borrower.borrowed_book} </td>
+                  <td style={{ padding: '10px' }} onClick={()=>navigate(`/catalog/view/${borrower.resource_id}`)} className='resource'> {borrower.borrowed_book} </td>
                  
-                  <td >
-                    {borrower.authors}
-                  </td>
-                  <td >
+                  <td style={{ padding: '10px' }}>
                     {new Date(borrower.checkout_date).toLocaleDateString('en-CA')}
                   </td>
-                  <td >
+                  <td style={{ padding: '10px' }}>
                     {new Date(borrower.checkout_due).toLocaleDateString('en-CA')}
                   </td>
-                  <td >
+                  <td style={{ padding: '10px' }}>
                     {borrower.checkin_date
                       ? new Date(borrower.checkin_date).toLocaleDateString('en-CA')
                       : "Not Yet Returned"}
                   </td>
-                  <td >
+                  <td style={{ padding: '10px' }}>
                     <span className={borrower.status=='overdue'?'overdue':borrower.status=='returned'?'returned':'borrowed'}>{borrower.status}</span>
                     
                   </td>
