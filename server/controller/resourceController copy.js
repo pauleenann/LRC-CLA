@@ -256,38 +256,11 @@ export const insertBook = async(isbn, resourceId, pubId, topic, res, imageFile)=
 }
 
 //check resource if exist
-export const checkResourceIfExist = (title,authors) => {
-    console.log(authors);
-
-    let authorParams = [];
-    let authorPlaceholder = [];
-    const authorsArr = Array.isArray(authors) ? authors : authors.split(',');
-
-    authorsArr.forEach(element => {          
-        const nameParts = element.trim().split(' '); 
-        const fname = nameParts.slice(0, -1).join(" "); // "John Michael"
-        const lname = nameParts.length > 1 ? nameParts[nameParts.length - 1] : ''; // "Doe"
-
-        authorParams.push(fname);
-        authorParams.push(lname);
-        authorPlaceholder.push('(?,?)');
-    });
-    
+export const checkResourceIfExist = (title) => {
     return new Promise((resolve, reject) => {
-        const query = `
-            SELECT r.resource_id, r.resource_title
-            FROM resources r
-            JOIN resourceauthors ra ON r.resource_id = ra.resource_id
-            JOIN author a ON ra.author_id = a.author_id
-            WHERE r.resource_title = ?
-            AND (a.author_fname, a.author_lname) IN (${authorPlaceholder.join(', ')}) 
-            GROUP BY r.resource_id, r.resource_title
-            HAVING COUNT(DISTINCT a.author_id) = ?;
-        `;
-        console.log(query)
-        console.log(authorParams)
+        const query = `SELECT * FROM resources WHERE resource_title = ?`;
 
-        db.query(query, [title, ...authorParams, authorsArr.length], (err, results) => {
+        db.query(query, [title], (err, results) => {
             if (err) {
                 return reject(err); // Reject with error
             }
@@ -307,7 +280,7 @@ export const insertResources = async (res, req, authors, username) => {
     return new Promise(async (resolve, reject) => {
         try {
             // Check if the resource exists
-            const resourceExists = await checkResourceIfExist(req.body.title, req.body.authors);
+            const resourceExists = await checkResourceIfExist(req.body.title);
 
             if (resourceExists) {
                 console.log('Resource already exists.');
