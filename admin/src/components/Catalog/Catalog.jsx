@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import './Catalog.css'
 import axios from 'axios'
-import { getAllFromStore, getAllUnsyncedFromStore, getBook, getBookPub, getCatalogDetailsOffline, getPub, getResource, getResourceAdviser, getResourceAuthors } from '../../indexedDb/getDataOffline'
-import { clearObjectStore, deleteResourceFromIndexedDB, markAsSynced } from '../../indexedDb/syncData'
-import ResourceStatusModal from '../ResourceStatusModal/ResourceStatusModal'
+import { getAllFromStore, getCatalogDetailsOffline} from '../../indexedDb/getDataOffline'
+import { deleteResourceFromIndexedDB } from '../../indexedDb/syncData'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight, faSearch, faPlus, faBarcode, faArrowsRotate, faArrowDown, faArrowUp, faArrowUpWideShort, faExclamationCircle, faArchive, faEye, faFileImport, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowRight, faSearch, faPlus, faArrowsRotate, faArrowDown, faArrowUp, faArrowUpWideShort, faExclamationCircle, faArchive, faEye, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
 import CatalogFilterModal from '../CatalogFilterModal/CatalogFilterModal'
@@ -19,7 +18,6 @@ import { fetchDepartmentOffline, fetchDepartmentOnline } from '../../features/de
 const Catalog = () => {
   const dispatch = useDispatch();
   const {username} = useSelector(state=>state.username)
-
   // state for catalog import modal
   const [isOpen, setIsOpen] = useState(false);
   const [catalog, setCatalog] = useState([])
@@ -28,13 +26,10 @@ const Catalog = () => {
   const [pagination, setPagination] = useState(5); // Items per page
   const [currentPage, setCurrentPage] = useState(1); // Current page
   const [totalPages, setTotalPages] = useState(0); // Total pages
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [syncLoading, setSyncLoading] = useState(false);
   const [keyword, setKeyword] = useState('') // Changed from '%%' to empty string for clearer handling
   const [statusModal, setStatusModal] = useState(false)
-  const [statusModalContent, setStatusModalContent] = useState({
-    status: '',
-    message: ''
-  })
   const isOnline = useSelector(state => state.isOnline.isOnline)
   const {department} = useSelector(state=>state.department)
   const {topic} = useSelector(state=>state.topic)
@@ -48,6 +43,7 @@ const Catalog = () => {
   const [displayedCatalog, setDisplayedCatalog] = useState([]);
   // for catalog modal
   const [openFilter, setOpenFilter] = useState(false);
+  const [duplicatedResources,setDuplicatedResources] = useState();
 
   const toggleSort = (column) => {
     setSortOrder((prev) => {
@@ -256,8 +252,9 @@ const Catalog = () => {
 
   /*------------------------SYNC DATA------------------------------ */
   const syncData2DB = async () => {
-    setLoading(true)
+    setSyncLoading(true)
     const resources = await getAllFromStore('resources');
+    let duplicated = [];
     for(const resource of resources){
       const formData = new FormData();
       formData.append('username', username);
@@ -266,7 +263,7 @@ const Catalog = () => {
       })
       const response = await axios.post('http://localhost:3001/api/resources', formData);
       if (response.data.status === 409) {
-        alert(response.data.message);
+        duplicated.push(resource.title)
         continue; // Skip the resource if there's a conflict
       }
       // delete if synced
@@ -274,16 +271,27 @@ const Catalog = () => {
       console.log(`Synced resource: ${resource.resource_id}`, response.data);
     }
 
-    setLoading(false)
+    setDuplicatedResources(duplicated)
 
-    setStatusModal(true);
-    setStatusModalContent({
-      status: 'success',
-      message: 'All resources processed.',
-    });
+    setTimeout(()=>{
+      setSyncLoading(false)
+      setStatusModal(true);
+      Swal.fire({
+        title: "All resources synced!",
+        html: duplicatedResources && duplicatedResources.length > 0 
+            ? `Offline resources synced successfully. These will be deleted from storage. Resources such as <b>${duplicatedResources.join(', ')}</b>, already exist and cannot be synced again.` 
+            : 'You have successfully synced offline resources. These resources will now be deleted from offline storage.',
+        icon: "success",
+        draggable: true,
+        confirmButtonColor: "#54CB58",
+    });    
+    },3000)
+
+    
     console.log('All resources processed.')
   };
 
+  console.log(duplicatedResources)
 
   /*------------HANDLE PAGINATION---------------- */
   const handlePreviousButton = () => {
@@ -367,26 +375,13 @@ const Catalog = () => {
               Add item
             </button>
           </Link>
-
-          {isOnline ?
-            <div>
-              {/* sync to database */}
-              <button
-                className='btn cat-button px-3'
-                onClick={syncData2DB}
-                disabled={!isOnline}
-                title='Sync offline data to online.'
-              >
-                <FontAwesomeIcon icon={faArrowsRotate} />
-              </button>
-            </div> : ''}
         </div>
       </div>
 
       {/* search-filter */}
       <div className="search-filter d-flex">
         {/* search */}
-        <div className='input-group'>
+        <div className='input-group z-0'>
           <div>
             <input 
               type="search" 
@@ -458,11 +453,29 @@ const Catalog = () => {
         </div>
 
         {isOnline&&(
-          <button className='btn btn-primary d-flex gap-2 align-items-center' onClick={()=>setIsOpen(true)}>
-            <FontAwesomeIcon icon={faUpload}/>
-            Import
-          </button>
+          <div className='d-flex gap-2'>  
+            <button 
+              className='btn btn-primary d-flex gap-2 align-items-center' 
+              onClick={()=>setIsOpen(true)}
+              title='Import excel file'
+            >
+              <FontAwesomeIcon icon={faUpload}/>
+              Import
+            </button>
+            {/* sync to database */}
+            <button
+              className='btn btn-danger d-flex align-items-center gap-2 px-3'
+              onClick={syncData2DB}
+              disabled={!isOnline||syncLoading}
+              title='Sync offline data to online.'
+            >
+              <FontAwesomeIcon icon={faArrowsRotate} />
+              {syncLoading?'Syncing...':'Sync data'}
+            </button>
+          </div>
+          
         )}
+
         
       </div>
       
@@ -611,7 +624,6 @@ const Catalog = () => {
           </div>
         </nav>
 
-      <ResourceStatusModal open={statusModal} close={() => setStatusModal(false)} content={statusModalContent} isOnline={isOnline} />
       <CatalogFilterModal open={openFilter} close={()=>setOpenFilter(false)}/>
       <CatalogImport open={isOpen} close={()=>setIsOpen(false)}/>
     </div>
