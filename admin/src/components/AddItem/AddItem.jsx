@@ -370,8 +370,14 @@ const AddItem = () => {
     const handleSaveResourceOffline = async ()=>{
         if (formValidation() === true) {
             setLoading(true)
+            
             try{
-                const response = await saveResourceOffline(bookData);
+                const updatedBookData = {
+                    ...bookData,      // Spread the existing bookData
+                    username: username // Add the username to the bookData object
+                };
+
+                const response = await saveResourceOffline(updatedBookData);
                 navigate('/catalog')
                 window.toast.fire({icon:"success", title:"Resource added successfully"})
             }catch(err){

@@ -97,3 +97,59 @@ export const initDB = async (status, type, publisher, publisherInfo, author, adv
         }
     })
 };
+
+export const resetDBExceptResources = async (status, type, publisher, publisherInfo, author, adviser, department, topic) => {
+    const db = await openDB(dbName, version);
+    
+    const transaction = db.transaction(db.objectStoreNames, "readwrite");
+
+    for (const storeName of db.objectStoreNames) {
+        if (storeName !== "resources") {
+            const store = transaction.objectStore(storeName);
+            await store.clear();
+        }
+    }
+
+    // Repopulate each store after clearing
+    if (Array.isArray(status)) {
+        const store = transaction.objectStore("availability");
+        status.forEach(stat => store.add(stat));
+    }
+
+    if (Array.isArray(type)) {
+        const store = transaction.objectStore("resourcetype");
+        type.forEach(t => store.add(t));
+    }
+
+    if (Array.isArray(publisher)) {
+        const store = transaction.objectStore("publisher");
+        publisher.forEach(pub => store.add(pub));
+    }
+
+    if (Array.isArray(publisherInfo)) {
+        const store = transaction.objectStore("publisherInfo");
+        publisherInfo.forEach(pub => store.add(pub));
+    }
+
+    if (Array.isArray(author)) {
+        const store = transaction.objectStore("author");
+        author.forEach(a => store.add(a));
+    }
+
+    if (Array.isArray(adviser)) {
+        const store = transaction.objectStore("adviser");
+        adviser.forEach(adv => store.add(adv));
+    }
+
+    if (Array.isArray(department)) {
+        const store = transaction.objectStore("department");
+        department.forEach(dept => store.add(dept));
+    }
+
+    if (Array.isArray(topic)) {
+        const store = transaction.objectStore("topic");
+        topic.forEach(top => store.add(top));
+    }
+
+    await transaction.done;
+};
