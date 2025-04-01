@@ -49,8 +49,8 @@ export const getCatalogDetailsOffline = async () => {
 
             catalog.push({
                 resource_id: resource.resource_id,
-                type_id: resource.type_id,
-                dept_id: resource.dept_id,
+                type_id: resource.mediaType,
+                dept_id: resource.department,
                 topic_id: resource.topic,
                 resource_title: resource.title,
                 type_name: resourceType,

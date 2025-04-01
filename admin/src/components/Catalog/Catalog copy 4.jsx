@@ -81,7 +81,8 @@ const Catalog = () => {
   // This useEffect triggers search when keyword changes, including empty string
   useEffect(() => {
     // Skip the initial render
-    if (keyword=='') {
+    const isInitialRender = keyword == '';
+    if (!isInitialRender) {
       if (isOnline) {
         getCatalogOnline();
       } else {
@@ -187,42 +188,7 @@ const Catalog = () => {
     try {
       setLoading(true);
       const data = await getCatalogDetailsOffline();
-      if (resetPage) {
-        setCurrentPage(1);
-        setSelectedFilters({ title: '', author: '', type: '', department: '', topic: '', isArchived:0 });
-        setSortOrder({ title: 0, author: 0 });
-      }
-
-      let filteredData = data;
-      if (keyword !== '') {
-        // Filter the data based on the keyword
-        filteredData = data.filter(item => {
-          console.log(item)
-          // Check if the title includes the keyword (case-insensitive)
-          const titleMatch = item.resource_title.toLowerCase().includes(keyword.toLowerCase());
-
-          // Check if any author name in the array matches the keyword (case-insensitive)
-          const authorMatch = Array.isArray(item.author_names) && item.author_names.some(author =>
-            author.toLowerCase().includes(keyword.toLowerCase())
-          );
-
-          // Return true if either the title or any author name matches the keyword
-          return titleMatch || authorMatch;
-        });
-      }
-
-      // Apply filters for type, department, topic
-      if (selectedFilters.type) {
-        filteredData = filteredData.filter(item => item.type_id == selectedFilters.type);
-      }
-      if (selectedFilters.department) {
-        filteredData = filteredData.filter(item => item.dept_id == selectedFilters.department);
-      }
-      if (selectedFilters.topic) {
-        filteredData = filteredData.filter(item => item.topic_id == selectedFilters.topic);
-      }
-
-      setCatalog(filteredData);
+      setCatalog(data);
     } catch (error) {
       console.error('Error fetching offline catalog data:', error);
     } finally {
@@ -519,16 +485,16 @@ const Catalog = () => {
           <tr>
             <td>
               Title
-             
+              {isOnline && (
                 <FontAwesomeIcon
                   icon={sortOrder.title === 1 ? faArrowUp : sortOrder.title === 2 ? faArrowDown : faArrowUpWideShort}
                   className={`sort-icon ps-2 ${sortOrder.title !== 0 ? 'active' : ''}`}
                   onClick={() => toggleSort('title')}
                 />
-              
+              )}
             </td>
             <td>Type
-              <select 
+              {isOnline ? <select 
                 value={selectedFilters.type}
                 className='sort' 
                 onChange={(e) => handleSelectedFilter('type', e.target.value)}>
@@ -536,21 +502,21 @@ const Catalog = () => {
                 {type.length > 0 ? type.map(item => {
                   return <option key={item.type_id} value={item.type_id}>{item.type_name}</option>
                 }) : ''}
-              </select> 
+              </select> : ''}
             </td>
             <td>
               Authors
-            
+              {isOnline && (
                 <FontAwesomeIcon
                   icon={sortOrder.author === 1 ? faArrowUp : sortOrder.author === 2 ? faArrowDown : faArrowUpWideShort}
                   className={`sort-icon ps-2 ${sortOrder.author !== 0 ? 'active' : ''}`}
                   onClick={() => toggleSort('author')}
                 />
-              
+              )}
             </td>
             <td>
               Department
-              
+              {isOnline ?
                 <select 
                   value={selectedFilters.department}
                   className='sort' 
@@ -559,10 +525,10 @@ const Catalog = () => {
                   {department.length > 0 ? department.map(item => {
                     return <option key={item.dept_id} value={item.dept_id}>{item.dept_name}</option>
                   }) : ''}
-                </select>
+                </select> : ''}
             </td>
             <td>Topic
-              
+              {isOnline ?
                 <select 
                   value={selectedFilters.topic}
                   className='sort' 
@@ -571,7 +537,7 @@ const Catalog = () => {
                   {topic.length > 0 ? topic.map(item => {
                     return <option key={item.topic_id} value={item.topic_id}>{item.topic_name}</option>
                   }) : ''}
-                </select>
+                </select> : ''}
             </td>
             <td>Copies</td>
             {/* <td>Status</td> */}
