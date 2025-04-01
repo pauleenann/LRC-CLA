@@ -113,17 +113,11 @@
         /* width: 80px; */
         /* background-color: var(--tup-color); */
         color: var(--tup-color) !important;
+        outline: none;
+        border: none;
 }
 
-.patrons-container .patron-edit-button:hover,
-.patrons-container .patron-edit-button:active,
-.patrons-container .patron-edit-button:focus,
-.patrons-container .patron-view-button:hover,
-.patrons-container .patron-view-button:active,
-.patrons-container .patron-view-button:focus{
-    background-color: var(--tup-color);
-    color: var(--white) !important;
-}
+
 
 .pagination {
     display: flex;

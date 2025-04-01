@@ -915,13 +915,10 @@ export const importCatalog = async (req, res) => {
 
         // 1. Iterate through each element
         for (const data of importData) {
-            
-
-
             // 2. Get department ID
             const deptQ = 'SELECT dept_id FROM department WHERE dept_name = ?';
             const deptId = await new Promise((resolve, reject) => {
-                db.query(deptQ, [data['department'].toLowerCase().trim()], (err, result) => {
+                db.query(deptQ, [data['Department'].toLowerCase()], (err, result) => {
                     if (err) reject(err);
                     else resolve(result.length ? result[0].dept_id : null);
                 });
@@ -932,18 +929,20 @@ export const importCatalog = async (req, res) => {
             if (selectedType != 4) {
                 const topicQ = 'SELECT topic_id FROM topic WHERE topic_name = ?';
                 topicId = await new Promise((resolve, reject) => {
-                    db.query(topicQ, [data['topic'].toLowerCase().trim()], (err, result) => {
+                    db.query(topicQ, [data['Topic'].toLowerCase()], (err, result) => {
                         if (err) reject(err);
                         else resolve(result.length ? result[0].topic_id : null);
                     });
                 });
             }
 
-            // 4. Organize authors (Trim Spaces)
-            const authors = data['authors']
-                ? data['authors'].split(',').map(author => author.trim())
+            // 4. Organize authors
+            const authors = data['Authors']
+                ? data['Authors'].includes(',')
+                    ? data['Authors'].split(',')
+                    : [data['Authors']]
                 : [];
-            console.log('authors:', authors);
+            console.log('Authors:',authors);
 
             // 5. Organize advisers and publishers
             let pub;
@@ -951,50 +950,54 @@ export const importCatalog = async (req, res) => {
             if (selectedType == 1) {
                 pub = {
                     pub_id: 0,
-                    pub_name: data['publisher name'] || '',
-                    pub_add: data['publisher address'] || '',
-                    pub_email: data['publisher email'] || '',
-                    pub_phone: data['publisher number'] || '',
-                    pub_web: data['publisher website'] || ''
+                    pub_name: data['Publisher Name'],
+                    pub_add: data['Publisher Address'],
+                    pub_email: data['Publisher Email'],
+                    pub_phone: data['Publisher Number'],
+                    pub_web: data['Publisher Website']
                 };
-            } else if (selectedType == 4 && data['adviser']) {
-                const nameParts = data['adviser'].trim().split(' ');
-                adviserFname = nameParts.slice(0, -1).join(" "); // "John Michael"
-                adviserLname = nameParts.length > 1 ? nameParts[nameParts.length - 1] : ''; // "Doe"
+            } else if (selectedType == 4) {
+                const adviser = data['Adviser'].split(' ');
+                adviserFname = adviser[0];
+                adviserLname = adviser[1];
             }
 
             // 6. Insert Resources
             const resourceId = await importResources(res, deptId, data, authors, username, selectedType);
             if (!resourceId) {
-                console.log(`Skipping resource: ${data['title']} (Insert Failed)`);
+                console.log(`Skipping resource: ${data['Title']}`);
                 continue;
             }
+        
 
-            insertedResources.push({ title: data['title'], id: resourceId });
+            insertedResources.push({ title: data['Title'], id: resourceId });
 
             // 7. Insert Books if selected type is 1 (Book)
             if (selectedType == '1') {
                 const pubId = await checkIfPubExist(pub);
                 console.log('Publisher ID:', pubId);
-                await importBook(data['isbn'].replace(/\s+/g, ''), resourceId, pubId, topicId, imageFile);
-            } else if (['2', '3'].includes(selectedType)) {
+                await importBook(data['ISBN'].replace(/\s+/g, ''), resourceId, pubId, topicId, imageFile);
+            }else if(['2', '3'].includes(selectedType)){
                 const jn = [
-                    data['volume'] || '',
-                    data['issue'] || '',
+                    data['Volume'] || '',
+                    data['Issue'] || '',
                     imageFile, 
                     resourceId,
-                    topicId
+                    topicId,
                 ];
-                await importJournalNewsletter(jn, res);
-            } else {
-                const adviser = [adviserFname, adviserLname];
+
+                await importJournalNewsletter(jn,res)
+            }else{
+                const adviser = [
+                    adviserFname,
+                    adviserLname
+                ]
                 
-                // Get adviserId
-                const adviserID = await checkAdviserIfExist(adviser);
-                console.log('Adviser ID:', adviserID);
-                
-                // Insert into thesis table
-                await importThesis(resourceId, adviserID);
+                //get adviserId
+                const adviserID = await checkAdviserIfExist(adviser)
+                console.log('adviserId: ',adviserID)
+                //insert to thesis table
+                await importThesis(resourceId,adviserID) 
             }
         }
 
@@ -1009,12 +1012,13 @@ export const importCatalog = async (req, res) => {
     }
 };
 
+
 //insert resource
 const importResources = async (res, deptId, data, authors, username, selectedType) => {
     return new Promise(async (resolve, reject) => {
         try {
             // Check if the resource exists
-            const resourceExists = await checkResourceIfExist(data['title'],data['authors']);
+            const resourceExists = await checkResourceIfExist(data['Title'],data['Authors']);
 
             if (resourceExists) {
                 console.log('Resource already exists.');
@@ -1037,11 +1041,11 @@ const importResources = async (res, deptId, data, authors, username, selectedTyp
             `;
 
             const resourceValues = [
-                data['title'],
-                data['description'] || '',
-                data['published date'],
-                data['quantity'],
-                data['quantity'],
+                data['Title'],
+                data['Description'] || '',
+                data['Published Date'],
+                data['Quantity'],
+                data['Quantity'],
                 selectedType==1?1:0,
                 deptId,
                 selectedType,

@@ -14,6 +14,7 @@ const CatalogImport = ({open, close}) => {
     const [acceptedColumns, setAcceptedColumns] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [importSuccess, setImportSuccess] = useState(false);
+    const [importFailed, setImportFailed] = useState(false);
     const [error, setError] = useState('')
     
     const bookColumns = [
@@ -49,7 +50,7 @@ const CatalogImport = ({open, close}) => {
         'title',
         'description',
         'quantity',
-        'adivisers',
+        'adviser',
         'published date'
     ]
     
@@ -74,19 +75,20 @@ const CatalogImport = ({open, close}) => {
         setImportData([])
         setError('')
         setImportSuccess(false)
-    }, [])
+        setImportFailed(false)
+    }, [selectedType])
 
     // Handle file upload and parse Excel file
     const handleFileUpload = async (event) => {
         const file = event.target.files[0];
         if (!file) return;
-        
+
         setError('');
         setImportData([]);
-    
+
         const reader = new FileReader();
         reader.readAsBinaryString(file);
-    
+
         reader.onload = async (e) => {
             let columnNames;
             let columnError = [];
@@ -94,55 +96,89 @@ const CatalogImport = ({open, close}) => {
             const workbook = XLSX.read(data, { type: 'binary' });
             const sheetName = workbook.SheetNames[0];
             const sheet = workbook.Sheets[sheetName];
-    
-            const jsonData = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+            // Convert Excel data to JSON
+            let jsonData = XLSX.utils.sheet_to_json(sheet, { defval: "" });
             console.log("Parsed Excel Data:", jsonData);
 
             if (jsonData.length > 0) {
-                columnNames = Object.keys(jsonData[0]).map(key => key.toLowerCase());
-                console.log(columnNames);
-                
+                // **Remove only trailing spaces and convert column names to lowercase**
+                columnNames = Object.keys(jsonData[0]).map(key => key.replace(/\s+$/, "").toLowerCase());
+                console.log("Formatted Column Names:", columnNames);
+
+                // Check for missing columns
                 acceptedColumns.forEach(item => {
                     if (!columnNames.includes(item)) {
                         columnError.push(item);
                     }
                 });
-                
+
+                // Set error message if columns are missing
                 setError(columnError.length > 0 ? `Excel file should contain the following column names:  ${columnError.join(', ')}` : '');
-                
+
                 if (columnError.length === 0) {
-                    setImportData(jsonData);
+                    // **Remove only trailing spaces from all column values**
+                    const cleanedData = jsonData.map(row => {
+                        return Object.fromEntries(
+                            Object.entries(row).map(([key, value]) => [
+                                key.replace(/\s+$/, "").toLowerCase(), // Remove trailing spaces in column names
+                                typeof value === 'string' ? value.replace(/\s+$/, "") : value // Remove trailing spaces in values
+                            ])
+                        );
+                    });
+
+                    setImportData(cleanedData);
                 }
             } else {
                 setError('File appears to be empty');
             }
         };
-        
+
         reader.onerror = () => {
             setError('Error reading file');
         };
     };
 
-
     const handleImport = async () => {
         try {
             setIsLoading(true);
             // Send the data to the server
-            await axios.post('http://localhost:3001/api/resources/import', {importData,selectedType,username});
+            const response = await axios.post('http://localhost:3001/api/resources/import', {importData,selectedType,username});
             
-            setImportSuccess(true);
-            setTimeout(() => {
+            console.log(response)
+
+            if(response.data.insertedRecords.length==0){
+                setImportFailed(true);
                 setImportData([])
-                close();
-                setImportSuccess(false);
-                window.location.reload()
-            }, 2000);
+                // window.location.reload()
+            }else{
+                setImportSuccess(true);
+                setTimeout(() => {
+                    setImportData([])
+                    close();
+                    setImportSuccess(false);
+                    setError('')
+                    window.location.reload()
+                }, 2000);
+            }
+            
+            
+            
         } catch (err) {
             console.error('Error importing catalog:', err);
             setError('Failed to import catalog data. Please try again.');
         } finally {
             setIsLoading(false);
         }
+    }
+
+    const closeModal = ()=>{
+        setImportData([])
+        setError('')
+        setImportSuccess(false)
+        setImportFailed(false)
+        setSelectedType('1')
+        close()
     }
 
     if (!open) {
@@ -158,7 +194,7 @@ const CatalogImport = ({open, close}) => {
                 {/* header */}
                 <div className='d-flex align-items-center justify-content-between'>
                     <h4 className='m-0'>Import Catalog Data</h4>
-                    <FontAwesomeIcon icon={faX} className="cursor-pointer" onClick={close}/>
+                    <FontAwesomeIcon icon={faX} className="cursor-pointer" onClick={closeModal}/>
                 </div>
                 
                 {/* body */}
@@ -166,6 +202,11 @@ const CatalogImport = ({open, close}) => {
                     {importSuccess && (
                         <div className="alert alert-success">
                             Data imported successfully!
+                        </div>
+                    )}
+                    {importFailed && (
+                        <div className="alert alert-danger">
+                            Failed to import data! Please make sure that fields are not empty.
                         </div>
                     )}
 
@@ -207,7 +248,7 @@ const CatalogImport = ({open, close}) => {
                     <div className='d-flex justify-content-end gap-2 mt-2'>
                         <button 
                             className="btn btn-outline-secondary"
-                            onClick={close}
+                            onClick={closeModal}
                             disabled={isLoading}
                         >
                             Cancel

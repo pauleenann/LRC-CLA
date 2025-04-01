@@ -327,7 +327,8 @@ export const patron = (req, res) => {
                 p.patron_lname, 
                 p.patron_email, 
                 p.category, 
-                cr.course_name;
+                cr.course_name
+            ORDER BY p.tup_id DESC
     `;
 
     db.query(q, (err, results) => {
@@ -652,6 +653,12 @@ export const importPatron = async (req, res) => {
 
         await Promise.all(patrons.map(async (item) => {
             const tupId = item['TUP ID'];
+
+            // Validate TUP ID format (TUPM-00-0000)
+            const tupIdRegex = /^TUPM-\d{2}-\d{4}$/;
+            if (!tupIdRegex.test(tupId)) {
+                return; // Skip invalid TUP ID
+            }
 
             // Check if patron already exists
             const checkPatronQuery = `SELECT * FROM patron WHERE tup_id = ?`;
