@@ -998,7 +998,7 @@ const importResources = async (res, deptId, data, authors, username, selectedTyp
     return new Promise(async (resolve, reject) => {
         try {
             // Check if the resource exists
-            const resourceExists = await checkResourceIfExist(data['Title']);
+            const resourceExists = await checkResourceIfExist(data['Title'],data['Authors']);
 
             if (resourceExists) {
                 console.log('Resource already exists.');
@@ -1101,3 +1101,4 @@ const importJournalNewsletter = async(jn,res)=>{
         return res.send({status: 201, message:'Journal/Newsletter inserted successfully.'});
     });
 }
+
