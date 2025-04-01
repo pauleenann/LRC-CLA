@@ -203,7 +203,8 @@ export const catalog = (req, res) => {
             resourcetype.type_name,
             department.dept_name,
             topic.topic_name,
-            resources.resource_published_date;
+            resources.resource_published_date
+        ORDER BY resources.timestamp DESC
     `;
 
     console.log(q);

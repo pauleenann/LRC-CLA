@@ -88,6 +88,7 @@ const Patrons = () => {
                 
             return matchesSearch && matchesCategory; //if true, it returns the patron object
         });
+        console.log(filtered)
         setFilteredPatrons(filtered);
         setCurrentPage(1);
     };
@@ -98,7 +99,7 @@ const Patrons = () => {
         }
     };
 
-    const paginatedPatrons = filteredPatrons.slice(
+    const paginatedPatrons = filteredPatrons.length>0&&filteredPatrons.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
@@ -206,9 +207,9 @@ const Patrons = () => {
                         <tr>
                             <td colSpan="8" className='no-data-box text-center'>
                                 <div className='d-flex flex-column align-items-center gap-2 my-3'>
-                                    <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
-                                    <span>'{searchTerm}' resource not available.<br/>Please try again.</span>
-                                    <button className='btn btn-secondary' onClick={handleClearFilter}>Clear Filter</button>
+                                    <FontAwesomeIcon icon={faExclamationCircle} className="fs-2" />
+                                    <span className=''>Resource not available.<br/>Please try again.</span>
+                                    <button className='btn btn-warning' onClick={handleClearFilter}>Clear Filter</button>
                                 </div>
                             </td>
                         </tr>

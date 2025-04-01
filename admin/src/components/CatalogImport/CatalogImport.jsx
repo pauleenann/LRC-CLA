@@ -138,8 +138,8 @@ const CatalogImport = ({open, close}) => {
                 window.location.reload()
             }, 2000);
         } catch (err) {
-            console.error('Error importing patrons:', err);
-            setError('Failed to import patron data. Please try again.');
+            console.error('Error importing catalog:', err);
+            setError('Failed to import catalog data. Please try again.');
         } finally {
             setIsLoading(false);
         }
