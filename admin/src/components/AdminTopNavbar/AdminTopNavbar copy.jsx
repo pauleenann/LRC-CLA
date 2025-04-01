@@ -13,7 +13,7 @@ import { fetchAuthorOffline, fetchAuthorOnline } from '../../features/authorSlic
 import { fetchAdviserOffline, fetchAdviserOnline } from '../../features/adviserSlice';
 import { fetchDepartmentOffline, fetchDepartmentOnline } from '../../features/departmentSlice';
 import { fetchTopicOffline, fetchTopicOnline } from '../../features/topicSlice';
-import { initDB, resetDBExceptResources } from '../../indexedDb/initializeIndexedDb';
+import { initDB, refreshNonResourceStores, resetDBExceptResources } from '../../indexedDb/initializeIndexedDb';
 import { fetchPublisherInfo } from '../../features/publisherInfoSlice';
 
 const AdminTopNavbar = () => {
@@ -125,16 +125,38 @@ const AdminTopNavbar = () => {
         dispatch(fetchTopicOffline());
     }
 
+    
+    // This useEffect now only handles the REFRESH when online with new data
     useEffect(() => {
-        if (status.length > 0 && type.length > 0 && publisher.length > 0 && publisherInfo.length > 0 &&
-            author.length > 0 && adviser.length > 0 && department.length > 0 && topic.length > 0) {
-            
-            initDB(status, type, publisher, publisherInfo, author, adviser, department, topic)
+        // Check if all required data arrays fetched from online source are populated
+        const allDataLoaded = status.length > 0 && type.length > 0 && publisher.length > 0 && publisherInfo.length > 0 &&
+            author.length > 0 && adviser.length > 0 && department.length > 0 && topic.length > 0;
+
+        if (isOnline === true && allDataLoaded) { // Explicitly check isOnline === true
+            console.log("Online and all necessary data loaded, refreshing IndexedDB non-resource stores...");
+
+            // Call the corrected refresh function directly.
+            // No need to call initDB here anymore for the refresh cycle.
+            refreshNonResourceStores(status, type, publisher, publisherInfo, author, adviser, department, topic)
                 .then(() => {
-                    resetDBExceptResources(status, type, publisher, publisherInfo, author, adviser, department, topic);
+                    console.log("Successfully refreshed non-resource stores in IndexedDB.");
+                })
+                .catch(error => {
+                    console.error("Failed to refresh non-resource stores in IndexedDB:", error);
+                    // Handle error appropriately (e.g., show a message to the user)
                 });
+
+        } else if (isOnline === false) {
+            console.log("Offline. Will rely on existing IndexedDB data (fetched via getOfflineData).");
+            // The getOfflineData logic should be handling reads from IndexedDB here or elsewhere
+            getOfflineData(); // Make sure this function correctly reads from IDB
+        } else {
+            // Cases: isOnline is null (initial check) OR isOnline is true but data isn't loaded yet.
+             console.log("Waiting for online status check or for all data to load...");
         }
-    }, [status, type, publisher, publisherInfo, author, adviser, department, topic]);
+        // Add dispatch to dependencies if any thunks inside getOfflineData use it,
+        // otherwise, base dependencies on what triggers the effect.
+    }, [status, type, publisher, publisherInfo, author, adviser, department, topic, isOnline, dispatch]);
     
 
     return (

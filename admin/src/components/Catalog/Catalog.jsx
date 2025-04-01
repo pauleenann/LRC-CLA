@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './Catalog.css'
 import axios from 'axios'
-import { getAllFromStore, getCatalogDetailsOffline} from '../../indexedDb/getDataOffline'
+import { getAllFromStore, getAllResources, getCatalogDetailsOffline} from '../../indexedDb/getDataOffline'
 import { deleteResourceFromIndexedDB } from '../../indexedDb/syncData'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight, faSearch, faPlus, faArrowsRotate, faArrowDown, faArrowUp, faArrowUpWideShort, faExclamationCircle, faArchive, faEye, faUpload } from '@fortawesome/free-solid-svg-icons';
@@ -186,7 +186,7 @@ const Catalog = () => {
   const getCatalogOffline = async (resetPage = false) => {
     try {
       setLoading(true);
-      const data = await getCatalogDetailsOffline();
+      const data = await getCatalogDetailsOffline(username);
       if (resetPage) {
         setCurrentPage(1);
         setSelectedFilters({ title: '', author: '', type: '', department: '', topic: '', isArchived:0 });
@@ -287,7 +287,7 @@ const Catalog = () => {
   /*------------------------SYNC DATA------------------------------ */
   const syncData2DB = async () => {
     setSyncLoading(true)
-    const resources = await getAllFromStore('resources');
+    const resources = await getAllResources(username);
     let duplicated = [];
     for(const resource of resources){
       const formData = new FormData();

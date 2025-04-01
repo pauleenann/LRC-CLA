@@ -8,8 +8,22 @@ export const getAllFromStore = async (storeName) => {
     return await store.getAll();
 };
 
+export const getAllResources = async (username) => {
+    const db = await initDB();
+    const txResource = db.transaction('resources', 'readonly');
+    const resourceStore = txResource.objectStore('resources');
+    const resources = await resourceStore.getAll(); // Ensure this is awaited
+    await txResource.done;
+
+    // Filter resources by username
+    const filteredResources = resources.filter(resource => resource.username === username);
+    return filteredResources
+};
+
+
+
 //displays resources in catalog page
-export const getCatalogDetailsOffline = async () => {
+export const getCatalogDetailsOffline = async (username) => {
     const db = await initDB();
     const catalog = [];
 
@@ -20,26 +34,29 @@ export const getCatalogDetailsOffline = async () => {
         const resources = await resourceStore.getAll(); // Ensure this is awaited
         await txResource.done;
 
-        //get department
+        // Filter resources by username
+        const filteredResources = resources.filter(resource => resource.username === username);
+
+        // Get department
         const txDept = db.transaction('department','readonly');
         const deptStore = txDept.objectStore('department')
-        const department = await deptStore.getAll()
-        await txDept.done
+        const department = await deptStore.getAll();
+        await txDept.done;
         
-        // get topic
+        // Get topic
         const txTopic = db.transaction('topic','readonly');
-        const topicStore = txTopic.objectStore('topic')
-        const topic = await topicStore.getAll()
-        await txTopic.done
+        const topicStore = txTopic.objectStore('topic');
+        const topic = await topicStore.getAll();
+        await txTopic.done;
 
-        //get related type
+        // Get related type
         const txType = db.transaction('resourcetype','readonly');
         const typeStore = txType.objectStore('resourcetype');
-        const types = await typeStore.getAll()
-        await txType.done
+        const types = await typeStore.getAll();
+        await txType.done;
 
         // Process and store data
-        for (const resource of resources) {
+        for (const resource of filteredResources) {
             console.log(resource);
             const resourceType = types.find(type => type.type_id == resource.mediaType)?.type_name || '';
 
@@ -54,22 +71,21 @@ export const getCatalogDetailsOffline = async () => {
                 topic_id: resource.topic,
                 resource_title: resource.title,
                 type_name: resourceType,
-                author_names: resource.authors.length>1?resource.authors.join(', '):resource.authors,
-                // dept_shelf_no: shelfNo,
+                author_names: resource.authors.length > 1 ? resource.authors.join(', ') : resource.authors,
                 dept_name: deptName,
-                topic_name:topicName,
+                topic_name: topicName,
                 resource_quantity: resource.quantity,
                 original_resource_quantity: resource.quantity
-            })
+            });
         }
 
-         // Ensure transaction completes (or use txResource.complete if available)
     } catch (error) {
         console.error("Error fetching catalog details:", error);
     }
 
     return catalog;
 };
+
 
 
 //get all unsynced data
