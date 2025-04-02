@@ -20,6 +20,7 @@ export const checkoutSearch = async (req, res) => {
             r.resource_title AS title, 
             r.resource_quantity AS quantity, 
             r.resource_id,
+            r.resource_is_archived,
             GROUP_CONCAT(DISTINCT CONCAT(a.author_fname, ' ', a.author_lname) ORDER BY a.author_lname SEPARATOR ', ') AS authors
         FROM 
             book b
@@ -32,6 +33,7 @@ export const checkoutSearch = async (req, res) => {
         WHERE 
             (b.book_isbn LIKE ? OR r.resource_title LIKE ?  )
             AND r.resource_quantity > 0
+            AND r.resource_is_archived = 0
         GROUP BY 
             b.book_isbn, b.filepath, r.resource_id
         LIMIT 10;
