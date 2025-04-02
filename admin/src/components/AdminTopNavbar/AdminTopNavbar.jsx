@@ -126,16 +126,21 @@ const AdminTopNavbar = () => {
     }
 
     useEffect(() => {
-        if (status.length > 0 && type.length > 0 && publisher.length > 0 && publisherInfo.length > 0 &&
-            author.length > 0 && adviser.length > 0 && department.length > 0 && topic.length > 0) {
+        initDB(status, type, publisher, publisherInfo, author, adviser, department, topic)
+            .then(() => {
+                resetDBExceptResources(status, type, publisher, publisherInfo, author, adviser, department, topic);
+            });
+        // if (status.length > 0 && type.length > 0 && publisher.length > 0 && publisherInfo.length > 0 &&
+        //     author.length > 0 && adviser.length > 0 && department.length > 0 && topic.length > 0) {
             
-            initDB(status, type, publisher, publisherInfo, author, adviser, department, topic)
-                .then(() => {
-                    resetDBExceptResources(status, type, publisher, publisherInfo, author, adviser, department, topic);
-                });
-        }
+        //     initDB(status, type, publisher, publisherInfo, author, adviser, department, topic)
+        //         .then(() => {
+        //             resetDBExceptResources(status, type, publisher, publisherInfo, author, adviser, department, topic);
+        //         });
+        // }
     }, [status, type, publisher, publisherInfo, author, adviser, department, topic]);
     
+    // console.log(status)
 
     return (
         <div className="top-navbar bg-light">

@@ -73,6 +73,6 @@
     color: var(--tup-color);
 }
 
-.audit-container input, .audit-container select, .audit-container button{
+/* .audit-container input, .audit-container select, .audit-container button{
     height: 50px;
-}
+} */

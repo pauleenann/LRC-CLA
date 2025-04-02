@@ -109,7 +109,7 @@ const Reports = () => {
         {/* search bar, and sort and create */}
         <div className='d-flex justify-content-between mt-4'>
           {/* search bar */}
-          <div className='input-group w-50 shadow-sm'>
+          <div className='input-group w-50 shadow-sm z-0'>
             <input 
               type="text" 
               className='form-control' 
