@@ -1097,7 +1097,7 @@ const importResources = async (res, deptId, data, authors, username, selectedTyp
 
                 // Get the `resource_id` of the newly inserted row
                 const resourceId = results.insertId;
-                // logAuditAction(username, 'INSERT', 'resources', null, null, JSON.stringify("Added a new resource: '" + data['Title'] + "'"));
+                logAuditAction(username, 'INSERT', 'resources', resourceId, null, JSON.stringify("Added a new resource: '" + data['title'] + "'"));
                 try {
                     // Insert authors for the resource
                     await insertAuthors(res, authors, resourceId);
