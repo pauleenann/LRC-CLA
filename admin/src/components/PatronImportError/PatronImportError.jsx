@@ -26,7 +26,7 @@ const PatronImportError = ({open, close, invalidPatrons}) => {
                 {/* body */}
                 <div className='mt-4 d-flex flex-column gap-3'>
                     <div className="alert alert-danger">
-                        Failed to import patron\s due to the following reasons:
+                        Failed to import some patron\s due to the following reasons:
                     </div>
                     <div className="data-box">  
                         {invalidPatrons&&invalidPatrons.map((item, index) => (
