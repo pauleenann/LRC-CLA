@@ -6,6 +6,7 @@ import { faX } from '@fortawesome/free-solid-svg-icons';
 import * as XLSX from 'xlsx'; // Import xlsx library
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import CatalogImportError from '../CatalogImportError/CatalogImportError';
 
 const CatalogImport = ({open, close}) => {
     const {username} = useSelector(state=>state.username)
@@ -16,6 +17,7 @@ const CatalogImport = ({open, close}) => {
     const [importSuccess, setImportSuccess] = useState(false);
     const [importFailed, setImportFailed] = useState(false);
     const [error, setError] = useState('')
+    const [invalidResources, setInvalidResources] = useState([])
     
     const bookColumns = [
         'isbn',
@@ -146,13 +148,13 @@ const CatalogImport = ({open, close}) => {
             const response = await axios.post('http://localhost:3001/api/resources/import', {importData,selectedType,username});
             
             console.log(response)
+            console.log(response.data.invalidResources)
 
-            if(response.data.insertedRecords.length==0){
+            if(response.data.invalidResources.length>=0&&response.data.insertedRecords.length==0){
+                setInvalidResources(response.data.invalidResources)
                 setImportFailed(true);
-                setImportData([])
-                // window.location.reload()
             }else{
-                setImportSuccess(true);
+            setImportSuccess(true);
                 setTimeout(() => {
                     setImportData([])
                     close();
@@ -202,11 +204,6 @@ const CatalogImport = ({open, close}) => {
                     {importSuccess && (
                         <div className="alert alert-success">
                             Data imported successfully!
-                        </div>
-                    )}
-                    {importFailed && (
-                        <div className="alert alert-danger">
-                            Failed to import data! Please make sure that fields are not empty.
                         </div>
                     )}
 
@@ -263,6 +260,7 @@ const CatalogImport = ({open, close}) => {
                     </div>
                 </div>
             </div>
+        <CatalogImportError open={importFailed} close={()=>setImportFailed(false)} invalidResources={invalidResources}/>
         </div>,
         document.getElementById('portal')
     )

@@ -912,10 +912,27 @@ export const importCatalog = async (req, res) => {
         console.log(selectedType);
 
         let insertedResources = []; // Array to store successfully inserted resources
+        let invalidResources = []
 
         // 1. Iterate through each element
         for (const data of importData) {
-            
+            const fieldsRequired = ['quantity', 'title', 'authors', 'published date', 'department'];
+            if (selectedType == 4) fieldsRequired.push('adviser');
+            if (selectedType != 4) fieldsRequired.push('topic');
+
+            // **Check for missing fields**
+            const missingFields = fieldsRequired.filter(field => 
+                !data[field] || data[field] === undefined || data[field] === null
+            );
+
+            if (missingFields.length > 0) {
+                invalidResources.push({
+                    title: data['title'] || "Unknown Title",
+                    reason: "Missing/empty required fields",
+                    missingFields
+                });
+                continue;
+            }
 
 
             // 2. Get department ID
@@ -927,7 +944,16 @@ export const importCatalog = async (req, res) => {
                 });
             });
 
-            // 3. Get topic ID if selected type is book/journal/newsletter
+            // **Skip resource if department ID is not found**
+            if (!deptId) {
+                console.log(`Skipping resource: ${data['title']} (Department not found: ${data['department']})`);
+                invalidResources.push({
+                    title: data['title'],
+                    reason: `Department not found in database: ${data['department']}`
+                });
+                continue;
+            }
+
             let topicId = null;
             if (selectedType != 4) {
                 const topicQ = 'SELECT topic_id FROM topic WHERE topic_name = ?';
@@ -937,7 +963,18 @@ export const importCatalog = async (req, res) => {
                         else resolve(result.length ? result[0].topic_id : null);
                     });
                 });
+
+                // **Skip the resource if topic is not found**
+                if (!topicId) {
+                    console.log(`Skipping resource: Topic not found for ${data['topic']}`);
+                    invalidResources.push({ 
+                        title: data['title'], 
+                        reason: `Topic not found in database: ${data['topic']}`
+                    });
+                    continue; // Skip the rest of the logic and continue with the next item in the loop
+                }
             }
+
 
             // 4. Organize authors (Trim Spaces)
             const authors = data['authors']
@@ -967,6 +1004,10 @@ export const importCatalog = async (req, res) => {
             const resourceId = await importResources(res, deptId, data, authors, username, selectedType);
             if (!resourceId) {
                 console.log(`Skipping resource: ${data['title']} (Insert Failed)`);
+                invalidResources.push({
+                    title: data['title'],
+                    reason: "Resource already exist"
+                });
                 continue;
             }
 
@@ -1001,7 +1042,8 @@ export const importCatalog = async (req, res) => {
         // **Send a response after processing all items**
         res.status(200).json({
             message: 'Import completed successfully.',
-            insertedRecords: insertedResources
+            insertedRecords: insertedResources,
+            invalidResources: invalidResources
         });
     } catch (error) {
         console.error('Error in importCatalog:', error);
