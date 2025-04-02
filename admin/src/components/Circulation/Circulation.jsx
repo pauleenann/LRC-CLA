@@ -174,45 +174,42 @@ const Circulation = () => {
           <option value="overdue">Overdue</option>
         </select>
       </div>
-
-          {/* Date Range Row */}
-          <div className="date-filter d-flex align-items-center flex-wrap w-50">
-            <div className="d-flex align-items-center flex-grow-1 gap-2">
-              <div className="input-group">
-                <span className="input-group-text bg-white border-end-0">
-                  <FontAwesomeIcon icon={faCalendarAlt} className="text-muted" />
-                </span>
-                <input
-                  type="date"
-                  className="form-control border-start-0"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-              </div>
-              <span className="text-muted">to</span>
-              <div className="input-group">
-                <span className="input-group-text bg-white border-end-0">
-                  <FontAwesomeIcon icon={faCalendarAlt} className="text-muted" />
-                </span>
-                <input
-                  type="date"
-                  className="form-control border-start-0"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </div>
-            </div>
-            <button 
-              className="btn btn-warning ms-2 d-flex align-items-center" 
-              onClick={clearFilter}
-            >
-              {/* <FontAwesomeIcon icon={faTimes} className="me-2" /> */}
-              Clear Filters
-            </button>
+      
+      {/* Date Range Row */}
+      <div className="date-filter d-flex align-items-center flex-wrap w-50">
+        <div className="d-flex align-items-center flex-grow-1 gap-2">
+          <div className="input-group">
+            <span className="input-group-text bg-white border-end-0">
+              <FontAwesomeIcon icon={faCalendarAlt} className="text-muted" />
+            </span>
+            <input
+              type="date"
+              className="form-control border-start-0"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
+          <span className="text-muted">to</span>
+          <div className="input-group">
+            <span className="input-group-text bg-white border-end-0">
+              <FontAwesomeIcon icon={faCalendarAlt} className="text-muted" />
+            </span>
+            <input
+              type="date"
+              className="form-control border-start-0"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
           </div>
         </div>
+        <button 
+          className="btn btn-warning ms-2 d-flex align-items-center" 
+          onClick={clearFilter}
+        >
+          {/* <FontAwesomeIcon icon={faTimes} className="me-2" /> */}
+          Clear Filters
+        </button>
       </div>
-      
 
       <div className="table-box">
         <h2>Recent transactions</h2>
@@ -315,4 +312,4 @@ const Circulation = () => {
   );
 };
 
-export default Circulation; 
+export default Circulation;
