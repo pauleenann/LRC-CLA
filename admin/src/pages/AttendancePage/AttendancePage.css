@@ -15,19 +15,6 @@
   --transition: all 0.3s ease;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-  background-color: #e9ecef;
-  background-image:url("../../assets/attendance-bg.png");
-  background-position: center;
-  background-size:cover;
-}
 
 .attendance-container {
   display: flex;
@@ -36,13 +23,13 @@ body {
 }
 
 /* Header Styles */
-.header {
+.attendance-container .header {
   background: linear-gradient(135deg, var(--tup-color) 0%, var(--secondary-color) 100%);
   color: var(--text-light);
   padding: 16px;
 }
 
-.header-content {
+.attendance-container .header-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -51,35 +38,35 @@ body {
   width: 100%;
 }
 
-.logo-group {
+.attendance-container .logo-group {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.header-logo {
+.attendance-container .header-logo {
   height: 60px;
   width: auto;
   object-fit: contain;
 }
 
-.header-title {
+.attendance-container .header-title {
   text-align: center;
   flex-grow: 1;
 }
 
-.header-title h1 {
+.attendance-container .header-title h1 {
   font-size: 24px;
   margin-bottom: 8px;
   font-weight: 600;
 }
 
-.header-title h2 {
+.attendance-container .header-title h2 {
   font-size: 16px;
   font-weight: 400;
 }
 
-.datetime-display {
+.attendance-container .datetime-display {
   text-align: right;
   font-size: 14px;
   background-color: rgba(255, 255, 255, 0.1);
@@ -87,13 +74,13 @@ body {
   border-radius: var(--border-radius);
 }
 
-.datetime-display .date {
+.attendance-container .datetime-display .date {
   font-weight: bold;
   margin-bottom: 4px;
 }
 
 /* Main Content */
-.content {
+.attendance-container .content {
   flex: 1;
   padding: 32px 16px;
   max-width: 1200px;
@@ -104,7 +91,7 @@ body {
   align-items: flex-start;
 }
 
-.attendance-card {
+.attendance-container .attendance-card {
   background-color: white;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -114,7 +101,7 @@ body {
   transition: var(--transition);
 }
 
-.card-title {
+.attendance-container .card-title {
   color: var(--secondary-color);
   text-align: center;
   font-size: 24px;
@@ -123,7 +110,7 @@ body {
   padding-bottom: 16px;
 }
 
-.instructions {
+.attendance-container .instructions {
   text-align: center;
   margin-bottom: 24px;
   color: var(--text-dark);
@@ -131,7 +118,7 @@ body {
 }
 
 /* Success Panel */
-.student-info {
+.attendance-container .student-info {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -142,7 +129,7 @@ body {
   gap: 16px;
 }
 
-.welcome-icon {
+.attendance-container .welcome-icon {
   font-size: 48px;
   color: var(--success-color);
   display: flex;
@@ -154,34 +141,34 @@ body {
   border-radius: 50%;
 }
 
-.welcome-text {
+.attendance-container .welcome-text {
   text-align: left;
 }
 
-.welcome-message, .student-name {
+.attendance-container .welcome-message, .attendance-container .student-name {
   margin: 0;
   line-height: 1.2;
 }
 
-.welcome-message {
+.attendance-container .welcome-message {
   font-size: 18px;
   color: var(--text-dark);
 }
 
-.student-name {
+.attendance-container .student-name {
   font-size: 24px;
   font-weight: bold;
   color: var(--success-color);
 }
 
 /* Search Bar */
-.search-bar {
+.attendance-container .search-bar {
   display: flex;
   gap: 12px;
   margin-bottom: 24px;
 }
 
-.form-input {
+.attendance-container .form-input {
   flex-grow: 1;
   padding: 14px 20px;
   border: 1px solid var(--background-medium);
@@ -190,13 +177,13 @@ body {
   transition: var(--transition);
 }
 
-.form-input:focus {
+.attendance-container .form-input:focus {
   outline: none;
   border-color: var(--secondary-color);
   box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.2);
 }
 
-.search-button {
+.attendance-container .search-button {
   background-color: var(--tup-color);
   color: var(--text-light);
   border: none;
@@ -209,22 +196,22 @@ body {
   font-weight: 500;
 }
 
-.search-button:hover {
+.attendance-container  .search-button:hover {
   background-color: var(--secondary-color);
 }
 
-.search-button:active {
+.attendance-container .search-button:active {
   transform: scale(0.98);
 }
 
-.search-button.loading {
+.attendance-container .search-button.loading {
   background-color: var(--tup-color);
   cursor: not-allowed;
   opacity: 0.8;
 }
 
 /* Message Styles */
-.message {
+.attendance-container .message {
   padding: 16px;
   border-radius: var(--border-radius);
   text-align: center;
@@ -232,20 +219,20 @@ body {
   animation: fadeIn 0.3s ease;
 }
 
-.message.success {
+.attendance-container .message.success {
   background-color: rgba(40, 167, 69, 0.1);
   border: 1px solid rgba(40, 167, 69, 0.2);
   color: var(--success-color);
 }
 
-.message.error {
+.attendance-container .message.error {
   background-color: rgba(220, 53, 69, 0.1);
   border: 1px solid rgba(220, 53, 69, 0.2);
   color: var(--error-color);
 }
 
 /* Footer */
-.footer {
+.attendance-container .footer {
   background-color: var(--secondary-color);
   color: var(--text-light);
   text-align: center;
@@ -261,52 +248,52 @@ body {
 
 /* Responsive Styles */
 @media (max-width: 768px) {
-  .header-content {
+  .attendance-container .header-content {
     flex-direction: column;
     gap: 16px;
   }
   
-  .logo-group {
+  .attendance-container .logo-group {
     justify-content: center;
   }
   
-  .datetime-display {
+  .attendance-container .datetime-display {
     width: 100%;
     text-align: center;
   }
   
-  .attendance-card {
+  .attendance-container .attendance-card {
     padding: 24px 16px;
   }
   
-  .search-bar {
+  .attendance-container .search-bar {
     flex-direction: column;
   }
   
-  .search-button {
+  .attendance-container .search-button {
     width: 100%;
   }
 }
 
 @media (max-width: 480px) {
-  .header-logo {
+  .attendance-container .header-logo {
     height: 40px;
   }
   
-  .header-title h1 {
+  .attendance-container .header-title h1 {
     font-size: 20px;
   }
   
-  .card-title {
+  .attendance-container .card-title {
     font-size: 20px;
   }
   
-  .student-info {
+  .attendance-container .student-info {
     flex-direction: column;
     text-align: center;
   }
   
-  .welcome-text {
+  .attendance-container .welcome-text {
     text-align: center;
   }
 }
