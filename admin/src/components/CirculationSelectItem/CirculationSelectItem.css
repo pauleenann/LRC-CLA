@@ -203,11 +203,11 @@
 }
 
 .circ-select-item-container .summary .remove{
-    display: flex;
-    align-items: center;
+    
     cursor: pointer;
     color: var(--black);
     margin: auto;
+    margin-top: 10px;
 }
 
 .circ-select-item-container .summary .remove:hover,

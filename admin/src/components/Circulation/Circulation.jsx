@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Circulation.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCartPlus, faCartShopping, faSearch, faArrowLeft, faArrowRight, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCartPlus, faCartShopping, faSearch, faArrowLeft, faArrowRight, faExclamationCircle, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Circulation = () => {
@@ -44,6 +44,7 @@ const Circulation = () => {
       });
 
       setBorrowers(response.data.data);
+      console.log(response.data.data)
       setFilteredBorrowers(response.data.data);
       setTotalPages(Math.ceil(response.data.totalCount / itemsPerPage));
     } catch (err) {
@@ -173,27 +174,41 @@ const Circulation = () => {
           <option value="overdue">Overdue</option>
         </select>
       </div>
-
-      {/* Date filter */}
-      <div className="d-flex justify-content-between">
-        <div className="d-flex align-items-center gap-1">
-          <input
-            type="date"
-            className="shadow-sm form-control"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          />
-          <span>to</span>
-          <input
-            type="date"
-            className="shadow-sm form-control"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-          />
-          <button className="btn btn-warning w-100" onClick={clearFilter}>
-            Clear filter
-          </button>
+      
+      {/* Date Range Row */}
+      <div className="date-filter d-flex align-items-center flex-wrap w-50">
+        <div className="d-flex align-items-center flex-grow-1 gap-2">
+          <div className="input-group">
+            <span className="input-group-text bg-white border-end-0">
+              <FontAwesomeIcon icon={faCalendarAlt} className="text-muted" />
+            </span>
+            <input
+              type="date"
+              className="form-control border-start-0"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
+          <span className="text-muted">to</span>
+          <div className="input-group">
+            <span className="input-group-text bg-white border-end-0">
+              <FontAwesomeIcon icon={faCalendarAlt} className="text-muted" />
+            </span>
+            <input
+              type="date"
+              className="form-control border-start-0"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
         </div>
+        <button 
+          className="btn btn-warning ms-2 d-flex align-items-center" 
+          onClick={clearFilter}
+        >
+          {/* <FontAwesomeIcon icon={faTimes} className="me-2" /> */}
+          Clear Filters
+        </button>
       </div>
 
       <div className="table-box">
@@ -205,7 +220,7 @@ const Circulation = () => {
               <td>TUP ID</td>
               <td>Name</td>
               <td>Book/s issued</td>
-              <td>Course</td>
+              <td>Author/s</td>
               <td>Borrow Date</td>
               <td>Due Date</td>
               <td>Return Date</td>
@@ -216,26 +231,26 @@ const Circulation = () => {
             {filteredBorrowers.length > 0 ? (
               filteredBorrowers.map((borrower, index) => (
                 <tr key={index} style={{ borderBottom: '1px solid #ddd' }}>
-                  <td style={{ padding: '10px' }}>{borrower.tup_id}</td>
-                  <td style={{ padding: '10px' }}>
+                  <td style={{ padding: '10px' }} className='col'>{borrower.tup_id}</td>
+                  <td style={{ padding: '10px' }} className='col'>
                     {borrower.patron_fname} {borrower.patron_lname}
                   </td>
-                  <td style={{ padding: '10px' }} onClick={() => navigate(`/catalog/view/${borrower.resource_id}`)} className="resource">
+                  <td style={{ padding: '10px' }} onClick={() => navigate(`/catalog/view/${borrower.resource_id}`)} className="resource col-2">
                     {borrower.borrowed_book}
                   </td>
-                  <td style={{ padding: '10px' }}>{borrower.course}</td>
-                  <td style={{ padding: '10px' }}>
+                  <td style={{ padding: '10px' }} className='col-3'>{borrower.authors}</td>
+                  <td style={{ padding: '10px' }} className='col'>
                     {borrower.checkout_date ? new Date(borrower.checkout_date).toLocaleDateString('en-CA') : 'N/A'}
                   </td>
-                  <td style={{ padding: '10px' }}>
+                  <td style={{ padding: '10px' }} className='col'>
                     {borrower.checkout_due ? new Date(borrower.checkout_due).toLocaleDateString('en-CA') : 'N/A'}
                   </td>
-                  <td style={{ padding: '10px' }}>
+                  <td style={{ padding: '10px' }} className='col'>
                     {borrower.checkin_date
                       ? new Date(borrower.checkin_date).toLocaleDateString('en-CA')
                       : 'Not Yet Returned'}
                   </td>
-                  <td style={{ padding: '10px' }}>
+                  <td style={{ padding: '10px' }} className='col'>
                     <span
                       className={
                         borrower.status === 'overdue'
@@ -297,4 +312,4 @@ const Circulation = () => {
   );
 };
 
-export default Circulation; 
+export default Circulation;
