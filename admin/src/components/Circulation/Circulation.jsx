@@ -57,12 +57,18 @@ const Circulation = () => {
     if (!borrowers || !Array.isArray(borrowers) || borrowers.length === 0) return;
 
     const filtered = borrowers.filter((borrower) => {
-      const fullName = `${borrower.patron_fname ?? ''} ${borrower.patron_lname ?? ''}`.toLowerCase();
+      // Only search non-date columns
       const matchesSearch = 
-        fullName.includes(searchTerm.toLowerCase()) ||
+        // TUP ID column
         (borrower.tup_id?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+        // Name column
+        `${borrower.patron_fname ?? ''} ${borrower.patron_lname ?? ''}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        // Book/s issued column
+        (borrower.borrowed_book?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+        // Course column
         (borrower.course?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
-        (borrower.borrowed_book?.toLowerCase() ?? '').includes(searchTerm.toLowerCase());
+        // Status column
+        (borrower.status?.toLowerCase() ?? '').includes(searchTerm.toLowerCase());
 
       // Date range filtering using the approach from the first code
       const isDateInRange = (date) => {
@@ -151,7 +157,7 @@ const Circulation = () => {
           <input
             type="text"
             className="search-bar form-control shadow-sm"
-            placeholder="Search"
+            placeholder="Search by ID, name, book, course or status"
             value={searchTerm}
             onChange={handleSearch}
             onKeyDown={(e) => e.key === 'Enter' && search()}
@@ -259,7 +265,7 @@ const Circulation = () => {
                 <td colSpan="8" className="no-data-box text-center">
                   <div className="d-flex flex-column align-items-center gap-2 my-5">
                     <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
-                    <span>No records found for the selected date range.</span>
+                    <span>No records found...</span>
                   </div>
                 </td>
               </tr>
@@ -291,4 +297,4 @@ const Circulation = () => {
   );
 };
 
-export default Circulation;
+export default Circulation; 
