@@ -39,9 +39,12 @@ export const saveResource = async (req, res) => {
         }else if(mediaType==='4'){
             // split string
             //if req.body.adviser is 'name lastname'. pag ginamitan ng split(' ') it will be ['name','lastname']
-            const adviser = req.body.adviser.split(' ')
-            adviserFname = adviser[0];
-            adviserLname = adviser[1];
+            // const adviser = req.body.adviser.split(' ')
+            // adviserFname = adviser[0];
+            // adviserLname = adviser[1];
+            const nameParts = req.body.adviser.trim().split(' ');
+            adviserFname = nameParts.slice(0, -1).join(" "); // "John Michael"
+            adviserLname = nameParts.length > 1 ? nameParts[nameParts.length - 1] : ''; // "Doe"
         }
         
         //authors is in string
@@ -453,9 +456,12 @@ export const updateResource = async (req, res) => {
          }else if(mediaType==='4'){
              // split string
              //if req.body.adviser is 'name lastname'. pag ginamitan ng split(' ') it will be ['name','lastname']
-             const adviser = req.body.adviser.split(' ')
-             adviserFname = adviser[0];
-             adviserLname = adviser[1];
+            //  const adviser = req.body.adviser.split(' ')
+            //  adviserFname = adviser[0];
+            //  adviserLname = adviser[1];
+            const nameParts = req.body.adviser.trim().split(' ');
+            adviserFname = nameParts.slice(0, -1).join(" "); // "John Michael"
+            adviserLname = nameParts.length > 1 ? nameParts[nameParts.length - 1] : ''; // "Doe"
          }
          
          const authors = req.body.authors.split(',')
