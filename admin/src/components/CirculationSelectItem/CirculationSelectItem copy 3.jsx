@@ -112,21 +112,15 @@ const CirculationSelectItem = () => {
     }
   };
 
-  // Handle cover image preview
-  useEffect(() => {
-    if (selectedItems.length === 0 || !selectedItems[0].cover) return;
-    
+  useEffect(()=>{
+    if(!selectedItems[0].cover) return;
+
     try {
-      if (typeof selectedItems[0].cover === 'object') {
-        setPreview(URL.createObjectURL(selectedItems[0].cover));
-      } else {
-        setPreview(`https://api.tuplrc-cla.com/${selectedItems[0].cover}`);
-      }
+        setPreview(URL.createObjectURL(selectedItems[0].cover))
     } catch (error) {
-      console.error('Error creating preview URL:', error);
-      setPreview(null);
+        setPreview(`https://api.tuplrc-cla.com/${selectedItems[0].cover}`);
     }
-  }, [selectedItems]);
+},[selectedItems[0].cover])
 
   return (
     <div className='circ-select-item-container bg-light'>
@@ -206,30 +200,24 @@ const CirculationSelectItem = () => {
                 </div>
               ) : (
                 selectedItems.map((item) => (
-                  <div className="item rounded p-3 row mt-2 position-relative" key={item.resource_id}>
-                    <div className="col-4">
+                  <div className="item row mt-2" key={item.resource_id}>
+                    <div className="col-3 cover">
                       <img 
                         src={preview} 
                         alt={`Cover of ${item.resource_title}`}
-                        className="w-100 h-100 object-fit-cover rounded shadow"
                       />
                     </div>
-                    <div className="col">
-                      <div className="d-flex justify-content-between align-items-start mb-2">
-                        <p className="m-0 fs-5 fw-semibold">{item.resource_title}</p>
-                        <button 
-                          className="btn p-0 ms-2" 
-                          onClick={() => handleRemoveItem(item.resource_id)}
-                        >
-                          <FontAwesomeIcon icon={faTrashCan} aria-label={`Remove ${item.resource_title}`} />
-                        </button>
-                      </div>
-                      <p className="m-0 text-secondary">ISBN: {item.book_isbn || "Unknown"}</p>
-                      <p className="m-0 text-secondary">Author/s: {item.authors || "Unknown"}</p>
-                      <p className="m-0 text-secondary">Publisher: {item.publisher || "Unknown"}</p>
-                      <p className="m-0 text-secondary">Quantity: <span>1</span></p>
+                    <div className="col-8 info">
+                      <p className='mt-2 mb-0 fs-5'>{item.resource_title}</p>
+                      <p className='qnty justify-content-start'>ISBN: {item.book_isbn || "Unknown"}</p>
+                      <p className='qnty'>Author/s: {item.authors || "Unknown"}</p>
+                      <p className='qnty'>Publisher: {item.publisher || "Unknown"}</p>
+                      <p className='qnty'>Quantity: <span>1</span></p>
                     </div>
-                  </div> 
+                    <div className="col-1 remove" onClick={() => handleRemoveItem(item.resource_id)}>
+                      <FontAwesomeIcon icon={faX} aria-label={`Remove ${item.resource_title}`} />
+                    </div>
+                  </div>
                 ))
               )}
             </div>

@@ -165,9 +165,49 @@
 
 .circ-select-item-container .summary .item{
   background-color: var(--white) !important;
+  padding: 10px;
+  border-radius: 10px;
   border: 1px solid var(--tup-color);
   margin: auto;
   width: 100%;
+}
+
+.circ-select-item-container .item .cover{
+    display: flex;
+    justify-content: center;
+}
+
+.circ-select-item-container .item img{
+    width: 70px !important;
+    border-radius: 5px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.circ-select-item-container .summary .info{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.circ-select-item-container .summary .info .title{
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.circ-select-item-container .summary .info .qnty{
+    margin: 0;
+    font-size: 1rem !important;
+    color: var(--table-header);
+}
+
+.circ-select-item-container .summary .remove{
+    
+    cursor: pointer;
+    color: var(--black);
+    margin: auto;
+    margin-top: 10px;
 }
 
 .circ-select-item-container .summary .remove:hover,
