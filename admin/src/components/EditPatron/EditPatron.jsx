@@ -13,7 +13,7 @@ const EditPatron = () => {
         patron_mobile: '',
         patron_email: '',
         category: 'Student',
-        patron_status:'Select Status',
+        patron_status:'active',
         college: '',
         program: null,
         tup_id: 'TUPM-',
@@ -362,6 +362,8 @@ const EditPatron = () => {
         setErrors(newErrors);
         return isValid;
     };
+
+    console.log(patronData)
 
     return (
         <div className='edit-patron-container bg-light'>
