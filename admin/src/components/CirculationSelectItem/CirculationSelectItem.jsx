@@ -196,9 +196,10 @@ const CirculationSelectItem = () => {
                       />
                     </div>
                     <div className="col-8 info">
-                      <p className='ttle'>{item.resource_title}</p>
-                      <p className='text-start'>ISBN: {item.book_isbn || "Unknown"}</p>
+                      <p className='mt-2 mb-0 fs-5'>{item.resource_title}</p>
+                      <p className='qnty justify-content-start'>ISBN: {item.book_isbn || "Unknown"}</p>
                       <p className='qnty'>Author/s: {item.authors || "Unknown"}</p>
+                      <p className='qnty'>Publisher: {item.publisher || "Unknown"}</p>
                       <p className='qnty'>Quantity: <span>1</span></p>
                     </div>
                     <div className="col-1 remove" onClick={() => handleRemoveItem(item.resource_id)}>

@@ -44,6 +44,7 @@ const Circulation = () => {
       });
 
       setBorrowers(response.data.data);
+      console.log(response.data.data)
       setFilteredBorrowers(response.data.data);
       setTotalPages(Math.ceil(response.data.totalCount / itemsPerPage));
     } catch (err) {
@@ -223,7 +224,7 @@ const Circulation = () => {
               <td>TUP ID</td>
               <td>Name</td>
               <td>Book/s issued</td>
-              <td>Course</td>
+              <td>Author/s</td>
               <td>Borrow Date</td>
               <td>Due Date</td>
               <td>Return Date</td>
@@ -234,26 +235,26 @@ const Circulation = () => {
             {filteredBorrowers.length > 0 ? (
               filteredBorrowers.map((borrower, index) => (
                 <tr key={index} style={{ borderBottom: '1px solid #ddd' }}>
-                  <td style={{ padding: '10px' }}>{borrower.tup_id}</td>
-                  <td style={{ padding: '10px' }}>
+                  <td style={{ padding: '10px' }} className='col'>{borrower.tup_id}</td>
+                  <td style={{ padding: '10px' }} className='col'>
                     {borrower.patron_fname} {borrower.patron_lname}
                   </td>
-                  <td style={{ padding: '10px' }} onClick={() => navigate(`/catalog/view/${borrower.resource_id}`)} className="resource">
+                  <td style={{ padding: '10px' }} onClick={() => navigate(`/catalog/view/${borrower.resource_id}`)} className="resource col-2">
                     {borrower.borrowed_book}
                   </td>
-                  <td style={{ padding: '10px' }}>{borrower.course}</td>
-                  <td style={{ padding: '10px' }}>
+                  <td style={{ padding: '10px' }} className='col-3'>{borrower.authors}</td>
+                  <td style={{ padding: '10px' }} className='col'>
                     {borrower.checkout_date ? new Date(borrower.checkout_date).toLocaleDateString('en-CA') : 'N/A'}
                   </td>
-                  <td style={{ padding: '10px' }}>
+                  <td style={{ padding: '10px' }} className='col'>
                     {borrower.checkout_due ? new Date(borrower.checkout_due).toLocaleDateString('en-CA') : 'N/A'}
                   </td>
-                  <td style={{ padding: '10px' }}>
+                  <td style={{ padding: '10px' }} className='col'>
                     {borrower.checkin_date
                       ? new Date(borrower.checkin_date).toLocaleDateString('en-CA')
                       : 'Not Yet Returned'}
                   </td>
-                  <td style={{ padding: '10px' }}>
+                  <td style={{ padding: '10px' }} className='col'>
                     <span
                       className={
                         borrower.status === 'overdue'
