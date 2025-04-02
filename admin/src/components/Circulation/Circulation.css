@@ -55,7 +55,6 @@
 .circulation-container .search-container .search-btn{
     background-color: var(--tup-color);
     color: var(--white);
-    width: 50px;
     box-shadow: 0px 1px 2px var(--shadow);
 }
 

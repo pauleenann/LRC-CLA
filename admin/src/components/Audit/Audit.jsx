@@ -130,41 +130,44 @@ const Audit = () => {
     <div className="audit-container bg-light">
       <h1>User Activity Log</h1>
 
-      {/* Filter Section */}
-      <div className="w-25">
-        <select
-          className="form-select shadow-sm"
-          value={selectedActivity}
-          onChange={(e) => setSelectedActivity(e.target.value)}
-        >
-          <option value="">Filter by activity</option>
-          <option value="Added a new user">Insert User</option>
-          <option value="Added a new resource">Insert Resource</option>
-          <option value="Edited a resource">Update Resource</option>
-          <option value="Added new patron">Insert Patron</option>
-          <option value="Edited a patron">Edited Patron</option>
-          <option value="borrowed a book">Borrowed Book</option>
-          <option value="returned a book">Returned Book</option>
-          <option value="Edited a user">Edited User</option>
-          <option value="Logged In">Login</option>
-          <option value="Logged Out">Logout</option>
-          
-        </select>
-      </div>
-
-      {/* Date Filters & Export */}
-      <div className="d-flex justify-content-between">
-        <div className="d-flex align-items-center gap-1">
-          <input type="date" className="shadow-sm form-control" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-          <span>to</span>
-          <input type="date" className="shadow-sm form-control" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-          <button className="btn btn-warning w-100" onClick={clearFilters}>Clear filter</button>
+      <div>
+        {/* Filter Section */}
+        <div className="w-50 mb-2">
+          <select
+            className="form-select shadow-sm"
+            value={selectedActivity}
+            onChange={(e) => setSelectedActivity(e.target.value)}
+          >
+            <option value="">Filter by activity</option>
+            <option value="Added a new user">Insert User</option>
+            <option value="Added a new resource">Insert Resource</option>
+            <option value="Edited a resource">Update Resource</option>
+            <option value="Added new patron">Insert Patron</option>
+            <option value="Edited a patron">Edited Patron</option>
+            <option value="borrowed a book">Borrowed Book</option>
+            <option value="returned a book">Returned Book</option>
+            <option value="Edited a user">Edited User</option>
+            <option value="Logged In">Login</option>
+            <option value="Logged Out">Logout</option>
+            
+          </select>
         </div>
-        <button className="btn export-btn btn-success d-flex align-items-center gap-2" onClick={exportToCSV}>
-          <FontAwesomeIcon icon={faDownload}/>
-          Export to Excel
-        </button>
+
+        {/* Date Filters & Export */}
+        <div className="d-flex justify-content-between">
+          <div className="d-flex align-items-center gap-1">
+            <input type="date" className="shadow-sm form-control" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+            <span>to</span>
+            <input type="date" className="shadow-sm form-control" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+            <button className="btn btn-warning w-100" onClick={clearFilters}>Clear filter</button>
+          </div>
+          <button className="btn export-btn btn-success d-flex align-items-center gap-2" onClick={exportToCSV}>
+            <FontAwesomeIcon icon={faDownload}/>
+            Export to Excel
+          </button>
+        </div>
       </div>
+      
 
       {/* Table */}
       <div className="audit-table-box">
