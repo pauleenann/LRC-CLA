@@ -150,7 +150,7 @@ const CatalogImport = ({open, close}) => {
             console.log(response)
             console.log(response.data.invalidResources)
 
-            if(response.data.invalidResources.length>=0&&response.data.insertedRecords.length==0){
+            if(response.data.invalidResources.length>0&&response.data.insertedRecords.length==0){
                 setInvalidResources(response.data.invalidResources)
                 setImportFailed(true);
             }else{
