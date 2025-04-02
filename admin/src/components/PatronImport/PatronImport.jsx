@@ -8,11 +8,13 @@ import axios from 'axios';
 import PatronImportError from '../PatronImportError/PatronImportError';
 
 const PatronImport = ({open, close}) => {
-    const [importData, setImportData] = useState()
+    const [importData, setImportData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [importSuccess, setImportSuccess] = useState(false);
     const [importFailed, setImportFailed] = useState(false);
-    const [invalidPatrons, setInvalidPatrons] = useState(false)
+    const [invalidPatrons, setInvalidPatrons] = useState([]);
+    const [insertedPatrons, setInsertedPatrons] = useState([]);
+    const [showResults, setShowResults] = useState(false);
     
     const acceptedColumns = [
         'tup id',
@@ -24,14 +26,21 @@ const PatronImport = ({open, close}) => {
         'college',
         'program',
         'category'
-    ]
-    const [error, setError] = useState('')
+    ];
+    const [error, setError] = useState('');
 
     useEffect(() => {
-        setImportData([])
-        setError('')
-        setImportSuccess(false)
-    }, [])
+        if (open) {
+            // Reset state when modal opens
+            setImportData([]);
+            setError('');
+            setImportSuccess(false);
+            setImportFailed(false);
+            setInvalidPatrons([]);
+            setInsertedPatrons([]);
+            setShowResults(false);
+        }
+    }, [open]);
 
     // Handle file upload and parse Excel file
     const handleFileUpload = async (event) => {
@@ -53,12 +62,10 @@ const PatronImport = ({open, close}) => {
             const sheet = workbook.Sheets[sheetName];
     
             const jsonData = XLSX.utils.sheet_to_json(sheet); // Convert Excel to JSON
-            console.log("Parsed Excel Data:", jsonData);
     
             if (jsonData.length > 0) {
                 // Lowercase and trim column names, but leave values untouched
                 columnNames = Object.keys(jsonData[0]).map(key => key.trim().toLowerCase());
-                console.log(columnNames);
     
                 // Check if the required columns exist
                 acceptedColumns.forEach(item => {
@@ -67,7 +74,7 @@ const PatronImport = ({open, close}) => {
                     }
                 });
     
-                setError(columnError.length > 0 ? `Excel file should contain the following column names:  ${columnError.join(', ')}` : '');
+                setError(columnError.length > 0 ? `Excel file should contain the following column names: ${columnError.join(', ')}` : '');
     
                 if (columnError.length === 0) {
                     // No need to change the values to lowercase, just clean the trailing spaces in data
@@ -92,28 +99,33 @@ const PatronImport = ({open, close}) => {
         };
     };
     
-    
-
-
     const handleImport = async () => {
         try {
             setIsLoading(true);
             // Send the data to the server
             const response = await axios.post('http://localhost:3001/api/patron/import', {patrons: importData});
 
-            console.log(response.data.invalidPatrons)
-            if(response.data.invalidPatrons.length>0&&response.data.insertedPatrons.length==0){
-                setInvalidPatrons(response.data.invalidPatrons)
+            setInvalidPatrons(response.data.invalidPatrons || []);
+            setInsertedPatrons(response.data.insertedPatrons || []);
+            
+            if (response.data.invalidPatrons.length > 0 && response.data.insertedPatrons.length === 0) {
+                // Only invalid patrons, no successful insertions
                 setImportFailed(true);
-            }else{
-            setImportSuccess(true);
-                setTimeout(() => {
-                    setImportData([])
-                    close();
-                    setImportSuccess(false);
-                    setError('')
-                    window.location.reload()
-                }, 2000);
+            } else if (response.data.insertedPatrons.length > 0) {
+                // Some patrons were successfully inserted
+                setImportSuccess(true);
+                setShowResults(true);
+                
+                // Auto close and reload after delay only if there are no invalid patrons
+                if (response.data.invalidPatrons.length === 0) {
+                    setTimeout(() => {
+                        setImportData([]);
+                        close();
+                        setImportSuccess(false);
+                        setError('');
+                        window.location.reload();
+                    }, 2000);
+                }
             }
             
         } catch (err) {
@@ -122,7 +134,16 @@ const PatronImport = ({open, close}) => {
         } finally {
             setIsLoading(false);
         }
-    }
+    };
+
+    // Handle final close after viewing results
+    const handleCompleteImport = () => {
+        setImportData([]);
+        close();
+        setImportSuccess(false);
+        setError('');
+        window.location.reload();
+    };
 
     if (!open) {
         return null;
@@ -148,52 +169,91 @@ const PatronImport = ({open, close}) => {
                         </div>
                     )}
                     
-                    {/* file */}
-                    <div className='d-flex flex-column'>
-                        <label htmlFor="file" className=''>Excel File</label>
-                        <input 
-                            type="file" 
-                            accept='.xlsx, .xls' 
-                            name="file" 
-                            id="file" 
-                            onChange={handleFileUpload}
-                            className="form-control"
-                        />
-                        {error && (
-                            <p className='error fst-italic text-danger mt-2'>
-                                <span className=' fw-semibold'> {error}</span>
-                            </p>
-                        )}
-                        {importData.length > 0 && (
-                            <p className="text-success mt-1">
-                                File loaded: {importData.length} records found
-                            </p>
-                        )}
-                    </div>
+                    {/* Results section - shown when insertedPatrons > 0 */}
+                    {showResults && insertedPatrons.length > 0 && (
+                        <div className="import-results">
+                            <h5>Import Results</h5>
+                            <p className="text-success">Successfully imported: {insertedPatrons.length} records</p>
+                            
+                            {invalidPatrons.length > 0 && (
+                                <div className="mt-2">
+                                    <p className="text-warning">Failed to import: {invalidPatrons.length} records</p>
+                                    <button 
+                                        className="btn btn-sm btn-outline-warning" 
+                                        onClick={() => setImportFailed(true)}
+                                    >
+                                        View Failed Records
+                                    </button>
+                                </div>
+                            )}
+                            
+                            <div className="d-flex justify-content-end mt-3">
+                                <button 
+                                    className="btn btn-primary" 
+                                    onClick={handleCompleteImport}
+                                >
+                                    Complete Import
+                                </button>
+                            </div>
+                        </div>
+                    )}
                     
-                    {/* buttons */}
-                    <div className='d-flex justify-content-end gap-2 mt-2'>
-                        <button 
-                            className="btn btn-outline-secondary"
-                            onClick={close}
-                            disabled={isLoading}
-                        >
-                            Cancel
-                        </button>
-                        <button 
-                            className="btn btn-primary"
-                            onClick={handleImport}
-                            disabled={isLoading || importData.length === 0 }
-                        >
-                            {isLoading ? 'Importing...' : 'Import'}
-                        </button>
-                    </div>
+                    {/* File input section - hidden when showing results */}
+                    {!showResults && (
+                        <>
+                            <div className='d-flex flex-column'>
+                                <label htmlFor="file" className=''>Excel File</label>
+                                <input 
+                                    type="file" 
+                                    accept='.xlsx, .xls' 
+                                    name="file" 
+                                    id="file" 
+                                    onChange={handleFileUpload}
+                                    className="form-control"
+                                />
+                                {error && (
+                                    <p className='error fst-italic text-danger mt-2'>
+                                        <span className='fw-semibold'>{error}</span>
+                                    </p>
+                                )}
+                                {importData.length > 0 && (
+                                    <p className="text-success mt-1">
+                                        File loaded: {importData.length} records found
+                                    </p>
+                                )}
+                            </div>
+                            
+                            {/* buttons */}
+                            <div className='d-flex justify-content-end gap-2 mt-2'>
+                                <button 
+                                    className="btn btn-outline-secondary"
+                                    onClick={close}
+                                    disabled={isLoading}
+                                >
+                                    Cancel
+                                </button>
+                                <button 
+                                    className="btn btn-primary"
+                                    onClick={handleImport}
+                                    disabled={isLoading || importData.length === 0}
+                                >
+                                    {isLoading ? 'Importing...' : 'Import'}
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
-        <PatronImportError open={importFailed} close={()=>setImportFailed(false)} invalidPatrons={invalidPatrons}/>
+            
+            {/* Error modal for displaying invalid patrons */}
+            <PatronImportError 
+                open={importFailed} 
+                close={() => setImportFailed(false)} 
+                invalidPatrons={invalidPatrons}
+            />
         </div>,
         document.getElementById('portal')
     )
-}
+};
 
-export default PatronImport
+export default PatronImport;

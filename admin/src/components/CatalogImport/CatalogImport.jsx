@@ -10,7 +10,7 @@ import CatalogImportError from '../CatalogImportError/CatalogImportError';
 
 const CatalogImport = ({open, close}) => {
     const {username} = useSelector(state=>state.username)
-    const [importData, setImportData] = useState()
+    const [importData, setImportData] = useState([])
     const [selectedType, setSelectedType] = useState('1');
     const [acceptedColumns, setAcceptedColumns] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -18,6 +18,8 @@ const CatalogImport = ({open, close}) => {
     const [importFailed, setImportFailed] = useState(false);
     const [error, setError] = useState('')
     const [invalidResources, setInvalidResources] = useState([])
+    const [insertedResources, setInsertedResources] = useState([])
+    const [showResults, setShowResults] = useState(false)
     
     const bookColumns = [
         'isbn',
@@ -78,7 +80,21 @@ const CatalogImport = ({open, close}) => {
         setError('')
         setImportSuccess(false)
         setImportFailed(false)
+        setShowResults(false)
     }, [selectedType])
+
+    useEffect(() => {
+        if (open) {
+            // Reset state when modal opens
+            setImportData([])
+            setError('')
+            setImportSuccess(false)
+            setImportFailed(false)
+            setInvalidResources([])
+            setInsertedResources([])
+            setShowResults(false)
+        }
+    }, [open])
 
     // Handle file upload and parse Excel file
     const handleFileUpload = async (event) => {
@@ -101,12 +117,10 @@ const CatalogImport = ({open, close}) => {
 
             // Convert Excel data to JSON
             let jsonData = XLSX.utils.sheet_to_json(sheet, { defval: "" });
-            console.log("Parsed Excel Data:", jsonData);
 
             if (jsonData.length > 0) {
                 // **Remove only trailing spaces and convert column names to lowercase**
                 columnNames = Object.keys(jsonData[0]).map(key => key.replace(/\s+$/, "").toLowerCase());
-                console.log("Formatted Column Names:", columnNames);
 
                 // Check for missing columns
                 acceptedColumns.forEach(item => {
@@ -116,7 +130,7 @@ const CatalogImport = ({open, close}) => {
                 });
 
                 // Set error message if columns are missing
-                setError(columnError.length > 0 ? `Excel file should contain the following column names:  ${columnError.join(', ')}` : '');
+                setError(columnError.length > 0 ? `Excel file should contain the following column names: ${columnError.join(', ')}` : '');
 
                 if (columnError.length === 0) {
                     // **Remove only trailing spaces from all column values**
@@ -145,27 +159,30 @@ const CatalogImport = ({open, close}) => {
         try {
             setIsLoading(true);
             // Send the data to the server
-            const response = await axios.post('http://localhost:3001/api/resources/import', {importData,selectedType,username});
+            const response = await axios.post('http://localhost:3001/api/resources/import', {importData, selectedType, username});
             
-            console.log(response)
-            console.log(response.data.invalidResources)
-
-            if(response.data.invalidResources.length>0&&response.data.insertedRecords.length==0){
-                setInvalidResources(response.data.invalidResources)
+            setInvalidResources(response.data.invalidResources || []);
+            setInsertedResources(response.data.insertedRecords || []);
+            
+            if (response.data.invalidResources.length > 0 && response.data.insertedRecords.length === 0) {
+                // Only invalid resources, no successful insertions
                 setImportFailed(true);
-            }else{
-            setImportSuccess(true);
-                setTimeout(() => {
-                    setImportData([])
-                    close();
-                    setImportSuccess(false);
-                    setError('')
-                    window.location.reload()
-                }, 2000);
+            } else if (response.data.insertedRecords.length > 0) {
+                // Some resources were successfully inserted
+                setImportSuccess(true);
+                setShowResults(true);
+                
+                // Auto close and reload after delay only if there are no invalid resources
+                if (response.data.invalidResources.length === 0) {
+                    setTimeout(() => {
+                        setImportData([])
+                        close();
+                        setImportSuccess(false)
+                        setError('')
+                        window.location.reload()
+                    }, 2000);
+                }
             }
-            
-            
-            
         } catch (err) {
             console.error('Error importing catalog:', err);
             setError('Failed to import catalog data. Please try again.');
@@ -174,17 +191,39 @@ const CatalogImport = ({open, close}) => {
         }
     }
 
-    const closeModal = ()=>{
+    // Handle complete import after viewing results
+    const handleCompleteImport = () => {
+        setImportData([])
+        close();
+        setImportSuccess(false)
+        setError('')
+        window.location.reload()
+    }
+
+    const closeModal = () => {
         setImportData([])
         setError('')
         setImportSuccess(false)
         setImportFailed(false)
+        setInvalidResources([])
+        setInsertedResources([])
+        setShowResults(false)
         setSelectedType('1')
         close()
     }
 
     if (!open) {
         return null;
+    }
+
+    const getResourceTypeName = () => {
+        switch(selectedType) {
+            case '1': return 'Book';
+            case '2': return 'Journal';
+            case '3': return 'Newsletter';
+            case '4': return 'Thesis';
+            default: return 'Resource';
+        }
     }
 
     return ReactDom.createPortal(
@@ -207,60 +246,109 @@ const CatalogImport = ({open, close}) => {
                         </div>
                     )}
 
-                    {/* resource type */}
-                    <div>
-                        <label htmlFor="">Resource Type</label>
-                        <select name="" id="" className='form-select' onChange={(e)=>setSelectedType(e.target.value)}>
-                            <option value="1">Book</option>
-                            <option value="2">Journal</option>
-                            <option value="3">Newsletter</option>
-                            <option value="4">Thesis</option>
-                        </select>
-                    </div>
-                    
-                    {/* file */}
-                    <div className='d-flex flex-column'>
-                        <label htmlFor="file" className=''>Excel File</label>
-                        <input 
-                            type="file" 
-                            accept='.xlsx, .xls' 
-                            name="file" 
-                            id="file" 
-                            onChange={handleFileUpload}
-                            className="form-control"
-                        />
-                        {error && (
-                            <p className='error fst-italic text-danger mt-2'>
-                                <span className=' fw-semibold'> {error}</span>
+                    {/* Results section - shown when insertedResources > 0 */}
+                    {showResults && insertedResources.length > 0 && (
+                        <div className="import-results">
+                            <h5>Import Results</h5>
+                            <p className="text-success">
+                                Successfully imported: {insertedResources.length} {getResourceTypeName()}
+                                {insertedResources.length !== 1 ? 's' : ''}
                             </p>
-                        )}
-                        {importData.length > 0 && (
-                            <p className="text-success mt-1">
-                                File loaded: {importData.length} records found
-                            </p>
-                        )}
-                    </div>
+                            
+                            {invalidResources.length > 0 && (
+                                <div className="mt-2">
+                                    <p className="text-warning">
+                                        Failed to import: {invalidResources.length} record
+                                        {invalidResources.length !== 1 ? 's' : ''}
+                                    </p>
+                                    <button 
+                                        className="btn btn-sm btn-outline-warning" 
+                                        onClick={() => setImportFailed(true)}
+                                    >
+                                        View Failed Records
+                                    </button>
+                                </div>
+                            )}
+                            
+                            <div className="d-flex justify-content-end mt-3">
+                                <button 
+                                    className="btn btn-primary" 
+                                    onClick={handleCompleteImport}
+                                >
+                                    Complete Import
+                                </button>
+                            </div>
+                        </div>
+                    )}
                     
-                    {/* buttons */}
-                    <div className='d-flex justify-content-end gap-2 mt-2'>
-                        <button 
-                            className="btn btn-outline-secondary"
-                            onClick={closeModal}
-                            disabled={isLoading}
-                        >
-                            Cancel
-                        </button>
-                        <button 
-                            className="btn btn-primary"
-                            onClick={handleImport}
-                            disabled={isLoading || importData.length === 0 }
-                        >
-                            {isLoading ? 'Importing...' : 'Import'}
-                        </button>
-                    </div>
+                    {/* File input section - hidden when showing results */}
+                    {!showResults && (
+                        <>
+                            {/* resource type */}
+                            <div>
+                                <label htmlFor="resourceType">Resource Type</label>
+                                <select 
+                                    id="resourceType" 
+                                    className='form-select' 
+                                    value={selectedType}
+                                    onChange={(e) => setSelectedType(e.target.value)}
+                                >
+                                    <option value="1">Book</option>
+                                    <option value="2">Journal</option>
+                                    <option value="3">Newsletter</option>
+                                    <option value="4">Thesis</option>
+                                </select>
+                            </div>
+                            
+                            {/* file */}
+                            <div className='d-flex flex-column'>
+                                <label htmlFor="file" className=''>Excel File</label>
+                                <input 
+                                    type="file" 
+                                    accept='.xlsx, .xls' 
+                                    name="file" 
+                                    id="file" 
+                                    onChange={handleFileUpload}
+                                    className="form-control"
+                                />
+                                {error && (
+                                    <p className='error fst-italic text-danger mt-2'>
+                                        <span className='fw-semibold'>{error}</span>
+                                    </p>
+                                )}
+                                {importData.length > 0 && (
+                                    <p className="text-success mt-1">
+                                        File loaded: {importData.length} records found
+                                    </p>
+                                )}
+                            </div>
+                            
+                            {/* buttons */}
+                            <div className='d-flex justify-content-end gap-2 mt-2'>
+                                <button 
+                                    className="btn btn-outline-secondary"
+                                    onClick={closeModal}
+                                    disabled={isLoading}
+                                >
+                                    Cancel
+                                </button>
+                                <button 
+                                    className="btn btn-primary"
+                                    onClick={handleImport}
+                                    disabled={isLoading || importData.length === 0}
+                                >
+                                    {isLoading ? 'Importing...' : 'Import'}
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
-        <CatalogImportError open={importFailed} close={()=>setImportFailed(false)} invalidResources={invalidResources}/>
+            <CatalogImportError 
+                open={importFailed} 
+                close={() => setImportFailed(false)} 
+                invalidResources={invalidResources}
+            />
         </div>,
         document.getElementById('portal')
     )
