@@ -360,11 +360,13 @@ export const addPatron = (req, res) => {
     console.log(values)
   
   // SQL query to insert new patron into the database
-  const query = 'INSERT INTO patron (patron_fname, patron_lname, patron_sex, patron_mobile, patron_email, category, college_id, course_id, tup_id, status) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?,?)';
+  const query = 'INSERT INTO patron (patron_fname, patron_lname, patron_sex, patron_mobile, patron_email, category, status, college_id, course_id, tup_id) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?,?)';
 
+  console.log(query)
   // Execute the query with the data from the request body
   db.query(query, values, (err, result) => {
     if (err) {
+        console.log(err)
       return res.status(500).json({ message: 'Error adding patron', error: err });
     }
     logAuditAction(
