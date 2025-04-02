@@ -5,11 +5,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import * as XLSX from 'xlsx'; // Import xlsx library
 import axios from 'axios';
+import PatronImportError from '../PatronImportError/PatronImportError';
 
 const PatronImport = ({open, close}) => {
     const [importData, setImportData] = useState()
     const [isLoading, setIsLoading] = useState(false);
     const [importSuccess, setImportSuccess] = useState(false);
+    const [importFailed, setImportFailed] = useState(false);
+    const [invalidPatrons, setInvalidPatrons] = useState(false)
     
     const acceptedColumns = [
         'tup id',
@@ -34,7 +37,7 @@ const PatronImport = ({open, close}) => {
     const handleFileUpload = async (event) => {
         const file = event.target.files[0];
         if (!file) return;
-        
+    
         setError('');
         setImportData([]);
     
@@ -51,46 +54,68 @@ const PatronImport = ({open, close}) => {
     
             const jsonData = XLSX.utils.sheet_to_json(sheet); // Convert Excel to JSON
             console.log("Parsed Excel Data:", jsonData);
-
+    
             if (jsonData.length > 0) {
-                columnNames = Object.keys(jsonData[0]).map(key => key.toLowerCase());
+                // Lowercase and trim column names, but leave values untouched
+                columnNames = Object.keys(jsonData[0]).map(key => key.trim().toLowerCase());
                 console.log(columnNames);
-                
+    
+                // Check if the required columns exist
                 acceptedColumns.forEach(item => {
                     if (!columnNames.includes(item)) {
                         columnError.push(item);
                     }
                 });
-                
+    
                 setError(columnError.length > 0 ? `Excel file should contain the following column names:  ${columnError.join(', ')}` : '');
-                
+    
                 if (columnError.length === 0) {
-                    setImportData(jsonData);
+                    // No need to change the values to lowercase, just clean the trailing spaces in data
+                    const cleanedData = jsonData.map((row) => {
+                        const cleanedRow = {};
+                        Object.keys(row).forEach((key) => {
+                            const cleanedKey = key.trim().toLowerCase(); // Convert column name to lowercase
+                            cleanedRow[cleanedKey] = (row[key] || '').toString().trim(); // Trim values but leave them as they are
+                        });
+                        return cleanedRow;
+                    });
+    
+                    setImportData(cleanedData); // Set the cleaned data for import
                 }
             } else {
                 setError('File appears to be empty');
             }
         };
-        
+    
         reader.onerror = () => {
             setError('Error reading file');
         };
     };
+    
+    
 
 
     const handleImport = async () => {
         try {
             setIsLoading(true);
             // Send the data to the server
-            await axios.post('http://localhost:3001/api/patron/import', {patrons: importData});
-            
+            const response = await axios.post('http://localhost:3001/api/patron/import', {patrons: importData});
+
+            console.log(response.data.invalidPatrons)
+            if(response.data.invalidPatrons.length>0&&response.data.insertedPatrons.length==0){
+                setInvalidPatrons(response.data.invalidPatrons)
+                setImportFailed(true);
+            }else{
             setImportSuccess(true);
-            setTimeout(() => {
-                setImportData([])
-                close();
-                setImportSuccess(false);
-                window.location.reload()
-            }, 2000);
+                setTimeout(() => {
+                    setImportData([])
+                    close();
+                    setImportSuccess(false);
+                    setError('')
+                    window.location.reload()
+                }, 2000);
+            }
+            
         } catch (err) {
             console.error('Error importing patrons:', err);
             setError('Failed to import patron data. Please try again.');
@@ -165,6 +190,7 @@ const PatronImport = ({open, close}) => {
                     </div>
                 </div>
             </div>
+        <PatronImportError open={importFailed} close={()=>setImportFailed(false)} invalidPatrons={invalidPatrons}/>
         </div>,
         document.getElementById('portal')
     )
