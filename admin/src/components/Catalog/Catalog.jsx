@@ -318,6 +318,8 @@ const Catalog = () => {
         icon: "success",
         draggable: true,
         confirmButtonColor: "#54CB58",
+    }).then(() => {
+      window.location.reload(); // Reload the page after confirming
     });    
     },3000)
 
