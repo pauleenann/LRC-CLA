@@ -6,8 +6,10 @@ import { faX } from '@fortawesome/free-solid-svg-icons';
 import * as XLSX from 'xlsx'; // Import xlsx library
 import axios from 'axios';
 import PatronImportError from '../PatronImportError/PatronImportError';
+import { useSelector } from 'react-redux';
 
 const PatronImport = ({open, close}) => {
+    const {username} = useSelector(state=>state.username)
     const [importData, setImportData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [importSuccess, setImportSuccess] = useState(false);
@@ -103,7 +105,7 @@ const PatronImport = ({open, close}) => {
         try {
             setIsLoading(true);
             // Send the data to the server
-            const response = await axios.post('http://localhost:3001/api/patron/import', {patrons: importData});
+            const response = await axios.post('http://localhost:3001/api/patron/import', {patrons: importData, username, username});
 
             setInvalidPatrons(response.data.invalidPatrons || []);
             setInsertedPatrons(response.data.insertedPatrons || []);

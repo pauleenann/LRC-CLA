@@ -26,7 +26,7 @@ const CatalogImportError = ({open, close, invalidResources}) => {
                 {/* body */}
                 <div className='mt-4 d-flex flex-column gap-3'>
                     <div className="alert alert-danger">
-                        Failed to import resources due to the following reasons:
+                        Failed to import some resource/s due to the following reasons:
                     </div>
                     <div className="data-box">  
                         {invalidResources.map((item, index) => (

@@ -602,7 +602,7 @@ export const patronCirculation = (req,res)=>{
 
 export const importPatron = async (req, res) => {
     try {
-        const { patrons } = req.body;
+        const { patrons, username } = req.body;
         console.log('Attempting to import patrons:', patrons);
 
         if (!patrons || patrons.length === 0) {
@@ -765,6 +765,16 @@ export const importPatron = async (req, res) => {
                     tupId: tupId,
                     name: `${firstName} ${lastName}`
                 });
+
+                logAuditAction(
+                    username,
+                    'INSERT',
+                    'patron',
+                    null,
+                    null,
+                    JSON.stringify("Added new patron: " + firstName + " " + lastName)
+                );
+                
 
             } catch (itemError) {
                 console.error('Error processing patron item:', itemError);
