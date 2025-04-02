@@ -31,7 +31,8 @@
 
 .about-container .mission,
 .about-container .vision{
-    height: 70vh;
+    min-height: 300px;
+    /*height: 70vh;*/
     /* background-color: aqua; */
 }
 
@@ -55,7 +56,8 @@
 }
 
 .about-container .remark-box{
-    height: 100vh;
+    /*height 100vh;*/
+    min-height: 400px;
 }
 
 .about-container .prof{
@@ -83,7 +85,8 @@
 }
 
 .about-container .accordion-item{
-    width: 700px;
+    max-width: 100%; /* Allows it to shrink on smaller screens */
+    width: 90%; /* Ensures it takes up most of the container but remains responsive */width: 700px;
 }
 
 .about-container .faq h2{
