@@ -65,71 +65,87 @@ const AboutUsPage = () => {
         </div>
 
         {/* about us */}
-        <div className='aboutus d-flex align-items-center justify-content-center'>
+        <div className='aboutus d-flex align-items-center justify-content-between px-5 py-5'>
             <div className="container">
                 <h1 className='fw-bold'>About Us</h1>
-                <p className='m-0 fs-5'>The College of Liberal Arts Learning Resource Center (CLA LRC) is your dedicated hub for academic exploration and intellectual growth. Our mission is to provide a comprehensive range of resources and services that support your academic journey.</p>
+                <p className='m-0 fs-5'>
+                    The College of Liberal Arts Learning Resource Center (CLA LRC) is your dedicated hub for academic exploration and intellectual growth. Our mission is to provide a comprehensive range of resources and services that support your academic journey.
+                </p>
             </div>
         </div>
         
         {/* gallery */}
-        <div className="gallery d-flex gap-3 px-5">
-            <img src={about2} alt="" />
-            <img src={about1} alt="" />
-            <img src={about} alt="" />
+        <div className="gallery px-5">
+            <div className="row g-3">
+            <div className="col-12 col-md-4">
+            <img src={about2} alt="" className="img-fluid w-100 rounded" />
+            </div>
+
+            <div className="col-12 col-md-4">
+            <img src={about1} alt="" className="img-fluid w-100 rounded" />
+            </div>
+
+            <div className="col-12 col-md-4">
+            <img src={about} alt="" className="img-fluid w-100 rounded"  />
+            </div>
+            </div>
         </div>
         
         {/* mission */}
-        <div className="container mission d-flex align-items-center justify-content-center">
-            <div className="row">
+        <div className="container mission py-5">
+            <div className="row g-4 align-items-center">
                 {/* img */}
-                <div className="col-6 img-box">
+                <div className="col-12 col-md-6 img-box order-2 order-md-1">
                     <img src={lrc} alt="" className='w-100 h-100 rounded-3'/>
                 </div>
                 {/* content */}
-                <div className="col-6 d-flex flex-column justify-content-center px-5">
+                <div className="col-12 col-md-6 d-flex flex-column justify-content-center px-md-5 px-3">
                     <h2 className='fw-bold mission-title fs-1'>A Space for Learning and Collaboration</h2>
                     <p className="m-0 mission-subtitle fw-semibold mt-2">The CLA LRC offers a serene and conducive environment for focused study and collaborative work. Our facilities include study areas and specialized sections for each Liberal Arts discipline: Entrepreneurship, Languages, Hotel and Restaurant Management, Physical Education, Social Sciences.</p>
                 </div>
             </div>
         </div>
-
+        
         {/* vision */}
-        <div className="container vision d-flex align-items-center justify-content-center">
-            <div className="row">
-                {/* content */}
-                <div className="col-6 d-flex flex-column justify-content-center px-5">
-                    <h2 className='fw-bold vision-title fs-1'>Comprehensive Resources at your Fingertips</h2>
-                    <p className="m-0 vision-subtitle fw-semibold mt-2">Our extensive collection of books, newsletters, magazines, and theses resources provide you with the tools you need to succeed. Whether you're researching a complex topic, preparing for an exam, or working on a creative project, the CLA LRC has you covered.</p>
-                </div>
-                {/* img */}
-                <div className="col-6 img-box">
-                    <img src={lrc1} alt="" className='w-100 h-100 rounded-3'/>
-                </div>
+        <div className="container vision py-5">
+    <div className="row g-4 align-items-center">
+        {/* img - on the left on desktop */}
+        <div className="col-12 col-md-6 img-box order-2 order-md-1 mb-4 mb-md-0">
+            <div className="img-container" style={{height: "100%", overflow: "hidden"}}>
+                <img src={lrc1} alt="Library resources" className='img-fluid rounded-3' style={{objectFit: 'cover', width: '100%'}}/>
             </div>
         </div>
+        {/* content - on the right on desktop */}
+        <div className="col-12 col-md-6 d-flex flex-column justify-content-center px-md-5 px-3 order-1 order-md-2">
+            <h2 className='fw-bold vision-title fs-1'>Comprehensive Resources at your Fingertips</h2>
+            <p className="m-0 vision-subtitle fw-semibold mt-2">Our extensive collection of books, newsletters, magazines, and theses resources provide you with the tools you need to succeed. Whether you're researching a complex topic, preparing for an exam, or working on a creative project, the CLA LRC has you covered.</p>
+        </div>
+    </div>
+</div>
 
         {/* services */}
-        <div className="services w-100 d-flex align-items-center">
-            <div className="container h-50">
-                <div className="row h-100 ">
-                    <div className="col-6">
-                        <h2 className='fw-bold text-tertiary fs-1'>We're Committed to Your Learning Journey</h2>
+        <div className="services w-100 d-flex align-items-center mb-5 mb-md-0">
+            <div className="container">
+                <div className="row g-4 flex-wrap ">
+                    <div className="col-12 col-md-6">
+                         {/* Title Section */}
+                        <h2 className='fw-bold text-tertiary fs-1 text-md-start text-center'>We're Committed to Your Learning Journey</h2>
                     </div>
-                    <div className="col d-flex flex-column gap-5">
-                        <div className="row">
-                            <div className="col-6">
+
+                    <div className="col-12 col-md-6 d-flex flex-column gap-4">
+                        <div className="row g-3">
+                            <div className="col-12 col-sm-6 col-lg-6">
                                 <Service title={'Extensive Resource Collection'} subtitle={'Access a diverse collection of books, magazines, newsletter, and theses related to the liberal arts.'} icon={'fa-book'}/>
                             </div>
-                            <div className="col-6">
+                            <div className="col-12 col-sm-6 col-lg-6">
                                 <Service title={'Study and Collaboration Spaces'} subtitle={'Find quiet study areas and group study spaces to enhance your learning experience.'} icon={'fa-book-open-reader'}/>
                             </div>
                         </div>
-                        <div className="row">
-                            <div className="col-6">
+                        <div className="row g-3">
+                            <div className="col-12 col-sm-6 col-lg-6">
                                 <Service title={'Faculty Consultation'} subtitle={'Connect with CLA faculty for academic guidance, research assistance, and thesis support.'} icon={'fa-chalkboard-user'}/>
                             </div>
-                            <div className="col-6">
+                            <div className="col-12 col-sm-6 col-lg-6">
                                 <Service title={'OBE and Research Support'} subtitle={'Benefit from the expertise of our OBE Coordinator and Research and Extension staff.'} icon={'fa-handshake'}/>
                             </div>
                         </div>
@@ -139,13 +155,19 @@ const AboutUsPage = () => {
             </div>
         </div>
 
+        <div className="py-4">
+
+        </div>
+
         {/* prof */}
-        <div className="container remark-box d-flex align-items-center ">
-            <div className="row w-100">
-                <div className="col-6">
-                    <img src={reading} alt="" className='w-100'/>
+        <div className="container remark-box d-flex align-items-center py-5 ">
+            <div className="row w-100 g-4 align-items-center">
+                {/* Image Column */}
+                <div className="col-12 col-md-6 text-center">
+                    <img src={reading} alt="" className="w-100 rounded-3" style={{maxWidth: "400px"}}/>
                 </div>
-                <div className="col-6 d-flex flex-column justify-content-center">
+
+                <div className="col-12 col-md-6 d-flex flex-column justify-content-center text-md-start text-center">
                     <h2 className='prof m-0 fw-bold fs-1'>Prof. Jaime Jr. E. Mozo</h2>
                     <p className="m-0 position fw-semibold ">Coordinator of College of Liberal Arts’ Learning Resources Center</p>
                     <p className="m-0 remarks mt-3 fw-semibold">The vision is to create an environment where students, faculty, and staff can easily access valuable resources, benefit from exceptional services, and thrive within a culture of continuous learning and collaboration. By prioritizing accessibility, responsiveness, and innovation, the coordinator aims to contribute to the academic and personal growth of every individual who engages with the center, fostering a supportive community that encourages success and development.</p>
@@ -154,39 +176,46 @@ const AboutUsPage = () => {
         </div>
 
         {/* FAQ Section */}
-        <div className="faq d-flex flex-column align-items-center">
-            <h2 className="mb-5 fw-bold fs-1">Frequently Asked Questions</h2>
-            <div className="accordion accordion-flush" id="accordionFlushExample">
-                {FAQ.map((item, index) => {
-                    const collapseId = `flush-collapse-${index}`;
-                    const headingId = `flush-heading-${index}`;
-                    return (
-                        <div className="accordion-item" key={index}>
-                            <h2 className="accordion-header" id={headingId}>
-                                <button 
-                                    className="accordion-button collapsed fs-5 fw-semibold" 
-                                    type="button" 
-                                    data-bs-toggle="collapse" 
-                                    data-bs-target={`#${collapseId}`} 
-                                    aria-expanded="false" 
-                                    aria-controls={collapseId}
+        <div className="container py-5">
+            <div className="row justify-content-center">
+                <div className="col-12 col-md-10 col-lg-8">
+                    <div className="faq d-flex flex-column align-items-center">
+                <h2 className="mb-4 mb-md-5 fw-bold fs-1 text-center">Frequently Asked Questions</h2>
+                
+                <div className="accordion accordion-flush w-100" id="accordionFlushExample">
+                    {FAQ.map((item, index) => {
+                        const collapseId = `flush-collapse-${index}`;
+                        const headingId = `flush-heading-${index}`;
+                        return (
+                            <div className="accordion-item" key={index}>
+                                <h2 className="accordion-header" id={headingId}>
+                                    <button 
+                                        className="accordion-button collapsed fs-5 fw-semibold" 
+                                        type="button" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target={`#${collapseId}`} 
+                                        aria-expanded="false" 
+                                        aria-controls={collapseId}
+                                    >
+                                        {item.question}
+                                    </button>
+                                </h2>
+                                <div 
+                                    id={collapseId} 
+                                    className="accordion-collapse collapse" 
+                                    aria-labelledby={headingId} 
+                                    data-bs-parent="#accordionFlushExample"
                                 >
-                                    {item.question}
-                                </button>
-                            </h2>
-                            <div 
-                                id={collapseId} 
-                                className="accordion-collapse collapse" 
-                                aria-labelledby={headingId} 
-                                data-bs-parent="#accordionFlushExample"
-                            >
-                                <div className="accordion-body">{item.answer}</div>
+                                    <div className="accordion-body">{item.answer}</div>
+                                </div>
                             </div>
-                        </div>
-                    );
-                })}
+                        );
+                    })}
+                </div>
             </div>
         </div>
+    </div>
+</div>
 
 
         {/* footer */}
