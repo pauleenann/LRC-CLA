@@ -20,6 +20,7 @@ export const checkoutSearch = async (req, res) => {
             r.resource_title AS title, 
             r.resource_quantity AS quantity, 
             r.resource_id,
+            pub.pub_name,
             r.resource_is_archived,
             GROUP_CONCAT(DISTINCT CONCAT(a.author_fname, ' ', a.author_lname) ORDER BY a.author_lname SEPARATOR ', ') AS authors
         FROM 
@@ -28,6 +29,8 @@ export const checkoutSearch = async (req, res) => {
             resources r ON b.resource_id = r.resource_id
         INNER JOIN 
             resourceauthors ra ON ra.resource_id = r.resource_id
+        INNER JOIN
+            publisher pub ON pub.pub_id = b.pub_id
         INNER JOIN 
             author a ON a.author_id = ra.author_id
         WHERE 
@@ -49,7 +52,7 @@ export const checkoutSearch = async (req, res) => {
         resource_quantity: (book.quantity),
         book_isbn: (book.book_isbn),
         authors: book.authors,
-
+        publisher: (book.pub_name),
     }));
 
       res.json(covers);
