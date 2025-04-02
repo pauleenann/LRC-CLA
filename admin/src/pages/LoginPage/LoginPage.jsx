@@ -110,8 +110,8 @@ const LoginPage = () => {
                     
                     <div className="d-grid gap-2">
                         {loading ? (
-                            <button className="btn btn-primary btn-lg" type="button" disabled>
-                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <button className="btn btn-dark btn-lg" type="button" disabled>
+                                {/* <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> */}
                                 Loading...
                             </button>
                         ) : (
