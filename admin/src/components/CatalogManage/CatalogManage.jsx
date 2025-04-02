@@ -188,8 +188,8 @@ const CatalogManage = () => {
               <div className="list-group mb-4">
                 {isLoading && departments.length === 0 ? (
                   <div className="text-center py-3">
-                    <div className="spinner-border text-primary" role="status">
-                      <span className="visually-hidden">Loading...</span>
+                    <div class="spinner-grow text-danger" role="status">
+                      <span class="sr-only">Loading...</span>
                     </div>
                   </div>
                 ) : departments.length === 0 ? (
@@ -271,8 +271,8 @@ const CatalogManage = () => {
                 
                 {isLoading && topics.length === 0 ? (
                   <div className="text-center py-3">
-                    <div className="spinner-border text-primary" role="status">
-                      <span className="visually-hidden">Loading...</span>
+                    <div class="spinner-grow text-danger" role="status">
+                      <span class="sr-only">Loading...</span>
                     </div>
                   </div>
                 ) : topics.length === 0 ? (

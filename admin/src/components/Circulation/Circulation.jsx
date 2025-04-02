@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Circulation.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCartPlus, faCartShopping, faSearch, faArrowLeft, faArrowRight, faExclamationCircle, faCalendarAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCartPlus, faCartShopping, faSearch, faArrowLeft, faArrowRight, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Circulation = () => {
@@ -157,7 +157,7 @@ const Circulation = () => {
           <input
             type="text"
             className="search-bar form-control shadow-sm"
-            placeholder="Search"
+            placeholder="Search by ID, name, book, or course"
             value={searchTerm}
             onChange={handleSearch}
             onKeyDown={(e) => e.key === 'Enter' && search()}
@@ -174,44 +174,27 @@ const Circulation = () => {
         </select>
       </div>
 
-          {/* Date Range Row */}
-          <div className="date-filter d-flex align-items-center flex-wrap w-50">
-            <div className="d-flex align-items-center flex-grow-1 gap-2">
-              <div className="input-group">
-                <span className="input-group-text bg-white border-end-0">
-                  <FontAwesomeIcon icon={faCalendarAlt} className="text-muted" />
-                </span>
-                <input
-                  type="date"
-                  className="form-control border-start-0"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-              </div>
-              <span className="text-muted">to</span>
-              <div className="input-group">
-                <span className="input-group-text bg-white border-end-0">
-                  <FontAwesomeIcon icon={faCalendarAlt} className="text-muted" />
-                </span>
-                <input
-                  type="date"
-                  className="form-control border-start-0"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </div>
-            </div>
-            <button 
-              className="btn btn-warning ms-2 d-flex align-items-center" 
-              onClick={clearFilter}
-            >
-              {/* <FontAwesomeIcon icon={faTimes} className="me-2" /> */}
-              Clear Filters
-            </button>
-          </div>
+      {/* Date filter */}
+      <div className="d-flex justify-content-between">
+        <div className="d-flex align-items-center gap-1">
+          <input
+            type="date"
+            className="shadow-sm form-control"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+          <span>to</span>
+          <input
+            type="date"
+            className="shadow-sm form-control"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+          <button className="btn btn-warning w-100" onClick={clearFilter}>
+            Clear filter
+          </button>
         </div>
       </div>
-      
 
       <div className="table-box">
         <h2>Recent transactions</h2>
