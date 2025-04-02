@@ -13,7 +13,7 @@ const EditPatron = () => {
         patron_mobile: '',
         patron_email: '',
         category: 'Student',
-        patron_status:'',
+        patron_status:'Select Status',
         college: '',
         program: null,
         tup_id: 'TUPM-',
@@ -657,6 +657,7 @@ const EditPatron = () => {
                                             value={patronData.patron_status}
                                             onChange={handleChange}
                                         >
+                                            <option selected disabled>Select Status</option>
                                             <option value="active">Active</option>
                                             <option value="inactive">Inactive</option>
                                         </select>
