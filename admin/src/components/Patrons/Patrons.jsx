@@ -11,6 +11,10 @@ const Patrons = () => {
     const [filteredPatrons, setFilteredPatrons] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('');
+    const [selectedFilters,setSelectedFilters]=useState({
+        category: '',
+        status: ''
+    })
     const [loading, setLoading] = useState(false);
     const [userRole, setUserRole] = useState(null);
     
@@ -66,16 +70,23 @@ const Patrons = () => {
     };
 
     const handleSearch = ()=>{
-        filterPatrons(searchTerm, categoryFilter);
+        filterPatrons(searchTerm.toLowerCase(), selectedFilters);
     }
 
-    const handleCategoryChange = (event) => {
-        const selectedCategory = event.target.value;
-        setCategoryFilter(selectedCategory);
-        filterPatrons(searchTerm, selectedCategory);
+    const handleFilterChange = (e) => {
+        const { value, name } = e.target;
+    
+        const newFilters = {
+            ...selectedFilters,
+            [name]: value,
+        };
+    
+        setSelectedFilters(newFilters);
+        filterPatrons(searchTerm.toLowerCase(), newFilters); // Pass the updated filters directly here
     };
+    
 
-    const filterPatrons = (term, category) => {
+    const filterPatrons = (term, filters) => {
         const filtered = patrons.filter((patron) => {
         
             const matchesSearch =
@@ -84,9 +95,12 @@ const Patrons = () => {
                 patron.patron_email.toLowerCase().includes(term);
 
             const matchesCategory =
-                category === '' || patron.category.toLowerCase() === category.toLowerCase();
+                filters.category === '' || patron.category.toLowerCase() === filters.category.toLowerCase();
+
+            const matchesStatus =
+                filters.status === '' || patron.status.toLowerCase() === filters.status.toLowerCase();
                 
-            return matchesSearch && matchesCategory; //if true, it returns the patron object
+            return matchesSearch && matchesCategory && matchesStatus; //if true, it returns the patron object
         });
         console.log(filtered)
         setFilteredPatrons(filtered);
@@ -115,7 +129,7 @@ const Patrons = () => {
     return (
         <div className="patrons-container bg-light">
             <h1>Patrons</h1>
-            <div className="search-field-category-filter">
+            {/* <div className="search-field-category-filter">
                 <div className="patrons-category">
                     <label>Category</label>
                     <select className="form-select shadow-sm" value={categoryFilter} onChange={handleCategoryChange}>
@@ -124,7 +138,7 @@ const Patrons = () => {
                         <option value="Faculty">Faculty</option>
                     </select>
                 </div>
-            </div>
+            </div> */}
             <div className="search-bar-box">
                 <div className='d-flex gap-2'>
                     <div className="input-group">
@@ -161,6 +175,38 @@ const Patrons = () => {
                 </div>
             </div>
             <div className="">
+                <div className="mb-3 d-flex gap-3">
+                    <div>
+                        <label>Category</label>
+                        <select
+                            id=""
+                            name='category'
+                            value={selectedFilters.category} 
+                            onChange={handleFilterChange}
+                            className="form-select form-select-sm"
+                            style={{ width: 'auto', display: 'inline-block', marginLeft: '5px',height:'35px' }}
+                        >
+                            <option value="">Any</option>
+                            <option value="Student">Student</option>
+                            <option value="Faculty">Faculty</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Status</label>
+                        <select
+                            id=""
+                            name='status'
+                            value={selectedFilters.status} 
+                            onChange={handleFilterChange}
+                            className="form-select form-select-sm"
+                            style={{ width: 'auto', display: 'inline-block', marginLeft: '5px',height:'35px' }}
+                        >
+                            <option value="">Any</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
                 <table className=" table-hover shadow-sm">
                     <thead className="">
                         <tr>
