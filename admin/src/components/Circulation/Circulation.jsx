@@ -57,12 +57,18 @@ const Circulation = () => {
     if (!borrowers || !Array.isArray(borrowers) || borrowers.length === 0) return;
 
     const filtered = borrowers.filter((borrower) => {
-      const fullName = `${borrower.patron_fname ?? ''} ${borrower.patron_lname ?? ''}`.toLowerCase();
+      // Only search non-date columns
       const matchesSearch = 
-        fullName.includes(searchTerm.toLowerCase()) ||
+        // TUP ID column
         (borrower.tup_id?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+        // Name column
+        `${borrower.patron_fname ?? ''} ${borrower.patron_lname ?? ''}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        // Book/s issued column
+        (borrower.borrowed_book?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+        // Course column
         (borrower.course?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
-        (borrower.borrowed_book?.toLowerCase() ?? '').includes(searchTerm.toLowerCase());
+        // Status column
+        (borrower.status?.toLowerCase() ?? '').includes(searchTerm.toLowerCase());
 
       // Date range filtering using the approach from the first code
       const isDateInRange = (date) => {
@@ -145,35 +151,28 @@ const Circulation = () => {
         </Link>
       </div>
 
-      <div className="">
-        <div className="card-body">
-          {/* Search and Filter Row */}
-          <div className="search-container d-flex justify-content-between align-items-center mb-3">
-            <div className="input-group w-50">
-              <input
-                type="text"
-                className="search-bar form-control border-start-0"
-                placeholder="Search by name, ID, course or book..."
-                value={searchTerm}
-                onChange={handleSearch}
-                onKeyDown={(e) => e.key === 'Enter' && search()}
-              />
-              <button className="btn search-btn" onClick={search}>
-                <FontAwesomeIcon icon={faSearch} className="text-light" />
-              </button>
-            </div>
-            <select 
-              className="form-select dropdown ms-3" 
-              style={{maxWidth: "180px"}}
-              onChange={(e) => setQuery(e.target.value)}
-              value={query}
-            >
-              <option value="any">Any Status</option>
-              <option value="borrowed">Borrowed</option>
-              <option value="returned">Returned</option>
-              <option value="overdue">Overdue</option>
-            </select>
-          </div>
+      {/* Search */}
+      <div className="search-container d-flex justify-content-between">
+        <div className="input-group w-50">
+          <input
+            type="text"
+            className="search-bar form-control shadow-sm"
+            placeholder="Search"
+            value={searchTerm}
+            onChange={handleSearch}
+            onKeyDown={(e) => e.key === 'Enter' && search()}
+          />
+          <button className="btn search-btn" onClick={search}>
+            <FontAwesomeIcon icon={faSearch} />
+          </button>
+        </div>
+        <select className="form-select dropdown" onChange={(e) => setQuery(e.target.value)}>
+          <option value="any">Any</option>
+          <option value="borrowed">Borrowed</option>
+          <option value="returned">Returned</option>
+          <option value="overdue">Overdue</option>
+        </select>
+      </div>
 
           {/* Date Range Row */}
           <div className="date-filter d-flex align-items-center flex-wrap w-50">
@@ -283,7 +282,7 @@ const Circulation = () => {
                 <td colSpan="8" className="no-data-box text-center">
                   <div className="d-flex flex-column align-items-center gap-2 my-5">
                     <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
-                    <span>No records found for the selected date range.</span>
+                    <span>No records found...</span>
                   </div>
                 </td>
               </tr>
@@ -315,4 +314,4 @@ const Circulation = () => {
   );
 };
 
-export default Circulation;
+export default Circulation; 
