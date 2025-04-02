@@ -659,6 +659,7 @@ const EditPatron = () => {
                                             value={patronData.patron_status}
                                             onChange={handleChange}
                                         >
+                                            <option selected disabled>Select Status</option>
                                             <option value="active">Active</option>
                                             <option value="inactive">Inactive</option>
                                         </select>
