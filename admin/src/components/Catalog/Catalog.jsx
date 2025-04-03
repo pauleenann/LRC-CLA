@@ -625,8 +625,9 @@ const Catalog = () => {
           ) : (
             <tr>
               <td colSpan="7" style={{ textAlign: 'center' }}>
-                <FontAwesomeIcon icon={faExclamationCircle} className='fs-2'/>
-                <p className="m-0 mt-1">Resources not found.</p>
+                <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
+                <p className='fw-semibold m-0 mt-2'>Resources not found.</p>
+                <p className='text-secondary m-0'>Please try again.</p>
               </td>
             </tr>
           )}

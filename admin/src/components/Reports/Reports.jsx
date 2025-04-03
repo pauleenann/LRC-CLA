@@ -162,15 +162,17 @@ const Reports = () => {
               <Loading />
             </div>
           ) : reports.length === 0 ? (
-            <div className="d-flex flex-column align-items-center text-center my-4 gap-2">
+            <div className="text-center py-4">
               <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
-              <span>No reports available.<br/>Please create one.</span>
+              <p className='fw-semibold m-0 mt-2'>No reports available.</p>
+              <p className='text-secondary m-0'>Please create one.</p>
               {/* <button className='btn clear-btn' onClick={clearFilters}>Clear Filter</button> */}
             </div>
           ) : currentReports.length === 0 ? (
-            <div className="d-flex flex-column align-items-center text-center my-4 gap-2">
+            <div className="text-center py-4">
               <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
-              <span>Report not found.<br/>Please try a different search.</span>
+              <p className='fw-semibold m-0 mt-2'>Report not found.</p>
+              <p className='text-secondary m-0'>Please try a different search.</p>
               <button className='btn btn-warning' onClick={clearFilters}>Clear Filter</button>
             </div>
           )
