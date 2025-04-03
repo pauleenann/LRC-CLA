@@ -3,23 +3,74 @@
 footer{
     background-color: var(--tup-color);
     width: 100%;
-    height: 50vh;
+    min-height: 50vh;
+    padding-bottom: 2rem;
     /* margin-top: 100px; */
 }
 
 footer .logo, footer .logo span,
 footer .quick-links h2,
 footer .contact-us h2{
+    margin-bottom: 0.5rem;
     font-family: var(--playfair) !important;
+
+   
+}
+
+footer.row{
+    display: flex;
+    align-items: flex-start;
 }
 
 footer .copyright{
     background-color: var(--dark-red);
+    margin-top: 2rem; /* Push pababa */
+    padding: 1rem 0; /* Add padding para mas may space */
 }
+footer .container {
+    flex-grow: 1; 
+}
+
+
+
 
 footer .copyright p,
 footer .sub,
 footer .quick-links p,
 footer .contact-us p{
     font-family: var(--open-sans);
+}
+
+
+
+
+/* Add responsive styles */
+@media (max-width: 767px) {
+
+    footer .row > .col-md-4,
+    footer .row > .col-md-8 > .row > .col-sm-6 {
+        padding-top: 1rem;
+    }
+   
+    .quick-links,
+    .contact-us {
+        margin-top: 2rem;
+    }
+    .quick-links ul {
+        align-items: center;
+    }
+    .contact-us .d-flex {
+        justify-content: center;
+    }
+
+    footer {
+        text-align: center;
+    }   
+    footer h2 {
+        font-size: 1.75rem !important;
+    }
+    
+    .email-text {
+        word-break: break-word;
+    }
 }
