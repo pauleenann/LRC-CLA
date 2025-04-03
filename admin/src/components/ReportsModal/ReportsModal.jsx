@@ -149,14 +149,27 @@ const ReportsModal = ({ open, close}) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     
-    // If changing category, reset detail
+    // If changing category, reset detail,college, and course
     if (name === 'category') {
       setReportData({
         ...reportData,
         category: value,
-        detail: ''
+        detail: '',
+        college:'all',
+        course:'all',
+        startDate:'',
+        endDate:''
       });
       setShowReportTable(false);
+    } else if(name === 'detail'){
+      setReportData({
+        ...reportData,
+        detail: value,
+        college:'all',
+        course:'all',
+        startDate:'',
+        endDate:''
+      });
     } else {
       setReportData({
         ...reportData,
@@ -199,7 +212,7 @@ const ReportsModal = ({ open, close}) => {
     
     const categoryId = parseInt(reportData.category);
     const detailId = parseInt(reportData.detail);
-    const datesRequired = categoryId !== 3 && categoryId !== 4 && detailId !== 6 && detailId !== 7;
+    const datesRequired = categoryId !== 3 && categoryId !== 4 && detailId !== 6 && detailId !== 7 && reportData.detail!=5;
     
     if (!reportData.startDate && datesRequired) {
       newErrors.startDate = 'Start date is required';
@@ -518,14 +531,14 @@ const ReportsModal = ({ open, close}) => {
             </div>
           </div>
           
-          {reportData.category!=3&&(
+          {reportData.category!=3&&reportData.detail!=5&&reportData.detail!=6&&reportData.detail!=7&&(
           <div className='d-flex gap-3'>
             {/* college */}
             <div className='d-flex flex-column w-100 form-floating'>
                 <select 
                 name="college" 
                 id="college"
-                // value={reportData.category}
+                value={reportData.college}
                 onChange={handleInputChange}
                 className={`form-control ${errors.college ? 'is-invalid' : ''}`}
                 >
@@ -546,7 +559,7 @@ const ReportsModal = ({ open, close}) => {
                 <select 
                 name="course" 
                 id="course"
-                // value={reportData.detail}
+                value={reportData.course}
                 onChange={handleInputChange}
                 disabled={!reportData.college}
                 className={`form-control ${errors.course ? 'is-invalid' : ''}`}
@@ -569,7 +582,7 @@ const ReportsModal = ({ open, close}) => {
 
         
           {/* Only show date fields for categories other than 3 and 4 */}
-          {reportData.category != 3 && reportData.category != 4 &&  reportData.detail !=6 && reportData.detail != 7 && (
+          {reportData.category != 3 && reportData.category != 4 &&reportData.detail!=5 && reportData.detail !=6 && reportData.detail != 7 && (
             <div className='d-flex gap-3'>
               {/* start date */}
               <div className='d-flex flex-column w-100 form-floating'>
