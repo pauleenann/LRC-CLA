@@ -680,7 +680,7 @@ const ReportsModal = ({ open, close}) => {
                     {generatedReport.map((row, rowIndex) => (
                       <tr key={rowIndex}>
                         {Object.values(row).map((value, colIndex) => (
-                          <td key={colIndex} className='text-capitalize'>
+                          <td key={colIndex}>
                             {value !== null ? value :''}
                           </td>
                         ))}

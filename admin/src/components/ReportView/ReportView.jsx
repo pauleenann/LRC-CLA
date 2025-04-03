@@ -34,7 +34,7 @@ const ReportView = ({open, close, id}) => {
   
   const getReport = async() => {
     try {
-        const response = await axios.get(`http://localhost:3001/api/reports/${id}`);
+        const response = await axios.get(`http://localhost:3001/api/reports/view/${id}`);
         console.log(response.data);
         
         // Convert dates to local timezone in the report data
@@ -119,7 +119,10 @@ const ReportView = ({open, close, id}) => {
             {/* details */}
             {report.map((item, index) => (
               <div className="details" key={item.id || index}>
-                <div className="row">
+                <div className="row mt-3">
+                  <div className="col-2 fw-semibold">Report status:</div>
+                  <div className={`col-10 fw-semibold ${item.is_archived==1?'text-danger':'text-success'}`}>{item.is_archived==1?'Archived':'Unarchived'}</div>
+                  
                   <div className="col-2 fw-semibold">Report name:</div>
                   <div className="col-10">{item.report_name}</div>
 
@@ -148,7 +151,7 @@ const ReportView = ({open, close, id}) => {
             ))}
             
             <button 
-              className="btn d-flex align-items-center gap-2 btn-success mt-3"
+              className="btn d-flex align-items-center gap-2 btn-success mt-3 text-end"
               disabled={exporting || generatedReport.length === 0}
               onClick={exportToExcel}
             >
@@ -168,7 +171,7 @@ const ReportView = ({open, close, id}) => {
                 {generatedReport.map((row, index) => (
                   <tr key={index}>
                     {Object.values(row).map((value, i) => (
-                      <td key={i} className='text-capitalize'>{value}</td>
+                      <td key={i}>{value}</td>
                     ))}
                   </tr>
                 ))}
