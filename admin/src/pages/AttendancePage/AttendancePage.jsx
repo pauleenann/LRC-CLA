@@ -102,6 +102,13 @@ const AttendancePage = () => {
     }
   };
 
+  useEffect(()=>{
+    const regex = /^TUPM-\d{2}-\d{4}$/i;
+    if(regex.test(studentId)){
+      handleSubmit()
+    }
+  }, [studentId])
+
   return (
     <div className="attendance-container">
       <header className="header">
@@ -135,7 +142,7 @@ const AttendancePage = () => {
             </div>
           ) : (
             <div className="instructions">
-              <p>Please scan your student ID or enter your name below</p>
+              <p>Please scan your student ID</p>
             </div>
           )}
 
@@ -147,7 +154,7 @@ const AttendancePage = () => {
               value={studentId}
               onChange={(e) => setStudentId(e.target.value)}
               ref={searchInputRef}
-              placeholder="Student ID / Name"
+              placeholder="Student ID"
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
               disabled={status === "loading"}
             />
