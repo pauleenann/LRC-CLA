@@ -66,7 +66,7 @@ const ResourceBook = ({ loading, data }) => {
             }
           </div>
           <p className="m-0 title fw-semibold">{truncateTitle(data.resource_title)}</p>
-          <p className="m-0 author fw-semibold">By {truncateAuthor(data.authors || "Unknown Author")}</p>
+          <p className="m-0 author fw-semibold">By {truncateAuthor(data.authors === "N/A N/A" || data.authors === "n/a n/a" ? "Unknown Author" : data.authors)}</p>
         </>
       )}
     </div>

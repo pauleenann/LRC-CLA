@@ -110,7 +110,7 @@ const ViewResourcePage = () => {
                     {/* availability */}
                     {resource && typeof resource.resource_quantity !== 'undefined' && (
                         <div
-                            className={`availability text-light d-flex align-items-center py-2 px-4 rounded-pill 
+                            className={`fw-semibold availability text-light d-flex align-items-center py-2 px-4 rounded-pill 
                                 ${resource.resource_quantity === 0 ? 'bg-danger' : 'bg-success'}`}
                         >
                             {resource.resource_quantity === 0 ? 'Borrowed' : 'Available'}
@@ -125,7 +125,7 @@ const ViewResourcePage = () => {
                                 ) : (
                                 <h4 className="m-0 fw-bold text-capitalize">{resource.resource_title}</h4>
                                 )}
-                                <p className="m-0 author">by {resource.authors}</p>
+                                <p className="m-0 author">by {resource.authors == "N/A N/A" || resource.authors == "n/a n/a" ? "Unknown Author" : resource.authors}</p>
                             </>
                         )}
                     </div>
@@ -143,27 +143,31 @@ const ViewResourcePage = () => {
                     {/* Topic */}
                     <div>
                         <h5 className='m-0 info-label'>Topic</h5>
-                        <p className="m-0 fs-5 info text-capitalize">{resource&&resource.topic_name}</p>
+                        <p className="m-0 fs-5 info text-capitalize">
+                        {resource?.topic_name?.trim() ? resource.topic_name : "Unknown topic"}
+                        </p>
                     </div>
                     {/* shelf */}
                     <div>
                         <h5 className='m-0 info-label'>Shelf No.</h5>
                         <p className="m-0 fs-5 info">{resource&&resource.dept_shelf_no}</p>
                     </div>
-                    {/* Topic */}
+                    {/* row */}
                     <div>
                         <h5 className='m-0 info-label'>Row No.</h5>
-                        <p className="m-0 fs-5 info">{resource&&resource.topic_row_no}</p>
+                        <p className="m-0 fs-5 info text-capitalize">
+                        {resource?.topic_row_no?.trim() ? resource.topic_row_no : "Unknown row number"}
+                        </p>
                     </div>
                     {resource&&resource.resource_is_circulation==1
-                    ?<p className="m-0 fst-italic text-danger">This resource can be borrowed and is not limited to use within the premises.</p>:<p className="m-0 fst-italic text-danger">This resource cannot be borrowed and is limited to use within the premises.</p>}
+                    ?<p className="m-0 fst-italic text-danger fw-semibold">This resource can be borrowed and is not limited to use within the premises.</p>:<p className="m-0 fst-italic text-danger">This resource cannot be borrowed and is limited to use within the premises.</p>}
                     
                 </div>
                 {/* book cover */}
                 <div className="col-6 h-100">
                     {resource&&resource.type_id!=4
-                    ?<img src={preview} alt="" className='book-cover'/>
-                    :<div className='thesis-cover d-flex justify-content-center align-items-center text-light p-5 text-center text-uppercase'>
+                    ?<img src={preview} alt="" className='book-cover rounded shadow'/>
+                    :<div className='thesis-cover d-flex justify-content-center align-items-center text-light p-5 text-center text-uppercase rounded shadow'>
                         {resource.resource_title}
                     </div>}
                 </div>

@@ -77,7 +77,7 @@ const Logbook = () => {
             <div className='d-flex justify-content-between align-items-center'> 
                 {/* search bar and export button */}
                 <div className="search-export">
-                    <div className="input-group" role="search">
+                    <div className="input-group z-0" role="search">
                         <input
                             className="log-search-bar form-control shadow-sm"
                             type="search"

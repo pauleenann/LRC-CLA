@@ -99,6 +99,8 @@ const HomePage = () => {
     }
   };
 
+  console.log(featuredBooks)
+
   return (
     <motion.div 
       className='homepage-container'

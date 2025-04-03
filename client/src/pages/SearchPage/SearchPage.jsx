@@ -66,6 +66,8 @@ const SearchPage = () => {
 
     // advanced search results
     const {advancedSearch,isSearch} = useSelector(state=>state.advancedSearch)
+    // Back to top button visibility state
+    const [showBackToTop, setShowBackToTop] = useState(false);
 
     console.log(advancedSearch)
 
@@ -120,6 +122,18 @@ const SearchPage = () => {
         getDept();
         getTopics();
         dispatch(fetchResources({ searchQuery: searchQuery, type, dept, topic }));
+
+         // Add scroll event listener for back to top button
+         const handleScroll = () => {
+            if (window.scrollY > 300) {
+                setShowBackToTop(true);
+            } else {
+                setShowBackToTop(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     useEffect(()=>{
@@ -311,6 +325,14 @@ const SearchPage = () => {
         return buttons;
     };
 
+    // Scroll to top function
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
+
     
     console.log(currentItems)
 
@@ -389,7 +411,7 @@ const SearchPage = () => {
                             Reset filter
                         </button>
                     </div>
-                    <div className="col">
+                    <div className="col-9">
                         {/* search header */}
                         <div className='d-flex justify-content-between align-items-center'>
                             <div>
@@ -447,11 +469,12 @@ const SearchPage = () => {
                                     </div>
                                 ))
                             ) : (
-                                <div className='d-flex flex-column align-items-center my-5 text-center gap-2'>
-                                    <i className="fa-solid fa-circle-exclamation fs-2 text-danger"></i>
-                                    <p className="m-0">No resources found.<br/>Please try a new filter.</p>
+                                <div className='d-flex flex-column align-items-center text-center py-5'>
+                                    <i className="fa-solid fa-circle-exclamation fs-2"></i>
+                                    <p className="m-0 fw-semibold mt-2">No resources found.</p>
+                                    <p className="m-0 text-secondary">Please try a new filter.</p>
                                     <button 
-                                        className="btn btn-dark"
+                                        className="btn btn-warning mt-2"
                                         onClick={handleResetFilters}
                                     >
                                         Clear Filter
@@ -491,7 +514,36 @@ const SearchPage = () => {
                     </div>
                 </div>
             </div>
-            
+
+            {/* Back to Top Button */}
+            {showBackToTop && (
+                <motion.div 
+                    className="back-to-top"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={scrollToTop}
+                    style={{
+                        position: 'fixed',
+                        bottom: '30px',
+                        right: '30px',
+                        zIndex: 999,
+                        cursor: 'pointer',
+                        backgroundColor: '#343a40',
+                        color: 'white',
+                        width: '50px',
+                        height: '50px',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)'
+                    }}
+                >
+                    <i className="fa-solid fa-arrow-up"></i>
+                </motion.div>
+            )}
+
             <Footer />
         </div>
     )

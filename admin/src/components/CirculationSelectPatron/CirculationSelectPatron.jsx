@@ -98,7 +98,7 @@ const CirculationSelectPatron = () => {
 
       {/* path and back */}
       <div className="back-path">
-        <button onClick={() => navigate(-1)} className="btn">Back</button>
+        <button onClick={() => navigate(-1)} className="btn back">Back</button>
         <p>Book Circulation / <span>Select patron</span></p>
       </div>
 
@@ -136,10 +136,11 @@ const CirculationSelectPatron = () => {
 
 
         {filteredPatrons.length === 0 ? (
-          <div className='d-flex flex-column align-items-center gap-2 my-3 text-center'>
-            <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
-            <span>'{searchQuery}' user not found.<br/>Please try again.</span>
-            <button className='btn btn-secondary' onClick={clearFilter}>Clear Filter</button>
+          <div className='d-flex flex-column align-items-center my-3 text-center'>
+            <FontAwesomeIcon icon={faExclamationCircle} className="fs-2" />
+            <span className='fw-semibold m-0'>'{searchQuery}' user not found.</span>
+            <span className='m-0 text-secondary'>Please try again.</span>
+            <button className='btn btn-warning mt-2' onClick={clearFilter}>Clear Filter</button>
           </div>
         ) : (
           currentItems.map((patron, index) => {
