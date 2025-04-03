@@ -189,7 +189,7 @@ export const getAdvancedSearchOnlineCatalog = (req, res) => {
 
     // Convert `selectedType` to a WHERE clause
     if (selectedType && selectedType != 'any') {
-        whereClause.push(`AND resourcetype.type_name = '${selectedType}'`);
+        whereClause.push(`AND resourcetype.type_name = '${selectedType} AND resources.resource_is_archived = 0'`);
     }
 
     // Join all conditions into a valid SQL WHERE clause

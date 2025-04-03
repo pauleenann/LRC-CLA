@@ -154,7 +154,7 @@ const Circulation = () => {
 
       {/* Search */}
       <div className="search-container d-flex justify-content-between">
-        <div className="input-group w-50">
+        <div className="input-group w-50 z-0">
           <input
             type="text"
             className="search-bar form-control shadow-sm"
@@ -252,13 +252,13 @@ const Circulation = () => {
                   </td>
                   <td style={{ padding: '10px' }} className='col'>
                     <span
-                      className={
-                        borrower.status === 'overdue'
-                          ? 'overdue'
+                      className={` text-light p-2 rounded fw-semibold
+                        ${borrower.status === 'overdue'
+                          ? 'bg-danger'
                           : borrower.status === 'returned'
-                          ? 'returned'
-                          : 'borrowed'
-                      }
+                          ? 'bg-success'
+                          : 'bg-primary'}
+                      `}
                     >
                       {borrower.status}
                     </span>
@@ -278,9 +278,11 @@ const Circulation = () => {
             ) : (
               <tr>
                 <td colSpan="8" className="no-data-box text-center">
-                  <div className="d-flex flex-column align-items-center gap-2 my-5">
+                  <div className="d-flex flex-column align-items-center my-5">
                     <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
-                    <span>No records found...</span>
+                    <span className='fw-semibold mt-2 m-0'>No records found.</span>
+                    <span className='m-0'>Please try a different search.</span>
+                    <button className='btn btn-warning mt-2' onClick={clearFilter}>Clear filter</button>
                   </div>
                 </td>
               </tr>

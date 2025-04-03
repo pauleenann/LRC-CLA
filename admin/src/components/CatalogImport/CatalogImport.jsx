@@ -130,7 +130,7 @@ const CatalogImport = ({open, close}) => {
                 });
 
                 // Set error message if columns are missing
-                setError(columnError.length > 0 ? `Excel file should contain the following column names: ${columnError.join(', ')}` : '');
+                setError(columnError.length > 0 ? `Excel file should contain the exact column names: ${columnError.join(', ')}` : '');
 
                 if (columnError.length === 0) {
                     // **Remove only trailing spaces from all column values**

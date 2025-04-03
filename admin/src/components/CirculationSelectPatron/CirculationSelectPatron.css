@@ -21,15 +21,15 @@
     gap: 15px;
 }
 
-.circ-select-patron-container button{
+.circ-select-patron-container .back{
     background-color: var(--white);
     border-color: var(--tup-color);
     color: var(--tup-color);
 }
 
-.circ-select-patron-container button:hover,
-.circ-select-patron-container button:active,
-.circ-select-patron-container button:focus{
+.circ-select-patron-container .back:hover,
+.circ-select-patron-container .back:active,
+.circ-select-patron-container .back:focus{
     background-color: var(--tup-color);
     border-color: var(--tup-color);
     color: var(--white);
