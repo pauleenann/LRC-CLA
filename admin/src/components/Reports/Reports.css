@@ -28,9 +28,8 @@
     border: 1px solid var(--tup-color);
 }
 
-.reports-container .download-btn .icon,
-.reports-container .eye-btn .icon{
-    color: var(--tup-color);
+.reports-container .eye-btn{
+    color: var(--tup-color) !important;
 }
 
 .reports-container .download-btn:hover,

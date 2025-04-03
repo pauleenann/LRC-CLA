@@ -34,9 +34,12 @@ export const fetchDetails = (req,res)=>{
 }
 
 export const fetchReports = (req,res)=>{
-    const q = `SELECT * from reports`
+    const {id} = req.params;
 
-    db.query(q,(err,results)=>{
+    console.log(id)
+    const q = `SELECT * from reports WHERE staff_id = ?`
+
+    db.query(q,[id],(err,results)=>{
         if (err) {
             console.error(err);
             return res.status(500).send({ error: 'Database query failed' });
@@ -248,7 +251,8 @@ const generateInventory = async (res, detail) => {
         SELECT 
             resources.resource_title AS 'resource title', 
             resourcetype.type_name AS 'resource type', 
-            resources.resource_quantity AS quantity, 
+            resources.original_resource_quantity - resources.resource_quantity AS borrowed,
+            resources.original_resource_quantity AS quantity,
             department.dept_name AS department,
             COALESCE(topic.topic_name, 'n/a') AS topic,
             GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS authors
@@ -541,4 +545,22 @@ export const fetchExcel = (req, res) => {
             res.status(500).json({ error: 'File not found or inaccessible' });
         }
     });
+}
+
+export const handleArchive = (req,res)=>{
+    const {id, reportState, username} = req.body;
+
+    const q = `
+        UPDATE reports
+        SET is_archived = ?
+        WHERE report_id = ?`
+
+    db.query(q,[reportState,id],(err,results)=>{
+        if (err) {
+            console.error(err);
+            return res.status(500).send({ error: 'Database query failed' });
+        }
+    
+        res.send(results)
+    })
 }

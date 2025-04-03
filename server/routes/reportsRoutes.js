@@ -3,7 +3,7 @@ import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { fetchCategory, fetchDetails, fetchExcel, fetchReport, fetchReports, generateReports, saveReport } from '../controller/reportsController.js';
+import { fetchCategory, fetchDetails, fetchExcel, fetchReport, fetchReports, generateReports, handleArchive, saveReport } from '../controller/reportsController.js';
 
 // Define __dirname manually
 const __filename = fileURLToPath(import.meta.url);
@@ -41,12 +41,13 @@ const upload = multer({
 });
   
 
-router.get('/', fetchReports);
+router.get('/:id', fetchReports);
 router.get('/categories', fetchCategory)
 router.get('/details', fetchDetails)
 router.post('/', upload.single('report_file'),saveReport)
 router.get('/generate-report', generateReports);
 router.get('/fetch-excel', fetchExcel);
 router.get('/:id', fetchReport);
+router.put('/archive', handleArchive)
 
 export default router;
