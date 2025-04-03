@@ -34,7 +34,7 @@ const Reports = () => {
   useEffect(() => {
     getReports();
     getCategories();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     const search = searchTerm?.toLowerCase() || "";
@@ -86,6 +86,7 @@ const Reports = () => {
   const getCategories = async () => {
     try {
       const response = await axios.get(`http://localhost:3001/api/reports/categories`);
+      console.log(response.data)
       setCategories(response.data);
     } catch (error) {
       console.error('Cannot fetch categories:', error);
@@ -185,7 +186,7 @@ const Reports = () => {
     }))
   }
 
-  console.log(selectedFilter)
+  console.log(categories)
 
   console.log(reports)
 
