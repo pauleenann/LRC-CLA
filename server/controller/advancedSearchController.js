@@ -19,7 +19,7 @@ export const getAdvancedSearch = (req, res) => {
             'title': 'resources.resource_title',
             'ISBN': 'book.book_isbn',
             'publisher': 'publisher.pub_name',
-            'publication year': 'YEAR(resources.resource_published_date)',
+            'publication year': 'resources.resource_published_date',
             'author': 'CONCAT(author.author_fname, " ", author.author_lname)',
             'department': 'department.dept_name',
             'topic': 'topic.topic_name'
@@ -142,7 +142,7 @@ export const getAdvancedSearchOnlineCatalog = (req, res) => {
             'title': 'resources.resource_title',
             'ISBN': 'book.book_isbn',
             'publisher': 'publisher.pub_name',
-            'publication year': 'YEAR(resources.resource_published_date)',
+            'publication year': 'resources.resource_published_date',
             'author': 'CONCAT(author.author_fname, " ", author.author_lname)',
             'department': 'department.dept_name',
             'topic': 'topic.topic_name'

@@ -65,16 +65,16 @@ const SearchPage = () => {
     });
 
     // advanced search results
-    const {advancedSearch} = useSelector(state=>state.advancedSearch)
+    const {advancedSearch,isSearch} = useSelector(state=>state.advancedSearch)
 
     console.log(advancedSearch)
 
     // handle advanced search
     useEffect(()=>{
-        if(advancedSearch.length>0){
+        if(isSearch){
             dispatch(setResource(advancedSearch))
         }
-    },[advancedSearch,resource])
+    },[advancedSearch])
 
     
     useEffect(() => {
@@ -312,7 +312,7 @@ const SearchPage = () => {
     };
 
     
-    console.log(searchFilters)
+    console.log(currentItems)
 
     return (
         <div className='search-container'>
@@ -353,7 +353,7 @@ const SearchPage = () => {
                         {/* department */}
                         <div className='d-flex flex-column'>
                             <h5 className='m-0'>Department</h5>
-                            {department.map(item => (
+                            {department&&department.map(item => (
                                 <div className='d-flex gap-2' key={`dept-${item.dept_id}`}>
                                     <input 
                                         type="checkbox" 
