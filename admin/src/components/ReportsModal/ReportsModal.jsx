@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './ReportsModal.css';
 import ReactDom from 'react-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faX, faDownload } from '@fortawesome/free-solid-svg-icons';
+import { faX, faDownload, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
 import dayjs from 'dayjs';
@@ -35,9 +35,7 @@ const ReportsModal = ({ open, close}) => {
   const [colleges, setColleges] = useState([]);
   const [courses, setCourses] = useState([]);
   const [showReportTable, setShowReportTable] = useState(false);
-  const [filteredCourses, setFilteredCourses] = useState([]);
-
-  
+  const [filteredCourses, setFilteredCourses] = useState([]);  
 
   useEffect(() => {
     if (open) {
@@ -349,6 +347,7 @@ const ReportsModal = ({ open, close}) => {
     setErrors({});
     setGeneratedReport([]);
     setShowReportTable(false);
+    setIsGenerating(false)
   };
 
   const handleCancel = () => {
@@ -360,7 +359,7 @@ const ReportsModal = ({ open, close}) => {
     if (!validateForm()) {
       return;
     }
-    
+
     setIsGenerating(true);
     
     try {
@@ -405,8 +404,6 @@ const ReportsModal = ({ open, close}) => {
     } catch (error) {
       console.error('Cannot fetch generated report:', error);
       alert('Failed to generate report. Please try again later.');
-    } finally {
-      setIsGenerating(false);
     }
   };
 
@@ -578,9 +575,6 @@ const ReportsModal = ({ open, close}) => {
           </div>
           )}
           
-          
-
-        
           {/* Only show date fields for categories other than 3 and 4 */}
           {reportData.category != 3 && reportData.category != 4 &&reportData.detail!=5 && reportData.detail !=6 && reportData.detail != 7 && (
             <div className='d-flex gap-3'>
@@ -617,8 +611,6 @@ const ReportsModal = ({ open, close}) => {
               </div>
             </div>
           )}
-            
-          
 
           {/* buttons */}
           <div className='d-flex gap-2 justify-content-start buttons mt-3'>
@@ -633,10 +625,10 @@ const ReportsModal = ({ open, close}) => {
             <button 
               type="button" 
               className="btn save-btn"
-              disabled={isGenerating}
+              // disabled={isGenerating}
               onClick={generateReport}
             >
-              {isGenerating ? 'Generating...' : 'Generate Report'}
+              {'Generate Report'}
             </button>
             {showReportTable && generatedReport.length > 0 && (
               <button 
@@ -655,7 +647,7 @@ const ReportsModal = ({ open, close}) => {
           </span>
 
           {/* Generated report table */}
-          {showReportTable && generatedReport.length > 0 && (
+          {showReportTable && generatedReport.length > 0 ? (
             <div className="report-result mt-4">
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <h5 className="m-0">Report Results</h5>
@@ -690,7 +682,13 @@ const ReportsModal = ({ open, close}) => {
                 </table>
               </div>
             </div>
-          )}
+          ):isGenerating&&generatedReport.length<=0?
+          <div className='text-center py-4'>
+            <FontAwesomeIcon icon={faExclamationCircle} className='fs-2'/>
+            <p className="m-0 mt-1 fw-semibold">No available data to generate report.</p>
+            <p className="m-0 text-secondary">Please try another filter.</p>
+          </div>
+          :''}
           
         </div>
       </div>      
