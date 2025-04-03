@@ -147,7 +147,7 @@ export const generateReports = (req, res) => {
           generateInventory(res, detail_name, report_start_date, report_end_date);
           break; 
         case 'circulation':
-          generateCirculation(res, detail_name, report_start_date, report_end_date);
+          generateCirculation(res, detail_name, report_start_date, report_end_date, college, course);
           break;
         case 'patron':
           generatePatron(res,detail_name);
@@ -243,67 +243,167 @@ const generateInventory = async (res, detail, startDate, endDate) => {
     });
 };
 
-const generateCirculation = async (res, detail, startDate, endDate) => {
-    let whereClause = '';
+// const generateCirculation = async (res, detail, startDate, endDate) => {
+//     let whereClause = '';
+//     let orderBy = '';
+//     let q;
+
+//     console.log(startDate)
+//     // Handle date filtering for all relevant queries
+//     let dateFilter = '';
+//     if (startDate && endDate) {
+//         dateFilter = `AND checkout.checkout_date BETWEEN '${startDate}' AND '${endDate}'`;
+//     }
+
+//     switch (detail) {
+//         case 'books issued':
+//             whereClause += 'WHERE checkout.status = "borrowed"';
+//             if (startDate && endDate) whereClause += dateFilter;
+//             break;
+//         case 'books returned':
+//             whereClause += 'WHERE checkout.status = "returned"';
+//             if (startDate && endDate) whereClause += dateFilter;
+//             break;
+//         case 'overdue books':
+//             whereClause += 'WHERE checkout.status = "overdue"';
+//             if (startDate && endDate) whereClause += dateFilter;
+//             break;
+//         case 'most borrowed books':
+//             orderBy += 'ORDER BY borrowed_times DESC'; 
+//             break;
+//         case 'daily circulation':
+//         case 'monthly circulation':
+//         case 'custom circulation':
+//             whereClause += `WHERE checkout.checkout_date BETWEEN "${startDate}" AND "${endDate}"`;
+//             break;
+//         case 'least borrowed books':
+//             orderBy = 'ORDER BY borrowed_times ASC';
+//             break;
+//         default:
+//             return res.status(400).send({ error: 'Invalid report type' });
+//     }
+
+    
+//     if (detail == 'most borrowed books' || detail == 'least borrowed books') {
+//         console.log('most/least borrowed')
+//         // Shared query structure for both most and least borrowed books
+//         q = `SELECT 
+//             r.resource_id,
+//             r.resource_title, 
+//             (SELECT CONCAT(a.author_fname, ' ', a.author_lname) 
+//             FROM resourceauthors ra 
+//             JOIN author a ON a.author_id = ra.author_id 
+//             WHERE ra.resource_id = r.resource_id 
+//             ORDER BY ra.author_id ASC 
+//             LIMIT 1) AS authors,
+//             r.resource_published_date,
+//             COUNT(${detail === 'least borrowed books' ? 'DISTINCT cout.checkout_id' : 'r.resource_id'}) AS borrowed_times
+//         FROM 
+//             resources r
+//         JOIN book b ON b.resource_id = r.resource_id
+//         ${detail === 'least borrowed books' ? 'LEFT JOIN' : 'JOIN'} checkout cout ON cout.resource_id = r.resource_id
+//         GROUP BY r.resource_title, r.resource_published_date, r.resource_id
+//         ${orderBy}`;
+//     } else {
+//         q = `
+//             SELECT
+//                 resources.resource_title AS 'resource title',
+//                 patron.patron_fname AS 'first name',
+//                 patron.patron_lname AS 'last name',
+//                 patron.category AS category,
+//                 college.college_name AS college, 
+//                 course.course_name AS course,
+//                 checkout.checkout_date AS 'borrowed date',
+//                 checkout.checkout_due AS 'due date'
+//             FROM 
+//                 checkout
+//             JOIN patron ON patron.patron_id = checkout.patron_id
+//             JOIN resources ON resources.resource_id = checkout.resource_id
+//             JOIN college ON patron.college_id = college.college_id
+//             JOIN course ON patron.course_id = course.course_id
+//             ${whereClause}`;
+//     }
+    
+//     console.log("whereClause:", whereClause);
+//     console.log("Final Query:", q);
+
+//     // Use promises for database query
+//     try {
+        
+//         const results = await new Promise((resolve, reject) => {
+//             db.query(q, (err, results) => {
+//                 if (err) reject(err);
+//                 else resolve(results);
+//             });
+//         });
+        
+//         return res.send(results);
+//     } catch (err) {
+//         console.error('Database query failed:', err);
+//         return res.status(500).send({ error: 'Database query failed' });
+//     }
+// };
+
+const generateCirculation = async (res, detail, startDate, endDate, college, course) => {
+    let whereClause = [];
     let orderBy = '';
     let q;
+    let params = [];
 
-    console.log(startDate)
-    // Handle date filtering for all relevant queries
-    let dateFilter = '';
-    if (startDate && endDate) {
-        dateFilter = `AND checkout.checkout_date BETWEEN '${startDate}' AND '${endDate}'`;
+    if (startDate && endDate ) {
+        whereClause.push(`checkout.checkout_date BETWEEN ? AND ?`);
+        params.push(startDate, endDate);
     }
 
     switch (detail) {
         case 'books issued':
-            whereClause += 'WHERE checkout.status = "borrowed"';
-            if (startDate && endDate) whereClause += dateFilter;
+            whereClause.push('checkout.status = "borrowed"');
             break;
         case 'books returned':
-            whereClause += 'WHERE checkout.status = "returned"';
-            if (startDate && endDate) whereClause += dateFilter;
+            whereClause.push('checkout.status = "returned"');
             break;
         case 'overdue books':
-            whereClause += 'WHERE checkout.status = "overdue"';
-            if (startDate && endDate) whereClause += dateFilter;
+            whereClause.push('checkout.status = "overdue"');
             break;
         case 'most borrowed books':
-            orderBy += 'ORDER BY borrowed_times DESC'; 
-            break;
-        case 'daily circulation':
-        case 'monthly circulation':
-        case 'custom circulation':
-            whereClause += `WHERE checkout.checkout_date BETWEEN "${startDate}" AND "${endDate}"`;
+            orderBy = 'ORDER BY borrowed_times DESC';
             break;
         case 'least borrowed books':
             orderBy = 'ORDER BY borrowed_times ASC';
             break;
-        default:
-            return res.status(400).send({ error: 'Invalid report type' });
     }
 
-    
-    if (detail == 'most borrowed books' || detail == 'least borrowed books') {
-        console.log('most/least borrowed')
-        // Shared query structure for both most and least borrowed books
-        q = `SELECT 
-            r.resource_id,
-            r.resource_title, 
-            (SELECT CONCAT(a.author_fname, ' ', a.author_lname) 
-            FROM resourceauthors ra 
-            JOIN author a ON a.author_id = ra.author_id 
-            WHERE ra.resource_id = r.resource_id 
-            ORDER BY ra.author_id ASC 
-            LIMIT 1) AS authors,
-            r.resource_published_date,
-            COUNT(${detail === 'least borrowed books' ? 'DISTINCT cout.checkout_id' : 'r.resource_id'}) AS borrowed_times
-        FROM 
-            resources r
-        JOIN book b ON b.resource_id = r.resource_id
-        ${detail === 'least borrowed books' ? 'LEFT JOIN' : 'JOIN'} checkout cout ON cout.resource_id = r.resource_id
-        GROUP BY r.resource_title, r.resource_published_date, r.resource_id
-        ${orderBy}`;
+    if (college !== 'all') {
+        whereClause.push('college.college_id = ?');
+        params.push(college);
+    }
+
+    if (course !== 'all') {
+        whereClause.push('course.course_id = ?');
+        params.push(course);
+    }
+
+    let whereString = whereClause.length > 0 ? `WHERE ${whereClause.join(' AND ')}` : '';
+
+    if (detail === 'most borrowed books' || detail === 'least borrowed books') {
+        q = `
+            SELECT 
+                r.resource_id,
+                r.resource_title, 
+                (SELECT CONCAT(a.author_fname, ' ', a.author_lname) 
+                FROM resourceauthors ra 
+                JOIN author a ON a.author_id = ra.author_id 
+                WHERE ra.resource_id = r.resource_id 
+                ORDER BY ra.author_id ASC 
+                LIMIT 1) AS authors,
+                r.resource_published_date,
+                COUNT(DISTINCT cout.checkout_id) AS borrowed_times
+            FROM 
+                resources r
+            JOIN book b ON b.resource_id = r.resource_id
+            ${detail === 'least borrowed books' ? 'LEFT JOIN' : 'JOIN'} checkout cout ON cout.resource_id = r.resource_id
+            GROUP BY r.resource_title, r.resource_published_date, r.resource_id
+            ${orderBy}`;
     } else {
         q = `
             SELECT
@@ -321,28 +421,27 @@ const generateCirculation = async (res, detail, startDate, endDate) => {
             JOIN resources ON resources.resource_id = checkout.resource_id
             JOIN college ON patron.college_id = college.college_id
             JOIN course ON patron.course_id = course.course_id
-            ${whereClause}`;
+            ${whereString}`;
     }
-    
-    console.log("whereClause:", whereClause);
-    console.log("Final Query:", q);
 
-    // Use promises for database query
+    console.log("Generated Query:", q);
+    console.log("Query Parameters:", params);
+
     try {
-        
         const results = await new Promise((resolve, reject) => {
-            db.query(q, (err, results) => {
+            db.query(q, params, (err, results) => {
                 if (err) reject(err);
                 else resolve(results);
             });
         });
-        
+
         return res.send(results);
     } catch (err) {
         console.error('Database query failed:', err);
         return res.status(500).send({ error: 'Database query failed' });
     }
 };
+
 
 const generateAttendance = async (res, kind, startDate, endDate, college, course) => {
     let params = [startDate, endDate]
