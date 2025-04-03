@@ -289,39 +289,67 @@ const Catalog = () => {
     setSyncLoading(true)
     const resources = await getAllResources(username);
     let duplicated = [];
-    for(const resource of resources){
-      const formData = new FormData();
-      formData.append('username', username);
-      Object.entries(resource).forEach(([key, value]) => {
-        formData.append(key, value);
-      })
-      const response = await axios.post('http://localhost:3001/api/resources', formData);
-      if (response.data.status === 409) {
-        duplicated.push(resource.title)
-        continue; // Skip the resource if there's a conflict
+    if(resources.length>0){
+      for(const resource of resources){
+        const formData = new FormData();
+        formData.append('username', username);
+        Object.entries(resource).forEach(([key, value]) => {
+          formData.append(key, value);
+        })
+        const response = await axios.post('http://localhost:3001/api/resources', formData);
+        if (response.data.status === 409) {
+          duplicated.push(resource.title)
+          continue; // Skip the resource if there's a conflict
+        }
+        // delete if synced
+        deleteResourceFromIndexedDB('resources', resource.resource_id);
+        console.log(`Synced resource: ${resource.resource_id}`, response.data);
       }
-      // delete if synced
-      deleteResourceFromIndexedDB('resources', resource.resource_id);
-      console.log(`Synced resource: ${resource.resource_id}`, response.data);
-    }
 
-    setDuplicatedResources(duplicated)
+      setDuplicatedResources(duplicated)
 
-    setTimeout(()=>{
+      setTimeout(()=>{
+        setSyncLoading(false)
+        setStatusModal(true);
+        Swal.fire({
+          title: "All resources synced!",
+          html: duplicatedResources && duplicatedResources.length > 0 
+              ? `Offline resources synced successfully. These will be deleted from storage. Resources such as <b>${duplicatedResources.join(', ')}</b>, already exist and cannot be synced again.` 
+              : 'You have successfully synced offline resources. These resources will now be deleted from offline storage.',
+          icon: "success",
+          draggable: true,
+          confirmButtonColor: "#54CB58",
+      }).then(() => {
+        window.location.reload(); // Reload the page after confirming
+      });    
+      },3000)
+    }else{
       setSyncLoading(false)
-      setStatusModal(true);
+      let timerInterval;
       Swal.fire({
-        title: "All resources synced!",
-        html: duplicatedResources && duplicatedResources.length > 0 
-            ? `Offline resources synced successfully. These will be deleted from storage. Resources such as <b>${duplicatedResources.join(', ')}</b>, already exist and cannot be synced again.` 
-            : 'You have successfully synced offline resources. These resources will now be deleted from offline storage.',
-        icon: "success",
-        draggable: true,
-        confirmButtonColor: "#54CB58",
-    }).then(() => {
-      window.location.reload(); // Reload the page after confirming
-    });    
-    },3000)
+        title: "You have no offline data to sync!",
+        html: "I will close in <b></b> milliseconds.",
+        timer: 5000,
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+          const timer = Swal.getPopup().querySelector("b");
+          timerInterval = setInterval(() => {
+            timer.textContent = `${Swal.getTimerLeft()}`;
+          }, 100);
+        },
+        willClose: () => {
+          clearInterval(timerInterval);
+        }
+      }).then((result) => {
+        /* Read more about handling dismissals below */
+        if (result.dismiss === Swal.DismissReason.timer) {
+          console.log("I was closed by the timer");
+        }
+        window.location.reload()
+      });
+    }
+    
 
     
     console.log('All resources processed.')
@@ -500,7 +528,7 @@ const Catalog = () => {
             </button>
             {/* sync to database */}
             <button
-              className='btn btn-danger d-flex align-items-center gap-2 px-3'
+              className='btn btn-danger d-flex align-items-center gap-2 px-3 position-relative'
               onClick={syncData2DB}
               disabled={!isOnline||syncLoading}
               title='Sync offline data to online.'
@@ -508,11 +536,8 @@ const Catalog = () => {
               <FontAwesomeIcon icon={faArrowsRotate} />
               {syncLoading?'Syncing...':'Sync data'}
             </button>
-          </div>
-          
+          </div>   
         )}
-
-        
       </div>
       
               
