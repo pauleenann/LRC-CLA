@@ -54,7 +54,7 @@
     width: 100%;
     outline: 1px solid var(--tup-color);
     font-size: 0.8rem;
-    /* min-height: 500px; */
+    min-height: 500px;
     table-layout: fixed;
 }
 

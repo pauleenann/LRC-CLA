@@ -1023,7 +1023,7 @@ export const importCatalog = async (req, res) => {
             if (selectedType == '1') {
                 const pubId = await checkIfPubExist(pub);
                 console.log('Publisher ID:', pubId);
-                await importBook(data['isbn'].replace(/\s+/g, ''), resourceId, pubId, topicId, imageFile);
+                await importBook(data['isbn'], resourceId, pubId, topicId, imageFile);
             } else if (['2', '3'].includes(selectedType)) {
                 const jn = [
                     data['volume'] || '',

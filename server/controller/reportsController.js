@@ -144,23 +144,53 @@ export const generateReports = (req, res) => {
           generateAttendance(res, detail_name, report_start_date, report_end_date, college, course);
           break;
         case 'inventory':
-          generateInventory(res, detail_name, report_start_date, report_end_date);
+          generateInventory(res, detail_name);
           break; 
         case 'circulation':
           generateCirculation(res, detail_name, report_start_date, report_end_date, college, course);
           break;
         case 'patron':
-          generatePatron(res,detail_name);
+          generatePatron(res,detail_name,college,course);
           break;
         // Add cases for other report types as needed
       }
 };
 
-const generatePatron = (res, detail) => {
+const generatePatron = (res, detail,college,course) => {
     let selectCount = detail == 'top borrowers' ? 'COUNT(cout.patron_id) AS checkout_count,' : '';
-    let whereClause = detail == 'top borrowers' ? '' : "WHERE cout.status = 'overdue'";
-    let groupByClause = detail == 'top borrowers' ? `GROUP BY p.tup_id, p.patron_fname, p.patron_lname, p.patron_mobile, 
-        p.patron_email, p.category, col.college_name, cou.course_name` : '';
+    let whereClause = '';
+    // let whereClause = detail == 'top borrowers' ? '' : "WHERE cout.status = 'overdue'";
+    let groupByClause = '';
+    let fromJoin = `FROM patron p`
+
+    switch(detail){
+        case 'top borrowers':
+            groupByClause+=`GROUP BY p.tup_id, p.patron_fname, p.patron_lname, p.patron_mobile, 
+            p.patron_email, p.category, col.college_name, cou.course_name`;
+            fromJoin = `FROM checkout cout
+                        JOIN patron p ON p.patron_id = cout.patron_id`
+            break
+        case 'users with overdue':
+            whereClause+="WHERE cout.status = 'overdue'";
+            fromJoin = `FROM checkout cout
+                        JOIN patron p ON p.patron_id = cout.patron_id`
+            break
+        case 'active patrons':
+            whereClause+="WHERE p.status = 'active'";
+            break
+        case 'inactive patrons':
+            whereClause+="WHERE p.status = 'inactive'";
+            break
+    }
+
+    if (college !== 'all') {
+        whereClause+=` AND col.college_id = ${college}`;
+    }
+
+    if (course !== 'all') {
+        whereClause+=` AND cou.course = ${course}`;
+    }
+
 
     let q = `
         SELECT 
@@ -173,8 +203,7 @@ const generatePatron = (res, detail) => {
             col.college_name,
             cou.course_name,
             ${selectCount}
-        FROM checkout cout
-        JOIN patron p ON p.patron_id = cout.patron_id
+        ${fromJoin}
         JOIN college col ON p.college_id = col.college_id
         JOIN course cou ON p.course_id = cou.course_id
         ${whereClause}
@@ -182,6 +211,8 @@ const generatePatron = (res, detail) => {
 
     // Ensure query does not have trailing commas in SELECT
     q = q.replace(/,\s*FROM/, ' FROM');
+
+    console.log(q)
 
     db.query(q, (err, results) => {
         if (err) {
@@ -194,7 +225,7 @@ const generatePatron = (res, detail) => {
 };
 
 
-const generateInventory = async (res, detail, startDate, endDate) => {
+const generateInventory = async (res, detail) => {
     let whereClause = ``;
 
     const filterConditions = {
@@ -204,7 +235,9 @@ const generateInventory = async (res, detail, startDate, endDate) => {
         'theses': 'resources.type_id = 4',
         'available resources': 'resources.avail_id = 1',
         'lost resources': 'resources.avail_id = 2',
-        'damaged resources': 'resources.avail_id = 3'
+        'damaged resources': 'resources.avail_id = 3',
+        'archived': 'resources.resource_is_archived = 1',
+        'unarchived': 'resources.resource_is_archived = 0',
     };
 
     if (filterConditions[detail]) {
