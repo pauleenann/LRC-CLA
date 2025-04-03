@@ -133,15 +133,13 @@ export const saveReport = (req, res)=>{
 
 
 export const generateReports = (req, res) => {
-    const {cat_name, detail_name, report_start_date, report_end_date, college, course } = req.query
+    const {cat_name, detail_name, report_start_date, report_end_date} = req.query
     console.log(cat_name)
     console.log(detail_name)
-    console.log(college)
-    console.log(course)
 
     switch (cat_name) {
         case 'attendance':
-          generateAttendance(res, detail_name, report_start_date, report_end_date, college, course);
+          generateAttendance(res, detail_name, report_start_date, report_end_date);
           break;
         case 'inventory':
           generateInventory(res, detail_name, report_start_date, report_end_date);
@@ -344,8 +342,7 @@ const generateCirculation = async (res, detail, startDate, endDate) => {
     }
 };
 
-const generateAttendance = async (res, kind, startDate, endDate, college, course) => {
-    let params = [startDate, endDate]
+const generateAttendance = async (res, kind, startDate, endDate) => {
     let q = `
       SELECT 
           patron.tup_id as 'TUP ID',
@@ -366,24 +363,10 @@ const generateAttendance = async (res, kind, startDate, endDate, college, course
     `;
   
     if (kind == 'daily attendance' || kind == 'monthly attendance' || kind == 'custom attendance') {
-      q += `WHERE (attendance.att_date BETWEEN ? AND ?)`;
+      q += `WHERE attendance.att_date BETWEEN ? AND ?`;
     }
 
-    if(college!='all'){
-        q+= ` AND college.college_id = ?`
-        params.push(college)
-    }
-
-    if(course!='all'){
-        q+= ` AND course.course_id = ?`
-        params.push(course)
-    }
-
-    console.log(q)
-
-    console.log(params)
-
-    db.query(q,params,(err,results)=>{
+    db.query(q,[startDate,endDate],(err,results)=>{
         if (err) {
             console.error(err);
             return res.status(500).send({ error: 'Database query failed' });

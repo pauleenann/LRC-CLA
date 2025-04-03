@@ -80,7 +80,7 @@ const Accounts = () => {
   const appendToAccount = (key, value) => {
       setAccount((prevAccount) => ({
           ...prevAccount,
-          [key]: value, // Dynamically add or update the key-value pair
+          [key]: value, 
       }));
       console.log(account)
   };
