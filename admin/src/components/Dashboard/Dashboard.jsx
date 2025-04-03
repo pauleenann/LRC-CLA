@@ -80,18 +80,21 @@ const Dashboard = () => {
       socket.on('attendanceUpdated', () => {
         console.log('Attendance updated, refreshing data...');
         getTotalVisitors();
+        getVisitorStats();
       });
 
       // Listen for checkin updates
       socket.on('checkinUpdated', () => {
         console.log('checkin updated, refreshing data...');
         getTotalReturned();
+        getBookTrends();
       });
 
       // Listen for checkout updates
       socket.on('checkoutUpdated', () => {
         console.log('checkout updated, refreshing data...');
         getTotalBorrowed();
+        getBookTrends();
       });
 
       // Listen for checkout updates

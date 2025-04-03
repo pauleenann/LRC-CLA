@@ -41,12 +41,12 @@ const upload = multer({
 });
   
 
-router.get('/:id', fetchReports);
 router.get('/categories', fetchCategory)
 router.get('/details', fetchDetails)
 router.post('/', upload.single('report_file'),saveReport)
 router.get('/generate-report', generateReports);
 router.get('/fetch-excel', fetchExcel);
+router.get('/:id', fetchReports);
 router.get('/:id', fetchReport);
 router.put('/archive', handleArchive)
 
