@@ -21,9 +21,7 @@ const ReportsModal = ({ open, close}) => {
     detail: '',
     detail_name:'',
     startDate: '',
-    endDate: '',
-    college:'all',
-    course:'all'
+    endDate: ''
   });
   const [staffId, setStaffId] = useState('');
   const [staffUname, setStaffUname] = useState('');
@@ -32,29 +30,17 @@ const ReportsModal = ({ open, close}) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [categories, setCategories] = useState([]);
   const [details, setDetails] = useState([]);
-  const [colleges, setColleges] = useState([]);
-  const [courses, setCourses] = useState([]);
   const [showReportTable, setShowReportTable] = useState(false);
-  const [filteredCourses, setFilteredCourses] = useState([]);
-
-  
 
   useEffect(() => {
     if (open) {
       getCategories();
       getDetails();
-      getCollege();
-      getCourse();
       getUsername();
       setShowReportTable(false);
       setGeneratedReport([]);
     }
   }, [open]);
-
-  useEffect(() => {
-    if (!reportData.college) return;
-      setFilteredCourses(courses.filter(item => item.college_id == reportData.college));
-  }, [reportData.college, courses]);
 
   useEffect(() => {
     if (reportData.detail_name) {
@@ -125,24 +111,6 @@ const ReportsModal = ({ open, close}) => {
       setDetails(response.data);
     } catch (error) {
       console.error('Cannot fetch details:', error);
-    }
-  };
-
-  const getCollege = async () => {
-    try {
-      const response = await axios.get(`http://localhost:3001/api/data/college`);
-      setColleges(response.data);
-    } catch (error) {
-      console.error('Cannot fetch categories:', error);
-    }
-  };
-
-  const getCourse = async () => {
-    try {
-      const response = await axios.get(`http://localhost:3001/api/data/course`);
-      setCourses(response.data);
-    } catch (error) {
-      console.error('Cannot fetch categories:', error);
     }
   };
 
@@ -320,18 +288,15 @@ const ReportsModal = ({ open, close}) => {
     }
 };
 
+
   const resetForm = () => {
     setReportData({
       name: '',
       description: '',
       category: '',
-      cat_name: '',
       detail: '',
-      detail_name:'',
       startDate: '',
-      endDate: '',
-      college:'all',
-      course:'all'
+      endDate: ''
     });
     setErrors({});
     setGeneratedReport([]);
@@ -443,44 +408,43 @@ const ReportsModal = ({ open, close}) => {
         {/* body */}
         <div className="body px-5 pb-5 d-flex flex-column gap-3">
           {/* report name */}
-          <div className='d-flex flex-column form-floating'>
+          <div className='d-flex flex-column'>
+            <label htmlFor="reportName">Report name</label>
             <input 
               type="text" 
               id="reportName"
               name="name"
               value={reportData.name}
-              placeholder=''
               onChange={handleInputChange}
-              className={`form-control ${errors.name ? 'is-invalid' : ''}`}
+              className={errors.name ? 'error-input' : ''}
             />
-            <label htmlFor="reportName">Report name</label>
             {errors.name && <span className="error-message">{errors.name}</span>}
           </div>
 
           {/* report description */}
-          <div className='d-flex flex-column form-floating'>
+          <div className='d-flex flex-column'>
+            <label htmlFor="reportDesc">Report description</label>
             <input 
               type="text" 
               id="reportDesc"
               name="description"
               value={reportData.description}
-              placeholder=''
               onChange={handleInputChange}
-              className={`form-control ${errors.description ? 'is-invalid' : ''}`}
+              className={errors.description ? 'error-input' : ''}
             />
-            <label htmlFor="reportDesc">Report description</label>
             {errors.description && <span className="error-message">{errors.description}</span>}
           </div>
 
           <div className='d-flex gap-3'>
             {/* report category */}
-            <div className='d-flex flex-column w-100 form-floating'>
+            <div className='d-flex flex-column w-100'>
+                <label htmlFor="reportCategory">Report category</label>
                 <select 
                 name="category" 
                 id="reportCategory"
                 value={reportData.category}
                 onChange={handleInputChange}
-                className={`form-control text-capitalize ${errors.category ? 'is-invalid' : ''}`}
+                className={errors.category ? 'error-input' : ''}
                 >
                 <option value="" disabled>Select a category</option>
                 {categories.map(category => (
@@ -489,19 +453,19 @@ const ReportsModal = ({ open, close}) => {
                     </option>
                 ))}
                 </select>
-                <label htmlFor="reportCategory">Report category</label>
                 {errors.category && <span className="error-message">{errors.category}</span>}
             </div>
 
             {/* report detail */}
-            <div className='d-flex flex-column w-100 form-floating'>
+            <div className='d-flex flex-column w-100'>
+                <label htmlFor="reportDetail">Report detail</label>
                 <select 
                 name="detail" 
                 id="reportDetail"
                 value={reportData.detail}
                 onChange={handleInputChange}
                 disabled={!reportData.category}
-                className={`form-control text-capitalize ${errors.detail ? 'is-invalid' : ''}`}
+                className={errors.detail ? 'error-input' : ''}
                 >
                 <option value="" disabled>Select a detail type</option>
                 {reportData.category && details
@@ -513,82 +477,31 @@ const ReportsModal = ({ open, close}) => {
                   ))
                 }
                 </select>
-                <label htmlFor="reportDetail">Report detail</label>
                 {errors.detail && <span className="error-message">{errors.detail}</span>}
             </div>
           </div>
-          
-          {reportData.category!=3&&(
-          <div className='d-flex gap-3'>
-            {/* college */}
-            <div className='d-flex flex-column w-100 form-floating'>
-                <select 
-                name="college" 
-                id="college"
-                // value={reportData.category}
-                onChange={handleInputChange}
-                className={`form-control ${errors.college ? 'is-invalid' : ''}`}
-                >
-                  {/* <option value="" disabled>Select College</option> */}
-                  <option value="all">All</option>
-                  {colleges.map(college => (
-                      <option key={college.college_id} value={college.college_id}>
-                      {college.college_name}
-                      </option>
-                  ))}
-                </select>
-                <label htmlFor="college">College</label>
-                {/* {errors.category && <span className="error-message">{errors.category}</span>} */}
-            </div>
 
-            {/* course */}
-            <div className='d-flex flex-column w-100 form-floating'>
-                <select 
-                name="course" 
-                id="course"
-                // value={reportData.detail}
-                onChange={handleInputChange}
-                disabled={!reportData.college}
-                className={`form-control ${errors.course ? 'is-invalid' : ''}`}
-                >
-                  {/* <option value="" disabled>Select Course</option> */}
-                  <option value="all">All</option>
-                  {filteredCourses&&filteredCourses.map(course => (
-                      <option key={course.course_id} value={course.course_id}>
-                      {course.course_name}
-                      </option>
-                  ))}
-                </select>
-                <label htmlFor="course">Course</label>
-                {/* {errors.detail && <span className="error-message">{errors.detail}</span>} */}
-            </div>
-          </div>
-          )}
-          
-          
-
-        
           {/* Only show date fields for categories other than 3 and 4 */}
           {reportData.category != 3 && reportData.category != 4 &&  reportData.detail !=6 && reportData.detail != 7 && (
             <div className='d-flex gap-3'>
               {/* start date */}
-              <div className='d-flex flex-column w-100 form-floating'>
+              <div className='d-flex flex-column w-100'>
+                  <label htmlFor="startDate">Start date</label>
                   <input 
                   type="date" 
                   name="startDate" 
                   id="startDate"
                   value={reportData.startDate}
-                  disabled={reportData.detail==1||reportData.detail==2}
                   onChange={handleInputChange}
                   max={reportData.endDate || undefined}
-                  className={`form-control ${errors.startDate ? 'is-invalid' : ''}`}
+                  className={errors.startDate ? 'error-input' : ''}
                   />
-                  <label htmlFor="startDate">Start date</label>
                   {errors.startDate && <span className="error-message">{errors.startDate}</span>}
               </div>
 
               {/* end date */}
-              <div className='d-flex flex-column w-100 form-floating'>
+              <div className='d-flex flex-column w-100'>
+                  <label htmlFor="endDate">End date</label>
                   <input 
                   type="date" 
                   name="endDate" 
@@ -596,10 +509,9 @@ const ReportsModal = ({ open, close}) => {
                   value={reportData.endDate}
                   onChange={handleInputChange}
                   min={reportData.startDate || undefined}
-                  className={`form-control ${errors.endDate ? 'is-invalid' : ''}`}
+                  className={errors.endDate ? 'error-input' : ''}
                   disabled={reportData.detail == '1' || reportData.detail == '2' || reportData.detail == '18'}
                   />
-                  <label htmlFor="endDate">End date</label>
                   {errors.endDate && <span className="error-message">{errors.endDate}</span>}
               </div>
             </div>
