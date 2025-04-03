@@ -612,6 +612,12 @@ const ReportsModal = ({ open, close}) => {
             </div>
           )}
 
+          <div>
+            <button className='btn btn-warning' onClick={resetForm}>
+              Clear Filter
+            </button>
+          </div>
+
           {/* buttons */}
           <div className='d-flex gap-2 justify-content-start buttons mt-3'>
             <button 
@@ -674,7 +680,9 @@ const ReportsModal = ({ open, close}) => {
                     {generatedReport.map((row, rowIndex) => (
                       <tr key={rowIndex}>
                         {Object.values(row).map((value, colIndex) => (
-                          <td key={colIndex}>{value !== null ? value : '-'}</td>
+                          <td key={colIndex} className='text-capitalize'>
+                            {value !== null ? value :''}
+                          </td>
                         ))}
                       </tr>
                     ))}

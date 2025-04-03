@@ -10,9 +10,11 @@ import axios from 'axios';
 import Loading from '../Loading/Loading';
 import ResourceStatusModal from '../ResourceStatusModal/ResourceStatusModal';
 import Swal from 'sweetalert2'
+import { useSelector } from 'react-redux';
 
 const Accounts = () => {
-  const [staffUname, setStaffUname] = useState(null);
+  // const [staffUname, setStaffUname] = useState(null);
+  const {username} = useSelector(state=>state.username)
   const [openCreateUser, setOpenCreateUser] = useState(false);
   const [openEditUser, setEditUser] = useState(false);
   const [openDeactivate, setOpenDeactivate] = useState(false);
@@ -74,7 +76,7 @@ const Accounts = () => {
   
   useEffect(() => {
     userAccounts();
-    getUsername(); 
+    // getUsername(); 
   }, []);
 
   const appendToAccount = (key, value) => {
@@ -91,22 +93,22 @@ const Accounts = () => {
     }
   },[keyword])
 
-  const getUsername = async()=>{
-    try {
-      // Request server to verify the JWT token
-      const response = await axios.get(`http://localhost:3001/api/user/check-session`, { withCredentials: true });
-      console.log(response.data)
-      // If session is valid, set the role
-      if (response.data.loggedIn) {
-        setStaffUname(response.data.username);
-      } else {
-        setStaffUname(null); // If not logged in, clear the role
-      }
-    } catch (error) {
-      console.error('Error verifying session:', error);
-      setStaffUname(null); // Set null if there's an error
-    }
-  }
+  // const getUsername = async()=>{
+  //   try {
+  //     // Request server to verify the JWT token
+  //     const response = await axios.get(`http://localhost:3001/api/user/check-session`, { withCredentials: true });
+  //     console.log(response.data)
+  //     // If session is valid, set the role
+  //     if (response.data.loggedIn) {
+  //       setStaffUname(response.data.username);
+  //     } else {
+  //       setStaffUname(null); // If not logged in, clear the role
+  //     }
+  //   } catch (error) {
+  //     console.error('Error verifying session:', error);
+  //     setStaffUname(null); // Set null if there's an error
+  //   }
+  // }
 
   // Fetch user accounts
   const userAccounts = async () => {
@@ -136,7 +138,7 @@ const Accounts = () => {
           role: response.data[0].role_id,
           password: '',
           confirmPassword: '',
-          username: staffUname,
+          username: username,
         };
         setAccount(result);
         setOriginalAccount(result)
@@ -147,7 +149,7 @@ const Accounts = () => {
 
   // Create user account
   const createUserAccount = async (isChangePassword) => {
-    await appendToAccount('username', staffUname);
+    await appendToAccount('username', username);
     const isValid = await formValidation();  // No need for await
     const isPasswordValid = await passwordValidation(); // No need for await
 
@@ -210,7 +212,7 @@ const Accounts = () => {
 
 
   const editUserAccount = async(isChangePassword)=>{
-    await appendToAccount('username', staffUname);
+    await appendToAccount('username', username);
     const isValid = await formValidation();
     let isPasswordValid = true;
 
@@ -324,8 +326,8 @@ const Accounts = () => {
 
     setLoading(true);
     try {
-      console.log('account: ', staffUname)
-      const response = await axios.put(`http://localhost:3001/api/account/deactivate/${id}`, {staffUname});
+      console.log('account: ', username)
+      const response = await axios.put(`http://localhost:3001/api/account/deactivate/${id}`, {username});
       const result2 = await Swal.fire({
         title: "Deactivated!",
         text: `${uname} deactivated successfully.`,
@@ -359,7 +361,7 @@ const Accounts = () => {
 
     setLoading(true);
     try {
-      const response = await axios.put(`http://localhost:3001/api/account/activate/${id}`, {staffUname});
+      const response = await axios.put(`http://localhost:3001/api/account/activate/${id}`, {username});
       const result2 = await Swal.fire({
         title: "Activated!",
         text: `${uname} activated successfully.`,
@@ -680,7 +682,7 @@ const Accounts = () => {
             role: '',
             password: '',
             confirmPassword: '',
-            username: staffUname
+            username: username
           });
           setError({});
         }}

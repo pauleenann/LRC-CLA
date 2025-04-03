@@ -168,7 +168,7 @@ const ReportView = ({open, close, id}) => {
                 {generatedReport.map((row, index) => (
                   <tr key={index}>
                     {Object.values(row).map((value, i) => (
-                      <td key={i}>{value}</td>
+                      <td key={i} className='text-capitalize'>{value}</td>
                     ))}
                   </tr>
                 ))}

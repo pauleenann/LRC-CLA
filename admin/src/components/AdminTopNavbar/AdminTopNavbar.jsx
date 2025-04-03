@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { checkIfOnline } from '../../features/isOnlineSlice';
-import { setUsername } from '../../features/userSlice';
+import { setUserId, setUsername } from '../../features/userSlice';
 import { fetchStatusOffline, fetchStatusOnline } from '../../features/statusSlice';
 import { fetchPublisherOffline, fetchPublisherOnline } from '../../features/publisherSlice';
 import { fetchAuthorOffline, fetchAuthorOnline } from '../../features/authorSlice';
@@ -49,6 +49,7 @@ const AdminTopNavbar = () => {
                 if (response.data.loggedIn) {
                     setUname(response.data.username);
                     dispatch(setUsername(response.data.username))
+                    dispatch(setUserId(response.data.userID))
                 } else {
                     setUname(null);
                 }
