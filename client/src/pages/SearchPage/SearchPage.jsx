@@ -31,7 +31,7 @@ const SearchPage = () => {
     // array from letter A-Z
     const alphabet = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i));
     // resource
-    const {resource, loading, searchQuery} = useSelector(state=>state.resource);
+    const {resource, loading, searchQuery,searchPerformed} = useSelector(state=>state.resource);
     const {type} = useSelector(state=>state.type)
     const {dept} = useSelector(state=>state.dept)
     const {topic} = useSelector(state=>state.topic)
@@ -74,10 +74,10 @@ const SearchPage = () => {
 
     // handle advanced search
     useEffect(()=>{
-        if(isSearch){
+        if(isSearch&&advancedSearch.length>0){
             dispatch(setResource(advancedSearch))
         }
-    },[advancedSearch])
+    },[advancedSearch,resource])
 
     
     useEffect(() => {
@@ -335,7 +335,8 @@ const SearchPage = () => {
     };
 
     
-    console.log(currentItems)
+    console.log(searchQuery)
+    console.log(searchPerformed)
 
     return (
         <div className='search-container'>
@@ -417,9 +418,9 @@ const SearchPage = () => {
                         <div className='d-flex justify-content-between align-items-center'>
                             <div>
                                 <h1 className='m-0 fw-semibold'>
-                                    {searchQuery.length > 0 ? `Search results for: ${searchQuery}` : !filter ? 'Find resources' : `Results found`}
+                                    {searchQuery.length>0 && searchPerformed ? `Search results for: ${searchQuery}` : `Results found`}
                                 </h1>
-                                {searchQuery.length > 0 && (
+                                {searchQuery.length > 0 && searchPerformed && (
                                     <p className="m-0">A total of {displayedResources.length} resource/s found for {searchQuery}</p>
                                 )}
                             </div>
