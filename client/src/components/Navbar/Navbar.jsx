@@ -18,8 +18,6 @@ const Navbar = ({query}) => {
   const {dept} = useSelector(state=>state.dept)
   const {topic} = useSelector(state=>state.topic)
   const {resource,searchQuery,searchPerformed} = useSelector(state=>state.resource);
-
-  console.log(type)
  
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && searchKeyword.length!='') {
@@ -29,9 +27,9 @@ const Navbar = ({query}) => {
 
   const getSearch = async()=>{
     if(searchKeyword!=''){
+      dispatch(setSearchPerformed(true))
       dispatch(setSearchQuery(searchKeyword));
       dispatch(fetchResources({ searchQuery: searchKeyword, type, dept, topic })); // Pass as an object
-      dispatch(setSearchPerformed(true))
       navigate('/search')
     }
   }
@@ -44,7 +42,7 @@ const Navbar = ({query}) => {
     if(searchPerformed&&searchKeyword==''){
       // dispatch(setSearchQuery(searchKeyword));
       dispatch(fetchResources({ searchQuery: searchKeyword, type, dept, topic })); // Pass as an object
-      // dispatch(setSearchPerformed(false))
+      dispatch(setSearchPerformed(false))
     }
 
   },[searchKeyword])
