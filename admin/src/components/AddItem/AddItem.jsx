@@ -303,8 +303,9 @@ const AddItem = () => {
             err.authors = 'Please specify author/s';
         }
 
-        if (!bookData.publishedDate) {
-            err.publishedDate = 'Please enter publish date';
+        const yearRegex = /^\d{4}$/;
+        if (!yearRegex.test(bookData.publishedDate)) {
+            err.publishedDate = "Please enter publish date in 'YYYY' format";
         }
 
         if (bookData.mediaType === '1'|| bookData.mediaType==='2'||bookData.mediaType==='3') {
