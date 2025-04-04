@@ -3,7 +3,7 @@ import './Navbar.css'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchResources, setSearchQuery } from '../../features/resourceSlice';
+import { fetchResources, setSearchPerformed, setSearchQuery } from '../../features/resourceSlice';
 import { setTypeArray } from '../../features/typeSlice';
 
 const Navbar = ({query}) => {
@@ -31,7 +31,7 @@ const Navbar = ({query}) => {
     if(searchKeyword!=''){
       dispatch(setSearchQuery(searchKeyword));
       dispatch(fetchResources({ searchQuery: searchKeyword, type, dept, topic })); // Pass as an object
-      dispatch(setSearchKeyword(true))
+      dispatch(setSearchPerformed(true))
       navigate('/search')
     }
   }
@@ -39,6 +39,15 @@ const Navbar = ({query}) => {
   useEffect(()=>{
     setSearchKeyword(searchQuery)
   },[searchQuery])
+
+  useEffect(()=>{
+    if(searchPerformed&&searchKeyword==''){
+      // dispatch(setSearchQuery(searchKeyword));
+      dispatch(fetchResources({ searchQuery: searchKeyword, type, dept, topic })); // Pass as an object
+      // dispatch(setSearchPerformed(false))
+    }
+
+  },[searchKeyword])
 
   console.log(searchKeyword)
   console.log(resource)
