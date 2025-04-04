@@ -78,6 +78,7 @@ export const checkinSearch = async (req, res) => {
             SELECT 
                 b.book_isbn, 
                 b.filepath,
+                pub.pub_name,
                 r.resource_title AS title, 
                 r.resource_id,
                 GROUP_CONCAT(DISTINCT CONCAT(a.author_fname, ' ', a.author_lname) ORDER BY a.author_lname SEPARATOR ', ') AS authors
@@ -89,6 +90,8 @@ export const checkinSearch = async (req, res) => {
                 resourceauthors ra ON ra.resource_id = r.resource_id
             INNER JOIN 
                 author a ON a.author_id = ra.author_id
+            INNER JOIN
+                publisher pub ON pub.pub_id = b.pub_id
             INNER JOIN 
                 checkout c ON r.resource_id = c.resource_id
             WHERE 
@@ -107,6 +110,7 @@ export const checkinSearch = async (req, res) => {
             resource_title: book.title,
             book_isbn: book.book_isbn,
             authors: book.authors,  
+            publisher: book.pub_name,
         }));
 
         res.json(covers);
