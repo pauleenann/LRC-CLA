@@ -69,7 +69,8 @@ const SearchPage = () => {
     // Back to top button visibility state
     const [showBackToTop, setShowBackToTop] = useState(false);
 
-    console.log(advancedSearch)
+    console.log(searchQuery)
+    console.log(resource)
 
     // handle advanced search
     useEffect(()=>{
@@ -416,7 +417,7 @@ const SearchPage = () => {
                         <div className='d-flex justify-content-between align-items-center'>
                             <div>
                                 <h1 className='m-0 fw-semibold'>
-                                    {searchQuery.length > 0 ? `Search results for: ${searchQuery}` : !filter ? 'Find resources' : `Results for ${filter}`}
+                                    {searchQuery.length > 0 ? `Search results for: ${searchQuery}` : !filter ? 'Find resources' : `Results found`}
                                 </h1>
                                 {searchQuery.length > 0 && (
                                     <p className="m-0">A total of {displayedResources.length} resource/s found for {searchQuery}</p>

@@ -10,27 +10,6 @@
     border-radius: 5px;
 }
 
-.view-patron-table-container .search{
-    height: 50px;
-    background-color: var(--tup-color);
-    color: var(--white);
-    border: none;
-    box-shadow: 1px 1px 5px var(--shadow);
-}
-
-.view-patron-table-container .export{
-    box-shadow: 1px 1px 5px var(--shadow);
-}
-
-.view-patron-table-container .search:hover,
-.view-patron-table-container .search:active,
-.view-patron-table-container .search:focus{
-    background-color: var(--button);
-    border: none;
-    color: var(--white);
-}
-
-
 .view-patron-table-container table{
     width: 100%;
     border-radius: 5px;

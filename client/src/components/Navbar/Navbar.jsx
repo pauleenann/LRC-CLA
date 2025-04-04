@@ -17,6 +17,7 @@ const Navbar = ({query}) => {
   const {type} = useSelector(state=>state.type)
   const {dept} = useSelector(state=>state.dept)
   const {topic} = useSelector(state=>state.topic)
+  const {resource,searchQuery,searchPerformed} = useSelector(state=>state.resource);
 
   console.log(type)
  
@@ -30,12 +31,17 @@ const Navbar = ({query}) => {
     if(searchKeyword!=''){
       dispatch(setSearchQuery(searchKeyword));
       dispatch(fetchResources({ searchQuery: searchKeyword, type, dept, topic })); // Pass as an object
+      dispatch(setSearchKeyword(true))
       navigate('/search')
     }
   }
 
-  
+  useEffect(()=>{
+    setSearchKeyword(searchQuery)
+  },[searchQuery])
+
   console.log(searchKeyword)
+  console.log(resource)
   
   return (
     <nav className='navbar-box container py-3'>
@@ -47,7 +53,7 @@ const Navbar = ({query}) => {
         {/* search */}
         {!searchType&&<div className='d-flex search'>
             {/* input */}
-            <input type="text" placeholder='Search for resources' onChange={(e)=>setSearchKeyword(e.target.value)} onKeyDown={handleKeyDown}/>
+            <input type="text" placeholder='Search for resources' onChange={(e)=>setSearchKeyword(e.target.value)} onKeyDown={handleKeyDown} value={searchKeyword}/>
             {/* search button */}
             <button className="" onClick={getSearch}>
                 <i class="fa-solid fa-magnifying-glass"></i>
