@@ -141,7 +141,7 @@ const Patrons = () => {
             </div> */}
             <div className="search-bar-box">
                 <div className='d-flex gap-2'>
-                    <div className="input-group">
+                    <div className="input-group z-0">
                         <input 
                             type="text" 
                             className="patrons-search-bar form-control shadow-sm" 
