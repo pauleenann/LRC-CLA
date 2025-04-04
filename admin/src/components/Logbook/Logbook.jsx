@@ -45,13 +45,54 @@ const Logbook = () => {
 
     useEffect(() => {
         fetchTodayEntries();
-    }, [location.search, currentPage, entriesPerPage, searchInput]);
+    }, [location.search, currentPage, entriesPerPage]);
     
+    // This function handles the search when either the button is clicked or Enter key is pressed
+    const handleSearch = () => {
+        setCurrentPage(1); // Reset to first page when searching
+        fetchTodayEntries();
+    };
+
     const fetchTodayEntries = async () => {
         setLoading(true);
         try {
             const today = new Date().toISOString().split('T')[0]; // Get today's date
-            const response = await axios.get(`http://localhost:3001/api/patron/sort?startDate=${today}&endDate=${today}&limit=${entriesPerPage}&page=${currentPage}`);
+            let url = `http://localhost:3001/api/patron/sort?startDate=${today}&endDate=${today}&limit=${entriesPerPage}&page=${currentPage}`;
+            
+            // Add search parameter if searchInput is not empty
+            if (searchInput.trim() !== '') {
+                url += `&search=${encodeURIComponent(searchInput.trim())}`;
+            }
+            
+            const response = await axios.get(url);
+            setPatron(response.data.results);
+            setTotalEntries(response.data.total);
+        } catch (err) {
+            console.log(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const clearFilters = () => {
+        // First update all states
+        setSearchInput('');
+        setCurrentPage(1);
+        setEntriesPerPage(5);
+        
+        // Then use the actual values directly in the fetch call
+        fetchClearEntries();
+    };
+    
+    // Create a new function that doesn't depend on the state values that are being updated
+    const fetchClearEntries = async () => {
+        setLoading(true);
+        try {
+            const today = new Date().toISOString().split('T')[0];
+            // Use hard-coded values instead of state variables that were just updated
+            let url = `http://localhost:3001/api/patron/sort?startDate=${today}&endDate=${today}&limit=5&page=1`;
+            
+            const response = await axios.get(url);
             setPatron(response.data.results);
             setTotalEntries(response.data.total);
         } catch (err) {
@@ -87,16 +128,26 @@ const Logbook = () => {
                             onChange={(e) => setSearchInput(e.target.value)}
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
-                                fetchTodayEntries();
+                                    handleSearch();
                                 }
                             }}
                         />
-                        <button className="btn log-search-button" onClick={fetchTodayEntries}>
+                        <button 
+                            className="btn log-search-button" 
+                            onClick={handleSearch}
+                        >
                             <FontAwesomeIcon icon={faSearch}/> 
                         </button>
+
+                        <button className='btn btn-warning ms-2 d-flex align-items-center' 
+                            onClick={clearFilters}>
+                            Clear Filters
+                        </button>
                     </div>
-                    
+
                 </div>
+
+
 
                 {/* filters */}
                 <div className="logbook-filters">
