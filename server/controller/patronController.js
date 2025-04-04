@@ -187,8 +187,7 @@ export const patron = (req, res) => {
                 checkout c ON p.patron_id = c.patron_id
             LEFT JOIN 
                 course cr ON p.course_id = cr.course_id
-            WHERE 
-                p.status = "active"
+            
             GROUP BY 
                 p.tup_id, 
                 p.patron_fname, 
