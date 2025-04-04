@@ -631,7 +631,7 @@ export const importPatron = async (req, res) => {
                 if (!tupId || !firstName || !lastName || !email) {
                     invalidPatrons.push({ 
                         tupId: tupId || 'Missing ID', 
-                        reason: 'Missing required fields' 
+                        reason: 'Missing required fields. Make sure TUP ID, First name, Last name, and TUP email address are not empty.' 
                     });
                     continue;
                 }
