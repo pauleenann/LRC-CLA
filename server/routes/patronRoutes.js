@@ -1,5 +1,5 @@
 import express from 'express';
-import { addPatron, borrowers, checkIn, checkOut, importPatron, patron, patronCirculation, patronLog, patronSort, updatePatron, viewPatron, viewPatronToUpdate } from '../controller/patronController.js';
+import { addPatron, borrowers, checkIn, checkOut, importPatron, patron, patronCirculation, patronLog, patronSort, updatePatron, viewPatron, viewPatronToUpdate, } from '../controller/patronController.js';
 
 const router = express.Router();
 
@@ -15,5 +15,6 @@ router.get('/circulation/:id', patronCirculation)
 router.put("/update/:id", updatePatron);
 router.get("/:id", viewPatron);
 router.get("/update/:id",viewPatronToUpdate);
+
 
 export default router;

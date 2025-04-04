@@ -135,7 +135,7 @@ const CirculationSelectPatron = () => {
         </div>
 
 
-        {filteredPatrons.length === 0 ? (
+        {/* {filteredPatrons.length === 0 ? (
           <div className='d-flex flex-column align-items-center my-3 text-center'>
             <FontAwesomeIcon icon={faExclamationCircle} className="fs-2" />
             <span className='fw-semibold m-0'>'{searchQuery}' user not found.</span>
@@ -169,7 +169,48 @@ const CirculationSelectPatron = () => {
               </div>
             );
           })
+        )} */}
+
+        {filteredPatrons.length === 0 ? (
+          <div className='d-flex flex-column align-items-center my-3 text-center'>
+            <FontAwesomeIcon icon={faExclamationCircle} className="fs-2" />
+            <span className='fw-semibold m-0'>'{searchQuery}' user not found.</span>
+            <span className='m-0 text-secondary'>Please try again.</span>
+            <button className='btn btn-warning mt-2' onClick={clearFilter}>Clear Filter</button>
+          </div>
+        ) : (
+          currentItems
+            .filter(patron => patron.status === 'active') // Filter only active patrons
+            .map((patron, index) => {
+              const isCheckIn = localStorage.getItem('clickedAction') === 'Check In';
+              return isCheckIn || patron.total_checkouts < 1 ? (
+                <Link to={`/circulation/patron/item/${patron.patron_id}`} key={index}>
+                  <div className="row patron">
+                    <div className="col"><input type="radio" /> {patron.tup_id}</div>
+                    <div className="col-3 text-start d-flex align-items-center justify-content-center">
+                      {patron.patron_fname} {patron.patron_lname}
+                    </div>
+                    <div className="col d-flex align-items-center justify-content-center">{patron.category}</div>
+                    <div className="col-3 d-flex align-items-center justify-content-center">
+                      {patron.course_name == null ? 'No course' : patron.course_name}
+                    </div>
+                    <div className="col-2 d-flex align-items-center justify-content-center">{patron.total_checkouts}</div>
+                  </div>
+                </Link>
+              ) : (
+                <div className="row patron disabled grey" key={index}>
+                  <div className="col"><input type="radio" disabled /> {patron.tup_id}</div>
+                  <div className="col-3 text-start d-flex align-items-center">
+                    {patron.patron_fname} {patron.patron_lname}
+                  </div>
+                  <div className="col d-flex align-items-center justify-content-center">{patron.category}</div>
+                  <div className="col-3 d-flex align-items-center">{patron.course_name}</div>
+                  <div className="col-2 d-flex align-items-center justify-content-center">{patron.total_checkouts}</div>
+                </div>
+              );
+            })
         )}
+
 
         {/* pagination */}
         {filteredPatrons.length > 0 && (
