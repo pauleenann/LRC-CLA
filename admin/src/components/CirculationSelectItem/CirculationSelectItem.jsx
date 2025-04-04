@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './CirculationSelectItem.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBarcode, faTrashCan, faX, faArrowRight, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { faBarcode, faTrashCan, faX, faArrowRight, faExclamationCircle, faQrcode } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
 const CirculationSelectItem = () => {
@@ -142,10 +142,10 @@ const CirculationSelectItem = () => {
         {/* Scan or manual */}
         <div className="col scan-manual shadow-sm">
           <div className="barcode">
-            <FontAwesomeIcon icon={faBarcode} className='barcode-icon' />
+            <FontAwesomeIcon icon={faQrcode} className='barcode-icon' />
             <p>Scan items in the scanner <br />to be {actionLabel.toLowerCase()}.</p>
           </div>
-          <p>No barcode available? Input manually instead</p>
+          <p>No QR code available? Input manually instead</p>
 
           <div className='circ-info'>
             <label htmlFor="item-search">ISBN / Title</label>
