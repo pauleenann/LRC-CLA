@@ -88,7 +88,7 @@ const GenerateBarcodePage = () => {
             <div>
                 <AdminTopNavbar />
                 <div className='cat-container'>
-                <h1>Generate QR Code</h1>
+                <h1>Generate Barcode</h1>
                 <div className='barcode-path-box'>
                     {/* <Link to={'/catalog'}>
                         <button className='back'>
@@ -101,13 +101,13 @@ const GenerateBarcodePage = () => {
                     </div> */}
                 </div>
                 <div className="search-filter input-group w-50 shadow-sm">
-                    <input type="search" className='form-control' placeholder="Search by title" onChange={(e)=>setSearchQuery(e.target.value)} onKeyDown={(e)=>e.key=='Enter'&&search()}/>
+                    <input type="search" className='form-control z-0' placeholder="Search by title" onChange={(e)=>setSearchQuery(e.target.value)} onKeyDown={(e)=>e.key=='Enter'&&search()}/>
                     <button className="btn search-btn">
                         <FontAwesomeIcon icon={faSearch}/>
                     </button>
                 </div>
                 <div className='d-flex align-items-end justify-content-between barcode-instruct m-auto'>
-                    <p className='m-0'>Select book/s to generate its QR code</p>
+                    <p className='m-0'>Select book/s to generate its barcode</p>
                     <div className='d-flex gap-2'>
                     {selectedResourcesWithQuantity.length > 0 ? (
                     <PDFDownloadLink 
@@ -139,7 +139,7 @@ const GenerateBarcodePage = () => {
                         <div className="col-3">Title</div>
                         <div className="col-3">Type</div>
                         <div className="col-2">ISBN</div>
-                        <div className="col-2">Quantity <span className='qnty-reminder'>(Specify no. of QR code to generate)</span></div>
+                        <div className="col-2">Quantity <span className='qnty-reminder'>(Specify no. of barcode to generate)</span></div>
                     </div>
                     {currentItems.length!=0?currentItems.map((item) => (
                         <BarcodeData
