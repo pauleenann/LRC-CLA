@@ -51,56 +51,63 @@ const Navbar = ({query}) => {
   console.log(resource)
   
   return (
-    <nav className='navbar-box container py-3'>
+    <nav className='navbar-box container py-4 py-lg-3'>
       {/* logo and search bar */}
-      <div className='d-flex align-items-center justify-content-between'>
-        <Link className='text-decoration-none' to='/'>
-          <p className='m-0 logo'>Liberal<span>Search</span>.</p>
+      <div className='row'>
+        <Link className='text-decoration-none col-12 col-lg-8' to='/'>
+          <p className='m-0 logo text-center text-lg-start'>Liberal<span>Search</span>.</p>
         </Link>
         {/* search */}
-        {!searchType&&<div className='d-flex search'>
-            {/* input */}
-            <input type="text" placeholder='Search for resources' onChange={(e)=>setSearchKeyword(e.target.value)} onKeyDown={handleKeyDown} value={searchKeyword}/>
-            {/* search button */}
-            <button className="" onClick={getSearch}>
-                <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
-        </div>}
+        <div className='col-12 col-lg-4'>
+          {!searchType&&<div className='row search m-auto '>
+              {/* input */}
+              <input type="text" placeholder='Search for resources' onChange={(e)=>setSearchKeyword(e.target.value)} onKeyDown={handleKeyDown} value={searchKeyword} className='col'/>
+              {/* search button */}
+              <button className="col-3" onClick={getSearch}>
+                  <i class="fa-solid fa-magnifying-glass"></i>
+              </button>
+          </div>}
+        </div>
+        
       </div>
       {/* menu */}
-      <div className="menu d-flex gap-3 mt-2">
+      <div className="menu d-flex align-items-center mt-2 justify-content-center justify-content-lg-start">
         <button
           onClick={()=>{
             dispatch(setTypeArray([1]))
             navigate(`/search?filter=Books`)
           }}
+          className='me-2 me-lg-3'
         >
           Books
         </button>
-        <span>|</span>
+        <span className='me-2 me-lg-3'>|</span>
         <button
           onClick={()=>{
             dispatch(setTypeArray([2]))
             navigate(`/search?filter=Journals`)
           }}
+          className='me-2 me-lg-3'
         >
           Journals
         </button>
-        <span>|</span>
+        <span className='me-2 me-lg-3'>|</span>
         <button
           onClick={()=>{
             dispatch(setTypeArray([3]))
             navigate(`/search?filter=Newsletters`)
           }}
+          className='me-2 me-lg-3'
         >
           Newsletters
         </button>
-        <span>|</span>
+        <span className='me-2 me-lg-3'>|</span>
         <button
           onClick={()=>{
             dispatch(setTypeArray([4]))
             navigate(`/search?filter=Theses and Dissertations`)
           }}
+          className=''
         >
           Theses & Dissertations
         </button>
