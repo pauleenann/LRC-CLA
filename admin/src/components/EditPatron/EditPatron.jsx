@@ -88,10 +88,10 @@ const EditPatron = () => {
                 tup_id: res.data.patronData.tup_id || '',
             };
     
-            const userResponse = await axios.get(`http://localhost:3001/api/user/check-session`, { withCredentials: true });
-            if (userResponse.data.loggedIn) {
-                fetchedData.username = userResponse.data.username;
-                setUserName(userResponse.data.username);
+            const storedCreds = JSON.parse(localStorage.getItem('token'));
+            if (storedCreds.message === "Login successful") {
+                fetchedData.username = storedCreds.user.username;
+                setUserName(storedCreds.user.username);
             }
     
             setPatronData(fetchedData);

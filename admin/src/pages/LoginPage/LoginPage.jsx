@@ -14,10 +14,9 @@ const LoginPage = () => {
     useEffect(() => {
         const checkLoginStatus = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/api/user/check-session', { withCredentials: true });
-                
-                if (response.data.loggedIn) {
-                    // If the user is logged in, redirect to the dashboard
+                const storedCreds = JSON.parse(localStorage.getItem('token'));
+
+                if (storedCreds.message === "Login successful") { 
                     navigate('/dashboard');
                 }
             } catch (error) {
@@ -46,7 +45,7 @@ const LoginPage = () => {
 
             if (response.status === 200) {
                 console.log("Login successful:", response.data);
-                // Redirect to dashboard
+                localStorage.setItem('token', JSON.stringify(response.data)); 
                 navigate('/dashboard');
             }
         } catch (err) {
