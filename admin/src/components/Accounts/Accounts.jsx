@@ -93,22 +93,7 @@ const Accounts = () => {
     }
   },[keyword])
 
-  // const getUsername = async()=>{
-  //   try {
-  //     // Request server to verify the JWT token
-  //     const response = await axios.get(`http://localhost:3001/api/user/check-session`, { withCredentials: true });
-  //     console.log(response.data)
-  //     // If session is valid, set the role
-  //     if (response.data.loggedIn) {
-  //       setStaffUname(response.data.username);
-  //     } else {
-  //       setStaffUname(null); // If not logged in, clear the role
-  //     }
-  //   } catch (error) {
-  //     console.error('Error verifying session:', error);
-  //     setStaffUname(null); // Set null if there's an error
-  //   }
-  // }
+
 
   // Fetch user accounts
   const userAccounts = async () => {
