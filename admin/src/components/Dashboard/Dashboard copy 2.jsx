@@ -10,6 +10,12 @@ import DashBox from '../DashBox/DashBox';
 import { Link, useNavigate } from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import { setBorrowedStats, setVisitorStats } from '../../features/chartSlice.js';
+import { io } from 'socket.io-client';
+import { setTypeArr } from '../../features/typeSlice.js';
+import { fetchDepartmentOnline, setDepartmentArr } from '../../features/departmentSlice.js';
+import { setTopicArr } from '../../features/topicSlice.js';
+import { fetchPublisherOnline, setPublisherArr } from '../../features/publisherSlice.js';
+import { setStatusArr } from '../../features/statusSlice.js';
 
 const Dashboard = () => {
   const [dateTime,setDateTime] = useState(new Date());
@@ -43,9 +49,13 @@ const Dashboard = () => {
   const bookListHeader = ["Book ID","Title","Author","Copies Available"];
   const bookIssuedHeader = ["Tup ID","Title","Return Date"];
   const dispatch = useDispatch()
+  const [socket, setSocket] = useState(null);
   
-  // Establish WebSocket connection
   useEffect(() => {
+    // Initialize socket connection
+    const newSocket = io('http://localhost:3001');
+    setSocket(newSocket);
+
     getTotalVisitors();
     getTotalBorrowed();
     getTotalReturned();
@@ -57,49 +67,51 @@ const Dashboard = () => {
     getBookTrends();
     getVisitorStats();
 
-    const ws = new WebSocket('ws://localhost:3001'); // Use wss:// for secure WebSocket connection
-
-    ws.onopen = () => {
-      console.log('Connected to WebSocket server');
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data); // Try parsing as JSON
-        if (message.event == 'attendanceUpdated') {
-          console.log('Received attendance update:', message.data);
-          getTotalVisitors();
-          getVisitorStats();
-        } else if (message.event == 'checkinUpdated') {
-          console.log('Received checkin update:', message.data);
-          getTotalReturned();
-          getBookTrends();
-        } else if (message.event == 'checkoutUpdated') {
-          console.log('Received checkout update:', message.data);
-          getTotalBorrowed();
-          getBookTrends();
-        } else if (message.event == 'overdueUpdated') {
-          console.log('Received overdue update:', message.data);
-          getTotalOverdue();
-        }
-      } catch (error) {
-        console.log('Error parsing message:', error);
-      }
-    };
-
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
-
-    ws.onclose = () => {
-      console.log('WebSocket connection closed');
-    };
-
-    // Cleanup WebSocket on unmount
+    // Clean up socket connection on unmount
     return () => {
-      ws.close();
+      newSocket.disconnect();
     };
   }, []);
+
+
+  useEffect(() => {
+    if (socket) {
+      // Listen for attendance updates
+      socket.on('attendanceUpdated', () => {
+        console.log('Attendance updated, refreshing data...');
+        getTotalVisitors();
+        getVisitorStats();
+      });
+
+      // Listen for checkin updates
+      socket.on('checkinUpdated', () => {
+        console.log('checkin updated, refreshing data...');
+        getTotalReturned();
+        getBookTrends();
+      });
+
+      // Listen for checkout updates
+      socket.on('checkoutUpdated', () => {
+        console.log('checkout updated, refreshing data...');
+        getTotalBorrowed();
+        getBookTrends();
+      });
+
+      // Listen for checkout updates
+      socket.on('overdueUpdated', () => {
+        console.log('overdue updated, refreshing data...');
+        getTotalOverdue();
+      });
+
+      // Clean up event listener
+      return () => {
+        socket.off('attendanceUpdated');
+        socket.off('checkinUpdated');
+        socket.off('checkoutUpdated');
+        socket.off('overdueUpdated');
+      };
+    }
+    }, [socket]);
 
   //total visitors
   const getTotalVisitors = async () => {
