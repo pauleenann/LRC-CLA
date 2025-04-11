@@ -10,7 +10,8 @@ import DashBox from '../DashBox/DashBox';
 import { Link, useNavigate } from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import { setBorrowedStats, setVisitorStats } from '../../features/chartSlice.js';
-import { io } from 'socket.io-client';
+//import { io } from 'socket.io-client';
+import socket from '../socket.js';
 import { setTypeArr } from '../../features/typeSlice.js';
 import { fetchDepartmentOnline, setDepartmentArr } from '../../features/departmentSlice.js';
 import { setTopicArr } from '../../features/topicSlice.js';
@@ -49,12 +50,11 @@ const Dashboard = () => {
   const bookListHeader = ["Book ID","Title","Author","Copies Available"];
   const bookIssuedHeader = ["Tup ID","Title","Return Date"];
   const dispatch = useDispatch()
-  const [socket, setSocket] = useState(null);
+  //const [socket, setSocket] = useState(null);
   
   useEffect(() => {
     // Initialize socket connection
-    const newSocket = io('http://localhost:3001');
-    setSocket(newSocket);
+    socket.connect();
 
     getTotalVisitors();
     getTotalBorrowed();
@@ -68,8 +68,38 @@ const Dashboard = () => {
     getVisitorStats();
 
     // Clean up socket connection on unmount
+    socket.on('attendanceUpdated', () => {
+      console.log('Attendance updated, refreshing data...');
+      getTotalVisitors();
+      getVisitorStats();
+    });
+
+    // Listen for checkin updates
+    socket.on('checkinUpdated', () => {
+      console.log('checkin updated, refreshing data...');
+      getTotalReturned();
+      getBookTrends();
+    });
+
+    // Listen for checkout updates
+    socket.on('checkoutUpdated', () => {
+      console.log('checkout updated, refreshing data...');
+      getTotalBorrowed();
+      getBookTrends();
+    });
+
+    // Listen for checkout updates
+    socket.on('overdueUpdated', () => {
+      console.log('overdue updated, refreshing data...');
+      getTotalOverdue();
+    });
+
+    // Clean up event listener
     return () => {
-      newSocket.disconnect();
+      socket.off('attendanceUpdated');
+      socket.off('checkinUpdated');
+      socket.off('checkoutUpdated');
+      socket.off('overdueUpdated');
     };
   }, []);
 
@@ -77,39 +107,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (socket) {
       // Listen for attendance updates
-      socket.on('attendanceUpdated', () => {
-        console.log('Attendance updated, refreshing data...');
-        getTotalVisitors();
-        getVisitorStats();
-      });
-
-      // Listen for checkin updates
-      socket.on('checkinUpdated', () => {
-        console.log('checkin updated, refreshing data...');
-        getTotalReturned();
-        getBookTrends();
-      });
-
-      // Listen for checkout updates
-      socket.on('checkoutUpdated', () => {
-        console.log('checkout updated, refreshing data...');
-        getTotalBorrowed();
-        getBookTrends();
-      });
-
-      // Listen for checkout updates
-      socket.on('overdueUpdated', () => {
-        console.log('overdue updated, refreshing data...');
-        getTotalOverdue();
-      });
-
-      // Clean up event listener
-      return () => {
-        socket.off('attendanceUpdated');
-        socket.off('checkinUpdated');
-        socket.off('checkoutUpdated');
-        socket.off('overdueUpdated');
-      };
+      
     }
     }, [socket]);
 

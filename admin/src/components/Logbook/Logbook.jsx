@@ -5,7 +5,8 @@ import { useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faArrowLeft, faArrowRight, faExclamationCircle, faSmile } from '@fortawesome/free-solid-svg-icons';
 import * as XLSX from 'xlsx'; // Import xlsx for Excel export
-import { io } from 'socket.io-client';
+//import { io } from 'socket.io-client';
+import socket from '../socket.js';
 
 const Logbook = () => {
     const [patron, setPatron] = useState([]);
@@ -15,33 +16,22 @@ const Logbook = () => {
     const [totalEntries, setTotalEntries] = useState(0); // Total number of entries
     const [loading, setLoading] = useState(false);
     const location = useLocation();
-    const [socket, setSocket] = useState(null);
+    //const [socket, setSocket] = useState(null);
 
     useEffect(() => {
         // Initialize socket connection
-        const newSocket = io('http://localhost:3001');
-        setSocket(newSocket);
+        socket.connect();
 
-        // Clean up socket connection on unmount
+        socket.on('attendanceUpdated', () => {
+            console.log('Attendance updated, refreshing data...');
+            fetchTodayEntries();
+        });
+
+        // Clean up event listener
         return () => {
-            newSocket.disconnect();
+            socket.off('attendanceUpdated');
         };
     }, []);
-
-    useEffect(() => {
-        if (socket) {
-            // Listen for attendance updates
-            socket.on('attendanceUpdated', () => {
-                console.log('Attendance updated, refreshing data...');
-                fetchTodayEntries();
-            });
-
-            // Clean up event listener
-            return () => {
-                socket.off('attendanceUpdated');
-            };
-        }
-    }, [socket, currentPage, entriesPerPage, searchInput]);
 
     useEffect(() => {
         fetchTodayEntries();
