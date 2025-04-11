@@ -42,7 +42,7 @@ export const checkoutSearch = async (req, res) => {
         LIMIT 10;
 
         `,
-        [`%${query}%`, `%${query}%`, `%${query}%`]
+        [`${query}%`, `%${query}%`, `${query}`]
       );
       
       const covers = results.map(book => ({
@@ -174,6 +174,14 @@ export const checkIn = async (req, res) => {
         const incrementResourceQuery =
             'UPDATE resources SET resource_quantity = resource_quantity + 1 WHERE resource_id = ?';
         await db.query(incrementResourceQuery, [resource_id]);
+
+        // Check if checkout_id exists in the overdue table
+        const [overdueRecord] = await db.query('SELECT * FROM overdue WHERE checkout_id = ?', [checkout_id]);
+
+        if (overdueRecord.length > 0) {
+            // If it exists, delete it
+            await db.query('DELETE FROM overdue WHERE checkout_id = ?', [checkout_id]);
+        }
 
         // Commit the transaction
         await db.query('COMMIT');
