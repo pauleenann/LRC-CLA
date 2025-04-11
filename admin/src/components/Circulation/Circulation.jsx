@@ -236,27 +236,27 @@ const Circulation = () => {
           <tbody>
             {filteredBorrowers.length > 0 ? (
               filteredBorrowers.map((borrower, index) => (
-                <tr key={index} style={{ borderBottom: '1px solid #ddd' }}>
-                  <td style={{ padding: '10px' }} className='col'>{borrower.tup_id}</td>
-                  <td style={{ padding: '10px' }} className='col'>
+                <tr key={index} >
+                  <td className='col'>{borrower.tup_id}</td>
+                  <td className='col'>
                     {borrower.patron_fname} {borrower.patron_lname}
                   </td>
-                  <td style={{ padding: '10px' }} onClick={() => navigate(`/catalog/view/${borrower.resource_id}`)} className="resource col-2">
+                  <td onClick={() => navigate(`/catalog/view/${borrower.resource_id}`)} className="resource col-2">
                     {borrower.borrowed_book}
                   </td>
-                  <td style={{ padding: '10px' }} className='col-3'>{borrower.authors}</td>
-                  <td style={{ padding: '10px' }} className='col'>
+                  <td className='col-3'>{borrower.authors}</td>
+                  <td className='col'>
                     {borrower.checkout_date ? new Date(borrower.checkout_date).toLocaleDateString('en-CA') : 'N/A'}
                   </td>
-                  <td style={{ padding: '10px' }} className='col'>
+                  <td  className='col'>
                     {borrower.checkout_due ? new Date(borrower.checkout_due).toLocaleDateString('en-CA') : 'N/A'}
                   </td>
-                  <td style={{ padding: '10px' }} className='col'>
+                  <td className='col'>
                     {borrower.checkin_date
                       ? new Date(borrower.checkin_date).toLocaleDateString('en-CA')
                       : 'Not Yet Returned'}
                   </td>
-                  <td style={{ padding: '10px' }} className='col'>
+                  <td className='col'>
                     <span
                       className={` text-light p-2 rounded fw-semibold
                         ${borrower.status === 'overdue'
