@@ -208,7 +208,7 @@ export const checkIn = async (req, res) => {
             null,
             JSON.stringify("Patron: " + patron_name + " returned a book: '" + resource_title + "'")
         );
-
+    
         // Use the io instance from the request object
         req.io.emit('checkinUpdated');
 
