@@ -37,8 +37,38 @@ const Reports = () => {
   }, [userId]);
 
   useEffect(() => {
-    handleSearch()
-  }, [reports, sortConfig, selectedFilter]);
+    const search = searchTerm?.toLowerCase() || "";
+  
+    const filtered = reports.filter(report => {
+      const matchesSearch = 
+        report.report_name.toLowerCase().includes(search) ||
+        report.report_description.toLowerCase().includes(search);
+  
+      const matchesCategory = 
+        selectedFilter.category == 'any' || report.cat_id == selectedFilter.category;
+  
+      const matchesStatus = 
+        selectedFilter.status == 'any' || report.is_archived == selectedFilter.status;
+  
+      return matchesSearch && matchesCategory && matchesStatus;
+    });
+  
+    // Apply sorting
+    const sortedReports = [...filtered].sort((a, b) => {
+      if (sortConfig.key === 'created_at') {
+        return sortConfig.direction === 'asc' 
+          ? new Date(a.created_at) - new Date(b.created_at)
+          : new Date(b.created_at) - new Date(a.created_at);
+      } else {
+        return sortConfig.direction === 'asc'
+          ? a[sortConfig.key]?.localeCompare?.(b[sortConfig.key]) ?? 0
+          : b[sortConfig.key]?.localeCompare?.(a[sortConfig.key]) ?? 0;
+      }
+    });
+  
+    setFilteredReports(sortedReports);
+    setCurrentPage(1); // Reset to first page when filtering or sorting
+  }, [searchTerm, reports, sortConfig, selectedFilter]);
 
   const getReports = async() => {
     setIsLoading(true);
@@ -75,37 +105,7 @@ const Reports = () => {
   };
 
   const handleSearch = (e) => {
-    const search = searchTerm?.toLowerCase() || "";
-  
-    const filtered = reports.filter(report => {
-      const matchesSearch = 
-        report.report_name.toLowerCase().includes(search) ||
-        report.report_description.toLowerCase().includes(search);
-  
-      const matchesCategory = 
-        selectedFilter.category == 'any' || report.cat_id == selectedFilter.category;
-  
-      const matchesStatus = 
-        selectedFilter.status == 'any' || report.is_archived == selectedFilter.status;
-  
-      return matchesSearch && matchesCategory && matchesStatus;
-    });
-  
-    // Apply sorting
-    const sortedReports = [...filtered].sort((a, b) => {
-      if (sortConfig.key === 'created_at') {
-        return sortConfig.direction === 'asc' 
-          ? new Date(a.created_at) - new Date(b.created_at)
-          : new Date(b.created_at) - new Date(a.created_at);
-      } else {
-        return sortConfig.direction === 'asc'
-          ? a[sortConfig.key]?.localeCompare?.(b[sortConfig.key]) ?? 0
-          : b[sortConfig.key]?.localeCompare?.(a[sortConfig.key]) ?? 0;
-      }
-    });
-  
-    setFilteredReports(sortedReports);
-    setCurrentPage(1); // Reset to first page when filtering or sorting
+    setSearchTerm(e.target.value);
   };
 
   const handleSort = (key) => {
@@ -186,11 +186,9 @@ const Reports = () => {
     }))
   }
 
-  useEffect(()=>{
-    if(searchTerm==''){
-      handleSearch()
-    }
-  },[searchTerm])
+  console.log(categories)
+
+  console.log(reports)
 
   return (
     <div className="reports-container bg-light">
@@ -206,10 +204,9 @@ const Reports = () => {
               className='form-control' 
               placeholder='Search' 
               value={searchTerm}
-              onChange={(e)=>setSearchTerm(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              onChange={handleSearch}
             />
-            <button className='btn search-btn' onClick={handleSearch}>
+            <button className='btn search-btn'>
               <FontAwesomeIcon icon={faSearch}/>
             </button>
           </div>
