@@ -19,6 +19,7 @@ import { fetchStatusOffline, fetchStatusOnline } from '../../features/statusSlic
 import { fetchPublisherOffline, fetchPublisherOnline } from '../../features/publisherSlice';
 import { fetchAuthorOffline, fetchAuthorOnline } from '../../features/authorSlice';
 import { fetchAdviserOnline } from '../../features/adviserSlice';
+import Swal from 'sweetalert2'
 
 const AddItem = () => {
     //pag may id, nagiging view ung purpose ng add item component
@@ -328,6 +329,18 @@ const AddItem = () => {
     // save resource online
     const handleSaveResourceOnline = async () => {
         if (formValidation() === true) {
+            const result = await Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#54CB58",
+                cancelButtonColor: "#94152b",
+                confirmButtonText: "Yes, save!"
+          });
+    
+          if (!result.isConfirmed) return; // Exit if user cancels
+          setLoading(true)
             setLoading(true)
             try{
                 const formData = new FormData();
@@ -370,6 +383,18 @@ const AddItem = () => {
     //save resource offline
     const handleSaveResourceOffline = async ()=>{
         if (formValidation() === true) {
+            const result = await Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#54CB58",
+                cancelButtonColor: "#94152b",
+                confirmButtonText: "Yes, save!"
+          });
+    
+          if (!result.isConfirmed) return; // Exit if user cancels
+          
             setLoading(true)
             
             try{
@@ -392,6 +417,17 @@ const AddItem = () => {
 /*-------------------EDIT RESOURCE---------------------- */
     // Handle resource save online
     const handleEditResourceOnline = async () => {
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#54CB58",
+            cancelButtonColor: "#94152b",
+            confirmButtonText: "Yes, edit!"
+      });
+
+      if (!result.isConfirmed) return; // Exit if user cancels
         console.log('edit resource online')
             try{
                 setLoading(true)
@@ -413,6 +449,17 @@ const AddItem = () => {
 
     //handle resource save offline
     const handleEditResourceOffline = async () => {
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#54CB58",
+            cancelButtonColor: "#94152b",
+            confirmButtonText: "Yes, edit!"
+      });
+
+      if (!result.isConfirmed) return; // Exit if user cancels
         console.log('edit resource offline')
             try{
                 setLoading(true)
@@ -423,6 +470,38 @@ const AddItem = () => {
                 window.toast.fire({icon:"error", title:"Cannot edit resource offline"})
             }
     };
+
+    //handle cancel
+    const handleCancelButton = async ()=>{
+        console.log('handle cancel')
+        const result = await Swal.fire({
+              title: "Are you sure?",
+              text: "You won't be able to revert this!",
+              icon: "question",
+              showCancelButton: true,
+              confirmButtonColor: "#54CB58",
+              cancelButtonColor: "#94152b",
+              confirmButtonText: "Yes, cancel!"
+        });
+
+        if (!result.isConfirmed) return; // Exit if user cancels
+
+        if(editMode){
+            setDisabled(true);
+            setEditMode(false);
+            viewResourceOnline()
+        }else{
+            setBookData({
+                mediaType: '1',
+                authors: [],
+                genre: [],
+                isCirculation: 1,
+                publisher_id: 0,
+                publisher: '',
+                status:''
+            })
+        }
+    }
 
     console.log(bookData)
     return (
@@ -469,14 +548,18 @@ const AddItem = () => {
                 />
             </div>
 
-            {disabled?<div className='edit-btn-cont'><button className="btn edit-item" onClick={()=>{
-                setDisabled(false);
-                setEditMode(true);
-                setIsOfflineView(false);
-                }}>
+            {disabled?
+                <div className='edit-btn-cont'>
+                    <button 
+                        className="btn edit-item" 
+                        onClick={()=>{
+                        setDisabled(false);
+                        setEditMode(true);
+                        setIsOfflineView(false);
+                    }}>
                     Edit
                 </button></div>:<div className="cancel-save">
-                <button className="btn add-item-cancel">
+                <button className="btn add-item-cancel" onClick={handleCancelButton}>
                     Cancel
                 </button>
                 <button className="btn add-item-save" onClick={()=>{
