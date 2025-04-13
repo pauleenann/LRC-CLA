@@ -26,18 +26,15 @@ const AdminNavbar = () => {
         
         const fetchUserRole = async () => {
             try {
-                const storedCreds = JSON.parse(localStorage.getItem('token'));
-                if (storedCreds && storedCreds.message === "Login successful") {
-                    setRole(storedCreds.user.role);
+                const response = await axios.get('http://localhost:3001/api/user/check-session', { withCredentials: true });
+                if (response.data.loggedIn) {
+                    setRole(response.data.userRole);
                 } else {
                     setRole(null);
-                    // Redirect to login if not logged in
-                    navigate('/login');
                 }
             } catch (error) {
                 console.error('Error verifying session:', error);
                 setRole(null);
-                navigate('/login');
             } finally {
                 setLoading(false);
             }
