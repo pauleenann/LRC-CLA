@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import './Dashboard.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -16,7 +16,6 @@ import { fetchDepartmentOnline, setDepartmentArr } from '../../features/departme
 import { setTopicArr } from '../../features/topicSlice.js';
 import { fetchPublisherOnline, setPublisherArr } from '../../features/publisherSlice.js';
 import { setStatusArr } from '../../features/statusSlice.js';
-import { SocketContext } from '../../store/socketContext.js';
 
 const Dashboard = () => {
   const [dateTime,setDateTime] = useState(new Date());
@@ -50,9 +49,14 @@ const Dashboard = () => {
   const bookListHeader = ["Book ID","Title","Author","Copies Available"];
   const bookIssuedHeader = ["Tup ID","Title","Return Date"];
   const dispatch = useDispatch()
-  const socket = useContext(SocketContext)
+  const [socket, setSocket] = useState(null);
   
   useEffect(() => {
+    // Initialize socket connection
+    const newSocket = io('http://localhost:3001');
+    setSocket(newSocket);
+    
+
     getTotalVisitors();
     getTotalBorrowed();
     getTotalReturned();
@@ -63,7 +67,13 @@ const Dashboard = () => {
     getPopularChoices();
     getBookTrends();
     getVisitorStats();
+
+    // Clean up socket connection on unmount
+    return () => {
+      newSocket.disconnect();
+    };
   }, []);
+
 
   useEffect(() => {
     if (socket) {
