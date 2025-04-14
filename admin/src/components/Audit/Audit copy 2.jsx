@@ -1,40 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import "./Audit.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileExport,faArrowRight, faArrowLeft, faDownload, faXmarkCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
+// import { Search, Download, ChevronRight, ChevronLeft, XCircle } from "lucide-react";
 
 const Audit = () => {
-  const [audit, setAudit] = useState([]); // Stores all audit data
-  const [filteredAudit, setFilteredAudit] = useState([]); // Stores filtered data
+  const [audit, setAudit] = useState([]);
+  const [filteredAudit, setFilteredAudit] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-
-  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
 
-  // Format timestamp function
-  const formatTimestamp = (timestamp) => {
+  // Format timestamp using Intl.DateTimeFormat for better localization
+  const formatTimestamp = useCallback((timestamp) => {
     try {
-      const date = new Date(timestamp);
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      const year = date.getFullYear();
-      const hours = String(date.getHours()).padStart(2, "0");
-      const minutes = String(date.getMinutes()).padStart(2, "0");
-      const seconds = String(date.getSeconds()).padStart(2, "0");
-      return `${month}-${day}-${year} ${hours}:${minutes}:${seconds}`;
+      return new Intl.DateTimeFormat('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).format(new Date(timestamp));
     } catch (error) {
       console.error("Error formatting timestamp:", timestamp, error);
       return "Invalid timestamp";
     }
-  };
+  }, []);
 
   // Fetch audit logs
-  const getAudit = async () => {
+  const getAudit = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get("http://localhost:3001/api/audit");
@@ -44,18 +41,18 @@ const Audit = () => {
       }));
       setAudit(updatedAudit);
       setFilteredAudit(updatedAudit);
-      setLoading(false);
     } catch (err) {
       console.error("Error fetching audit logs:", err.message);
+    } finally {
       setLoading(false);
     }
-  };
+  }, [formatTimestamp]);
 
   useEffect(() => {
     getAudit();
-  }, []);
+  }, [getAudit]);
 
-  // Apply filters when activity, start date, or end date changes
+  // Apply filters
   useEffect(() => {
     let filtered = audit;
 
@@ -75,10 +72,10 @@ const Audit = () => {
     }
 
     setFilteredAudit(filtered);
-    setCurrentPage(1); // Reset to first page on new filter
+    setCurrentPage(1);
   }, [selectedActivity, startDate, endDate, audit]);
 
-  // Clear filters and reset pagination
+  // Clear filters
   const clearFilters = () => {
     setStartDate("");
     setEndDate("");
@@ -96,6 +93,11 @@ const Audit = () => {
   const nextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
+  // Format description for better readability
+  const formatDescription = (description) => {
+    return description.replace(/[{}"]/g, "").replace(/,/g, "\n");
+  };
+
   // Export to CSV
   const exportToCSV = () => {
     if (filteredAudit.length === 0) {
@@ -110,7 +112,7 @@ const Audit = () => {
       const row = [
         `"${item.user_id}"`,
         `"${item.action_type}"`,
-        `"${item.new_value.replace(/[{}"]/g, "").replace(/,/g, ";")}"`,
+        `"${formatDescription(item.new_value).replace(/\n/g, ";")}"`,
         `"${item.formatted_timestamp}"`
       ];
       csvRows.push(row.join(","));
@@ -120,25 +122,37 @@ const Audit = () => {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "audit_log.csv");
+    link.setAttribute("download", `audit_log_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   return (
-    <div className="audit-container bg-light">
-      <h1>User Activity Log</h1>
+    <div className="container py-4 px-3 bg-light rounded-lg shadow-sm">
+      <h1 className="mb-4 text-primary fw-bold">User Activity Log</h1>
 
-      <div className="mb-4">
-        {/* Filter Section */}
-        <div>
-                {/* Filter Section */}
-                <div className="w-50 mb-2">
+      {loading ? (
+        <div className="d-flex justify-content-center my-5">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="mb-4">
+            {/* Filter Section */}
+            <div className="row g-3">
+              <div className="col-md-4">
+                <div className="input-group">
+                  <span className="input-group-text bg-white">
+                    {/* <Search size={18} /> */}
+                  </span>
                   <select
-                    className="form-select shadow-sm"
+                    className="form-select border-start-0"
                     value={selectedActivity}
                     onChange={(e) => setSelectedActivity(e.target.value)}
+                    aria-label="Filter by activity"
                   >
                     <option value="">Filter by activity</option>
                     <option value="Added a new user">Insert User</option>
@@ -151,41 +165,60 @@ const Audit = () => {
                     <option value="Edited a user">Edited User</option>
                     <option value="Logged In">Login</option>
                     <option value="Logged Out">Logout</option>
-                    
                   </select>
                 </div>
-        
-                {/* Date Filters & Export */}
-                <div className="d-flex justify-content-between">
-                  <div className="d-flex align-items-center gap-2">
-                    <input type="date" className="shadow-sm form-control" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                    <span>to</span>
-                    <input type="date" className="shadow-sm form-control" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                    <button 
-                      className="btn btn-outline-secondary w-100 d-flex gap-2 justify-content-center align-items-center" 
-                      onClick={clearFilters}>
-                      <FontAwesomeIcon icon={faXmarkCircle}/>
-                      Clear filter
+              </div>
+
+              <div className="col-md-8">
+                <div className="d-flex flex-wrap gap-2 justify-content-between">
+                  <div className="d-flex align-items-center gap-2 flex-grow-1">
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      aria-label="Start date"
+                    />
+                    <span className="text-muted">to</span>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      aria-label="End date"
+                    />
+                    <button
+                      className="btn btn-outline-secondary d-flex align-items-center gap-1"
+                      onClick={clearFilters}
+                      aria-label="Clear filters"
+                    >
+                      {/* <XCircle size={16} /> */}
+                      <span className="d-none d-md-inline">Clear</span>
                     </button>
                   </div>
-                  <button className="btn btn-success d-flex align-items-center gap-2" onClick={exportToCSV}>
-                    <FontAwesomeIcon icon={faDownload}/>
-                    Export to Excel
+                  
+                  <button
+                    className="btn btn-success d-flex align-items-center gap-2"
+                    onClick={exportToCSV}
+                    aria-label="Export to CSV"
+                  >
+                    {/* <Download size={16} /> */}
+                    <span className="d-none d-md-inline">Export</span>
                   </button>
                 </div>
               </div>
-      </div>
-      
+            </div>
+          </div>
 
-      {/* Table */}
-      <div className="audit-table-box ">
-            <table className="audit-table ">
-              <thead className="">
+          {/* Table */}
+          <div className="table-responsive shadow-sm rounded">
+            <table className="table table-hover mb-0">
+              <thead className="table-light">
                 <tr>
-                  <td>User</td>
-                  <td>Action</td>
-                  <td>Description</td>
-                  <td>Timestamp</td>
+                  <th scope="col">User</th>
+                  <th scope="col">Action</th>
+                  <th scope="col">Description</th>
+                  <th scope="col">Timestamp</th>
                 </tr>
               </thead>
               <tbody>
@@ -203,7 +236,7 @@ const Audit = () => {
                           {item.action_type}
                         </span>
                       </td>
-                      <td style={{ whiteSpace: "pre-line" }}>{item.new_value}</td>
+                      <td style={{ whiteSpace: "pre-line" }}>{formatDescription(item.new_value)}</td>
                       <td>{item.formatted_timestamp}</td>
                     </tr>
                   ))
@@ -218,18 +251,32 @@ const Audit = () => {
             </table>
           </div>
 
-      {/* Pagination */}
-      <div className="pagination">
-        <span> Page {currentPage} of {totalPages} </span>
-        <div>
-          <button className="btn" disabled={currentPage === 1} onClick={prevPage}>
-            <FontAwesomeIcon icon={faArrowLeft}/>
-          </button>
-          <button className="btn" disabled={currentPage === totalPages} onClick={nextPage}>
-            <FontAwesomeIcon icon={faArrowRight}/>
-          </button>
-        </div>
-      </div>
+          {/* Pagination */}
+          <div className="d-flex justify-content-between align-items-center mt-3">
+            <span className="text-muted">
+              Page {currentPage} of {totalPages || 1}
+            </span>
+            <div className="btn-group">
+              <button
+                className="btn btn-outline-primary"
+                disabled={currentPage === 1}
+                onClick={prevPage}
+                aria-label="Previous page"
+              >
+                {/* <ChevronLeft size={18} /> */}
+              </button>
+              <button
+                className="btn btn-outline-primary"
+                disabled={currentPage === totalPages || totalPages === 0}
+                onClick={nextPage}
+                aria-label="Next page"
+              >
+                {/* <ChevronRight size={18} /> */}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
