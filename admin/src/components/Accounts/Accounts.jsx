@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Accounts.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faUser, faPen, faUserSlash, faArrowLeft, faArrowRight, faSearch, faSort, faSortUp, faSortDown, faArrowUp, faArrowDown, faArrowUpWideShort, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faUser, faPen, faUserSlash, faArrowLeft, faArrowRight, faSearch, faSort, faSortUp, faSortDown, faArrowUp, faArrowDown, faArrowUpWideShort, faExclamationCircle, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import CreateUserModal from '../CreateUserModal/CreateUserModal';
 import EditUserModal from '../EditUserModal/EditUserModal';
 import DeactivateModal from '../DeactivateModal/DeactivateModal';
@@ -523,10 +523,11 @@ const Accounts = () => {
         <button className="btn search-btn px-3 shadow-sm" onClick={handleSearch} >
           <FontAwesomeIcon icon={faSearch} />
         </button>
-        <button
-          className="btn btn-warning clear-btn ms-2 shadow-sm"
+        <button 
+          className="btn btn-outline-secondary d-flex gap-2 justify-content-center align-items-center ms-2" 
           onClick={clearFilter}
         >
+          <FontAwesomeIcon icon={faXmarkCircle}/>
           Clear filter
         </button>
       </div>

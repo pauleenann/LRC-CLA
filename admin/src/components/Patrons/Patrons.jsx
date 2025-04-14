@@ -140,7 +140,7 @@ const Patrons = () => {
                 </div>
             </div> */}
             <div className="search-bar-box">
-                <div className='d-flex gap-2'>
+                <div className='d-flex gap-2 w-50'>
                     <div className="input-group z-0">
                         <input 
                             type="text" 
@@ -252,10 +252,11 @@ const Patrons = () => {
                     ) : !loading ? (
                         <tr>
                             <td colSpan="8" className='no-data-box text-center'>
-                                <div className='d-flex flex-column align-items-center gap-2 my-3'>
+                                <div className='d-flex flex-column align-items-center my-3'>
                                     <FontAwesomeIcon icon={faExclamationCircle} className="fs-2" />
-                                    <span className=''>Resource not available.<br/>Please try again.</span>
-                                    <button className='btn btn-warning' onClick={handleClearFilter}>Clear Filter</button>
+                                    <span className='fw-semibold m-0 mt-2'>Resource not available</span>
+                                    <span className='m-0'>Please try again.</span>
+                                    <button className='btn btn-outline-secondary mt-2' onClick={handleClearFilter}>Clear Filter</button>
                                 </div>
                             </td>
                         </tr>

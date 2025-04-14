@@ -260,7 +260,7 @@ const Reports = () => {
 
         <div className='d-flex flex-column gap-3 data-box'>
           {/* header */}
-          <div className='header m-0 p-0 row d-flex align-items-center text-center justify-content-center rounded text-light shadow-sm'>
+          <div className='header m-0 p-3 row d-flex align-items-center text-center justify-content-center rounded text-light shadow-sm'>
             <div className='col-3 cursor-pointer' onClick={() => handleSort('report_name')}>
               Report Name
               <FontAwesomeIcon 
@@ -306,7 +306,7 @@ const Reports = () => {
           )
           : (
             currentReports.map(report => (
-              <div key={report.report_id} className='m-0 p-0 d-flex align-items-center text-center row rounded data shadow-sm'>
+              <div key={report.report_id} className='m-0 p-3 d-flex align-items-center text-center row rounded data shadow-sm'>
                 <div className='col-3'>{report.report_name}</div>
                 <div className='col-3'>{report.report_description}</div>
                 <div className='col-3'>{dayjs(report.created_at).format("YYYY-MM-DD HH:mm:ss")}</div>

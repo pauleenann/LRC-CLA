@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './AdminTopNavbar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleUser, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCircleUser, faSignOutAlt, faUser, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -50,6 +50,7 @@ const AdminTopNavbar = () => {
                     setUname(response.data.username);
                     dispatch(setUsername(response.data.username))
                     dispatch(setUserId(response.data.userID))
+                    console.log(response.data.userID)
                 } else {
                     setUname(null);
                 }
@@ -106,6 +107,10 @@ const AdminTopNavbar = () => {
             console.error('Logout error:', err);
         }
     };
+
+    const profile = ()=>{
+        navigate('/profile')
+    }
 
     const getOnlineData = ()=>{
         dispatch(fetchStatusOnline());
@@ -173,7 +178,13 @@ const AdminTopNavbar = () => {
                                 Hello, <span className="user-welcome-uname">{uname}</span>
                             </span>
                         </button>
-                        <ul className="dropdown-menu">
+                        <ul className="dropdown-menu p-2">
+                            <li>
+                                <button className="dropdown-item" onClick={profile}>
+                                    <FontAwesomeIcon icon={faUser} className="dropdown-icon" />
+                                    Profile
+                                </button>
+                            </li>
                             <li>
                                 <button className="dropdown-item" onClick={logout}>
                                     <FontAwesomeIcon icon={faSignOutAlt} className="dropdown-icon" />
