@@ -132,11 +132,10 @@ const Accounts = () => {
 
   const saveInvitation = async () => {
     await appendToAccount('username', username);
-    const isValid = await formValidation();  // No need for await
-
-    if (!isValid) { // Stop if errors exist
-        return;
-    }
+    const isValid = await formValidation();
+  
+    if (!isValid) return;
+  
     const result = await Swal.fire({
       title: "Are you sure",
       text: "You want to send an activation link to this user?",
@@ -146,54 +145,50 @@ const Accounts = () => {
       cancelButtonColor: "#94152b",
       confirmButtonText: "Yes, send!"
     });
-    
-    if (!result.isConfirmed) return; // Exit if user cancels
-
-  setLoading(true);
-  try {
+  
+    if (!result.isConfirmed) return;
+  
+    setLoading(true);
+  
+    try {
       const response = await axios.post('http://localhost:3001/api/account/invite', account);
-      console.log(account);
-      setLoading(false);
-
-      if (response.data.status === 409) {
-        Swal.fire({
-          title: "User already exists!",
-          text: "User with the same username already exists. Please try again.",
-          icon: "warning",
-          confirmButtonColor: "#54CB58",
-        });
-      } else if (response.data.status === 201) {
-        const result2 = await Swal.fire({
-          title: "User created!",
-          text: "You successfully created an account.",
-          icon: "success",
-          confirmButtonColor: "#54CB58",
-        });
-
-        // Reset form after success
-        setAccount({
-          fname: '',
-          lname: '',
-          uname: '',
-          role: '',
-          password: '',
-          confirmPassword: ''
-        });
-
-        if (result2.isConfirmed) {
-          window.location.reload();
-        }
+      console.log("Invite sent:", response.data);
+  
+      setOpenCreateUser(false);
+      const result2 = await Swal.fire({
+        title: "Activation Link Sent!",
+        text: "You successfully sent an activation link.",
+        icon: "success",
+        confirmButtonColor: "#54CB58",
+      });
+  
+      // Reset form after success
+      setAccount({
+        fname: '',
+        lname: '',
+        uname: '',
+        role: '',
+        email: '',
+      });
+  
+      if (result2.isConfirmed) {
+        window.location.reload();
       }
     } catch (err) {
-        console.log('Cannot create account. An error occurred:', err.message);
+      console.log('Cannot create account. An error occurred:', err.message);
+      await Swal.fire({
+        title: "Failed",
+        text: "Something went wrong. Try again.",
+        icon: "error",
+        confirmButtonColor: "#94152b"
+      });
     } finally {
-        setLoading(false); // Ensure loading is reset even on error
+      setLoading(false);
     }
   };
-
-
+  
   // Form validation for creating user account
-  const formValidation = () => {
+  const formValidation = async () => {
     const err = {}; // Fresh object to collect errors
   
     if (!account.fname) err.fname = 'Enter first name';
@@ -208,6 +203,19 @@ const Accounts = () => {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(account.email)) {
         err.email = 'Enter a valid email address';
+      }else{
+        //if email is valid, check if nagamit na siya
+        try {
+          const response = await axios.get('http://localhost:3001/api/account/check-email', {
+            params: { email: account.email }
+          });          
+
+          if(response.data.length>0){
+            err.email = 'This email is already used. Please try another email.';
+          }
+        } catch (error) {
+          console.log('Cannot check if email exist. An error occurred: ', error)
+        }
       }
     }
   
@@ -216,7 +224,6 @@ const Accounts = () => {
     return Object.keys(err).length === 0; // Return true if no errors exist
   };
   
-
   // Deactivate user
   const deactivateUser = async (uname, id) => {
 
@@ -598,6 +605,7 @@ const Accounts = () => {
         handleChange={handleChange}
         error={error}
         save={saveInvitation}
+        loading={loading}
       />
  
       <DeactivateModal open={openDeactivate} close={() => setOpenDeactivate(false)} uname={selectedUname} deactivateUser={deactivateUser} />

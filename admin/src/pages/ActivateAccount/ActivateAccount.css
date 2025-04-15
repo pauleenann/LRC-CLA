@@ -149,14 +149,17 @@
   
   .activate-container .strength-text.strength-weak {
     color: #e74c3c;
+    background-color: transparent;
   }
   
   .activate-container .strength-text.strength-moderate {
     color: #f39c12;
+    background-color: transparent;
   }
   
   .activate-container .strength-text.strength-strong {
     color: #2ecc71;
+    background-color: transparent;
   }
   
   /* Password requirements */

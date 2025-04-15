@@ -1,4 +1,5 @@
 import { db } from "../config/db.js";
+import { mailOptions } from "../email/activationEmail.js";
 import { transporter } from "../mailer/mailer.js";
 import { generateToken } from "../utils/generateToken.js";
 import { logAuditAction } from "./auditController.js";
@@ -490,24 +491,18 @@ export const invite = (req,res)=>{
             const activationLink = `http://localhost:3000/activate?token=${token}`;
 
             // Send email
-            const mailOptions = {
-                from: process.env.USER_EMAIL,
-                to: email,
-                subject: 'Invitation to Activate Your Account',
-                text: `Hello ${fname || ''},\n\nYou have been invited to join. Click the link below to set up your account:\n${activationLink}\n\nThis link will expire in 24 hours.`,
-            };
-
-            transporter.sendMail(mailOptions, function(err, data) {
+            transporter.sendMail(mailOptions(email,fname,activationLink), function(err, data) {
                 if (err) {
                   console.log("Error " + err);
                 } else {
                   console.log("Email sent successfully");
+                  return res.status(200).json({ success: true });
                 }
               });
             });
-
     } catch (error) {
-        
+        console.error('Unexpected error in invite endpoint:', error);
+        return res.status(500).json({ error: 'Server error' });
     }
 }
 
@@ -612,3 +607,17 @@ export const activate = async (req, res) => {
       }
     });
   };
+
+  export const checkEmailIfExist = (req,res)=>{
+    const {email} = req.query;
+    console.log(email)
+
+    const q = `
+        SELECT * FROM invitation WHERE email = ?`
+
+    db.query(q, [email],(err,results)=>{
+        if(err) return res.send(err)
+        return res.json(results)
+    })
+
+  }

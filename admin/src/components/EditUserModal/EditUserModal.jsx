@@ -5,14 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faX} from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
 
-const EditUserModal = ({open, close, account, handleChange, error, save, title}) => {
+const EditUserModal = ({open, close, account, handleChange, error, save, title,loading}) => {
     const [roles, setRoles] = useState([])
-    const [isChangePassword, setIsChangePassword] = useState(false);
 
     useEffect(()=>{
-        if(title=='Create User Account'){
-            setIsChangePassword(true);
-        }
         getRole()
     },[])
 
@@ -30,7 +26,6 @@ const EditUserModal = ({open, close, account, handleChange, error, save, title})
     if(!open){
         return null
     }
-
 
   return ReactDom.createPortal(
     <div className='edit-u-modal-container'>
@@ -78,11 +73,18 @@ const EditUserModal = ({open, close, account, handleChange, error, save, title})
                 </div>
             </div>
             <div className="d-flex justify-content-center gap-1 mt-4">
-                <button className="btn cancel-btn" onClick={close}>
+                <button 
+                    className="btn cancel-btn" 
+                    onClick={close}
+                >
                     Cancel
                 </button>
-                <button className="btn create-btn" onClick={save}>
-                    Confirm
+                <button 
+                    className="btn create-btn" 
+                    onClick={save}
+                    disabled={loading}
+                >
+                    {!loading?'Confirm':'Loading...'}
                 </button>
             </div>
             
