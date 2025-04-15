@@ -679,3 +679,60 @@ export const activate = async (req, res) => {
         return res.json(results)
     })
   }
+
+  
+  export const newLink = (req, res) => {
+    const { token } = req.body; 
+  
+    // check if the token exists
+    const q = `SELECT * FROM invitation WHERE token = ?`;
+  
+    db.query(q, [token], (err, results) => {
+      if (err) {
+        console.error("New link query error:", err);
+        return res.status(500).json({ error: "Server error" });
+      }
+  
+      if (results.length === 0) {
+        return res.status(200).json({ error: "Invalid token" });
+      }
+  
+      const invite = results[0];
+      const { email, fname } = invite;
+  
+      // generate a new token and expiration
+      const newToken = generateToken(); 
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); 
+  
+      // update the token and expiration in DB
+      const updateQ = `
+        UPDATE invitation
+        SET token = ?, token_expires_at = ?, is_used = 0
+        WHERE email = ?
+      `;
+  
+      db.query(updateQ, [newToken, expiresAt, email], (updateErr, updateResults) => {
+        if (updateErr) {
+          console.error("Token update error:", updateErr);
+          return res.status(500).json({ error: "Failed to update token" });
+        }
+  
+        // send new activation email
+        const activationLink = `http://localhost:3000/activate?token=${newToken}`;
+  
+        transporter.sendMail(
+          mailOptions(email, fname, activationLink),
+          (mailErr, info) => {
+            if (mailErr) {
+              console.error("Email error:", mailErr);
+              return res.status(500).json({ error: "Failed to send email" });
+            } else {
+              console.log("Email sent:", info.response);
+              return res.status(200).json({ success: true });
+            }
+          }
+        );
+      });
+    });
+  };
+  

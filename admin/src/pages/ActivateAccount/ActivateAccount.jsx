@@ -133,6 +133,24 @@ const ActivateAccount = () => {
     }
   };
 
+  const requestActivationLink = async () => {
+    try {
+      const response = await axios.post('http://localhost:3001/api/account/request-new-link', {
+        token: token
+      });
+      console.log(response)
+  
+      if (response.data.success) {
+        setMessage("New activation link sent to your email.");
+      } else {
+        setMessage(response.data.error);
+      }
+    } catch (error) {
+      console.error("Request error:", error);
+    }
+  };
+  
+
   // Password strength indicator
   const getPasswordStrength = (password) => {
     if (!password) return { strength: 0, label: '' };
@@ -257,8 +275,7 @@ const ActivateAccount = () => {
         ) : (
             <div className="error-container">
             <h2>Invalid or Expired Token</h2>
-            <p className="error-message">{message}</p>
-            <button onClick={() => navigate('/request-activation')} className="action-button">
+            <button onClick={requestActivationLink} className="action-button">
                 Request New Activation Link
             </button>
             </div>
