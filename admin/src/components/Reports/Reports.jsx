@@ -301,7 +301,7 @@ const Reports = () => {
               <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
               <p className='fw-semibold m-0 mt-2'>Report not found.</p>
               <p className='text-secondary m-0'>Please try a different search.</p>
-              <button className='btn btn-warning mt-2' onClick={clearFilters}>Clear Filter</button>
+              <button className='btn btn-outline-secondary mt-2' onClick={clearFilters}>Clear Filter</button>
             </div>
           )
           : (

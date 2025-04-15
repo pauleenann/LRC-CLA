@@ -167,7 +167,7 @@ const GenerateBarcodePage = () => {
                         <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
                         <p className='fw-semibold m-0'>Book not found.</p>
                         <p className='mb-2'>Please try another search.</p>
-                        <button className='btn btn-warning' onClick={clearFilters}>Clear filter</button>
+                        <button className='btn btn-outline-secondary' onClick={clearFilters}>Clear filter</button>
                     </div>}
                 </div>
                 {/* Pagination Controls */}

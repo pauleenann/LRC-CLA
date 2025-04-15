@@ -3,7 +3,7 @@ import axios from 'axios';
 import './Logbook.css';
 import { useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faArrowLeft, faArrowRight, faExclamationCircle, faSmile } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faArrowLeft, faArrowRight, faExclamationCircle, faSmile, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import * as XLSX from 'xlsx'; // Import xlsx for Excel export
 import { io } from 'socket.io-client';
 import { SocketContext } from '../../store/socketContext';
@@ -129,9 +129,12 @@ const Logbook = () => {
                             <FontAwesomeIcon icon={faSearch}/> 
                         </button>
 
-                        <button className='btn btn-warning ms-2 d-flex align-items-center' 
-                            onClick={clearFilters}>
-                            Clear Filters
+                        <button 
+                            className="btn btn-outline-secondary d-flex gap-2 justify-content-center align-items-center ms-2" 
+                            onClick={clearFilters}
+                        >
+                            <FontAwesomeIcon icon={faXmarkCircle}/>
+                            Clear filter
                         </button>
                     </div>
 

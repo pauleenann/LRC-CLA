@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Audit.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileExport,faArrowRight, faArrowLeft, faDownload, faXmarkCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faFileExport,faArrowRight, faArrowLeft, faDownload, faXmarkCircle, faSearch, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 
 const Audit = () => {
   const [audit, setAudit] = useState([]); // Stores all audit data
@@ -210,7 +210,10 @@ const Audit = () => {
                 ) : (
                   <tr>
                     <td colSpan="4" className="text-center py-4 text-muted">
-                      No records available
+                      <FontAwesomeIcon icon={faExclamationCircle} className="fs-2 no-data" />
+                      <p className='fw-semibold m-0 mt-2'>Audit not found.</p>
+                      <p className='text-secondary m-0'>Please try a different search.</p>
+                      <button className='btn btn-outline-secondary mt-2' onClick={clearFilters}>Clear Filter</button>    
                     </td>
                   </tr>
                 )}
