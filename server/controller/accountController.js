@@ -1,6 +1,9 @@
 import { db } from "../config/db.js";
+import { transporter } from "../mailer/mailer.js";
+import { generateToken } from "../utils/generateToken.js";
 import { logAuditAction } from "./auditController.js";
 import bcrypt from 'bcrypt';
+
 
 const saltRounds = 10;
 
@@ -446,3 +449,166 @@ export const deactivateAccount = (req, res) => {
         });
     });
 }
+
+export const invite = (req,res)=>{
+    try {
+        const { 
+            fname,
+            lname,
+            uname,
+            role,
+            email
+         } = req.body;
+        console.log(req.body)
+
+        const token = generateToken();
+        // Set expiry for 24 hours
+        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+        const invValues = [
+            fname,
+            lname,
+            uname,
+            role,
+            email,
+            token,
+            expiresAt
+        ]
+
+        const query = `
+            INSERT INTO invitation (fname, lname, uname, role_id, email, token, token_expires_at) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
+        db.query(query, invValues, (err, results) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send({ error: 'Database query failed' });
+            }
+    
+            // // Log the audit action
+            // logAuditAction(username, 'UPDATE', 'staffaccount', staffUname, 'active', JSON.stringify("Deactivated a user: " + staffUname));
+
+            const activationLink = `http://localhost:3000/activate?token=${token}`;
+
+            // Send email
+            const mailOptions = {
+                from: process.env.USER_EMAIL,
+                to: email,
+                subject: 'Invitation to Activate Your Account',
+                text: `Hello ${fname || ''},\n\nYou have been invited to join. Click the link below to set up your account:\n${activationLink}\n\nThis link will expire in 24 hours.`,
+            };
+
+            transporter.sendMail(mailOptions, function(err, data) {
+                if (err) {
+                  console.log("Error " + err);
+                } else {
+                  console.log("Email sent successfully");
+                }
+              });
+            });
+
+    } catch (error) {
+        
+    }
+}
+
+export const verifyToken = async (req, res) => {
+    const { token } = req.query;
+    console.log('Received token:', token);
+  
+    if (!token) return res.status(400).json({ message: 'Token is required.' });
+  
+    const query = `SELECT * FROM invitation WHERE token = ? AND is_used = false`;
+  
+    db.query(query, [token], (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).send({ error: 'Database query failed' });
+      }
+  
+      if (results.length === 0) {
+        return res.status(400).json({ message: 'Invalid or already used token.' });
+      }
+  
+      const invitation = results[0];
+  
+      if (new Date(invitation.token_expires_at) < new Date()) {
+        return res.status(400).json({ message: 'Token expired.' });
+      }
+  
+      return res.status(200).json({ message: 'Token is valid.', email: invitation.email });
+    });
+  };
+;
+
+export const activate = async (req, res) => {
+    const { token, password } = req.body;
+  
+    if (!token || !password) {
+      return res.status(400).json({ message: 'Token and password are required.' });
+    }
+  
+    const query = `SELECT * FROM invitation WHERE token = ? AND is_used = false`;
+  
+    db.query(query, [token], async (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).send({ error: 'Database query failed' });
+      }
+  
+      if (results.length === 0) {
+        return res.status(400).json({ message: 'Invalid or already used token.' });
+      }
+  
+      const invitation = results[0];
+  
+      if (new Date(invitation.token_expires_at) < new Date()) {
+        return res.status(400).json({ message: 'Token expired.' });
+      }
+  
+      try {
+        // 1. Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const insertValues = [
+            invitation.uname,
+            invitation.fname,
+            invitation.lname,
+            hashedPassword,
+            invitation.email,
+            invitation.role_id
+        ]
+  
+        // 2. Insert the user into the users table
+        const insertQuery = `
+            INSERT INTO staffaccount (
+                staff_uname, 
+                staff_fname,
+                staff_lname,
+                staff_password,
+                staff_email,
+                role_id) 
+            VALUES (?, ?, ?, ?, ?,?)`;
+
+        db.query(insertQuery, insertValues, (insertErr) => {
+          if (insertErr) {
+            console.error('User creation failed:', insertErr);
+            return res.status(500).json({ message: 'Failed to create user.' });
+          }
+  
+          // 3. Update the invitation to mark it as used
+          const updateQuery = `UPDATE invitation SET is_used = true WHERE inv_id = ?`;
+          db.query(updateQuery, [invitation.inv_id], (updateErr) => {
+            if (updateErr) {
+              console.error('Failed to update invitation:', updateErr);
+              return res.status(500).json({ message: 'Failed to update invitation.' });
+            }
+  
+            return res.status(200).json({ message: 'Account activated successfully.' });
+          });
+        });
+      } catch (hashErr) {
+        console.error('Password hashing error:', hashErr);
+        return res.status(500).json({ message: 'Server error.' });
+      }
+    });
+  };

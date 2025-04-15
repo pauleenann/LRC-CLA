@@ -1,10 +1,13 @@
 import express from 'express'
-import { activateAccount, createAccount, deactivateAccount, editAccount, getAccounts, viewAccount } from '../controller/accountController.js'
+import { activate, activateAccount, createAccount, deactivateAccount, editAccount, getAccounts, invite, verifyToken, viewAccount } from '../controller/accountController.js'
 
 const router = express.Router()
 
 router.get('/', getAccounts)
 router.post('/', createAccount)
+router.post('/invite', invite)
+router.post('/activate',activate)
+router.get('/verify-token', verifyToken)
 router.get('/:id', viewAccount)
 router.put('/:id', editAccount)
 router.put('/activate/:id', activateAccount)

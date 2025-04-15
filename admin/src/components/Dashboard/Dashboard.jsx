@@ -51,6 +51,8 @@ const Dashboard = () => {
   const bookIssuedHeader = ["Tup ID","Title","Return Date"];
   const dispatch = useDispatch()
   const socket = useContext(SocketContext)
+
+  console.log(socket)
   
   useEffect(() => {
     getTotalVisitors();
@@ -66,43 +68,44 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (socket) {
-      // Listen for attendance updates
-      socket.on('attendanceUpdated', () => {
-        console.log('Attendance updated, refreshing data...');
-        getTotalVisitors();
-        getVisitorStats();
-      });
-
-      // Listen for checkin updates
-      socket.on('checkinUpdated', () => {
-        console.log('checkin updated, refreshing data...');
-        getTotalReturned();
-        getBookTrends();
-      });
-
-      // Listen for checkout updates
-      socket.on('checkoutUpdated', () => {
-        console.log('checkout updated, refreshing data...');
-        getTotalBorrowed();
-        getBookTrends();
-      });
-
-      // Listen for checkout updates
-      socket.on('overdueUpdated', () => {
-        console.log('overdue updated, refreshing data...');
-        getTotalOverdue();
-      });
-
-      // Clean up event listener
-      return () => {
-        socket.off('attendanceUpdated');
-        socket.off('checkinUpdated');
-        socket.off('checkoutUpdated');
-        socket.off('overdueUpdated');
-      };
-    }
-    }, [socket]);
+    if (!socket || !socket.connected) return;
+  
+    const handleAttendance = () => {
+      console.log('Attendance updated, refreshing data...');
+      getTotalVisitors();
+      getVisitorStats();
+    };
+  
+    const handleCheckin = () => {
+      console.log('checkin updated, refreshing data...');
+      getTotalReturned();
+      getBookTrends();
+    };
+  
+    const handleCheckout = () => {
+      console.log('checkout updated, refreshing data...');
+      getTotalBorrowed();
+      getBookTrends();
+    };
+  
+    const handleOverdue = () => {
+      console.log('overdue updated, refreshing data...');
+      getTotalOverdue();
+    };
+  
+    socket.on('attendanceUpdated', handleAttendance);
+    socket.on('checkinUpdated', handleCheckin);
+    socket.on('checkoutUpdated', handleCheckout);
+    socket.on('overdueUpdated', handleOverdue);
+  
+    return () => {
+      socket.off('attendanceUpdated', handleAttendance);
+      socket.off('checkinUpdated', handleCheckin);
+      socket.off('checkoutUpdated', handleCheckout);
+      socket.off('overdueUpdated', handleOverdue);
+    };
+  }, [socket?.connected]);
+  
 
   //total visitors
   const getTotalVisitors = async () => {

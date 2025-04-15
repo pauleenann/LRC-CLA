@@ -9,20 +9,12 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   
   useEffect(() => {
-    if (!isOnline) return;
-
     // Clean up previous socket if exists
     if (socket) {
       socket.disconnect();
     }
 
-    const newSocket = io('https://api.tuplrc-cla.com', {
-      transports: ['polling'],
-      upgrade: false,
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000
-    });
+    const newSocket = io('http://localhost:3001');
     
     newSocket.on('connect', () => {
       console.log('Connected to socket server', newSocket.id);
@@ -47,7 +39,7 @@ export const SocketProvider = ({ children }) => {
       console.log('Cleaning up socket connection');
       newSocket.disconnect();
     };
-  }, [isOnline]);
+  }, []);
 
   return (
     <SocketContext.Provider value={socket}>
