@@ -125,8 +125,7 @@ const ActivateAccount = () => {
       
       setMessage(res.data.message || 'Account activated successfully!');
       
-      // Redirect to login after a delay
-      setTimeout(() => navigate('/'), 2000);
+      navigate('/');
     } catch (err) {
       setMessage(err.response?.data?.message || 'Error activating account. Please try again.');
     } finally {
