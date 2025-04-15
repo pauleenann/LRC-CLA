@@ -1,5 +1,4 @@
 import { db } from "../config/db.js";
-import { mailOptions } from "../email/activationEmail.js";
 import { transporter } from "../mailer/mailer.js";
 import { generateToken } from "../utils/generateToken.js";
 import { logAuditAction } from "./auditController.js";
@@ -491,18 +490,24 @@ export const invite = (req,res)=>{
             const activationLink = `http://localhost:3000/activate?token=${token}`;
 
             // Send email
-            transporter.sendMail(mailOptions(email,fname,activationLink), function(err, data) {
+            const mailOptions = {
+                from: process.env.USER_EMAIL,
+                to: email,
+                subject: 'Invitation to Activate Your Account',
+                text: `Hello ${fname || ''},\n\nYou have been invited to join. Click the link below to set up your account:\n${activationLink}\n\nThis link will expire in 24 hours.`,
+            };
+
+            transporter.sendMail(mailOptions, function(err, data) {
                 if (err) {
                   console.log("Error " + err);
                 } else {
                   console.log("Email sent successfully");
-                  return res.status(200).json({ success: true });
                 }
               });
             });
+
     } catch (error) {
-        console.error('Unexpected error in invite endpoint:', error);
-        return res.status(500).json({ error: 'Server error' });
+        
     }
 }
 
@@ -607,75 +612,3 @@ export const activate = async (req, res) => {
       }
     });
   };
-
-  export const checkEmailIfExist = (req, res) => {
-    const { email } = req.query;
-    console.log("Checking email:", email);
-  
-    // Check if the email is already used in the activated users table (staffaccount)
-    const q = `SELECT * FROM staffaccount WHERE staff_email = ?`;
-    db.query(q, [email], (userErr, userResults) => {
-      if (userErr) {
-        console.error("User query error:", userErr);
-        return res.status(500).json({ error: "Server error" });
-      }
-  
-      if (userResults.length > 0) {
-        // Email is already activated, so it's in use
-        return res.status(200).json({ error: "Email is already in use" });
-      } else {
-        // Check the invitation table for this email
-        const invitationQuery = `SELECT * FROM invitation WHERE email = ?`;
-        db.query(invitationQuery, [email], (invErr, invResults) => {
-          if (invErr) {
-            console.error("Invitation query error:", invErr);
-            return res.status(200).json({ error: "Server error" });
-          }
-  
-          const now = new Date();
-  
-          if (invResults.length > 0) {
-            const invite = invResults[0];
-            const tokenExpires = new Date(invite.token_expires_at);
-  
-            // Check if there's a valid invitation:
-            // Here we assume that a valid invitation has not expired and hasn't been used.
-            if (tokenExpires > now && !invite.is_used) {
-              // A valid invitation is still pending for this email
-              return res.status(200).json({ error: "Activation link already sent" });
-            } else {
-              // The existing invitation is expired or has been marked as used.
-              return res.status(200).json({ valid: true, message: "This email is valid" });
-            }
-          } else {
-            // No invitation exists at all; the email is free to use.
-            return res.status(200).json({ valid: true, message: "This email is valid" });
-          }
-        });
-      }
-    });
-  };
-  
-
-  export const deleteInvite = (req,res)=>{
-    const {email} = req.query;
-
-    const q = `DELETE FROM invitation WHERE email = ?`
-
-    db.query(q, [email],(err,results)=>{
-        if(err) return res.send(err)
-        return res.json(results)
-    })
-  }
-
-  export const checkIfUnameExist =(req,res)=>{
-    const {uname} = req.query;
-    console.log(uname)
-
-    const q = `SELECT * FROM staffaccount WHERE staff_uname = ?`
-
-    db.query(q, [uname],(err,results)=>{
-        if(err) return res.send(err)
-        return res.json(results)
-    })
-  }

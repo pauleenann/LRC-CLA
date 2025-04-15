@@ -176,6 +176,9 @@ const Accounts = () => {
       }
     } catch (err) {
       console.log('Cannot create account. An error occurred:', err.message);
+      await axios.delete('http://localhost:3001/api/account/delete-invite', {
+        params: { email: account.email }
+      });
       await Swal.fire({
         title: "Failed",
         text: "Something went wrong. Try again.",
@@ -193,7 +196,6 @@ const Accounts = () => {
   
     if (!account.fname) err.fname = 'Enter first name';
     if (!account.lname) err.lname = 'Enter last name';
-    if (!account.uname) err.uname = 'Enter username';
     if (!account.role) err.role = 'Choose a role';
   
     // Email validation
@@ -203,19 +205,39 @@ const Accounts = () => {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(account.email)) {
         err.email = 'Enter a valid email address';
-      }else{
-        //if email is valid, check if nagamit na siya
+      } else {
+        // only call API if the format is correct
         try {
           const response = await axios.get('http://localhost:3001/api/account/check-email', {
             params: { email: account.email }
           });          
-
-          if(response.data.length>0){
-            err.email = 'This email is already used. Please try another email.';
+          const error = response.data.error || '';
+    
+          if (error !== '') {
+            err.email = error;
           }
         } catch (error) {
-          console.log('Cannot check if email exist. An error occurred: ', error)
+          console.log('Cannot check if email exists. An error occurred:', error);
         }
+      }
+    }    
+
+    //verify username 
+    if (!account.uname){
+      err.uname = 'Enter username';
+    }else{
+      try {
+        const response = await axios.get('http://localhost:3001/api/account/check-uname', {
+          params: { uname: account.uname }
+        });
+
+        console.log(response)
+
+        if(response.data.length>0){
+          err.uname = 'Username already exist'
+        }
+      } catch (error) {
+        console.log('Cannot check if username exist. An error occurred: ', error)
       }
     }
   
