@@ -32,6 +32,9 @@ const Profile = () => {
     const [usernameValid, setUsernameValid] = useState(true);
     const [usernameChecking, setUsernameChecking] = useState(false);
     const [isCurrentPasswordCorrect, setIsCurrentPasswordCorrect] = useState(false);
+    const [passwordError, setPasswordError] = useState('')
+    const [newPasswordError, setNewPasswordError] = useState('');
+    const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const [emailError, setEmailError] = useState('');
     const [isEmailExist, setIsEmailExist] = useState(false);
     const [isEmailValid, setIsEmailValid] = useState(false);
@@ -71,7 +74,109 @@ const Profile = () => {
     
         return () => clearTimeout(delayDebounce); // Clean up on new keystroke
     }, [userData.email]);
+
+    useEffect(() => {
+        if (!passwordData.currentPassword || passwordData.currentPassword.length < 3) {
+            setIsCurrentPasswordCorrect(false);
+            return;
+        }
     
+        setPasswordError('');
+        const delayDebounce = setTimeout(() => {
+            verifyPassword(passwordData.currentPassword, userData.username);
+        }, 500);
+    
+        return () => clearTimeout(delayDebounce);
+    }, [passwordData.currentPassword]);
+    
+
+    const verifyPassword = async (password, uname) => {
+        try {
+            const response = await axios.get(`http://localhost:3001/api/user/verify-password`, {
+                params: {
+                    password,
+                    username: uname
+                }
+            });
+    
+            if (response.status === 200) {
+                setIsCurrentPasswordCorrect(true);
+            }
+        } catch (error) {
+            console.log('Cannot verify password: ', error);
+            setIsCurrentPasswordCorrect(false);
+    
+            // Get message from backend if available
+            if (error.response?.data?.error) {
+                setPasswordError(error.response.data.error);
+            } else {
+                setPasswordError('Unable to verify password.');
+            }
+        }
+    };
+
+    const validateNewPassword = () => {
+        setNewPasswordError('');
+        setConfirmPasswordError('');
+    
+        const { currentPassword, newPassword, confirmPassword } = passwordData;
+    
+        if (newPassword === currentPassword) {
+            setNewPasswordError('New password must be different from current password.');
+            return false;
+        }
+    
+        const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+        if (!strongRegex.test(newPassword)) {
+            setNewPasswordError('Password must be at least 8 characters, include upper & lower case, a number, and a special character.');
+            return false;
+        }
+    
+        if (newPassword !== confirmPassword) {
+            setConfirmPasswordError('Passwords do not match.');
+            return false;
+        }
+    
+        return true;
+    };
+    
+    const handlePasswordSubmit = async (e) => {
+        e.preventDefault();
+    
+        if (!validateNewPassword()) return;
+    
+        try {
+            await axios.put(`http://localhost:3001/api/user/change-password/${userId}`, {
+                currentPassword: passwordData.currentPassword,
+                newPassword: passwordData.newPassword
+            });
+    
+            Swal.fire({
+                title: "Password Updated!",
+                text: "Your password has been changed successfully.",
+                icon: "success",
+                confirmButtonColor: "#54CB58"
+            });
+    
+            // Reset fields
+            setPasswordData({
+                currentPassword: '',
+                newPassword: '',
+                confirmPassword: ''
+            });
+    
+        } catch (error) {
+            console.error('Password update failed:', error);
+            Swal.fire({
+                title: "Error!",
+                text: "There was a problem updating your password.",
+                icon: "error",
+                confirmButtonColor: "#94152b"
+            });
+        }
+    };
+    
+
     const validateEmail = (email) => {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return emailRegex.test(email);
@@ -146,20 +251,6 @@ const Profile = () => {
         // Handle form submission
         console.log('Updated user data:', userData);
         // Add API call to update user data
-    };
-
-    const handlePasswordSubmit = (e) => {
-        e.preventDefault();
-        // Handle password change submission
-        console.log('Password change request:', passwordData);
-        // Add API call to update password
-        
-        // Reset password fields after submission
-        setPasswordData({
-            currentPassword: '',
-            newPassword: '',
-            confirmPassword: ''
-        });
     };
 
     const isEdited = () => {
@@ -269,6 +360,8 @@ const Profile = () => {
           console.log('Cannot check if email is verified: ', err);
         } 
       };
+
+      console.log(passwordData)
 
     return (
         <div className='profilepage bg-light'>
@@ -421,11 +514,17 @@ const Profile = () => {
                                             type="password" 
                                             id="currentPassword" 
                                             name="currentPassword" 
+                                            autoComplete="new-password" // <-- prevent autofill
                                             value={passwordData.currentPassword} 
                                             onChange={handlePasswordChange} 
-                                            className="form-control"
+                                            className={`form-control ${passwordError ? 'is-invalid' : ''}`}
                                             required
                                         />
+                                        {passwordError && (
+                                            <div className="invalid-feedback">
+                                                {passwordError}
+                                            </div>
+                                        )}
                                     </div>
                                     
                                     <div className="form-group">
@@ -436,12 +535,15 @@ const Profile = () => {
                                             name="newPassword" 
                                             value={passwordData.newPassword} 
                                             onChange={handlePasswordChange} 
-                                            className="form-control"
+                                            className={`form-control ${newPasswordError ? 'is-invalid' : ''}`}
                                             disabled={!isCurrentPasswordCorrect}
-                                            required
                                         />
+                                        {newPasswordError && (
+                                            <div className="invalid-feedback">
+                                                {newPasswordError}
+                                            </div>
+                                        )}
                                     </div>
-                                    
                                     <div className="form-group">
                                         <label htmlFor="confirmPassword">Confirm New Password</label>
                                         <input 
@@ -450,12 +552,15 @@ const Profile = () => {
                                             name="confirmPassword" 
                                             value={passwordData.confirmPassword} 
                                             onChange={handlePasswordChange} 
-                                            className="form-control"
+                                            className={`form-control ${confirmPasswordError ? 'is-invalid' : ''}`}
                                             disabled={!isCurrentPasswordCorrect}
-                                            required
                                         />
+                                        {confirmPasswordError && (
+                                            <div className="invalid-feedback">
+                                                {confirmPasswordError}
+                                            </div>
+                                        )}
                                     </div>
-                                    
                                     <div className="form-actions">
                                         <button 
                                             type="submit" 
