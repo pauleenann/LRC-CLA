@@ -343,3 +343,86 @@ export const checkIsEmailVerified = (req,res)=>{
       return res.status(200).json({ message: 'Token is valid.', email: invitation.email });
     })
 }
+
+export const verifyPassword = async (req,res)=>{
+    const {password,username} = req.query
+    const query = `
+        SELECT staff_password FROM staffaccount WHERE staff_uname = ?
+    `;
+
+    try {
+        db.query(query, [username], async (err, results) => {
+            if (err) {
+                return res.status(500).json({ error: 'Database query failed' });
+            }
+
+            const user = results[0];
+
+            // Compare provided password with hashed password from the database
+            const isMatch = await bcrypt.compare(password, user.staff_password);
+
+            if (!isMatch) {
+                return res.status(401).json({ error: 'Please try again' });
+            }
+
+            return res.status(200).json({
+                message: 'Password Validated'});
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+export const changePassword = async (req, res) => {
+    const userId = req.params.userId;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+        return res.status(400).json({ message: 'Missing required fields.' });
+    }
+
+    const query = `SELECT staff_password FROM staffaccount WHERE staff_id = ?`;
+
+    try {
+        db.query(query, [userId], async (err, results) => {
+            if (err) {
+                console.error('DB error:', err);
+                return res.status(500).json({ message: 'Database error.' });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'User not found.' });
+            }
+
+            const hashedPassword = results[0].staff_password;
+
+            const isMatch = await bcrypt.compare(currentPassword, hashedPassword);
+            if (!isMatch) {
+                return res.status(401).json({ message: 'Current password is incorrect.' });
+            }
+
+            const isSameAsOld = await bcrypt.compare(newPassword, hashedPassword);
+            if (isSameAsOld) {
+                return res.status(400).json({ message: 'New password must be different from the old one.' });
+            }
+
+            const saltRounds = 10;
+            const newHashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+            const updateQuery = `UPDATE staffaccount SET staff_password = ? WHERE staff_id = ?`;
+
+            db.query(updateQuery, [newHashedPassword, userId], (updateErr, updateResult) => {
+                if (updateErr) {
+                    console.error('DB update error:', updateErr);
+                    return res.status(500).json({ message: 'Failed to update password.' });
+                }
+
+                return res.status(200).json({ message: 'Password updated successfully.' });
+            });
+        });
+    } catch (error) {
+        console.error('Server error:', error);
+        return res.status(500).json({ message: 'Internal server error.' });
+    }
+};
