@@ -140,7 +140,7 @@ export const mailOptions = (email, firstName, verificationLink) => {
                         </div>
                         
                         <div class="expiry-note">
-                            <strong>Note:</strong> This invitation link will expire in 1 minute for security reasons. Please do not share this link to anyone.
+                            <strong>Note:</strong> This verification link will expire in 1 hour for security reasons. Please do not share this link to anyone.
                         </div>
                         
                         <p class="message">If the button above doesn't work, you can copy and paste this link into your browser:</p>

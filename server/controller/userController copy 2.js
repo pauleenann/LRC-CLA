@@ -267,7 +267,7 @@ export const verifyEmail = (req,res)=>{
                 return res.status(400).json({ success: false, isSent: false });
             } else {
                 console.log("Email sent successfully");
-                return res.status(200).json({ success: true, isSent: true, token: token });
+                return res.status(200).json({ success: true, isSent: true });
             }
         });
     });
