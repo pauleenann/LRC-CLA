@@ -235,7 +235,9 @@ export const verifyEmail = (req,res)=>{
         role_id
     } = req.body
 
-    const token = generateToken(email);
+    const token = generateToken();
+
+    const expiresAt = new Date(Date.now() + 60 * 1000); // 1 minute
 
     const invValues = [
         firstName,
@@ -243,11 +245,12 @@ export const verifyEmail = (req,res)=>{
         username,
         role_id,
         email,
-        token
+        token,
+        expiresAt
     ]
 
     const query = `
-            INSERT INTO invitation (fname, lname, uname, role_id, email, token) VALUES (?, ?, ?, ?, ?, ?)`;
+            INSERT INTO invitation (fname, lname, uname, role_id, email, token, token_expires_at) VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
     db.query(query, invValues, (err, results) => {
         if (err) {
@@ -264,12 +267,12 @@ export const verifyEmail = (req,res)=>{
         transporter.sendMail(mailOptions(email,firstName,verificationLink), function(err, data) {
             if (err) {
                 console.log("Error " + err);
-                return res.status(400).json({ success: false, isSent: false });
             } else {
                 console.log("Email sent successfully");
-                return res.status(200).json({ success: true, isSent: true, token: token });
+                return res.status(200).json({ success: true });
             }
         });
+        return res.status(200).json({ token: token });
     });
 }
 
@@ -292,25 +295,23 @@ export const verifyToken = async (req, res) => {
       }
   
       const invitation = results[0];
-
-      try {
-            // Verify the token
-            jwt.verify(token, process.env.JWT_SECRET);
-      
-            const updateQuery = `UPDATE invitation SET is_used = true WHERE inv_id = ?`;
-    
-            db.query(updateQuery, [invitation.inv_id], (updateErr) => {
-                if (updateErr) {
-                    console.error('Failed to update invitation:', updateErr);
-                    return res.status(500).json({ message: 'Failed to update invitation.' });
-                }
-            
-                return res.status(200).json({ message: 'Account activated successfully.' });
-            });
-      } catch (error) {
-            // Token verification failed or token expired
-            return res.status(400).json({ message: 'Token expired.' });
+  
+      if (new Date(invitation.token_expires_at) < new Date()) {
+        return res.status(400).json({ message: 'Token expired.' });
       }
+  
+    //   return res.status(200).json({ message: 'Token is valid.', email: invitation.email });
+
+     const updateQuery = `UPDATE invitation SET is_used = true WHERE inv_id = ?`;
+    
+     db.query(updateQuery, [invitation.inv_id], (updateErr) => {
+        if (updateErr) {
+            console.error('Failed to update invitation:', updateErr);
+            return res.status(500).json({ message: 'Failed to update invitation.' });
+        }
+      
+        return res.status(200).json({ message: 'Account activated successfully.' });
+    });
     });
   };
 ;
@@ -334,18 +335,12 @@ export const checkIsEmailVerified = (req,res)=>{
       }
   
       const invitation = results[0];
-
-      try {
-        // Verify the token
-        jwt.verify(token, process.env.JWT_SECRET);
-      
-        // If successful, mark it as used and proceed
-        return res.status(200).json({ message: 'Token is valid.', email: invitation.email });
-      } catch (error) {
-        // Token verification failed or token expired
-        console.error("JWT Verification Error:", error.message);
-        return res.status(400).json({ message: 'Token expired or invalid.' });
+  
+      if (new Date(invitation.token_expires_at) < new Date()) {
+        return res.status(400).json({ message: 'Token expired.' });
       }
+  
+      return res.status(200).json({ message: 'Token is valid.', email: invitation.email });
     })
 }
 

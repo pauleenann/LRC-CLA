@@ -47,9 +47,11 @@ const ActivateAccount = () => {
       const res = await axios.get(`http://localhost:3001/api/account/verify-token`, {
         params: { token }
       });
+      console.log(res)
       setValid(true);
       setEmail(res.data.email);
     } catch (err) {
+      console.log(err)
       setMessage(err.response?.data?.message || 'Invalid or expired token.');
       setValid(false);
     } finally {

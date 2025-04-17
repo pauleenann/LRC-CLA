@@ -40,6 +40,7 @@ const Profile = () => {
     const [isEmailValid, setIsEmailValid] = useState(false);
     const [isEmailVerified,setIsEmailVerified] = useState(true);
     const [token,setToken] = useState(null)
+    const [sendingLoading, setSendingLoading] = useState(false)
 
     useEffect(() => {
         if(!userId) return;
@@ -322,19 +323,24 @@ const Profile = () => {
       }, [token]);
 
     const verifyEmail = async () => {
+        setSendingLoading(true)
         try {
           const response = await axios.post(`http://localhost:3001/api/user/verify-email`, userData);
           // Store token in localStorage for persistence
+
+          console.log(response)
           if (response.data.token) {
             setToken(response.data.token);
           }
-          
-          Swal.fire({
-            title: "Verification Email Sent!",
-            text: "Please check your email inbox to complete verification.",
-            icon: "success",
-            confirmButtonColor: "#54CB58"
-          });
+
+          if(response.data.isSent){
+            Swal.fire({
+                title: "Verification Email Sent!",
+                text: "Please check your email inbox to complete verification.",
+                icon: "success",
+                confirmButtonColor: "#54CB58"
+            });
+          }
         } catch (error) {
           console.log('Cannot verify email. An error occurred: ', error);
           
@@ -344,6 +350,8 @@ const Profile = () => {
             icon: "error",
             confirmButtonColor: "#94152b"
           });
+        }finally{
+            setSendingLoading(false)
         }
       };
 
@@ -352,6 +360,8 @@ const Profile = () => {
           const res = await axios.get("http://localhost:3001/api/user/check-verified", {
             params: { token: token, username:userData.username }
           });
+
+          console.log(res)
           
           if (res.status === 200) {
             setIsEmailVerified(true);
@@ -463,7 +473,7 @@ const Profile = () => {
                                                 className="btn btn-success mt-1 verify"
                                                 onClick={verifyEmail}
                                             >
-                                                Verify now
+                                                {sendingLoading?'Sending':'Verify now'}
                                             </button>
                                             )}
                                             {isEmailValid && isEmailVerified && (

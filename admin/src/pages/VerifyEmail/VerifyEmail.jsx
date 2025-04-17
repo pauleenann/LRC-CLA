@@ -31,6 +31,7 @@ const VerifyEmail = () => {
           const res = await axios.get("http://localhost:3001/api/user/verify-token", {
             params: { token }
           });
+          console.log(res)
           dispatch(setIsEmailVerified(true));
           setEmail(res.data.email);
         } catch (err) {
