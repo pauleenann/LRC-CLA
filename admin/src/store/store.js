@@ -12,6 +12,7 @@ import adviserReducer from '../features/adviserSlice.js'
 import authorReducer from '../features/authorSlice.js'
 import publisherInfoReducer from '../features/publisherInfoSlice.js'
 import socketReducer from '../features/socketSlice.js'
+import isEmailVerifiedReducer from '../features/isEmailVerified.js'
 
 const store = configureStore({
     reducer:{
@@ -27,8 +28,8 @@ const store = configureStore({
         adviser: adviserReducer,
         author: authorReducer,
         publisherInfo: publisherInfoReducer,
-        socket: socketReducer
-
+        socket: socketReducer,
+        isEmailVerified: isEmailVerifiedReducer,
     }
 })
 

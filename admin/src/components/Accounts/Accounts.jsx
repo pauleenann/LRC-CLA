@@ -129,7 +129,6 @@ const Accounts = () => {
       }
   };
 
-
   const saveInvitation = async () => {
     await appendToAccount('username', username);
     const isValid = await formValidation();

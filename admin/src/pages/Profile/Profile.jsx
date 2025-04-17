@@ -1,26 +1,26 @@
-import React, { useEffect, useId, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AdminNavbar from '../../components/AdminNavbar/AdminNavbar';
 import AdminTopNavbar from '../../components/AdminTopNavbar/AdminTopNavbar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faUser, 
   faLock, 
-  faQrcode,
   faChevronRight
 } from '@fortawesome/free-solid-svg-icons';
 import './Profile.css';
-import { useSelector } from 'react-redux';
-import axios from 'axios'
-import Swal from 'sweetalert2'
-import Loading from '../../components/Loading/Loading';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const Profile = () => {
-    const {userId} = useSelector(state=>state.username)
+    const { userId } = useSelector(state => state.username);
     const [userData, setUserData] = useState({
         username: '',
         firstName: '',
         lastName: '',
         role: '',
+        role_id:'',
+        email:''
     });
     const [passwordData, setPasswordData] = useState({
         currentPassword: '',
@@ -31,12 +31,17 @@ const Profile = () => {
     const [originalUserData, setOriginalUserData] = useState(null);
     const [usernameValid, setUsernameValid] = useState(true);
     const [usernameChecking, setUsernameChecking] = useState(false);
-    const [isCurrentPasswordCorrect, setIsCurrentPasswordCorrect] = useState(false)
+    const [isCurrentPasswordCorrect, setIsCurrentPasswordCorrect] = useState(false);
+    const [emailError, setEmailError] = useState('');
+    const [isEmailExist, setIsEmailExist] = useState(false);
+    const [isEmailValid, setIsEmailValid] = useState(false);
+    const [isEmailVerified,setIsEmailVerified] = useState(true);
+    const [token,setToken] = useState(null)
 
-    useEffect(()=>{
-        if(!userId) return
-        getUserProfile()
-    },[userId])
+    useEffect(() => {
+        if(!userId) return;
+        getUserProfile();
+    }, [userId]);
 
     useEffect(() => {
         if (!userData.username.trim() || userData.username === originalUserData?.username) {
@@ -49,23 +54,47 @@ const Profile = () => {
         }, 500); // debounce
     
         return () => clearTimeout(delayDebounce);
-    }, [userData.username]);    
+    }, [userData.username, originalUserData]);    
 
-    const getUserProfile = async()=>{
+    useEffect(() => {
+        if (!userData.email) return;
+        setEmailError('');
+        setIsEmailValid(false);
+    
+        const delayDebounce = setTimeout(() => {
+            if (validateEmail(userData.email)) {
+                checkEmail(userData.email);
+            } else {
+                setEmailError('Invalid email format');
+            }
+        }, 500); // Wait 500ms after user stops typing
+    
+        return () => clearTimeout(delayDebounce); // Clean up on new keystroke
+    }, [userData.email]);
+    
+    const validateEmail = (email) => {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    }
+
+    const getUserProfile = async() => {
         try {
-            console.log(userId)
-            const response = await axios.get(`http://localhost:3001/api/user/profile/${userId}`)
-            const data = response.data[0]
+            console.log(userId);
+            const response = await axios.get(`http://localhost:3001/api/user/profile/${userId}`);
+            const data = response.data[0];
             const fetchedData = {
                 username: data.staff_uname,
                 firstName: data.staff_fname,
                 lastName: data.staff_lname,
                 role: data.role_name,
+                role_id: data.role_id,
+                email: data.staff_email
             };
     
             setUserData(fetchedData);
             setOriginalUserData(fetchedData); // Save the original for comparison
         } catch (error) {
+            console.error("Error fetching user profile:", error);
         }
     }
 
@@ -84,9 +113,27 @@ const Profile = () => {
         }
     };
 
+    const checkEmail = async (email) => {
+        try {
+          const response = await axios.get(
+            `http://localhost:3001/api/user/check-email/${email}?excludeId=${userId}`
+          );
+      
+          setIsEmailExist(response.data.exists);
+          setEmailError(response.data.error || '');
+          setIsEmailValid(userData.email !== originalUserData.email);
+          setIsEmailVerified(response.data.verified)
+        } catch (error) {
+          console.error('Email validation error:', error);
+        }
+      };
+
     const handleUserDataChange = (e) => {
         const { name, value } = e.target;
-        setUserData({...userData, [name]: value});
+        setUserData(prev => ({
+            ...prev, 
+            [name]: value
+        }));
     };
 
     const handlePasswordChange = (e) => {
@@ -117,11 +164,12 @@ const Profile = () => {
 
     const isEdited = () => {
         if (!originalUserData) return false;
-    
+
         const isChanged = (
             userData.username !== originalUserData.username ||
             userData.firstName !== originalUserData.firstName ||
             userData.lastName !== originalUserData.lastName ||
+            userData.email !== originalUserData.email ||
             userData.role !== originalUserData.role
         );
     
@@ -132,7 +180,7 @@ const Profile = () => {
             !userData.role.trim()
         );
     
-        return isChanged && !hasEmptyField;
+        return isChanged && !hasEmptyField && isEmailVerified;
     };
 
     const updateAccount = async () => {
@@ -169,8 +217,58 @@ const Profile = () => {
             });
         } 
     };
-    
-    console.log(userData)
+
+    useEffect(() => {
+        if (!token) return;
+
+        // Set up an interval to check periodically (every 5 seconds)
+        const intervalId = setInterval(() => {
+          checkIfVerified();
+        }, 5000);
+        
+        // Clean up interval on component unmount
+        return () => clearInterval(intervalId);
+      }, [token]);
+
+    const verifyEmail = async () => {
+        try {
+          const response = await axios.post(`http://localhost:3001/api/user/verify-email`, userData);
+          // Store token in localStorage for persistence
+          if (response.data.token) {
+            setToken(response.data.token);
+          }
+          
+          Swal.fire({
+            title: "Verification Email Sent!",
+            text: "Please check your email inbox to complete verification.",
+            icon: "success",
+            confirmButtonColor: "#54CB58"
+          });
+        } catch (error) {
+          console.log('Cannot verify email. An error occurred: ', error);
+          
+          Swal.fire({
+            title: "Error!",
+            text: "There was a problem sending the verification email.",
+            icon: "error",
+            confirmButtonColor: "#94152b"
+          });
+        }
+      };
+
+    const checkIfVerified = async () => {
+        try {
+          const res = await axios.get("http://localhost:3001/api/user/check-verified", {
+            params: { token: token, username:userData.username }
+          });
+          
+          if (res.status === 200) {
+            setIsEmailVerified(true);
+          }
+        } catch (err) {
+          console.log('Cannot check if email is verified: ', err);
+        } 
+      };
 
     return (
         <div className='profilepage bg-light'>
@@ -255,6 +353,38 @@ const Profile = () => {
                                             className="form-control text-capitalize"
                                         />
                                     </div>
+                                    <div className="form-group">
+                                        <label htmlFor="email">Email</label>
+                                        <div>
+                                            <input 
+                                                type="email" 
+                                                id="email" 
+                                                name="email" 
+                                                value={userData.email} 
+                                                onChange={handleUserDataChange} 
+                                                className={`form-control ${emailError ? 'is-invalid' : ''}`}
+                                            />
+                                            {!isEmailExist && isEmailValid && !isEmailVerified && (
+                                            <button 
+                                                type="button"
+                                                className="btn btn-success mt-1 verify"
+                                                onClick={verifyEmail}
+                                            >
+                                                Verify now
+                                            </button>
+                                            )}
+                                            {isEmailValid && isEmailVerified && (
+                                                <div className="text-success mt-1 verified">
+                                                    Your email is verified
+                                                </div>
+                                            )}
+                                            {emailError && (
+                                            <div className="invalid-feedback">
+                                                {emailError}
+                                            </div>
+                                            )}
+                                        </div>
+                                    </div>
                                     
                                     <div className="form-group">
                                         <label htmlFor="role">Role</label>
@@ -270,11 +400,11 @@ const Profile = () => {
                                     
                                     <div className="form-actions">
                                         <button 
-                                            type="submit" 
+                                            type="button" 
                                             className="btn-save" 
-                                            disabled={!isEdited()}
+                                            disabled={!isEdited() || !usernameValid || !!emailError}
                                             onClick={updateAccount}
-                                            >
+                                        >
                                             Save Changes
                                         </button>
                                     </div>
@@ -330,7 +460,6 @@ const Profile = () => {
                                         <button 
                                             type="submit" 
                                             className="btn-save"
-                                            
                                         >
                                             Update Password
                                         </button>

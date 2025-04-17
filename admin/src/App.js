@@ -26,6 +26,7 @@ import GenerateBarcodePage from './pages/GenerateBarcodePage/GenerateBarcodePage
 import CatalogManagePage from './pages/CatalogManagePage/CatalogManagePage';
 import Profile from './pages/Profile/Profile';
 import ActivateAccount from './pages/ActivateAccount/ActivateAccount';
+import VerifyEmail from './pages/VerifyEmail/VerifyEmail';
 
 const App = () => {
   return (
@@ -34,6 +35,7 @@ const App = () => {
         <Routes>
           <Route path='/' element={<LoginPage />} />
           <Route path="/activate" element={<ActivateAccount/>} />
+          <Route path="/verify" element={<VerifyEmail/>} />
           
           <Route path='/dashboard' element={
             <ProtectedRoute allowedRoles={['superadmin','admin','staff']}>

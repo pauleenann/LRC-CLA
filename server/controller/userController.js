@@ -3,6 +3,9 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { db } from "../config/db.js";
 import { logAuditAction } from "./auditController.js";
+import { generateToken } from '../utils/generateToken.js';
+import { transporter } from '../mailer/mailer.js';
+import { mailOptions } from '../email/verifyUpdatedEmail.js';
 
 dotenv.config();
 
@@ -126,7 +129,9 @@ export const profile = (req,res)=>{
             s.staff_uname,
             s.staff_fname,
             s.staff_lname,
-            r.role_name 
+            staff_email,
+            r.role_name,
+            r.role_id
         FROM staffaccount s
         JOIN roles r ON r.role_id = s.role_id
         WHERE s.staff_id = ?
@@ -163,12 +168,38 @@ export const checkUsername = (req, res) => {
     });    
 };
 
+export const checkEmail = (req, res) => {
+    const { email } = req.params;
+    const { excludeId } = req.query;
+
+    let q = 'SELECT * FROM staffaccount WHERE staff_email = ?';
+    const params = [email];
+
+    // Optional: Exclude the current user from the check
+    if (excludeId) {
+        q += ' AND staff_id != ?';
+        params.push(excludeId);
+    }
+
+    db.query(q, params, (err, results) => {
+        if (err) return res.status(500).json({ error: err });
+    
+        // Return the opposite of your current logic for clarity
+        if (results.length > 0) {
+            return res.json({ exists: true, error: 'This email is already taken. Please another email.' });  // email is already taken
+        } else {
+            return res.json({ exists: false, verified: false });  // email is available
+        }
+    });    
+};
+
 export const updateAccount = (req,res)=>{
     const {id} = req.params
     const {
         username,
         firstName,
-        lastName
+        lastName,
+        email
     } = req.body
 
     const q = `
@@ -176,7 +207,8 @@ export const updateAccount = (req,res)=>{
         SET
             staff_uname = ?,
             staff_fname = ?,
-            staff_lname = ?
+            staff_lname = ?,
+            staff_email = ?
         WHERE staff_id = ?
     `
 
@@ -188,8 +220,126 @@ export const updateAccount = (req,res)=>{
         null,
         JSON.stringify("Updated an account: " + firstName + " " + lastName))
 
-    db.query(q,[username,firstName,lastName,id],(err,results)=>{
+    db.query(q,[username,firstName,lastName,email,id],(err,results)=>{
         if(err) return res.send(err)
            return res.json(results)
+    })
+}
+
+export const verifyEmail = (req,res)=>{
+    const {
+        username,
+        firstName,
+        lastName,
+        email,
+        role_id
+    } = req.body
+
+    const token = generateToken();
+
+    const expiresAt = new Date(Date.now() + 60 * 1000); // 1 minute
+
+    const invValues = [
+        firstName,
+        lastName,
+        username,
+        role_id,
+        email,
+        token,
+        expiresAt
+    ]
+
+    const query = `
+            INSERT INTO invitation (fname, lname, uname, role_id, email, token, token_expires_at) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
+    db.query(query, invValues, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send({ error: 'Database query failed' });
+        }
+        
+        // // Log the audit action
+        // logAuditAction(username, 'UPDATE', 'staffaccount', staffUname, 'active', JSON.stringify("Deactivated a user: " + staffUname));
+    
+        const verificationLink = `http://localhost:3000/verify?token=${token}`;
+    
+        // Send email
+        transporter.sendMail(mailOptions(email,firstName,verificationLink), function(err, data) {
+            if (err) {
+                console.log("Error " + err);
+            } else {
+                console.log("Email sent successfully");
+                return res.status(200).json({ success: true });
+            }
+        });
+        return res.status(200).json({ token: token });
+    });
+}
+
+export const verifyToken = async (req, res) => {
+    const { token } = req.query;
+    console.log('Received token:', token);
+  
+    if (!token) return res.status(400).json({ message: 'Token is required.' });
+  
+    const query = `SELECT * FROM invitation WHERE token = ? AND is_used = false`;
+  
+    db.query(query, [token], (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).send({ error: 'Database query failed' });
+      }
+  
+      if (results.length === 0) {
+        return res.status(400).json({ message: 'Invalid or already used token.' });
+      }
+  
+      const invitation = results[0];
+  
+      if (new Date(invitation.token_expires_at) < new Date()) {
+        return res.status(400).json({ message: 'Token expired.' });
+      }
+  
+    //   return res.status(200).json({ message: 'Token is valid.', email: invitation.email });
+
+     const updateQuery = `UPDATE invitation SET is_used = true WHERE inv_id = ?`;
+    
+     db.query(updateQuery, [invitation.inv_id], (updateErr) => {
+        if (updateErr) {
+            console.error('Failed to update invitation:', updateErr);
+            return res.status(500).json({ message: 'Failed to update invitation.' });
+        }
+      
+        return res.status(200).json({ message: 'Account activated successfully.' });
+    });
+    });
+  };
+;
+
+export const checkIsEmailVerified = (req,res)=>{
+    const { token, username } = req.query;
+    console.log('Received token:', token);
+  
+    if (!token) return res.status(400).json({ message: 'Token is required.' });
+  
+    const query = `SELECT * FROM invitation WHERE token = ? AND is_used = true AND uname = ?`;
+  
+    db.query(query, [token,username], (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).send({ error: 'Database query failed' });
+      }
+  
+      if (results.length === 0) {
+        return res.status(400).json({ message: 'Invalid or already used token.' });
+      }
+  
+      const invitation = results[0];
+  
+      if (new Date(invitation.token_expires_at) < new Date()) {
+        return res.status(400).json({ message: 'Token expired.' });
+      }
+  
+      return res.status(200).json({ message: 'Token is valid.', email: invitation.email });
     })
 }
