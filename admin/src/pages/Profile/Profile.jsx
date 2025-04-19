@@ -11,6 +11,7 @@ import './Profile.css';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { checkEmail, checkIfVerified, isEdited, updateAccount, validateEmail, validateUsername, verifyEmail } from '../../functions/profileFunctions';
 
 const Profile = () => {
     const { userId } = useSelector(state => state.username);
@@ -54,7 +55,7 @@ const Profile = () => {
         }
     
         const delayDebounce = setTimeout(() => {
-            validateUsername(userData.username);
+            validateUsername(userData.username,userId,setUsernameChecking,setUsernameValid);
         }, 500); // debounce
     
         return () => clearTimeout(delayDebounce);
@@ -64,10 +65,11 @@ const Profile = () => {
         if (!userData.email) return;
         setEmailError('');
         setIsEmailValid(false);
+        setIsEmailVerified(true);
     
         const delayDebounce = setTimeout(() => {
             if (validateEmail(userData.email)) {
-                checkEmail(userData.email);
+                checkEmail(userData.email, userId, setIsEmailExist, setEmailError, setIsEmailValid, setIsEmailVerified, userData, originalUserData);
             } else {
                 setEmailError('Invalid email format');
             }
@@ -176,12 +178,6 @@ const Profile = () => {
             });
         }
     };
-    
-
-    const validateEmail = (email) => {
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        return emailRegex.test(email);
-    }
 
     const getUserProfile = async() => {
         try {
@@ -204,36 +200,6 @@ const Profile = () => {
         }
     }
 
-    const validateUsername = async (username) => {
-        setUsernameChecking(true);
-        try {
-            const response = await axios.get(
-                `http://localhost:3001/api/user/check-username/${username}?excludeId=${userId}`
-            );
-            setUsernameValid(!response.data.exists); // true if username is available
-        } catch (error) {
-            console.error('Username validation error:', error);
-            setUsernameValid(false);
-        } finally {
-            setUsernameChecking(false);
-        }
-    };
-
-    const checkEmail = async (email) => {
-        try {
-          const response = await axios.get(
-            `http://localhost:3001/api/user/check-email/${email}?excludeId=${userId}`
-          );
-      
-          setIsEmailExist(response.data.exists);
-          setEmailError(response.data.error || '');
-          setIsEmailValid(userData.email !== originalUserData.email);
-          setIsEmailVerified(response.data.verified)
-        } catch (error) {
-          console.error('Email validation error:', error);
-        }
-      };
-
     const handleUserDataChange = (e) => {
         const { name, value } = e.target;
         setUserData(prev => ({
@@ -254,122 +220,18 @@ const Profile = () => {
         // Add API call to update user data
     };
 
-    const isEdited = () => {
-        if (!originalUserData) return false;
-
-        const isChanged = (
-            userData.username !== originalUserData.username ||
-            userData.firstName !== originalUserData.firstName ||
-            userData.lastName !== originalUserData.lastName ||
-            userData.email !== originalUserData.email ||
-            userData.role !== originalUserData.role
-        );
-    
-        const hasEmptyField = (
-            !userData.username.trim() ||
-            !userData.firstName.trim() ||
-            !userData.lastName.trim() ||
-            !userData.role.trim()
-        );
-    
-        return isChanged && !hasEmptyField && isEmailVerified;
-    };
-
-    const updateAccount = async () => {
-        const result = await Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonColor: "#54CB58",
-            cancelButtonColor: "#94152b",
-            confirmButtonText: "Yes, update!"
-        });
-    
-        if (!result.isConfirmed) return;
-    
-        try {
-            await axios.put(`http://localhost:3001/api/user/update/${userId}`, userData);
-    
-            await Swal.fire({
-                title: "Updated!",
-                text: "Your account has been updated.",
-                icon: "success",
-                confirmButtonColor: "#54CB58"
-            });
-    
-            window.location.reload();
-        } catch (error) {
-            console.error("Cannot update account:", error);
-            Swal.fire({
-                title: "Error!",
-                text: "There was a problem updating your account.",
-                icon: "error",
-                confirmButtonColor: "#94152b"
-            });
-        } 
-    };
-
     useEffect(() => {
         if (!token) return;
 
         // Set up an interval to check periodically (every 5 seconds)
         const intervalId = setInterval(() => {
-          checkIfVerified();
+          checkIfVerified(token, userData.username, setIsEmailVerified);
         }, 5000);
         
         // Clean up interval on component unmount
         return () => clearInterval(intervalId);
       }, [token]);
 
-    const verifyEmail = async () => {
-        setSendingLoading(true)
-        try {
-          const response = await axios.post(`http://localhost:3001/api/user/verify-email`, userData);
-          // Store token in localStorage for persistence
-
-          console.log(response)
-          if (response.data.token) {
-            setToken(response.data.token);
-          }
-
-          if(response.data.isSent){
-            Swal.fire({
-                title: "Verification Email Sent!",
-                text: "Please check your email inbox to complete verification.",
-                icon: "success",
-                confirmButtonColor: "#54CB58"
-            });
-          }
-        } catch (error) {
-          console.log('Cannot verify email. An error occurred: ', error);
-          
-          Swal.fire({
-            title: "Error!",
-            text: "There was a problem sending the verification email.",
-            icon: "error",
-            confirmButtonColor: "#94152b"
-          });
-        }finally{
-            setSendingLoading(false)
-        }
-      };
-
-    const checkIfVerified = async () => {
-        try {
-          const res = await axios.get("http://localhost:3001/api/user/check-verified", {
-            params: { token: token, username:userData.username }
-          });
-
-          console.log(res)
-          
-          if (res.status === 200) {
-            setIsEmailVerified(true);
-          }
-        } catch (err) {
-          console.log('Cannot check if email is verified: ', err);
-        } 
-      };
 
       console.log(passwordData)
 
@@ -471,7 +333,7 @@ const Profile = () => {
                                             <button 
                                                 type="button"
                                                 className="btn btn-success mt-1 verify"
-                                                onClick={verifyEmail}
+                                                onClick={()=>verifyEmail(setSendingLoading,userData,setToken)}
                                             >
                                                 {sendingLoading?'Sending':'Verify now'}
                                             </button>
@@ -505,8 +367,8 @@ const Profile = () => {
                                         <button 
                                             type="button" 
                                             className="btn-save" 
-                                            disabled={!isEdited() || !usernameValid || !!emailError}
-                                            onClick={updateAccount}
+                                            disabled={!isEdited(userData,originalUserData, isEmailVerified) || !usernameValid || !!emailError}
+                                            onClick={()=>updateAccount(userId,userData)}
                                         >
                                             Save Changes
                                         </button>

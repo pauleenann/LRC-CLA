@@ -682,8 +682,7 @@ const Accounts = () => {
             lname: '',
             uname: '',
             role: '',
-            password: '',
-            confirmPassword: '',
+            email:'',
             username: username
           });
           setError({});
@@ -696,12 +695,23 @@ const Accounts = () => {
       />
       <EditUserModal
         open={openEditUser}
-        close={() => setEditUser(false)}
+        close={() => {
+          setAccount({
+            fname: '',
+            lname: '',
+            uname: '',
+            role: '',
+            email:'',
+            username: username
+          });
+          setError({});
+          setEditUser(false);
+        }}
         title={'Edit User Account'}
         account={account}
         handleChange={handleChange}
         error={error}
-        save={(isChangePassword)=>editUserAccount(isChangePassword)}
+        // save={}
       />
       <DeactivateModal open={openDeactivate} close={() => setOpenDeactivate(false)} uname={selectedUname} deactivateUser={deactivateUser} />
       <ActivateModal open={openActivate} close={() => setOpenActivate(false)} uname={selectedUname} activateUser={activateUser} />

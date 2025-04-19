@@ -106,12 +106,13 @@ const saltRounds = 10;
 export const getAccounts = (req,res)=>{
     const q = `
         SELECT 
-            staffaccount.staff_id, 
-            staffaccount.staff_uname, 
-            staffaccount.staff_lname, 
-            staffaccount.staff_fname,
-            staffaccount.staff_status,
-            roles.role_name
+            staffaccount.staff_id as userId, 
+            staffaccount.staff_uname as username, 
+            staffaccount.staff_lname as lastName, 
+            staffaccount.staff_fname as firstName,
+            staffaccount.staff_status as status,
+            roles.role_name as role,
+            roles.role_id as role_id
         FROM staffaccount
         JOIN roles ON staffaccount.role_id = roles.role_id
         WHERE roles.role_id = 2`
@@ -189,7 +190,17 @@ export const viewAccount = (req,res)=>{
     const keyword = req.query.keyword || '';
 
     const q = `
-    SELECT staff_id, staff_fname, staff_lname, staff_uname, role_id FROM staffaccount WHERE staff_id = ?`
+    SELECT 
+      sa.staff_id, 
+      sa.staff_fname, 
+      sa.staff_lname, 
+      sa.staff_uname, 
+      sa.staff_email, 
+      r.role_id,
+      r.role_name  
+    FROM staffaccount sa
+    JOIN roles r ON r.role_id = sa.role_id 
+    WHERE staff_id = ?`
 
 
     db.query(q,[id], (err,results)=>{
