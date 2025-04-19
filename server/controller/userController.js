@@ -186,7 +186,7 @@ export const checkEmail = (req, res) => {
     
         // Return the opposite of your current logic for clarity
         if (results.length > 0) {
-            return res.json({ exists: true, error: 'This email is already taken. Please another email.' });  // email is already taken
+            return res.json({ exists: true, error: 'This email is already taken. Please use another email.' });  // email is already taken
         } else {
             return res.json({ exists: false, verified: false });  // email is available
         }
@@ -318,6 +318,8 @@ export const verifyToken = async (req, res) => {
 export const checkIsEmailVerified = (req,res)=>{
     const { token, username } = req.query;
     console.log('Received token:', token);
+    console.log(token)
+    console.log(username)
   
     if (!token) return res.status(400).json({ message: 'Token is required.' });
   

@@ -4,9 +4,60 @@ import './EditUserModal.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faX} from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
+import { checkEmail, checkIfVerified, isEdited, updateAccount, validateEmail, validateUsername, verifyEmail } from '../../functions/profileFunctions'
 
-const EditUserModal = ({open, close, account, handleChange, error, save, title,loading}) => {
+const EditUserModal = ({open, close, account, originalAccount, handleChange, error, save, title, loading}) => {
     const [roles, setRoles] = useState([])
+    const [usernameValid, setUsernameValid] = useState(true);
+    const [usernameChecking, setUsernameChecking] = useState(false);
+    const [emailError, setEmailError] = useState('');
+    const [isEmailExist, setIsEmailExist] = useState(false);
+    const [isEmailValid, setIsEmailValid] = useState(false);
+    const [isEmailVerified,setIsEmailVerified] = useState(true);
+    const [token,setToken] = useState(null)
+    const [sendingLoading, setSendingLoading] = useState(false)
+
+    useEffect(() => {
+        if (!token && !account.username) return;
+    
+        // Set up an interval to check periodically (every 5 seconds)
+        const intervalId = setInterval(() => {
+            checkIfVerified(token, account.username,setIsEmailVerified);
+        }, 5000);
+            
+        // Clean up interval on component unmount
+        return () => clearInterval(intervalId);
+    }, [token]);
+    
+      useEffect(() => {
+        if (!account.username.trim() || account.username === originalAccount?.username) {
+                  setUsernameValid(true);
+                  return;
+              }
+          
+              const delayDebounce = setTimeout(() => {
+                  validateUsername(account.username, account.userId,setUsernameChecking,setUsernameValid);
+              }, 500); // debounce
+          
+              return () => clearTimeout(delayDebounce);
+    }, [account, originalAccount]);  
+
+    useEffect(() => {
+        if (!account.email && !account.userId ) return;
+        setEmailError('');
+        setIsEmailValid(false);
+        setIsEmailVerified(true);
+        
+        const delayDebounce = setTimeout(() => {
+            if (validateEmail(account.email)) {
+                checkEmail(account.email, account.userId, setIsEmailExist, setEmailError, setIsEmailValid, setIsEmailVerified, account, originalAccount);
+            } else {
+                setEmailError('Invalid email format');
+            }
+        }, 500); // Wait 500ms after user stops typing
+        
+        return () => clearTimeout(delayDebounce); // Clean up on new keystroke
+    }, [account]);
 
     useEffect(()=>{
         getRole()
@@ -22,7 +73,7 @@ const EditUserModal = ({open, close, account, handleChange, error, save, title,l
         }
     }
 
-    console.log(account)
+    console.log('isEmailVerified? ', isEmailVerified)
     if(!open){
         return null
     }
@@ -42,30 +93,87 @@ const EditUserModal = ({open, close, account, handleChange, error, save, title,l
 
             <div className="row px-4 gy-3">
                 <div className="col-12 form-floating">
-                    <input type="text" className={`form-control ${error.fname ? 'is-invalid' : ''}`} id='fname' name='fname' placeholder='' value={account?.fname} onChange={handleChange}/>
-                    <label htmlFor="fname" className='ms-2'>First Name</label>
+                    <input 
+                        type="text" 
+                        className={`form-control ${error.fname ? 'is-invalid' : ''}`} 
+                        id='firstName' 
+                        name='firstName' 
+                        placeholder='' 
+                        value={account?.firstName} 
+                        onChange={handleChange}
+                    />
+                    <label htmlFor="firstName" className='ms-2'>
+                        First Name
+                    </label>
                     <p className="invalid-feedback m-0">{error.fname}</p>
                 </div>
                 <div className="col-12 form-floating">
-                    <input type="text" className={`form-control ${error.lname ? 'is-invalid' : ''}`} id='lname' name='lname' placeholder='' value={account&&account.lname} onChange={handleChange}/>
-                    <label htmlFor="lname" className='ms-2'>Last Name</label>
+                    <input 
+                        type="text" 
+                        className={`form-control ${error.lname ? 'is-invalid' : ''}`} 
+                        id='lastName' 
+                        name='lastName' 
+                        placeholder='' 
+                        value={account&&account.lastName} 
+                        onChange={handleChange}
+                    />
+                    <label htmlFor="lastName" className='ms-2'>Last Name</label>
                     <p className="invalid-feedback m-0">{error.lname}</p>
                 </div>
                 <div className="col-12 form-floating">
-                    <input type="text" className={`form-control ${error.uname ? 'is-invalid' : ''}`} id='uname' name='uname' placeholder='' value={account&&account.uname} onChange={handleChange}/>
-                    <label htmlFor="uname" className='ms-2'>Username</label>
-                    <p className="invalid-feedback m-0">{error.uname}</p>
+                    <input 
+                        type="text" 
+                        className={`form-control ${!usernameValid ? 'is-invalid' : ''}`}
+                        id='username' 
+                        name='username' 
+                        placeholder=''
+                        value={account&&account.username}
+                        onChange={handleChange}
+                    />
+                    <label htmlFor="username" className='ms-2'>Username</label>
+                    {!usernameValid && (
+                        <div className="invalid-feedback">
+                            Username is already taken.
+                        </div>
+                    )}
                 </div>
                 <div className="col-12 form-floating">
-                    <input type="text" className={`form-control ${error.email ? 'is-invalid' : ''}`} id='email' name='email' placeholder='' value={account&&account.email} onChange={handleChange}/>
+                    <input 
+                        type="text" 
+                        className={`form-control ${emailError ? 'is-invalid' : ''}`}
+                        id='email' 
+                        name='email' 
+                        placeholder='' 
+                        value={account&&account.email} 
+                        onChange={handleChange}
+                    />
                     <label htmlFor="email" className='ms-2'>Email</label>
-                    <p className="invalid-feedback m-0">{error.email}</p>
+                    {!isEmailExist && isEmailValid && !isEmailVerified && (
+                        <button 
+                            type="button"
+                            className="btn btn-success mt-1 verify"
+                            onClick={()=>verifyEmail(setSendingLoading, account, setToken)}
+                        >
+                            {console.log('button here')}
+                            {sendingLoading?'Sending':'Verify now'}
+                        </button>
+                    )}
+                    {isEmailValid && isEmailVerified && (
+                        <div className="text-success mt-1 verified">
+                            Your email is verified
+                        </div>
+                    )}
+                    {emailError && (
+                        <div className="invalid-feedback">
+                            {emailError}
+                        </div>
+                    )}
                 </div>
                 <div className="col-12 form-floating">
                     <select name="role" id="role" className={`form-control ${error.role ? 'is-invalid' : ''}`} onChange={handleChange}>
                         <option value="" disabled selected>Select role</option>
                         {roles.length>0?roles.map(item=>{
-                            return <option value={item.role_id} selected={account&&item.role_id==account.role}>{item.role_name}</option>
+                            return <option value={item.role_id} selected={account&&item.role_id==account.role_id}>{item.role_name}</option>
                         }):''}
                     </select>
                     <label htmlFor="" className='ms-2'>Role</label>
@@ -80,9 +188,10 @@ const EditUserModal = ({open, close, account, handleChange, error, save, title,l
                     Cancel
                 </button>
                 <button 
-                    className="btn create-btn" 
-                    onClick={save}
-                    disabled={loading}
+                    type="button"
+                    className="btn btn-primary" 
+                    onClick={()=>updateAccount(account.userId, account)}
+                    disabled={!isEdited(account,originalAccount,isEmailVerified) || !usernameValid || !!emailError || !isEmailVerified}
                 >
                     {!loading?'Confirm':'Loading...'}
                 </button>
