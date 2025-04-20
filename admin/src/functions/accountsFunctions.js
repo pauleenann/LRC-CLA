@@ -153,11 +153,14 @@ export const saveInvitation = async (uname,setLoading,setOpenCreateUser,setAccou
   
       // Reset form after success
       setAccount({
-        fname: '',
-        lname: '',
-        uname: '',
+        userId: '',
+        username: '',
+        firstName: '',
+        lastName: '',
         role: '',
-        email: '',
+        role_id:'',
+        email:'',
+        status:''
       });
   
       if (result2.isConfirmed) {
@@ -253,18 +256,21 @@ export const clearFilter = (setSortStates,setKeyword,setFilteredAccounts,account
 
 // search
 export const handleSearch = (keyword,setFilteredAccounts,accounts) => {
+  console.log(keyword)
     if (!keyword.trim()) {
       setFilteredAccounts(accounts);
       return;
     }
   
     const filtered = accounts.filter(account =>
-      account.staff_fname.toLowerCase().includes(keyword.toLowerCase()) ||
-      account.staff_lname.toLowerCase().includes(keyword.toLowerCase()) ||
-      account.staff_uname.toLowerCase().includes(keyword.toLowerCase()) ||
-      account.role_name.toLowerCase().includes(keyword.toLowerCase()) ||
-      account.staff_status.toLowerCase().includes(keyword.toLowerCase())
+      account.firstName.toLowerCase().includes(keyword.toLowerCase()) ||
+      account.lastName.toLowerCase().includes(keyword.toLowerCase()) ||
+      account.username.toLowerCase().includes(keyword.toLowerCase()) ||
+      account.role.toLowerCase().includes(keyword.toLowerCase()) ||
+      account.status.toLowerCase().includes(keyword.toLowerCase())
     );
+
+    console.log(filtered)
   
     setFilteredAccounts(filtered);
 };
@@ -276,7 +282,7 @@ export const handleSortClick = (column,sortStates,setSortStates,accounts,setFilt
     const newState = currentState === 2 ? 0 : currentState + 1;
     
     // Reset other sort states
-    const newSortStates = { staff_fname: 0, staff_lname: 0, staff_uname: 0, staff_status: 0, role_name: 0 };
+    const newSortStates = { firstName: 0, lastName: 0, username: 0, status: 0, role: 0 };
     newSortStates[column] = newState;
     setSortStates(newSortStates);
   

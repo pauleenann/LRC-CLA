@@ -35,11 +35,11 @@ const Accounts = () => {
   const [keyword, setKeyword] = useState('');
   // New state to track sort directions
   const [sortStates, setSortStates] = useState({
-    staff_fname: 0, // 0 = unsorted, 1 = ascending (A-Z), 2 = descending (Z-A)
-    staff_lname: 0,
-    staff_uname: 0,
-    role_name:0,
-    role_status:0
+    firstName: 0, // 0 = unsorted, 1 = ascending (A-Z), 2 = descending (Z-A)
+    lastName: 0,
+    username: 0,
+    role:0,
+    status:0
   });
   // New state for pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -66,22 +66,24 @@ const Accounts = () => {
     let filteredResults = accounts;
 
     // Apply role filter if selected
-    if (sortStates.role_name) {
+    if (sortStates.role) {
       filteredResults = filteredResults.filter(
-        item => item.role.toLowerCase() === sortStates.role_name.toLowerCase()
+        item => item.role.toLowerCase() === sortStates.role.toLowerCase()
       );
     }
 
     // Apply status filter if selected
-    if (sortStates.staff_status) {
+    if (sortStates.status) {
       filteredResults = filteredResults.filter(
-        item => item.status.toLowerCase() === sortStates.staff_status.toLowerCase()
+        item => item.status.toLowerCase() === sortStates.status.toLowerCase()
       );
     }
 
     // Set filtered accounts
     setFilteredAccounts(filteredResults);
-  }, [sortStates.role_name, sortStates.staff_status, accounts]);
+  }, [sortStates.role, sortStates.status, accounts]);
+
+  console.log(filteredAccounts)
 
   return (
     <div className="accounts-container bg-light">
