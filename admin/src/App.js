@@ -27,6 +27,7 @@ import CatalogManagePage from './pages/CatalogManagePage/CatalogManagePage';
 import Profile from './pages/Profile/Profile';
 import ActivateAccount from './pages/ActivateAccount/ActivateAccount';
 import VerifyEmail from './pages/VerifyEmail/VerifyEmail';
+import ResetPassword from './pages/ResetPassword/ResetPassword';
 
 const App = () => {
   return (
@@ -34,7 +35,9 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<LoginPage />} />
+          <Route path="/reset-password" element={<ResetPassword/>} />
           <Route path="/activate" element={<ActivateAccount/>} />
+          <Route path="/reset" element={<ActivateAccount/>} />
           <Route path="/verify" element={<VerifyEmail/>} />
           
           <Route path='/dashboard' element={

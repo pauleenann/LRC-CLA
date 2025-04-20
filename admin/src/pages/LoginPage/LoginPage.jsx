@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.css'
+import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
@@ -89,7 +90,7 @@ const LoginPage = () => {
                         <label htmlFor="username" className="form-label">Username</label>
                     </div>
                     
-                    <div className="mb-4 form-floating">
+                    <div className="form-floating">
                         <input
                             type="password"
                             className="form-control"
@@ -100,6 +101,12 @@ const LoginPage = () => {
                             onKeyDown={handleKeyDown}
                         />
                         <label htmlFor="password" className="form-label">Password</label>
+                    </div>
+                    
+                    <div className='d-flex justify-content-center'>
+                        <Link to="/reset-password">
+                            <p className='mb-4 mt-2 fw-semibold m-auto forgot text-secondary'>Forgot password?</p>
+                        </Link>
                     </div>
                     
                     {error && (
