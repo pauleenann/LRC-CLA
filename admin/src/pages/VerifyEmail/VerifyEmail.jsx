@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsEmailVerified } from '../../features/isEmailVerified';
+import './VerifyEmail.css'
 
 const VerifyEmail = () => {
     const dispatch = useDispatch();
@@ -49,23 +50,23 @@ const VerifyEmail = () => {
     }, [isEmailVerified]);
 
     return (
-        <div className="container-fluid min-vh-100 bg-light d-flex align-items-center justify-content-center">
+        <div className="container-fluid min-vh-100 bg-light d-flex align-items-center justify-content-center verify-container">
           <div className="w-100" style={{ maxWidth: '500px' }}>
             {isLoading ? (
               // Loading State
-              <div className="card shadow border-0">
+              <div className="card shadow-sm border-0">
                 <div className="card-body text-center p-5">
-                  <div className="spinner-border text-primary mb-4" role="status">
-                    <span className="visually-hidden">Verifying...</span>
+                  <div class="spinner-grow text-danger" role="status">
+                    <span class="sr-only">Loading...</span>
                   </div>
-                  <h3 className="fw-bold mb-2">Verifying Your Email</h3>
+                  <h3 className="fw-bold mb-2 mt-3">Verifying Your Email</h3>
                   <p className="text-muted">Please wait while we verify your email address...</p>
                 </div>
               </div>
             ) : message ? (
               // Error State
-              <div className="card shadow border-0 overflow-hidden">
-                <div className="bg-danger text-white text-center p-4">
+              <div className="card shadow-sm border-0 overflow-hidden">
+                <div className="text-white text-center pt-4">
                   <div className="bg-white rounded-circle d-inline-flex p-3 shadow">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
                       strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-danger">
@@ -82,8 +83,8 @@ const VerifyEmail = () => {
               </div>
             ) : (
               // Success State
-              <div className="card shadow border-0 overflow-hidden">
-                <div className="bg-primary bg-gradient text-white text-center p-4">
+              <div className="card shadow-sm border-0 overflow-hidden">
+                <div className="text-white text-center pt-4">
                   <div className="bg-white rounded-circle d-inline-flex p-3 shadow">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
                       strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">

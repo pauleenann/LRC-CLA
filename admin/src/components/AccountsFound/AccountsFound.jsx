@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import '../../assets/styles/globals.css';
 
-const AccountsFound = ({account,setAccount,resetPassword}) => {
+const AccountsFound = ({account,setAccount,resetPassword,loading}) => {
     console.log(account)
   return (
     <div className='find-account rounded shadow-sm'>
@@ -32,10 +33,10 @@ const AccountsFound = ({account,setAccount,resetPassword}) => {
                 This is not me
             </button>
             <button 
-                className="btn btn-primary"
+                className="btn lrc-btn"
                 onClick={resetPassword}
             >
-                Proceed
+                {loading?'Loading...':'Proceed'}
             </button>
         </div>
     </div>

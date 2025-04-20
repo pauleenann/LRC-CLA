@@ -56,7 +56,7 @@ const ResetPassword = () => {
       {/* find your account by email */}
       {account.length==0?
       <FindYourAccount setEmail={setEmail} search={handleSearch} error={emailError}/>:
-      <AccountsFound account={account} setAccount={setAccount} resetPassword={resetPassword}/>}
+      <AccountsFound account={account} setAccount={setAccount} resetPassword={resetPassword} loading={loading}/>}
       
 
       {/* display found account */}

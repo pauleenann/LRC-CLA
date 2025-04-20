@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import '../../assets/styles/globals.css';
 
 const FindYourAccount = ({setEmail, search, error}) => {
   return (
@@ -26,7 +27,7 @@ const FindYourAccount = ({setEmail, search, error}) => {
         <div className="buttons p-3 d-flex justify-content-end gap-1 border-top border-light-subtle">
             <button className="btn btn-secondary">Cancel</button>
             <button 
-                className="btn btn-primary"
+                className="btn lrc-btn"
                 onClick={search}
             >
                 Search
