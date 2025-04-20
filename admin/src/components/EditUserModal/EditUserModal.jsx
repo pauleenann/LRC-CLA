@@ -4,9 +4,9 @@ import './EditUserModal.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faX} from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
-import { checkEmail, checkIfVerified, isEdited, updateAccount, validateEmail, validateUsername, verifyEmail } from '../../functions/profileFunctions'
+import { checkEmail, checkIfVerified, isEdited, validateEmail, validateUsername, verifyEmail, isCreate } from '../../functions/profileFunctions'
 
-const EditUserModal = ({open, close, account, originalAccount, handleChange, error, save, title, loading}) => {
+const EditUserModal = ({open, close, account, originalAccount, handleChange, error, save, title, loading, isCreate}) => {
     const [roles, setRoles] = useState([])
     const [usernameValid, setUsernameValid] = useState(true);
     const [usernameChecking, setUsernameChecking] = useState(false);
@@ -18,6 +18,7 @@ const EditUserModal = ({open, close, account, originalAccount, handleChange, err
     const [sendingLoading, setSendingLoading] = useState(false)
 
     useEffect(() => {
+        if(isCreate) return
         if (!token && !account.username) return;
     
         // Set up an interval to check periodically (every 5 seconds)
@@ -30,7 +31,7 @@ const EditUserModal = ({open, close, account, originalAccount, handleChange, err
     }, [token]);
     
       useEffect(() => {
-        if (!account.username.trim() || account.username === originalAccount?.username) {
+        if (!account.username?.trim() || account.username === originalAccount?.username) {
                   setUsernameValid(true);
                   return;
               }
@@ -43,6 +44,7 @@ const EditUserModal = ({open, close, account, originalAccount, handleChange, err
     }, [account, originalAccount]);  
 
     useEffect(() => {
+        if(isCreate) return
         if (!account.email && !account.userId ) return;
         setEmailError('');
         setIsEmailValid(false);
@@ -73,6 +75,16 @@ const EditUserModal = ({open, close, account, originalAccount, handleChange, err
         }
     }
 
+    const closeModal = ()=>{
+        setEmailError('');
+        setIsEmailExist(false);
+        setIsEmailValid(false);
+        setIsEmailVerified(true);
+        setToken(null);
+        close()
+    }
+    
+    console.log(account)
     console.log('isEmailVerified? ', isEmailVerified)
     if(!open){
         return null
@@ -105,7 +117,7 @@ const EditUserModal = ({open, close, account, originalAccount, handleChange, err
                     <label htmlFor="firstName" className='ms-2'>
                         First Name
                     </label>
-                    <p className="invalid-feedback m-0">{error.fname}</p>
+                    <p className="invalid-feedback m-0">{error.firstName}</p>
                 </div>
                 <div className="col-12 form-floating">
                     <input 
@@ -118,7 +130,7 @@ const EditUserModal = ({open, close, account, originalAccount, handleChange, err
                         onChange={handleChange}
                     />
                     <label htmlFor="lastName" className='ms-2'>Last Name</label>
-                    <p className="invalid-feedback m-0">{error.lname}</p>
+                    <p className="invalid-feedback m-0">{error.lastName}</p>
                 </div>
                 <div className="col-12 form-floating">
                     <input 
@@ -131,7 +143,8 @@ const EditUserModal = ({open, close, account, originalAccount, handleChange, err
                         onChange={handleChange}
                     />
                     <label htmlFor="username" className='ms-2'>Username</label>
-                    {!usernameValid && (
+                    <p className="invalid-feedback m-0">{error.username}</p>
+                    {!usernameValid && !isCreate && (
                         <div className="invalid-feedback">
                             Username is already taken.
                         </div>
@@ -148,50 +161,58 @@ const EditUserModal = ({open, close, account, originalAccount, handleChange, err
                         onChange={handleChange}
                     />
                     <label htmlFor="email" className='ms-2'>Email</label>
-                    {!isEmailExist && isEmailValid && !isEmailVerified && (
+                    {!isEmailExist && isEmailValid && !isEmailVerified && !isCreate && (
                         <button 
                             type="button"
                             className="btn btn-success mt-1 verify"
                             onClick={()=>verifyEmail(setSendingLoading, account, setToken)}
                         >
-                            {console.log('button here')}
                             {sendingLoading?'Sending':'Verify now'}
                         </button>
                     )}
-                    {isEmailValid && isEmailVerified && (
+                    {isEmailValid && isEmailVerified && !isCreate &&(
                         <div className="text-success mt-1 verified">
                             Your email is verified
                         </div>
                     )}
-                    {emailError && (
+                    {emailError && !isCreate &&(
                         <div className="invalid-feedback">
                             {emailError}
                         </div>
                     )}
                 </div>
                 <div className="col-12 form-floating">
-                    <select name="role" id="role" className={`form-control ${error.role ? 'is-invalid' : ''}`} onChange={handleChange}>
+                    <select 
+                        name="role_id" 
+                        id="role_id" 
+                        className={`form-control ${error.role ? 'is-invalid' : ''}`} 
+                        onChange={handleChange}
+                    >
                         <option value="" disabled selected>Select role</option>
                         {roles.length>0?roles.map(item=>{
-                            return <option value={item.role_id} selected={account&&item.role_id==account.role_id}>{item.role_name}</option>
+                            return <option 
+                                value={item.role_id} 
+                                selected={account&&item.role_id==account.role_id}>
+                                    {item.role_name}
+                                </option>
                         }):''}
                     </select>
                     <label htmlFor="" className='ms-2'>Role</label>
-                    <p className="invalid-feedback m-0">{error.role}</p>
+                    <p className="invalid-feedback m-0">{error.role_id}</p>
                 </div>
             </div>
             <div className="d-flex justify-content-center gap-1 mt-4">
                 <button 
                     className="btn cancel-btn" 
-                    onClick={close}
+                    onClick={closeModal}
                 >
                     Cancel
                 </button>
                 <button 
                     type="button"
                     className="btn btn-primary" 
-                    onClick={()=>updateAccount(account.userId, account)}
-                    disabled={!isEdited(account,originalAccount,isEmailVerified) || !usernameValid || !!emailError || !isEmailVerified}
+                    onClick={save}
+                    disabled={!isCreate?!isEdited(account,originalAccount,isEmailVerified) || !usernameValid || !!emailError || !isEmailVerified:false}
                 >
                     {!loading?'Confirm':'Loading...'}
                 </button>

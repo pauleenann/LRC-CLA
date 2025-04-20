@@ -466,10 +466,10 @@ export const deactivateAccount = (req, res) => {
 export const invite = (req,res)=>{
     try {
         const { 
-            fname,
-            lname,
-            uname,
-            role,
+            firstName,
+            lastName,
+            username,
+            role_id,
             email
          } = req.body;
         console.log(req.body)
@@ -477,10 +477,10 @@ export const invite = (req,res)=>{
         const token = generateToken(email);
 
         const invValues = [
-            fname,
-            lname,
-            uname,
-            role,
+            firstName,
+            lastName,
+            username,
+            role_id,
             email,
             token
         ]
@@ -500,7 +500,7 @@ export const invite = (req,res)=>{
             const activationLink = `http://localhost:3000/activate?token=${token}`;
 
             // Send email
-            transporter.sendMail(mailOptions(email,fname,activationLink), function(err, data) {
+            transporter.sendMail(mailOptions(email,firstName,activationLink), function(err, data) {
                 if (err) {
                   console.log("Error " + err);
                 } else {
@@ -691,12 +691,12 @@ export const activate = async (req, res) => {
   }
 
   export const checkIfUnameExist =(req,res)=>{
-    const {uname} = req.query;
-    console.log(uname)
+    const {username} = req.query;
+    console.log(username)
 
     const q = `SELECT * FROM staffaccount WHERE staff_uname = ?`
 
-    db.query(q, [uname],(err,results)=>{
+    db.query(q, [username],(err,results)=>{
         if(err) return res.send(err)
         return res.json(results)
     })

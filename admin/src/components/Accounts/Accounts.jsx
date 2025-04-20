@@ -7,7 +7,7 @@ import DeactivateModal from '../DeactivateModal/DeactivateModal';
 import ActivateModal from '../ActivateModal/ActivateModal';
 import { useSelector } from 'react-redux';
 import { activateUser, clearFilter, deactivateUser, getSortIcon, getToEdit, handleChange, handleEdit, handleFilterDropdown, handleSearch, handleSortClick, nextPage, prevPage, saveInvitation, userAccounts } from '../../functions/accountsFunctions';
-import { validateUsername } from '../../functions/profileFunctions';
+import { updateAccount, validateUsername } from '../../functions/profileFunctions';
 
 const Accounts = () => {
   // const [staffUname, setStaffUname] = useState(null);
@@ -304,6 +304,7 @@ const Accounts = () => {
         error={error}
         save={()=>saveInvitation(uname,setLoading,setOpenCreateUser,setAccount,account,setError)}
         loading={loading}
+        isCreate={openCreateUser}
       />
       <EditUserModal
         open={openEditUser}
@@ -313,6 +314,8 @@ const Accounts = () => {
         originalAccount={originalAccount}
         handleChange={(e)=>handleChange(e,setAccount)}
         error={error}
+        save={()=>updateAccount(account.userId, account)}
+        isCreate={openCreateUser}
       />
       <DeactivateModal open={openDeactivate} close={() => setOpenDeactivate(false)} uname={selectedUname} deactivateUser={deactivateUser} />
       <ActivateModal open={openActivate} close={() => setOpenActivate(false)} uname={selectedUname} activateUser={activateUser} />

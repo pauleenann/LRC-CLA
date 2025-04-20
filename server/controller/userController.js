@@ -227,6 +227,7 @@ export const updateAccount = (req,res)=>{
 }
 
 export const verifyEmail = (req,res)=>{
+    console.log(req.body)
     const {
         username,
         firstName,
