@@ -598,7 +598,7 @@ export const verifyResetToken = async (req, res) => {
 
   if (!token) return res.status(400).json({ message: 'Token is required.' });
 
-  const query = `SELECT * FROM passwordreset WHERE token = ?`;
+  const query = `SELECT * FROM passwordreset WHERE token = ? AND is_used = false`;
 
   db.query(query, [token], (err, results) => {
     if (err) {
@@ -723,7 +723,7 @@ export const activate = async (req, res) => {
         return res.status(400).json({ message: 'Invalid or already used token.' });
       }
   
-      const invitation = results[0];
+      const account = results[0];
   
       try {
         // Verify the token
@@ -743,12 +743,21 @@ export const activate = async (req, res) => {
                 staff_email = ?
               `;
   
-          db.query(insertQuery, [hashedPassword,invitation.email], (insertErr) => {
+          db.query(insertQuery, [hashedPassword,account.email], (insertErr) => {
             if (insertErr) {
               console.error('User creation failed:', insertErr);
               return res.status(500).json({ message: 'Failed to create user.' });
             }
-            return res.status(200).json({message: 'Account recovered'})
+            // 3. Update the invitation to mark it as used
+            const updateQuery = `UPDATE passwordreset SET is_used = true WHERE id = ?`;
+            db.query(updateQuery, [account.id], (updateErr) => {
+              if (updateErr) {
+                console.error('Failed to update invitation:', updateErr);
+                return res.status(500).json({ message: 'Failed to recover account.' });
+              }
+    
+              return res.status(200).json({ message: 'Account activated successfully.' });
+            });
           });
         } catch (hashErr) {
           console.error('Password hashing error:', hashErr);
