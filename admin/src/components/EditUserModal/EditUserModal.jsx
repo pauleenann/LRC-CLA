@@ -17,6 +17,7 @@ const EditUserModal = ({open, close, account, originalAccount, handleChange, err
     const [token,setToken] = useState(null)
     const [sendingLoading, setSendingLoading] = useState(false)
 
+    // if token exist, constantly check if email has been verified
     useEffect(() => {
         if(isCreate) return
         if (!token && !account.username) return;
@@ -30,6 +31,7 @@ const EditUserModal = ({open, close, account, originalAccount, handleChange, err
         return () => clearInterval(intervalId);
     }, [token]);
     
+    // everytime username changes, check is username exist
       useEffect(() => {
         if (!account.username?.trim() || account.username === originalAccount?.username) {
                   setUsernameValid(true);
@@ -43,9 +45,11 @@ const EditUserModal = ({open, close, account, originalAccount, handleChange, err
               return () => clearTimeout(delayDebounce);
     }, [account, originalAccount]);  
 
+    // everytime email changes, check if email is valid, exist or verified
     useEffect(() => {
         if(isCreate) return
         if (!account.email && !account.userId ) return;
+        if(account.email==originalAccount.email) return
         setEmailError('');
         setIsEmailValid(false);
         setIsEmailVerified(true);
@@ -210,7 +214,7 @@ const EditUserModal = ({open, close, account, originalAccount, handleChange, err
                 </button>
                 <button 
                     type="button"
-                    className="btn btn-primary" 
+                    className="btn create-btn" 
                     onClick={save}
                     disabled={!isCreate?!isEdited(account,originalAccount,isEmailVerified) || !usernameValid || !!emailError || !isEmailVerified:false}
                 >
