@@ -133,7 +133,7 @@ export const mailOptions = (email, firstName, verificationLink) => {
                     </div>
                     <div class="email-body">
                         <p class="greeting">Hello ${firstName || 'there'},</p>
-                        <p class="message">We received a request that you want to update your email account. To procedd, please verify your email by clicking the button below.</p>
+                        <p class="message">We received a request that you want to update your email account. To proceed, please verify your email by clicking the button below.</p>
                         
                         <div class="button-container">
                             <a href="${verificationLink}" class="button">Verify Your Email</a>

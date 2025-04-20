@@ -120,7 +120,7 @@ const appendToAccount = (key, value, setAccount) => {
 
 // save invitation
 export const saveInvitation = async (uname,setLoading,setOpenCreateUser,setAccount,account,setError) => {
-    await appendToAccount('username', uname, setAccount);
+    await appendToAccount('uname', uname, setAccount);
     const isValid = await formValidation(account,setError);
   
     if (!isValid) return;
@@ -183,9 +183,9 @@ export const saveInvitation = async (uname,setLoading,setOpenCreateUser,setAccou
   const formValidation = async (account,setError) => {
     const err = {}; // Fresh object to collect errors
   
-    if (!account.fname) err.fname = 'Enter first name';
-    if (!account.lname) err.lname = 'Enter last name';
-    if (!account.role) err.role = 'Choose a role';
+    if (!account.firstName) err.firstName = 'Enter first name';
+    if (!account.lastName) err.lastName = 'Enter last name';
+    if (!account.role_id) err.role_id = 'Choose a role';
   
     // Email validation
     if (!account.email) {
@@ -212,18 +212,18 @@ export const saveInvitation = async (uname,setLoading,setOpenCreateUser,setAccou
     }    
 
     //verify username 
-    if (!account.uname){
-      err.uname = 'Enter username';
+    if (!account.username){
+      err.username = 'Enter username';
     }else{
       try {
         const response = await axios.get('http://localhost:3001/api/account/check-uname', {
-          params: { uname: account.uname }
+          params: { username: account.username }
         });
 
         console.log(response)
 
         if(response.data.length>0){
-          err.uname = 'Username already exist'
+          err.username = 'Username already exist'
         }
       } catch (error) {
         console.log('Cannot check if username exist. An error occurred: ', error)
