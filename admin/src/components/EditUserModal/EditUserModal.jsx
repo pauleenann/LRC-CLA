@@ -49,10 +49,11 @@ const EditUserModal = ({open, close, account, originalAccount, handleChange, err
     useEffect(() => {
         if(isCreate) return
         if (!account.email && !account.userId ) return;
-        if(account.email==originalAccount.email) return
         setEmailError('');
         setIsEmailValid(false);
         setIsEmailVerified(true);
+
+        if(account.email==originalAccount.email) return
         
         const delayDebounce = setTimeout(() => {
             if (validateEmail(account.email)) {
