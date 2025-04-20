@@ -1,11 +1,12 @@
 import express from 'express';
-import { changePassword, checkEmail, checkIsEmailVerified, checkSession, checkUsername, login, logout, profile, updateAccount, verifyEmail, verifyPassword, verifyToken } from '../controller/userController.js';
+import { changePassword, checkEmail, checkIsEmailVerified, checkSession, checkUsername, login, logout, profile, searchEmail, updateAccount, verifyEmail, verifyPassword, verifyToken } from '../controller/userController.js';
 
 const router = express.Router();
 
 router.post('/login',login);
 router.post('/logout',logout);
 router.get('/check-session', checkSession);
+router.get('/search-email', searchEmail);
 router.post('/verify-email', verifyEmail)
 router.get('/verify-token', verifyToken)
 router.get('/check-verified', checkIsEmailVerified);

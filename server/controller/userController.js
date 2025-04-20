@@ -434,3 +434,24 @@ export const changePassword = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
+// search email for reset password
+export const searchEmail = (req,res)=>{
+    const {email} = req.query;
+    console.log(email)
+
+    const q = `SELECT * FROM staffaccount WHERE staff_email = ?`
+
+    db.query(q, [email], (err, results) => {
+        if (err) {
+            console.error('DB update error:', err);
+            return res.status(500).json({ message: 'Failed to update password.' });
+        }
+
+        if(results.length<=0){
+            return res.status(500).json({ message: 'Account not found. Please try again with other information.' });
+        }else{
+            return res.json(results)
+        }
+    });
+}

@@ -17,10 +17,7 @@ const ActivateAccount = () => {
   });
   const [message, setMessage] = useState('');
   const location = useLocation();
-  const currentPathname = location.pathname;
   const navigate = useNavigate();
-
-  console.log(currentPathname)
 
   // Password validation criteria
   const passwordCriteria = {
@@ -47,17 +44,9 @@ const ActivateAccount = () => {
 
   const verifyToken = async () => {
     try {
-      let res;
-      if(currentPathname!='/reset'){
-        res = await axios.get(`http://localhost:3001/api/account/verify-token`, {
+      const res = await axios.get(`http://localhost:3001/api/account/verify-token`, {
         params: { token }
-        });
-      }else{
-        res = await axios.get(`http://localhost:3001/api/account/verify-reset-token`, {
-        params: { token }
-        });
-      }
-      
+      });
       console.log(res)
       setValid(true);
       setEmail(res.data.email);
@@ -131,18 +120,10 @@ const ActivateAccount = () => {
     setIsLoading(true);
     
     try {
-      let res;
-      if(currentPathname!='/reset'){
-        res = await axios.post(`http://localhost:3001/api/account/activate`, {
-          token,
-          password: data.password
-        });
-      }else{
-        res = await axios.post(`http://localhost:3001/api/account/recover`, {
-          token,
-          password: data.password
-        });
-      }
+      const res = await axios.post(`http://localhost:3001/api/account/activate`, {
+        token,
+        password: data.password
+      });
       
       setMessage(res.data.message || 'Account activated successfully!');
       

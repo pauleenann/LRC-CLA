@@ -1,5 +1,6 @@
 import { db } from "../config/db.js";
 import { mailOptions } from "../email/activationEmail.js";
+import { resetEmail } from "../email/resetEmail.js";
 import { transporter } from "../mailer/mailer.js";
 import { generateToken } from "../utils/generateToken.js";
 import { logAuditAction } from "./auditController.js";
@@ -463,6 +464,48 @@ export const deactivateAccount = (req, res) => {
     });
 }
 
+export const resetPassword = (req,res)=>{
+  try {
+    
+      const {email,firstName} = req.body
+      console.log(req.params)
+      const token = generateToken(email);
+
+      const invValues = [
+          email,
+          token
+      ]
+
+      const query = `
+          INSERT INTO passwordreset (email, token) VALUES (?, ?)`;
+
+      db.query(query, invValues, (err, results) => {
+          if (err) {
+              console.error(err);
+              return res.status(500).send({ error: 'Database query failed' });
+          }
+  
+          // // Log the audit action
+          // logAuditAction(username, 'UPDATE', 'staffaccount', staffUname, 'active', JSON.stringify("Deactivated a user: " + staffUname));
+
+          const resetLink = `http://localhost:3000/reset?token=${token}`;
+
+          // Send email
+          transporter.sendMail(resetEmail(email,firstName,resetLink), function(err, data) {
+              if (err) {
+                console.log("Error " + err);
+              } else {
+                console.log("Email sent successfully");
+                return res.status(200).json({ success: true, isSent: true, });
+              }
+            });
+          });
+  } catch (error) {
+      console.error('Unexpected error in invite endpoint:', error);
+      return res.status(500).json({ error: 'Server error' });
+  }
+}
+
 export const invite = (req,res)=>{
     try {
         const { 
@@ -549,6 +592,40 @@ export const verifyToken = async (req, res) => {
   });
 };
 
+export const verifyResetToken = async (req, res) => {
+  const { token } = req.query;
+  console.log('Received token:', token);
+
+  if (!token) return res.status(400).json({ message: 'Token is required.' });
+
+  const query = `SELECT * FROM passwordreset WHERE token = ?`;
+
+  db.query(query, [token], (err, results) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).send({ error: 'Database query failed' });
+    }
+
+    if (results.length === 0) {
+      return res.status(400).json({ message: 'Invalid or already used token.' });
+    }
+
+    const account = results[0];
+
+    try {
+      // Verify the token
+      jwt.verify(token, process.env.JWT_SECRET);
+
+      // If successful, mark it as used and proceed
+      return res.status(200).json({ message: 'Token is valid.', email: account.email });
+    } catch (error) {
+      // Token verification failed or token expired
+      console.error("JWT Verification Error:", error.message);
+      return res.status(400).json({ message: 'Token expired or invalid.' });
+    }
+  });
+};
+
 
 export const activate = async (req, res) => {
     const { token, password } = req.body;
@@ -624,8 +701,63 @@ export const activate = async (req, res) => {
         // Token verification failed or token expired
         return res.status(400).json({ message: 'Token expired or invalid.' });
       }
+    });
+  };
+
+  export const recoverAccount = async (req, res) => {
+    const { token, password } = req.body;
   
-      
+    if (!token || !password) {
+      return res.status(400).json({ message: 'Token and password are required.' });
+    }
+  
+    const query = `SELECT * FROM passwordreset WHERE token = ?`;
+  
+    db.query(query, [token], async (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).send({ error: 'Database query failed' });
+      }
+  
+      if (results.length === 0) {
+        return res.status(400).json({ message: 'Invalid or already used token.' });
+      }
+  
+      const invitation = results[0];
+  
+      try {
+        // Verify the token
+        jwt.verify(token, process.env.JWT_SECRET);
+  
+        try {
+          // 1. Hash the password
+          const hashedPassword = await bcrypt.hash(password, 10);
+  
+          // 2. Insert the user into the users table
+          const insertQuery = `
+              UPDATE 
+                staffaccount
+              SET
+                staff_password = ?
+              WHERE
+                staff_email = ?
+              `;
+  
+          db.query(insertQuery, [hashedPassword,invitation.email], (insertErr) => {
+            if (insertErr) {
+              console.error('User creation failed:', insertErr);
+              return res.status(500).json({ message: 'Failed to create user.' });
+            }
+            return res.status(200).json({message: 'Account recovered'})
+          });
+        } catch (hashErr) {
+          console.error('Password hashing error:', hashErr);
+          return res.status(500).json({ message: 'Server error.' });
+        }
+      } catch (error) {
+        // Token verification failed or token expired
+        return res.status(400).json({ message: 'Token expired or invalid.' });
+      }
     });
   };
 
