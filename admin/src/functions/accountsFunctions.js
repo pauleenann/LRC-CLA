@@ -341,6 +341,7 @@ export const getSortIcon = (column, sortStates) => {
 // Handle input changes for account creation
 export const handleChange = (e, setAccount) => {
     const { name, value } = e.target;
+    
     setAccount((prevData) => ({
       ...prevData,
       [name]: value

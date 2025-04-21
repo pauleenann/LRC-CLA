@@ -83,8 +83,6 @@ const Accounts = () => {
     setFilteredAccounts(filteredResults);
   }, [sortStates.role, sortStates.status, accounts]);
 
-  console.log(filteredAccounts)
-
   return (
     <div className="accounts-container bg-light">
       <h1>User accounts</h1>
