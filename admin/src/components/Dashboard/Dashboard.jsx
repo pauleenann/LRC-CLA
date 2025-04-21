@@ -16,7 +16,7 @@ import { fetchDepartmentOnline, setDepartmentArr } from '../../features/departme
 import { setTopicArr } from '../../features/topicSlice.js';
 import { fetchPublisherOnline, setPublisherArr } from '../../features/publisherSlice.js';
 import { setStatusArr } from '../../features/statusSlice.js';
-import { SocketContext } from '../../store/socketContext.js';
+// import { SocketContext } from '../../store/socketContext.js';
 
 const Dashboard = () => {
   const [dateTime,setDateTime] = useState(new Date());
@@ -50,9 +50,9 @@ const Dashboard = () => {
   const bookListHeader = ["Book ID","Title","Author","Copies Available"];
   const bookIssuedHeader = ["Tup ID","Title","Return Date"];
   const dispatch = useDispatch()
-  const socket = useContext(SocketContext)
+  // const socket = useContext(SocketContext)
 
-  console.log(socket)
+  // console.log(socket)
   
   useEffect(() => {
     getTotalVisitors();
@@ -68,7 +68,10 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (!socket || !socket.connected) return;
+    const socket = io("http://localhost:3001", {
+      withCredentials: true,
+      transports: ["polling"],
+    });
   
     const handleAttendance = () => {
       console.log('Attendance updated, refreshing data...');
@@ -104,7 +107,7 @@ const Dashboard = () => {
       socket.off('checkoutUpdated', handleCheckout);
       socket.off('overdueUpdated', handleOverdue);
     };
-  }, [socket?.connected]);
+  }, []);
   
 
   //total visitors
