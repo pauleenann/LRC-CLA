@@ -1,19 +1,17 @@
 @import '../../assets/styles/global.css';
 
-footer{
+footer {
     background-color: var(--tup-color);
     width: 100%;
     /* height: 50vh; */
     /* margin-top: 100px; */
 }
 
-footer .logo, footer .logo span,
-footer .quick-links h2,
-footer .contact-us h2{
-    font-family: var(--playfair) !important;
+footer .sub {
+    text-wrap: balance;
 }
 
-footer .copyright{
+footer .copyright {
     background-color: var(--dark-red);
 }
 
@@ -29,3 +27,4 @@ footer .contact-us p{
         font-size: 0.8rem;
     }
 }
+
