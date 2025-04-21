@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faArrowLeft, faArrowRight, faExclamationCircle, faSmile, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import * as XLSX from 'xlsx'; // Import xlsx for Excel export
 import { io } from 'socket.io-client';
-import { SocketContext } from '../../store/socketContext';
+// import { SocketContext } from '../../store/socketContext';
 
 const Logbook = () => {
     const [patron, setPatron] = useState([]);
@@ -16,22 +16,23 @@ const Logbook = () => {
     const [totalEntries, setTotalEntries] = useState(0); // Total number of entries
     const [loading, setLoading] = useState(false);
     const location = useLocation();
-    const socket = useContext(SocketContext);
+    // const socket = useContext(SocketContext);
 
     useEffect(() => {
-        if (socket) {
-            // Listen for attendance updates
-            socket.on('attendanceUpdated', () => {
-                console.log('Attendance updated, refreshing data...');
-                fetchTodayEntries();
-            });
-
-            // Clean up event listener
-            return () => {
-                socket.off('attendanceUpdated');
-            };
-        }
-    }, [socket, currentPage, entriesPerPage, searchInput]);
+        const socket = io("http://localhost:3001", {
+            withCredentials: true,
+            transports: ["polling"],
+        });
+    
+        socket.on("attendanceUpdated", () => {
+            console.log("Attendance updated, refreshing data...");
+            fetchTodayEntries();
+        });
+    
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
 
     useEffect(() => {
         fetchTodayEntries();
