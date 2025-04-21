@@ -89,8 +89,8 @@ const EditUserModal = ({open, close, account, originalAccount, handleChange, err
         close()
     }
     
-    console.log(account)
-    console.log('isEmailVerified? ', isEmailVerified)
+    console.log("original: ", originalAccount);
+    console.log("current: ", account)
     if(!open){
         return null
     }
@@ -217,7 +217,7 @@ const EditUserModal = ({open, close, account, originalAccount, handleChange, err
                     type="button"
                     className="btn create-btn" 
                     onClick={save}
-                    disabled={!isCreate?!isEdited(account,originalAccount,isEmailVerified) || !usernameValid || !!emailError || !isEmailVerified:false}
+                    disabled={!isCreate?!isEdited(account,originalAccount) || !usernameValid || emailError || !isEmailVerified:false}
                 >
                     {!loading?'Confirm':'Loading...'}
                 </button>

@@ -233,7 +233,10 @@ const Profile = () => {
       }, [token]);
 
 
-      console.log(passwordData)
+    console.log("original: ", originalUserData);
+    console.log("current: ", userData)
+    console.log("username valid: ", usernameValid)
+    console.log("email error: ", emailError)
 
     return (
         <div className='profilepage bg-light'>
@@ -367,7 +370,7 @@ const Profile = () => {
                                         <button 
                                             type="button" 
                                             className="btn-save" 
-                                            disabled={!isEdited(userData,originalUserData, isEmailVerified) || !usernameValid || !!emailError}
+                                            disabled={!isEdited(userData, originalUserData) || !usernameValid || emailError}
                                             onClick={()=>updateAccount(userId,userData)}
                                         >
                                             Save Changes
