@@ -1,7 +1,6 @@
-import React from 'react'
-import './Footer.css'
-import { Link } from 'react-router-dom'
-
+import React from 'react';
+import './Footer.css';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -48,7 +47,7 @@ const Footer = () => {
         <p className="m-0 p-3 text-light fs-lg-6 small-font">Copyright © 2025. All Rights Reserved TUP-CLA Learning Resource Center</p>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

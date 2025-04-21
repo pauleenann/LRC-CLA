@@ -6,10 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchResources, setSearchPerformed, setSearchQuery } from '../../features/resourceSlice';
 import { setTypeArray } from '../../features/typeSlice';
 
-const Navbar = ({query}) => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  // get query from URL
+const Navbar = ({ query }) => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search);
   const searchType = queryParams.get('type');
@@ -20,10 +19,10 @@ const Navbar = ({query}) => {
   const {resource,searchQuery,searchPerformed} = useSelector(state=>state.resource);
  
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" && searchKeyword.length!='') {
-        getSearch();
+    if (e.key === "Enter" && searchKeyword !== '') {
+      getSearch()
     }
-  };
+  }
 
   const getSearch = async()=>{
     if(searchKeyword!=''){
@@ -51,66 +50,77 @@ const Navbar = ({query}) => {
   console.log(resource)
   
   return (
-    <nav className='navbar-box container py-4 py-lg-3'>
-      {/* logo and search bar */}
-      <div className='row'>
-        <Link className='text-decoration-none col-12 col-lg-8' to='/'>
-          <p className='m-0 logo text-center text-lg-start'>Liberal<span>Search</span>.</p>
+    <nav className='navbar navbar-expand-lg bg-white'>
+      <div className='container navbar-box py-3'>
+
+        {/* Logo */}
+        <Link className='text-decoration-none' to='/'>
+          <p className='logo m-0'>Liberal<span>Search</span>.</p>
         </Link>
-        {/* search */}
-        <div className='col-12 col-lg-4'>
-          {!searchType&&<div className='row search m-auto '>
-              {/* input */}
-              <input type="text" placeholder='Search for resources' onChange={(e)=>setSearchKeyword(e.target.value)} onKeyDown={handleKeyDown} value={searchKeyword} className='col'/>
-              {/* search button */}
-              <button className="col-3" onClick={getSearch}>
-                  <i class="fa-solid fa-magnifying-glass"></i>
+
+        {/* Hamburger Toggle */}
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarContent"
+          aria-controls="navbarContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+
+        {/* Collapsible content */}
+        <div className="collapse navbar-collapse " id="navbarContent">
+
+          {/* Search */}
+          {!searchType && (
+            <div className='d-flex search ms-lg-auto mt-3 mt-lg-0'>
+              <input
+                type="text"
+                placeholder='Search for resources'
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                onKeyDown={handleKeyDown}
+                value={searchKeyword}
+              />
+              <button onClick={getSearch}>
+                <i className="fa-solid fa-magnifying-glass"></i>
               </button>
-          </div>}
+            </div>
+          )}
+
+          {/* Menu buttons */}
+          <div className="menu d-flex flex-column flex-lg-row gap-3 mt-3 mt-lg-2 ms-lg-4">
+            <button onClick={() => {
+              dispatch(setTypeArray([1]))
+              navigate(`/search?filter=Books`)
+            }}>
+              Books
+            </button>
+            <span className='d-none d-lg-inline'>|</span>
+            <button onClick={() => {
+              dispatch(setTypeArray([2]))
+              navigate(`/search?filter=Journals`)
+            }}>
+              Journals
+            </button>
+            <span className='d-none d-lg-inline'>|</span>
+            <button onClick={() => {
+              dispatch(setTypeArray([3]))
+              navigate(`/search?filter=Newsletters`)
+            }}>
+              Newsletters
+            </button>
+            <span className='d-none d-lg-inline'>|</span>
+            <button onClick={() => {
+              dispatch(setTypeArray([4]))
+              navigate(`/search?filter=Theses and Dissertations`)
+            }}>
+              Theses & Dissertations
+            </button>
+          </div>
         </div>
-        
-      </div>
-      {/* menu */}
-      <div className="menu d-flex align-items-center mt-2 justify-content-center justify-content-lg-start">
-        <button
-          onClick={()=>{
-            dispatch(setTypeArray([1]))
-            navigate(`/search?filter=Books`)
-          }}
-          className='me-2 me-lg-3'
-        >
-          Books
-        </button>
-        <span className='me-2 me-lg-3'>|</span>
-        <button
-          onClick={()=>{
-            dispatch(setTypeArray([2]))
-            navigate(`/search?filter=Journals`)
-          }}
-          className='me-2 me-lg-3'
-        >
-          Journals
-        </button>
-        <span className='me-2 me-lg-3'>|</span>
-        <button
-          onClick={()=>{
-            dispatch(setTypeArray([3]))
-            navigate(`/search?filter=Newsletters`)
-          }}
-          className='me-2 me-lg-3'
-        >
-          Newsletters
-        </button>
-        <span className='me-2 me-lg-3'>|</span>
-        <button
-          onClick={()=>{
-            dispatch(setTypeArray([4]))
-            navigate(`/search?filter=Theses and Dissertations`)
-          }}
-          className=''
-        >
-          Theses & Dissertations
-        </button>
       </div>
     </nav>
   )

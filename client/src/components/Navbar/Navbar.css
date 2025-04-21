@@ -1,5 +1,10 @@
 @import '../../assets/styles/global.css';
 
+.navbar-box{
+    display: block;
+
+}
+
 .navbar-box .logo, .navbar-box .logo span{
     color: var(--dark-gray);
     font-size: 2rem;
@@ -16,6 +21,11 @@
     border: 1px solid var(--medium2-gray);
 }
 
+.navbar-box .search input {
+    padding: 0 12px; 
+}
+
+
 .navbar-box .search .dropdown, 
 .navbar-box .search input,.navbar-box 
 .search button,
@@ -23,7 +33,6 @@
     border: none !important;
     outline: none !important;
 }
-
 
 
 .navbar-box .search button{
@@ -34,16 +43,31 @@
 
 .navbar-box .menu button{
     background-color:transparent;
-    font-family: var(--open-sans);
+    color: var(--open-sans);
 }
 
-@media screen and (max-width:760px) {
-    .navbar-box .menu button{
-       font-size: 0.8rem;
-    }
 
-    .navbar-box .search{
-        height: 40px;
+
+
+@media (max-width: 991px) {
+    .navbar-box .search {
+      width: 100%;
+      margin-bottom: 1rem;
     }
-    
+  
+    .navbar-box .search input {
+      width: 100% !important;
+    }
+  
+    .navbar-box .menu {
+      flex-direction: column !important;
+      align-items: flex-start;
+    }
+  
+    .navbar-box .menu span {
+      display: none;
+    }
 }
+
+
+  
