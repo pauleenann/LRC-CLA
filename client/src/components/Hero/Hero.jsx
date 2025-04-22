@@ -12,10 +12,11 @@ const Hero = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }} // Faster transition
     >
-      <div className="container d-flex flex-column justify-content-center h-100 align-items-start text-light">
+      <div className="container d-flex flex-column justify-content-center h-100 align-items-start text-light hero-content-wrapper">
         {/* Fast fade-in heading */}
         <motion.h1 
           className='w-50 fw-semibold'
+          style={{ width: '100%', maxWidth: '600px' }}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
@@ -24,8 +25,9 @@ const Hero = () => {
         </motion.h1>
 
         {/* Fast fade-in paragraph */}
-        <motion.p 
-          className="m-0 w-50 fs-4 fw-light"
+        <motion.p
+          style={{ width: '100%', maxWidth: '600px' }} // Use style instead of fixed width class
+          className="m-0 fs-4 fw-light"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}

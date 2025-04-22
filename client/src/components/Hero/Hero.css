@@ -9,8 +9,63 @@
     background-position: bottom;
     border-bottom-right-radius: 100px;
     border-bottom-left-radius: 100px;
+     
 }
 
 .hero-box h1{
     font-family: var(--open-sans);
+}
+
+@media screen and (max-width: 768px) {
+    .hero-box {
+        height: auto; 
+        padding: 60px 20px 80px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .hero-content-wrapper {
+        padding: 0 20px 40px 20px;
+        text-align: center !important; /* Center text */
+        align-items: center !important; /* Center the flex items */
+    }
+    .hero-box h1 {
+        font-size: 1.75rem; /* Responsive font scaling */
+        margin-bottom: 10px;
+    }
+    .hero-box p {
+        font-size: 1rem;
+        margin-bottom: 20px;
+      }
+    
+    .hero-title {
+        font-size: 2rem; 
+    }
+    
+    .hero-text {
+        font-size: 3rem !important; 
+    
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .hero-box {
+        height: 90vh; /* Full height on small phones to ensure all content fits */
+        display: flex;
+    }
+    
+    
+    .hero-title {
+        font-size: 1rem; 
+    }
+    
+    .hero-text {
+        font-size: 1.75rem !important;
+    }
+    
+    .btn {
+        padding: 1rem !important; 
+    }
 }
