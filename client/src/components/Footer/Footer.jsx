@@ -9,7 +9,7 @@ const Footer = () => {
       <div className='container h-100'>
         <div className="row py-5 px-0 px-3">
         {/* logo, subtitle, social */}
-        <div className='col-12 col-lg-6 mb-3 mb-lg-0'>
+        <div className='col-12 col-lg-6 mb-3 mb-lg-0 text-center text-lg-start'>
           <div className='text-light row'>
               <p className='m-0 logo fs-1 col-12'>Liberal<span>Search</span>.</p>
               <p className='m-0 fs-6 sub col-12 col-lg-8'>An online catalog dedicated for College of Liberal Arts’ Learning Resources Center</p>
@@ -21,7 +21,7 @@ const Footer = () => {
         <div className='col'>
           <div className='row'>
             {/* quick links */}
-            <div className="quick-links text-light col-12 col-md">
+            <div className="quick-links text-light col-12 col-md text-center text-md-start mb-4 mb-md-0">
                 <h2 className='fs-1 mb-3'>Quick Links</h2>
                 <ul className='list-unstyled d-flex flex-column gap-2'>
                     <li><Link to='/' className='text-decoration-none text-light'>Home</Link></li>
@@ -30,9 +30,9 @@ const Footer = () => {
                 </ul>
             </div>
             {/* contact us */}
-            <div className="contact-us text-light col">
+            <div className="contact-us text-light col-12 col-md text-center text-md-start">
                 <h2 className='fs-1 mb-3'>Contact Us</h2>
-                <div className='d-flex align-items-center gap-2'>
+                <div className='d-flex align-items-center gap-2 justify-content-center justify-content-md-start'>
                     <i class="fa-solid fa-envelope"></i>
                     <p className="m-0">learningresourcescenter@gmail.com</p>
                 </div>
