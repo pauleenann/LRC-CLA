@@ -140,7 +140,13 @@ export const saveInvitation = async (uname,setLoading,setOpenCreateUser,setAccou
     setLoading(true);
   
     try {
-      const response = await axios.post('http://localhost:3001/api/account/invite', account);
+      const response = await axios.post(
+        'http://localhost:3001/api/account/invite',
+        account, // This is the request body (data sent to server)
+        {
+          params: { uname: uname } // This becomes a query string like ?uname=whatever
+        }
+      );
       console.log("Invite sent:", response.data);
   
       setOpenCreateUser(false);
