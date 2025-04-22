@@ -28,4 +28,15 @@ footer .contact-us p{
     footer .small-font{
         font-size: 0.8rem;
     }
+    footer .logo, 
+    footer .sub,
+    footer .social-icons,
+    footer .quick-links,
+    footer .contact-us {
+        text-align: center;
+    }
+    
+    footer .contact-us .d-flex {
+        justify-content: center;
+    }
 }
