@@ -516,6 +516,7 @@ export const invite = (req,res)=>{
             email
          } = req.body;
         console.log(req.body)
+        const {uname} = req.query
 
         const token = generateToken(email);
 
@@ -543,11 +544,22 @@ export const invite = (req,res)=>{
             const activationLink = `http://localhost:3000/activate?token=${token}`;
 
             // Send email
-            transporter.sendMail(mailOptions(email,firstName,activationLink), function(err, data) {
+            transporter.sendMail(mailOptions(email, firstName, username, activationLink), function(err, data) {
                 if (err) {
                   console.log("Error " + err);
+                  return res.status(400).json({ success: false });
                 } else {
                   console.log("Email sent successfully");
+
+                  logAuditAction(
+                    uname,
+                    'INSERT',
+                    'invitation',
+                    null,
+                    null,
+                    JSON.stringify("Sent an activation link to  " + email)
+                  )
+
                   return res.status(200).json({ success: true });
                 }
               });
