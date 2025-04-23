@@ -1,10 +1,5 @@
 @import '../../assets/styles/global.css';
 
-.navbar-box{
-    display: block;
-
-}
-
 .navbar-box .logo, .navbar-box .logo span{
     color: var(--dark-gray);
     font-size: 2rem;
@@ -21,19 +16,13 @@
     border: 1px solid var(--medium2-gray);
 }
 
-.navbar-box .search input {
-    padding: 0 12px; 
-}
-
-
 .navbar-box .search .dropdown, 
-.navbar-box .search input,.navbar-box 
-.search button,
+.navbar-box .search input,
+.navbar-box .search button,
 .navbar-box .menu button{
     border: none !important;
     outline: none !important;
 }
-
 
 .navbar-box .search button{
     background-color: var(--tup-color);
@@ -42,32 +31,73 @@
 }
 
 .navbar-box .menu button{
-    background-color:transparent;
-    color: var(--open-sans);
+    background-color: transparent;
+    font-family: var(--open-sans);
 }
 
-
-
-
-@media (max-width: 991px) {
-    .navbar-box .search {
-      width: 100%;
-      margin-bottom: 1rem;
-    }
-  
-    .navbar-box .search input {
-      width: 100% !important;
-    }
-  
-    .navbar-box .menu {
-      flex-direction: column !important;
-      align-items: flex-start;
-    }
-  
-    .navbar-box .menu span {
-      display: none;
-    }
+/* Hamburger button styling */
+.hamburger-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--dark-gray);
+    padding: 0.5rem;
+    display: none;
 }
 
+/* Mobile menu styles */
+.mobile-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out;
+    width: 100%;
+    background-color: var(--white);
+    margin-top: 0.5rem;
+    border-radius: 4px;
+}
 
-  
+.mobile-menu.show {
+    max-height: 350px; /* Increased to accommodate search bar */
+}
+
+.mobile-menu-item {
+    background-color: transparent;
+    text-align: left;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-family: var(--open-sans);
+    transition: background-color 0.2s;
+    border: none !important;
+}
+
+.mobile-menu-item:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+/* Mobile search specific styling */
+.mobile-menu .search {
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--medium2-gray);
+}
+
+@media screen and (max-width:760px) {
+    .navbar-box .menu button{
+       font-size: 0.8rem;
+    }
+
+   
+    
+    .hamburger-btn {
+        display: block;
+    }
+    
+    .navbar-box .logo, .navbar-box .logo span{
+        font-size: 1.5rem;
+    }
+    
+    /* Mobile search bar inside hamburger menu */
+    .mobile-menu .search input {
+        font-size: 0.9rem;
+    }
+}

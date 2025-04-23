@@ -161,7 +161,7 @@ const HomePage = () => {
       </motion.div>
 
       {/* Featured Books */}
-      <motion.div className="book-container px-4" variants={fadeIn}>
+      <motion.div className="book-container px-4 container" variants={fadeIn}>
         <div className='d-flex align-items-center justify-content-between mb-4'>
           <h4 className='fw-semibold fs-2'>Featured Books</h4>
           <button 
