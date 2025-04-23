@@ -12,7 +12,10 @@ const Footer = () => {
           <div className='text-light row'>
               <p className='m-0 logo fs-1 col-12 head'>Liberal<span>Search</span>.</p>
               <p className='m-0 fs-6 sub col-12 col-lg-8'>An online catalog dedicated for College of Liberal Arts’ Learning Resources Center</p>
-              <i class="fa-brands fa-facebook fs-1 mt-2 col-12"></i>
+              <Link to='https://www.facebook.com/CLATUPManila?rdid=UPcjPFHwN4M2BRlC&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1BtpcdvSpg%2F#'>
+                <i class="fa-brands fa-facebook fs-1 mt-2 col-12 text-white"></i>
+              </Link>
+              
           </div>
         </div>
 
