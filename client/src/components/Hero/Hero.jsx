@@ -12,18 +12,18 @@ const Hero = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }} 
     >
-      <div className="container d-flex flex-column justify-content-center h-100 align-items-start align-items-md-left text-light">
+      <div className="container d-flex flex-column justify-content-center h-100 align-items-center align-items-md-start text-light">
         <motion.h1 
-          className='fw-semibold'
+          className='fw-semibold text-center text-md-start'
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
         >
-          Welcome to College of Liberal Arts’ Learning Resources Center
+          Welcome to College of Liberal Arts' Learning Resources Center
         </motion.h1>
 
         <motion.p 
-          className="m-0 fs-4 fw-light"
+          className="m-0 fs-4 fw-light text-center text-md-start"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
