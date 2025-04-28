@@ -103,7 +103,7 @@ const Logbook = () => {
 
     console.log(patron);
     return (
-        <div className='logbook-container bg-light'>
+        <div className='logbook-container bg-light p-3 p-lg-5'>
             <h1>Logbook</h1>
 
             <div className='d-flex justify-content-between align-items-center'> 

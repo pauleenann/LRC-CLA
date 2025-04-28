@@ -239,7 +239,7 @@ const Profile = () => {
     console.log("email error: ", emailError)
 
     return (
-        <div className='profilepage bg-light'>
+        <div className='profilepage'>
             <div>
                 <AdminNavbar />
             </div>

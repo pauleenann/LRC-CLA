@@ -11,7 +11,7 @@ const LogbookPage = () => {
         <div>
         <AdminNavbar/>
         </div> 
-        <div>
+        <div className='p-0 m-0 h-100'>
             <AdminTopNavbar/>
             <Logbook/>
         </div>

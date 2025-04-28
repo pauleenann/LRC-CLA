@@ -56,7 +56,7 @@ const AdminNavbar = () => {
     }
 
     return (
-        <div className='navbar'>
+        <div className='navbar p-0'>
             {!isCollapsed&&<div className='overlay'></div>}
             <nav className={`admin-navbar-container shadow ${isCollapsed ? 'collapsed' : ''}`}>
             {/* Toggle Button */}
