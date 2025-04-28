@@ -278,25 +278,18 @@ const Dashboard = () => {
 
 
   return (
-    <div className='dashboard-container pb-5 bg-light'>
+    <div className='dashboard-container bg-light'>
        {/* dashboard heading */}
-       <div className="dashboard-heading px-3 px-lg-5">
+       <div className="dashboard-heading">
           {/* Goodmorning,admin */}
-          <p className='dashboard-heading-text fw-bold pt-3 pt-lg-0'>
-            {dateTime.getHours()>=1 && dateTime.getHours()<12
-              ? 'Good morning, '
-              : dateTime.getHours()>=12 && dateTime.getHours()<17
-              ? 'Good afternoon, '
-              : 'Good evening,'} 
-            <span>{username}</span>
-          </p>
+          <p className='dashboard-heading-text'>{dateTime.getHours()>=1 && dateTime.getHours()<12?'Good morning, ':dateTime.getHours()>=12&&dateTime.getHours()<17?'Good afternoon, ':'Good evening,'} <span>{username}</span></p>
       </div>
       
 
       {/* columns */}
-      <div className="dashboard row p-3 px-lg-5">
+      <div className="dashboard">
         {/* column 1 */}
-        <div className="dashboard-1 col-12 col-lg-8 row gap-3 pe-0 pe-lg-5">
+        <div className="dashboard-1 row gap-3">
           {/* total visitors */}
           <DashBox icon={<FontAwesomeIcon icon={faUsers} className='icon'/>} title={"Total Visits"} total={totalVisitors} loading={totalVisitorsLoading}/>
 
@@ -310,31 +303,32 @@ const Dashboard = () => {
           <DashBox icon={<FontAwesomeIcon icon={faTriangleExclamation} className='icon'/>} title={"Overdue Resources"} total={totalOverdue} loading={totalOverdueLoading}/>
 
           {/* bar chart */}
-          <div className="bar-chart col-12 shadow-sm p-3 p-lg-5 rounded">
+          <div className="bar-chart col-12 shadow-sm">
             <h5>Visitors and Borrowers Statistics</h5>
             <VerticalBarChart/>
           </div>
 
           {/* overdue book list */}
-          <div className="overdue-table bg-light py-4 h-auto">
+          <div className="overdue-table bg-light py-4">
             <div className='d-flex align-items-center justify-content-start gap-5 py-3'>
               <h5 className='m-0'>Overdue Book List</h5>
+              {/* <button className='see-all btn'>See all</button> */}
             </div>
             <DashboardTable header={overdueListHeader} data={overdueBooks} type={"overdue"} loading={overdueBooksLoading}/>
           </div>
 
           {/* book list */}
           <div className="book-table bg-light py-4">
-            <div className='d-flex justify-content-between align-items-center'>
+            <div className='d-flex justify-content-between'>
               <div className='d-flex align-items-center justify-content-start gap-5 py-3'>
                 <h5 className='m-0'>Book List</h5>
                 <Link to='/catalog'>
-                  <button className='see-all btn hover:btn-danger'>See all</button>
+                  <button className='see-all btn'>See all</button>
                 </Link>
                 
               </div>
               <Link to="/catalog/add">
-                <button className="btn add-btn btn-outline-dark d-flex align-items-center gap-2">
+                <button className="btn btn-outline-dark d-flex align-items-center gap-2">
                   <FontAwesomeIcon icon={faPlus}/>
                   Add new
                 </button>
@@ -347,7 +341,7 @@ const Dashboard = () => {
         </div>
 
         {/* column 2 */}
-        <div className="dashboard-2 col-12 col-lg-4 p-0 m-0">
+        <div className="dashboard-2">
           {/* top choices*/}
           <div className="top-choices d-flex flex-column gap-3">
             <h5>Popular Choices</h5>
@@ -377,7 +371,7 @@ const Dashboard = () => {
           </div>
 
           {/* books issued list */}
-          <div className="issued-table px-3 py-5 h-100">
+          <div className="issued-table px-3 py-5">
             <div className='d-flex align-items-center justify-content-between'>
               <div className='d-flex align-items-center justify-content-start gap-3 py-3'>
                 <h5 className='m-0'>Books Issued</h5>
@@ -388,6 +382,7 @@ const Dashboard = () => {
               </Link>
               
             </div>
+            
             <DashboardTable header={bookIssuedHeader} data={issuedBooks} type={"issued"} loading={issuedBooksLoading}/>
           </div>
 

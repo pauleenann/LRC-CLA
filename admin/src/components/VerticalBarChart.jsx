@@ -21,8 +21,8 @@ ChartJS.register(
 );
 
 export function VerticalBarChart() {
-  const {borrowedStats} = useSelector((state)=>state.chart);
-  const {visitorStats} = useSelector((state)=>state.chart)
+  const { borrowedStats } = useSelector((state) => state.chart);
+  const { visitorStats } = useSelector((state) => state.chart);
 
   const labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
   const data = {
@@ -30,7 +30,7 @@ export function VerticalBarChart() {
     datasets: [
       {
         label: 'Visitors',
-        data:visitorStats,
+        data: visitorStats,
         backgroundColor: '#94152B',
       },
       {
@@ -41,5 +41,29 @@ export function VerticalBarChart() {
     ],
   };
 
-  return <Bar data={data} />;
+  // Custom options for width and height
+  const options = {
+    responsive: true, // Ensures chart is responsive
+    maintainAspectRatio: false, // Allows manual control of width/height
+    plugins: {
+      title: {
+        display: true,
+        text: 'Vertical Bar Chart',
+      },
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+      },
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '400px' }}>
+      <Bar data={data} options={options} />
+    </div>
+  );
 }

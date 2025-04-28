@@ -2,9 +2,13 @@
 
 .dash-box{
     cursor: pointer;
+    color: var(--tup-color);
 }
 
 .dash-box:hover{
     background-color: var(--light-gray);
 }
 
+.dash-box .label{
+    font-size: 0.8rem;
+}

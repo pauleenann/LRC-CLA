@@ -1,12 +1,5 @@
 @import '../../assets/styles/globals.css';
 
-.logbook-container{
-    padding: 10px 70px 50px;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    overflow-x: hidden;   
-}
 
 .logbook-container h1{
     font-size: 2.5rem;
@@ -105,3 +98,15 @@
     border: none;
 }
 
+@media screen and (max-width:768px) {
+    .logbook-container{
+        height: 500px;
+        width: 700px;
+        overflow: scroll;
+    }
+
+    .logbook-container .logbook-table td{
+        font-size: 0.8rem !important;
+    }
+    
+}

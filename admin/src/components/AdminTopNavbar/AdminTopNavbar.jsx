@@ -150,14 +150,14 @@ const AdminTopNavbar = () => {
     // console.log(status)
 
     return (
-        <div className="top-navbar bg-light">
+        <div className="top-navbar p-lg-5 p-3 w-100 bg-light">
             {/* Online/Offline Indicator */}
             <div className="border text-secondary p-2 rounded">
                 {isOnline === null ? 'Loading...' : isOnline ? 'Online' : 'Offline'}
             </div>
             <div className="info">
                 {/* Date and Time */}
-                <div className="top-navbar-datetime">
+                <div className="top-navbar-datetime d-none d-lg-block">
                     <span>{dateTime.toLocaleTimeString()}</span>
                     <span className="separator">|</span>
                     <span>{currentDay}</span>
@@ -175,7 +175,7 @@ const AdminTopNavbar = () => {
                             aria-expanded="false"
                         >
                             <FontAwesomeIcon icon={faCircleUser} className="icon" />
-                            <span className="user-greeting">
+                            <span className="user-greeting d-none d-lg-block">
                                 Hello, <span className="user-welcome-uname">{uname}</span>
                             </span>
                         </button>

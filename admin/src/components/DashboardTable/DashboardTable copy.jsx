@@ -48,7 +48,7 @@ const DashboardTable = ({ header, data, type, loading }) => {
 
   return (
     
-    <table className='dashboard-table p-3'>
+    <table className='dashboard-table'>
       <thead>
         <tr>
           {header.map((item, index) => (

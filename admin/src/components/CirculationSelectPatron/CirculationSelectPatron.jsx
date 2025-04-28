@@ -4,6 +4,7 @@ import './CirculationSelectPatron.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight, faExclamationCircle, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { io } from 'socket.io-client';
 
 const CirculationSelectPatron = () => {
   const navigate = useNavigate();
@@ -16,7 +17,28 @@ const CirculationSelectPatron = () => {
   const searchInputRef = useRef(null); // Create a ref for the input
   
   useEffect(() => {
-    searchInputRef.current?.focus(); // Automatically focus on mount
+    // searchInputRef.current?.focus();
+
+    const socket = io('http://localhost:3001');
+  
+    socket.on('connect', () => {
+      console.log('Connected to socket.io server');
+    });
+  
+    socket.on('patron-data', (id) => {
+      console.log('Received serial data:', id);
+
+      setSearchQuery(id);
+      handleSearch(id)
+    });
+  
+    socket.on('disconnect', () => {
+      console.log('Disconnected from socket.io server');
+    });
+  
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
 
@@ -45,24 +67,29 @@ const CirculationSelectPatron = () => {
     localStorage.removeItem('selectedItems');
   }, [clickedAction]);
 
-  useEffect(()=>{
-    if(searchQuery==''){
-      getPatrons();
+  // Inside your useEffect, remove the old `handleSearch` and use it for search query changes:
+  useEffect(() => {
+    if (searchQuery === '') {
+      getPatrons(); // Reset the patron list when searchQuery is empty
+    } else {
+      handleSearch(); // Perform search when query changes
     }
-  },[searchQuery])
+  }, [searchQuery]);
 
-  const handleSearch = () => {
-    const query = searchQuery.toLowerCase();
-    const filtered = patrons.filter((patron) => {
-        return (
-            (patron.tup_id?.toLowerCase() || "").includes(query) ||
-            (`${patron.patron_fname || ''} ${patron.patron_lname || ''}`.toLowerCase()).includes(query) ||
-            (patron.category?.toLowerCase() || "").includes(query) ||
-            (patron.course_name?.toLowerCase() || "").includes(query)
-        );
-    });
-    setFilteredPatrons(filtered);
-    setCurrentPage(1);
+
+  // Inside your handleSearch function:
+const handleSearch = () => {
+  const query = searchQuery.toLowerCase();
+  const filtered = patrons.filter((patron) => {
+      return (
+          (patron.tup_id?.toLowerCase() || "").includes(query) ||
+          (`${patron.patron_fname || ''} ${patron.patron_lname || ''}`.toLowerCase()).includes(query) ||
+          (patron.category?.toLowerCase() || "").includes(query) ||
+          (patron.course_name?.toLowerCase() || "").includes(query)
+      );
+  });
+  setFilteredPatrons(filtered);
+  setCurrentPage(1); // Reset page to 1 after every search
 };
 
 
@@ -106,7 +133,7 @@ const CirculationSelectPatron = () => {
       <div className="search-container">
         <p className='m-0'>{actionText}</p>
         <input
-          ref={searchInputRef}  // Attach ref to input
+          // ref={searchInputRef}  // Attach ref to input
           type="text"
           value={searchQuery}
           onChange={(e) => {
