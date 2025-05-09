@@ -3,7 +3,7 @@ import './AdminNavbar.css';
 import tuplogo from '../../assets/tuplogo.png';
 import clalogo from '../../assets/clalogo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFile, faChartSimple, faFileLines, faCartShopping, faUser, faList, faFileExcel, faUsersGear, faUserPlus, faBookOpenReader, faLayerGroup, faBook, faArrowDown, faChevronDown, faBarcode, faPenToSquare, faQrcode, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faFile, faChartSimple, faFileLines, faCartShopping, faUser, faList, faFileExcel, faUsersGear, faUserPlus, faBookOpenReader, faLayerGroup, faBook, faArrowDown, faChevronDown, faBarcode, faPenToSquare, faQrcode, faBars, faBookAtlas, faBookOpen } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Loading from '../Loading/Loading';
 import axios from 'axios';
@@ -155,6 +155,18 @@ const AdminNavbar = () => {
                             {/* Cataloging Submenu - Only show when not collapsed or when hovering in collapsed mode */}
                             {isCatalogingOpen && (
                                 <ul className={`submenu ${isCollapsed ? '' : ''}`}>
+                                    <li className="submenu-list-item">
+                                        <Link to='/catalog/availability' className="submenu-item">
+                                            <div className="menu-icon-container">
+                                                <FontAwesomeIcon icon={faBookOpen} className='menu-icon'/>
+                                            </div>
+                                            {!isCollapsed && (
+                                                <div className="menu-text">
+                                                    <p>Resource Status</p>
+                                                </div>
+                                            )}
+                                        </Link>
+                                    </li>
                                     <li className="submenu-list-item">
                                         <Link to='/catalog/generate-barcode' className="submenu-item">
                                             <div className="menu-icon-container">

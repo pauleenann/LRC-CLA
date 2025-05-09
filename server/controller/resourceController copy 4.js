@@ -50,9 +50,6 @@ export const saveResource = async (req, res) => {
        
         // Insert resource
         const resourceId = await insertResources(res, req, authors, username);
-
-        // insert in resource copies
-        await insertCopies(req.body.isCirculation, req.body.quantity, resourceId)
     
         if (mediaType === '1') {
             // Handle books
@@ -89,32 +86,6 @@ export const saveResource = async (req, res) => {
     }
     
 }
-
-// insert copies 
-const insertCopies = async (isCirculation, quantity, resourceId) => {
-    const insertQuery = `
-      INSERT INTO resource_copies (
-        resource_is_circulation,
-        resource_id
-      ) VALUES (?, ?)
-    `;
-  
-    try {
-        // insert copies depending on quantity
-      for (let i = 0; i < quantity; i++) {
-        await new Promise((resolve, reject) => {
-          db.query(insertQuery, [isCirculation, resourceId], (err, result) => {
-            if (err) return reject(err);
-            resolve(result);
-          });
-        });
-      }
-  
-      console.log(`${quantity} copies inserted for resource ID ${resourceId}.`);
-    } catch (error) {
-      console.error("Error inserting copies:", error);
-    }
-};  
 
 //check if adviser exist
 export const checkAdviserIfExist = async (adviser) => {
@@ -323,10 +294,12 @@ export const insertResources = async (res, req, authors, username) => {
                     resource_description, 
                     resource_published_date, 
                     original_resource_quantity, 
-                    resource_quantity,
+                    resource_quantity, 
+                    resource_is_circulation, 
                     dept_id, 
-                    type_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                    type_id, 
+                    avail_id
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             `;
 
             const resourceValues = [
@@ -335,8 +308,10 @@ export const insertResources = async (res, req, authors, username) => {
                 req.body.publishedDate,
                 req.body.quantity,
                 req.body.quantity,
+                req.body.isCirculation,
                 req.body.department,
-                req.body.mediaType
+                req.body.mediaType,
+                req.body.status,
             ];
 
             db.query(insertQuery, resourceValues, async (err, results) => {
@@ -611,8 +586,10 @@ const editResource = async (res, req, authors, resourceId, username) => {
             req.body.description,
             req.body.publishedDate,
             req.body.quantity,
+            req.body.isCirculation,
             req.body.department,
             req.body.mediaType,
+            req.body.status,
             resourceId
         ];
         
@@ -634,8 +611,10 @@ const editResource = async (res, req, authors, resourceId, username) => {
                     resource_description = ?,
                     resource_published_date = ?,
                     resource_quantity = ?,
+                    resource_is_circulation = ?,
                     dept_id = ?,
-                    type_id = ?
+                    type_id = ?,
+                    avail_id = ?
                 WHERE 
                     resource_id = ?
             `;
@@ -649,40 +628,34 @@ const editResource = async (res, req, authors, resourceId, username) => {
                     return res.status(500).send(err);
                 }
 
-                // update resource copies
-                const updateQuery2 = `
-                    UPDATE resource_copies
-                    SET 
-                        resource_is_circulation = ?,
-                        avail_id = ?
-                    WHERE 
-                        resource_id = ?
-                `;
+                // Update authors
+                editAuthors(res, authors, resourceId)
+                    .then(() => {
+                        // Log audit action
+                        const newValue = JSON.stringify({
+                            resource_id: resourceId,
+                            title: req.body.title,
+                            description: req.body.description,
+                            publishedDate: req.body.publishedDate,
+                            quantity: req.body.quantity,
+                            isCirculation: req.body.isCirculation,
+                            department: req.body.department,
+                            mediaType: req.body.mediaType,
+                            status: req.body.status
+                        });
 
-                db.query(updateQuery2, [req.body.isCirculation, req.body.status, resourceId], (err, results) => {
-                    if (err) {
-                        return res.status(500).send(err);
-                    }
-                    
-                    // Update authors
-                    editAuthors(res, authors, resourceId)
-                        .then(() => {
-                            // Log audit action
-                            logAuditAction(
-                                username,  // Assuming userId is part of req.body
-                                'UPDATE',
-                                'resources',
-                                resourceId,
-                                oldValue,
-                                JSON.stringify("Edited a resource: '" + req.body.title + "'")
-                            );
+                        logAuditAction(
+                            username,  // Assuming userId is part of req.body
+                            'UPDATE',
+                            'resources',
+                            resourceId,
+                            oldValue,
+                            JSON.stringify("Edited a resource: '" + req.body.title + "'")
+                        );
 
-                            resolve('success');
-                        })
-                        .catch((err) => reject(err));
-                })
-
-                
+                        resolve('success');
+                    })
+                    .catch((err) => reject(err));
             });
         });
     });
@@ -816,20 +789,19 @@ const getBookResource = (id,res)=>{
         resources.type_id, 
         GROUP_CONCAT(DISTINCT CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS author_names, 
         resources.dept_id, 
-        rc.avail_id, 
+        resources.avail_id, 
         resources.resource_description, 
-        rc.resource_is_circulation, 
+        resources.resource_is_circulation, 
         book.book_isbn, 
         resources.resource_published_date,
         book.pub_id, 
-        resources.original_resource_quantity, 
+        resources.resource_quantity, 
         resources.resource_title, 
         publisher.pub_name,
         book.filepath,
 		book.topic_id 
     FROM resources 
     JOIN resourceauthors ON resourceauthors.resource_id = resources.resource_id 
-    JOIN resource_copies rc ON resources.resource_id = rc.resource_id
     JOIN author ON resourceauthors.author_id = author.author_id 
     JOIN resourcetype ON resources.type_id = resourcetype.type_id 
     LEFT JOIN book ON book.resource_id = resources.resource_id 
@@ -913,75 +885,37 @@ export const importCatalog = async (req, res) => {
         console.log(selectedType);
 
         let insertedResources = []; // Array to store successfully inserted resources
-        let invalidResources = []
 
         // 1. Iterate through each element
         for (const data of importData) {
-            const fieldsRequired = ['quantity', 'title', 'authors', 'published date', 'department'];
-            if (selectedType == 4) fieldsRequired.push('adviser');
-            if (selectedType != 4) fieldsRequired.push('topic');
-
-            // **Check for missing fields**
-            const missingFields = fieldsRequired.filter(field => 
-                !data[field] || data[field] === undefined || data[field] === null
-            );
-
-            if (missingFields.length > 0) {
-                invalidResources.push({
-                    title: data['title'] || "Unknown Title",
-                    reason: "Missing/empty required fields",
-                    missingFields
-                });
-                continue;
-            }
-
-
             // 2. Get department ID
             const deptQ = 'SELECT dept_id FROM department WHERE dept_name = ?';
             const deptId = await new Promise((resolve, reject) => {
-                db.query(deptQ, [data['department'].toLowerCase().trim()], (err, result) => {
+                db.query(deptQ, [data['Department'].toLowerCase()], (err, result) => {
                     if (err) reject(err);
                     else resolve(result.length ? result[0].dept_id : null);
                 });
             });
 
-            // **Skip resource if department ID is not found**
-            if (!deptId) {
-                console.log(`Skipping resource: ${data['title']} (Department not found: ${data['department']})`);
-                invalidResources.push({
-                    title: data['title'],
-                    reason: `Department not found in database: ${data['department']}`
-                });
-                continue;
-            }
-
+            // 3. Get topic ID if selected type is book/journal/newsletter
             let topicId = null;
-            if (selectedType != 4) {
+            if (selectedType !== 4) {
                 const topicQ = 'SELECT topic_id FROM topic WHERE topic_name = ?';
                 topicId = await new Promise((resolve, reject) => {
-                    db.query(topicQ, [data['topic'].toLowerCase().trim()], (err, result) => {
+                    db.query(topicQ, [data['Topic'].toLowerCase()], (err, result) => {
                         if (err) reject(err);
                         else resolve(result.length ? result[0].topic_id : null);
                     });
                 });
-
-                // **Skip the resource if topic is not found**
-                if (!topicId) {
-                    console.log(`Skipping resource: Topic not found for ${data['topic']}`);
-                    invalidResources.push({ 
-                        title: data['title'], 
-                        reason: `Topic not found in database: ${data['topic']}`
-                    });
-                    continue; // Skip the rest of the logic and continue with the next item in the loop
-                }
             }
 
-
-            // 4. Organize authors (Trim Spaces)
-            const authors = data['authors']
-                ? data['authors'].split(',').map(author => author.trim())
+            // 4. Organize authors
+            const authors = data['Authors']
+                ? data['Authors'].includes(',')
+                    ? data['Authors'].split(',')
+                    : [data['Authors']]
                 : [];
-            console.log('authors:', authors);
+            console.log(authors);
 
             // 5. Organize advisers and publishers
             let pub;
@@ -989,62 +923,41 @@ export const importCatalog = async (req, res) => {
             if (selectedType == 1) {
                 pub = {
                     pub_id: 0,
-                    pub_name: data['publisher name'] || '',
-                    pub_add: data['publisher address'] || '',
-                    pub_email: data['publisher email'] || '',
-                    pub_phone: data['publisher number'] || '',
-                    pub_web: data['publisher website'] || ''
+                    pub_name: data['Publisher Name'],
+                    pub_add: data['Publisher Address'],
+                    pub_email: data['Publisher Email'],
+                    pub_phone: data['Publisher Number'],
+                    pub_web: data['Publisher Website']
                 };
-            } else if (selectedType == 4 && data['adviser']) {
-                const nameParts = data['adviser'].trim().split(' ');
-                adviserFname = nameParts.slice(0, -1).join(" "); // "John Michael"
-                adviserLname = nameParts.length > 1 ? nameParts[nameParts.length - 1] : ''; // "Doe"
+            } else if (selectedType == 4) {
+                const adviser = req.body.adviser.split(' ');
+                adviserFname = adviser[0];
+                adviserLname = adviser[1];
             }
 
             // 6. Insert Resources
             const resourceId = await importResources(res, deptId, data, authors, username, selectedType);
             if (!resourceId) {
-                console.log(`Skipping resource: ${data['title']} (Insert Failed)`);
-                invalidResources.push({
-                    title: data['title'],
-                    reason: "Resource already exist"
-                });
+                console.log(`Skipping resource: ${data['Title']}`);
                 continue;
             }
 
-            insertedResources.push({ title: data['title'], id: resourceId });
+            insertedResources.push({ title: data['Title'], id: resourceId });
 
             // 7. Insert Books if selected type is 1 (Book)
             if (selectedType == '1') {
                 const pubId = await checkIfPubExist(pub);
                 console.log('Publisher ID:', pubId);
-                await importBook(data['isbn'], resourceId, pubId, topicId, imageFile);
-            } else if (['2', '3'].includes(selectedType)) {
-                const jn = [
-                    data['volume'] || '',
-                    data['issue'] || '',
-                    imageFile, 
-                    resourceId,
-                    topicId
-                ];
-                await importJournalNewsletter(jn, res);
-            } else {
-                const adviser = [adviserFname, adviserLname];
-                
-                // Get adviserId
-                const adviserID = await checkAdviserIfExist(adviser);
-                console.log('Adviser ID:', adviserID);
-                
-                // Insert into thesis table
-                await importThesis(resourceId, adviserID);
+                await importBook(data['ISBN'].replace(/\s+/g, ''), resourceId, pubId, topicId, imageFile);
+            }else if(['2', '3'].includes(selectedType)){
+
             }
         }
 
         // **Send a response after processing all items**
         res.status(200).json({
             message: 'Import completed successfully.',
-            insertedRecords: insertedResources,
-            invalidResources: invalidResources
+            insertedRecords: insertedResources
         });
     } catch (error) {
         console.error('Error in importCatalog:', error);
@@ -1052,12 +965,13 @@ export const importCatalog = async (req, res) => {
     }
 };
 
+
 //insert resource
 const importResources = async (res, deptId, data, authors, username, selectedType) => {
     return new Promise(async (resolve, reject) => {
         try {
             // Check if the resource exists
-            const resourceExists = await checkResourceIfExist(data['title'],data['authors']);
+            const resourceExists = await checkResourceIfExist(data['Title']);
 
             if (resourceExists) {
                 console.log('Resource already exists.');
@@ -1072,19 +986,23 @@ const importResources = async (res, deptId, data, authors, username, selectedTyp
                     resource_published_date, 
                     original_resource_quantity, 
                     resource_quantity, 
+                    resource_is_circulation, 
                     dept_id, 
-                    type_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                    type_id, 
+                    avail_id
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             `;
 
             const resourceValues = [
-                data['title'],
-                data['description'] || '',
-                data['published date'],
-                data['quantity'],
-                data['quantity'],
+                data['Title'],
+                data['Description'] || '',
+                data['Published Date'],
+                data['Quantity'],
+                data['Quantity'],
+                selectedType==1?1:0,
                 deptId,
-                selectedType
+                selectedType,
+                1,
             ];
 
             db.query(insertQuery, resourceValues, async (err, results) => {
@@ -1094,10 +1012,9 @@ const importResources = async (res, deptId, data, authors, username, selectedTyp
 
                 // Get the `resource_id` of the newly inserted row
                 const resourceId = results.insertId;
-                logAuditAction(username, 'INSERT', 'resources', resourceId, null, JSON.stringify("Added a new resource: '" + data['title'] + "'"));
+                // logAuditAction(username, 'INSERT', 'resources', null, null, JSON.stringify("Added a new resource: '" + data['Title'] + "'"));
                 try {
                     // Insert authors for the resource
-                    await importInsertCopies(selectedType,resourceId,data['quantity'])
                     await insertAuthors(res, authors, resourceId);
                     resolve(resourceId); // Resolve with the `resourceId`
                 } catch (authorError) {
@@ -1109,36 +1026,6 @@ const importResources = async (res, deptId, data, authors, username, selectedTyp
         }
     });
 };
-
-// insert copies
-const importInsertCopies = async (selectedType, resourceId, quantity) => {
-    const q = `
-        INSERT INTO resource_copies (resource_is_circulation, resource_id) 
-        VALUES (?, ?)
-    `;
-    const values = [
-        selectedType == 1 ? 1 : 0,
-        resourceId
-    ];
-
-    const insertPromises = [];
-
-    for (let i = 0; i < quantity; i++) {
-        insertPromises.push(new Promise((resolve, reject) => {
-            db.query(q, values, (err, results) => {
-                if (err) {
-                    console.error(`Error inserting copy #${i + 1} for resourceId ${resourceId}:`, err);
-                    return reject(err);
-                }
-                resolve(results);
-            });
-        }));
-    }
-
-    return Promise.all(insertPromises);
-};
-
-
 
 // Remove 'res' from parameters
 const importBook = async (isbn, resourceId, pubId, topicId, imageFile) => {
@@ -1177,33 +1064,13 @@ const importBook = async (isbn, resourceId, pubId, topicId, imageFile) => {
 };
 
 const importJournalNewsletter = async(jn,res)=>{
-    return new Promise((resolve, reject) => {
-        const q = 'INSERT INTO journalnewsletter (jn_volume, jn_issue, filepath, resource_id, topic_id) VALUES (?, ?, ?, ?,?)';
-                
-        db.query(q, jn, (err, result) => {
-            if (err) {
-                // Reject the promise with the error
-                reject(err);
-            } else {
-                resolve(result);
-            }
+    const q = 'INSERT INTO journalnewsletter (jn_volume, jn_issue, filepath, resource_id, topic_id) VALUES (?, ?, ?, ?,?)';
             
-        });
-    })
-}
-
-//insert thesis 
-export const importThesis = async (resourceId, adviserId)=>{
-    return new Promise((resolve, reject) => {
-        const q = "INSERT INTO thesis (resource_id, adviser_id) VALUES (?,?)"
-
-        db.query(q,[resourceId,adviserId],(err,results)=>{
-            if (err) {
-                // Reject the promise with the error
-                reject(err);
-            } else {
-                resolve(results);
-            }
-        })
-    })
+    db.query(q, jn, (err, result) => {
+        if (err) {
+            return res.status(500).send(err); 
+        }
+        
+        return res.send({status: 201, message:'Journal/Newsletter inserted successfully.'});
+    });
 }
