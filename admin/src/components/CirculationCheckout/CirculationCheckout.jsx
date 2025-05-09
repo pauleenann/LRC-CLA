@@ -88,7 +88,7 @@ const CirculationCheckout = () => {
         try {
           // Get checkout record
           const checkoutResponse = await axios.get(`http://localhost:3001/api/circulation/checkout-record`, {
-            params: { resource_id: item.resource_id, patron_id: id },
+            params: { rc_id: item.rc_id, patron_id: id },
           });
   
           if (!checkoutResponse.data.checkout_id) {
@@ -104,6 +104,7 @@ const CirculationCheckout = () => {
             patron_id: id,
             resource_id: item.resource_id,
             username: uname,
+            rc_id: item.rc_id,
           });
   
           if (response.status !== 201) {
@@ -174,6 +175,7 @@ const CirculationCheckout = () => {
           checkout_date: date,
           checkout_due: dueDate,
           resource_id: item.resource_id,
+          rc_id: item.rc_id,
           patron_id: id,
           username: uname,
         });

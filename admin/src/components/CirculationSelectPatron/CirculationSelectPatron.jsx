@@ -117,8 +117,6 @@ const handleSearch = () => {
     searchInputRef.current?.focus(); // Refocus input
 };
 
-
-
   return (
     <div className='circ-select-patron-container bg-light'>
       <h1>Book Circulation</h1>

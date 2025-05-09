@@ -35,7 +35,7 @@ const AddItem = () => {
         isCirculation: 1,
         publisher_id: 0,
         publisher: '',
-        // status:''
+        status:''
     });
     const [error, setError] = useState({});
     // for loading modal
@@ -55,14 +55,14 @@ const AddItem = () => {
                     isCirculation: 1,
                     publisher_id: 0,
                     publisher: '',
-                    // status:''
+                    status:''
                 });
             } else {
                 setBookData({
                     mediaType: bookData.mediaType, // keep the changed mediaType
                     authors: [],
                     isCirculation: 0,
-                    // status:''
+                    status:''
                 });
             }
         }
@@ -84,7 +84,6 @@ const AddItem = () => {
         // Handle resource view logic (inside useEffect)
         if (id) {
             setDisabled(true);
-            setEditMode(true)
             // Check if online or offline after setting the state
             if(isOnline) {
                 getDataOnline();
@@ -135,7 +134,7 @@ const AddItem = () => {
                         quantity:data.original_resource_quantity.toString(),
                         title:data.resource_title.toString(),
                         isbn:data.book_isbn?data.book_isbn.toString():'',
-                        // status:data.avail_id.toString(),
+                        status:data.avail_id.toString(),
                         publisher_id:data.pub_id,
                         publisher: data.pub_name?data.pub_name.toString():'',
                         file:data.filepath,
@@ -155,7 +154,7 @@ const AddItem = () => {
                         description:data.resource_description,
                         quantity:data.original_resource_quantity.toString(),
                         title:data.resource_title.toString(),
-                        // status:data.avail_id.toString(),
+                        status:data.avail_id.toString(),
                         file:data.filepath,
                         publishedDate:data.resource_published_date.toString(),
                         department: data.dept_id.toString(),
@@ -175,7 +174,7 @@ const AddItem = () => {
                         description:data.resource_description,
                         quantity:data.original_resource_quantity.toString(),
                         title:data.resource_title.toString(),
-                        // status:data.avail_id.toString(),
+                        status:data.avail_id.toString(),
                         publishedDate:data.resource_published_date.toString(),
                         department: data.dept_id.toString(),
                         isCirculation:data.resource_is_circulation,
@@ -288,9 +287,9 @@ const AddItem = () => {
         if (!bookData.quantity || bookData.quantity === 0) {
             err.quantity = 'Please enter quantity';
         }
-        // if (!bookData.status) {
-        //     err.status = 'Please select status';
-        // }
+        if (!bookData.status) {
+            err.status = 'Please select status';
+        }
         if (!bookData.title || bookData.title.length === 0) {
             err.title = 'Please enter title';
         }
@@ -489,7 +488,7 @@ const AddItem = () => {
 
         if(editMode){
             setDisabled(true);
-            setEditMode(true);
+            setEditMode(false);
             viewResourceOnline()
         }else{
             setBookData({
@@ -499,12 +498,12 @@ const AddItem = () => {
                 isCirculation: 1,
                 publisher_id: 0,
                 publisher: '',
-                // status:''
+                status:''
             })
         }
     }
 
-    console.log('editmode: ',editMode)
+    console.log(bookData)
     return (
         <div className='add-item-container bg-light'>
             <h1 className='m-0'>Cataloging</h1>
