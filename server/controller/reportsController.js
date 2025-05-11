@@ -195,7 +195,7 @@ const generatePatron = (res, detail,college,course) => {
     switch(detail){
         case 'top borrowers':
             groupByClause+=`GROUP BY p.tup_id, p.patron_fname, p.patron_lname, p.patron_mobile, 
-            p.patron_email, p.category, col.college_name, cou.course_name`;
+            p.patron_email, p.category, col.college_name, cou.course_name LIMIT 10`;
             fromJoin = `FROM checkout cout
                         JOIN patron p ON p.patron_id = cout.patron_id`
             break
@@ -229,8 +229,8 @@ const generatePatron = (res, detail,college,course) => {
             p.patron_mobile,
             p.patron_email,
             p.category,
-            col.college_name,
-            cou.course_name,
+            col.college_name as college,
+            cou.course_name as course,
             ${selectCount}
         ${fromJoin}
         JOIN college col ON p.college_id = col.college_id
@@ -262,11 +262,11 @@ const generateInventory = async (res, detail) => {
         'journals': 'resources.type_id = 2',
         'newsletters': 'resources.type_id = 3',
         'theses': 'resources.type_id = 4',
-        'available resources': 'resources.avail_id = 1',
-        'lost resources': 'resources.avail_id = 2',
-        'damaged resources': 'resources.avail_id = 3',
-        'archived': 'resources.resource_is_archived = 1',
-        'unarchived': 'resources.resource_is_archived = 0',
+        'available resources': 'rc.avail_id = 1',
+        'lost resources': 'rc.avail_id = 2',
+        'damaged resources': 'rc.avail_id = 3',
+        'archived': 'rc.resource_is_archived = 1',
+        'unarchived': 'rc.resource_is_archived = 0',
     };
 
     if (filterConditions[detail]) {
@@ -283,6 +283,7 @@ const generateInventory = async (res, detail) => {
             COALESCE(topic.topic_name, 'n/a') AS topic,
             GROUP_CONCAT(CONCAT(author.author_fname, ' ', author.author_lname) SEPARATOR ', ') AS authors
         FROM resources
+        JOIN resource_copies rc ON rc.resource_id = resources.resource_id
         JOIN resourcetype ON resources.type_id = resourcetype.type_id 
         JOIN department ON department.dept_id = resources.dept_id
         LEFT JOIN resourceauthors ON resourceauthors.resource_id = resources.resource_id 
@@ -464,9 +465,11 @@ const generateCirculation = async (res, detail, startDate, endDate, college, cou
             FROM 
                 resources r
             JOIN book b ON b.resource_id = r.resource_id
-            ${detail === 'least borrowed books' ? 'LEFT JOIN' : 'JOIN'} checkout cout ON cout.resource_id = r.resource_id
+            JOIN resource_copies rc ON rc.resource_id = r.resource_id
+            ${detail === 'least borrowed books' ? 'LEFT JOIN' : 'JOIN'} checkout cout ON cout.rc_id = rc.rc_id
             GROUP BY r.resource_title, r.resource_published_date, r.resource_id
-            ${orderBy}`;
+            ${orderBy}
+            LIMIT 10`;
     } else {
         q = `
             SELECT
@@ -481,10 +484,12 @@ const generateCirculation = async (res, detail, startDate, endDate, college, cou
             FROM 
                 checkout
             JOIN patron ON patron.patron_id = checkout.patron_id
-            JOIN resources ON resources.resource_id = checkout.resource_id
+            JOIN resource_copies rc ON rc.rc_id = checkout.rc_id
+            JOIN resources ON resources.resource_id = rc.resource_id
             JOIN college ON patron.college_id = college.college_id
             JOIN course ON patron.course_id = course.course_id
-            ${whereString}`;
+            ${whereString}
+            LIMIT 10`;
     }
 
     console.log("Generated Query:", q);
