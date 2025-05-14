@@ -322,23 +322,6 @@ const ReportsModal = ({ open, close}) => {
         formData.append('staff_id', staffId);
         formData.append('staff_uname', staffUname);
 
-        // generate pdf file
-        const pdfOptions = {
-          margin:      0.5,               // inches
-          filename:    'report.pdf',
-          html2canvas: { scale: 2, useCORS: true },
-          jsPDF: {
-            unit:        'in',
-            format:      'a3',         // 11×8.5in
-            orientation: 'landscape'       // switch to landscape!
-          }
-        };
-        const pdfBlob = await html2pdf().from(exportRef.current).set(pdfOptions).outputPdf('blob');
-        const pdfFilename = `${reportData.name || 'Report'}_${timestamp}.pdf`;
-
-        // Append both files to form data
-        formData.append('pdf_file', pdfBlob, pdfFilename);
-
         // Send request
         await axios.post(`${API_BASE_URL}/api/reports`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },

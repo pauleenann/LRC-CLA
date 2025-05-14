@@ -86,8 +86,7 @@ export const fetchReport = (req,res)=>{
             r.report_name,
             r.report_description,
             r.created_at,
-            filepath,
-            excel_filepath
+            filepath
         FROM reports r
         JOIN reportcategory rc ON rc.cat_id = r.cat_id
         JOIN reportdetail rd ON rd.detail_id = r.detail_id
@@ -104,13 +103,9 @@ export const fetchReport = (req,res)=>{
 }
 
 export const saveReport = (req, res)=>{
-    const excelFile = req.files?.report_file?.[0];
-    const pdfFile = req.files?.pdf_file?.[0];
+    const filePath = req.file ? `/public/reports/${req.file.filename}` : null;
 
-    const excelPath = excelFile ? `/public/reports/${excelFile.filename}` : null;
-    const pdfPath = pdfFile ? `/public/reports/${pdfFile.filename}` : null;
-        
-    const {
+        const {
           name,
           description,
           category_id,
@@ -119,7 +114,7 @@ export const saveReport = (req, res)=>{
           endDate,
           staff_id ,
           staff_uname,
-    } = req.body;
+        } = req.body;
     
         // SQL query to insert report
         const q = `
@@ -131,10 +126,9 @@ export const saveReport = (req, res)=>{
             report_start_date, 
             report_end_date, 
             staff_id,
-            filepath,
-            excel_filepath
+            filepath
           ) 
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
         const values = [
@@ -145,8 +139,7 @@ export const saveReport = (req, res)=>{
             startDate,
             endDate,
             staff_id,
-            pdfPath,
-            excelPath
+            filePath
         ]
     
         db.query(q, values, (err, result) => {
@@ -583,58 +576,6 @@ export const fetchExcel = (req, res) => {
             res.status(500).json({ error: 'File not found or inaccessible' });
         }
     });
-}
-
-export const fetchPDF = (req, res) => {
-  const filePath = req.query.filePath;
-  
-  if (!filePath) {
-    return res.status(400).json({ error: 'File path is required' });
-  }
-  
-  console.log('Requested PDF path:', filePath);
-  
-  // Handle the file path correctly
-  let absolutePath;
-  
-  // Check if path starts with /public
-  if (filePath.startsWith('/public/')) {
-    // Remove "/public" from the path since that's likely your static files directory
-    const relativePath = filePath.replace(/^\/public/, '');
-    absolutePath = path.join(__dirname, '../public', relativePath);
-  } else {
-    // For other paths, resolve based on project root
-    absolutePath = path.join(process.cwd(), filePath.startsWith('/') ? filePath.substring(1) : filePath);
-  }
-  
-  console.log('Attempting to serve PDF from:', absolutePath);
-  
-  // Check if file exists
-  if (!fs.existsSync(absolutePath)) {
-    console.error('PDF file not found at path:', absolutePath);
-    
-    // Try an alternative path as fallback
-    const altPath = path.join(__dirname, '..', filePath);
-    console.log('Trying alternative path:', altPath);
-    
-    if (fs.existsSync(altPath)) {
-      console.log('Found PDF at alternative path');
-      absolutePath = altPath;
-    } else {
-      return res.status(404).json({ error: 'PDF file not found' });
-    }
-  }
-
-  // Set proper content type for PDF
-  res.setHeader('Content-Type', 'application/pdf');
-  
-  // Send the file
-  res.sendFile(absolutePath, (err) => {
-    if (err) {
-      console.error('Error sending PDF file:', err);
-      res.status(500).json({ error: 'File not found or inaccessible', details: err.message });
-    }
-  });
 }
 
 export const handleArchive = (req,res)=>{
