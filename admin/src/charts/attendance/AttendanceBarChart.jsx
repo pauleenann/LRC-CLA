@@ -214,7 +214,6 @@ const AttendanceBarChart = forwardRef((props, ref) => {
                   <th className="py-2 px-4 text-left">Course</th>
                   <th className="py-2 px-4 text-left">Students</th>
                   <th className="py-2 px-4 text-left">Percentage</th>
-                  <th className="py-2 px-4 text-left">vs. Average</th>
                 </tr>
               </thead>
               <tbody>
@@ -228,9 +227,6 @@ const AttendanceBarChart = forwardRef((props, ref) => {
                       <td className="py-2 px-4 font-medium">{course}</td>
                       <td className="py-2 px-4">{courseCounts[course]}</td>
                       <td className="py-2 px-4">{((courseCounts[course] / totalAttendance) * 100).toFixed(1)}%</td>
-                      <td className={`py-2 px-4 ${diffColor}`}>
-                        {diffFromAvg > 0 ? "+" : ""}{diffFromAvg.toFixed(1)}
-                      </td>
                     </tr>
                   );
                 })}
