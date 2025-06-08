@@ -496,7 +496,7 @@ const generateCirculation = async (res, detail, startDate, endDate, college, cou
             JOIN college ON patron.college_id = college.college_id
             JOIN course ON patron.course_id = course.course_id
             ${whereString}
-            LIMIT 10`;
+            `;
     }
 
     console.log("Generated Query:", q);
