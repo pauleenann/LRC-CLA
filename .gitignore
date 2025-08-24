@@ -1,7 +1,11 @@
-/server/node_modules
+# Ignore root node_modules
+/node_modules/
 
-node_modules
+# Ignore server node_modules
+/server/node_modules/
 
-database
+# Ignore database folder
+/database/
 
-/server/.env
+# Ignore sensitive file
+/server/ca.pem
