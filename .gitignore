@@ -10,5 +10,3 @@
 # Ignore sensitive file
 /server/ca.pem
 
-# Ignore unneccessary files
-/.vscode
